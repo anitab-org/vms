@@ -8,6 +8,7 @@ from registration.forms import UserForm
 from volunteer.forms import VolunteerForm
 from volunteer.models import Volunteer #Volunteer model needs to be imported so that input type file renders properly
 from volunteer.validation import validate_file
+from django.contrib import messages
 
 def signup_administrator(request):
     """
@@ -41,10 +42,10 @@ def signup_administrator(request):
                 
                 if organization:
                     administrator.organization = organization
-                    
+					
                 administrator.save()
                 registered = True
-
+                messages.success(request, 'You have successfully registered!')
                 return HttpResponseRedirect(reverse('home:index'))
             else:
                 print user_form.errors, administrator_form.errors
@@ -94,6 +95,7 @@ def signup_volunteer(request):
                 volunteer.save()
                 registered = True
 
+                messages.success(request, 'You have successfully registered!')
                 return HttpResponseRedirect(reverse('home:index'))
             else:
                 print user_form.errors, volunteer_form.errors

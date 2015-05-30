@@ -1,6 +1,7 @@
 {% extends "vms/base.html" %}
 
 {% block content %}
+
     <form class="signup form-signup" id="signup_form" method="post" action="{% url 'registration:signup_administrator' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <h2>Sign Up</h2>
