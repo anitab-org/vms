@@ -7,16 +7,20 @@ def delete_organization(organization_id):
     result = True
 
     organization = get_organization_by_id(organization_id)
-    #check if there are currently any users associated with this organization
-    #this might be difficult to maintain as different types of users are added on
-    volunteers_in_organization = organization.volunteer_set.all()
-    administrators_in_organization = organization.administrator_set.all()
-    
-    #can only delete an organization if no users are currently associated with it
-    if organization and (not volunteers_in_organization) and (not administrators_in_organization):
-        organization.delete()
-    else:
+	#check if the organization exists
+    if not organization:
         result = False
+    else:
+        #check if there are currently any users associated with this organization
+        #this might be difficult to maintain as different types of users are added on
+        volunteers_in_organization = organization.volunteer_set.all()
+        administrators_in_organization = organization.administrator_set.all()
+    
+        #can only delete an organization if no users are currently associated with it
+        if organization and (not volunteers_in_organization) and (not administrators_in_organization):
+            organization.delete()
+        else:
+            result = False
 
     return result
 

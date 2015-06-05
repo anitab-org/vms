@@ -4,6 +4,23 @@ from organization.services import *
 
 class OrganizationMethodTests(TestCase):
 
+    def test_delete_organization(self):
+	
+        o1 = Organization(name = "Google")
+        o2 = Organization(name = "Yahoo")
+        o3 = Organization(name = "Ubisoft")
+
+        o1.save()
+        o2.save()
+        o3.save()
+		
+        self.assertTrue(delete_organization(o1.id))
+        self.assertTrue(delete_organization(o2.id))
+        self.assertTrue(delete_organization(o3.id))
+        self.assertFalse(delete_organization(100))
+        self.assertFalse(delete_organization(200))
+        self.assertFalse(delete_organization(300))
+		
     def test_get_organization_by_id(self):
 
         o1 = Organization(name = "Google")
