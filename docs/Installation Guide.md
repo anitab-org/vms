@@ -9,7 +9,7 @@ This tutorial assumes that the user is installing and running the project under 
 3. [Install Django and PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-django-and-postgresql)
 4. [Install VirtualBox and Vagrant](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-virtualbox-and-vagrant)
 5. [Download Systers Ubuntu Virtual Machine](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#download-systers-ubuntu-virtual-machine)
-6. [Using Vagrant] (https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#using-vagrant)
+6. [Using Vagrant](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#using-vagrant)
 7. [Install python-psycopg2 module](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-python-psycopg2-module)
 8. [Setup PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#setup-postgresql)
 9. [Generate Database Tables Corresponding to Django Models](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#generate-database-tables-corresponding-to-django-models)
@@ -124,9 +124,26 @@ To start up the VM again, run the command:
 
 ## <a name="ppm"></a>Install python-psycopg2 module
 
-To use Django with PostgreSQL, we will also need to install the python module python-psycopg2. Install it by running this command (this package is not installed by default on the VM):
+To use Django with PostgreSQL, we will also need to install the python module python-psycopg2.
+By default, this package is not installed on the VM.
+
+Install it by running this command from the VM command prompt:
 
     sudo apt-get install python-psycopg2
+
+Example output on VM:
+
+    vagrant@vagrant-ubuntu-trusty-32:/vagrant/vms$ sudo apt-get install python-psycopg2
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    ...
+    After this operation, 1,300 kB of additional disk space will be used.
+    Do you want to continue? [Y/n] Y
+    Get:1 http://archive.ubuntu.com/ubuntu/ trusty/main python-egenix-mxtools i386 3.2.7-1build1 [74.3 kB]
+    ...
+    Setting up python-psycopg2 (2.4.5-1build5) ...
+    vagrant@vagrant-ubuntu-trusty-32:/vagrant/vms$
 
 ## Setup PostgreSQL
 
