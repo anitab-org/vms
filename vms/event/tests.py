@@ -2,6 +2,7 @@ from django.test import TestCase
 from event.models import Event
 from event.services import *
 
+
 class EventMethodTests(TestCase):
 
     def test_event_not_empty(self):
@@ -27,7 +28,7 @@ class EventMethodTests(TestCase):
         self.assertFalse(event_not_empty(300))
 
     def test_delete_event(self):
-	
+    
         e1 = Event(name = "Open Source Event",
                 start_date = "2012-10-22",
                 end_date = "2012-10-23")
