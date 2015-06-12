@@ -2,11 +2,21 @@ import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from job.models import Job
 
+#check if the job exists and is not empty
+def job_not_empty(job_id):
+    result = True
+    job = get_job_by_id(job_id)
+    if not job:
+        result = False
+    return result
+
 def delete_job(job_id):
 
     result = True
     job = get_job_by_id(job_id)
-    shifts_in_job = job.shift_set.all()
+    
+    if job_not_empty(job_id):
+        shifts_in_job = job.shift_set.all()
 
     if job and (not shifts_in_job):
         job.delete()
