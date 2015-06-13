@@ -1,20 +1,22 @@
-import datetime
 from django.core.exceptions import ObjectDoesNotExist
+
 from job.models import Job
 
-#check if the job exists and is not empty
+
 def job_not_empty(job_id):
+    """ Check if the job exists and is not empty """
     result = True
     job = get_job_by_id(job_id)
     if not job:
         result = False
     return result
 
+
 def delete_job(job_id):
 
     result = True
     job = get_job_by_id(job_id)
-    
+
     if job_not_empty(job_id):
         shifts_in_job = job.shift_set.all()
 
@@ -24,6 +26,7 @@ def delete_job(job_id):
         result = False
 
     return result
+
 
 def get_job_by_id(job_id):
 
@@ -40,9 +43,11 @@ def get_job_by_id(job_id):
 
     return result
 
+
 def get_jobs_by_event_id(e_id):
     job_list = Job.objects.filter(event_id=e_id)
     return job_list
+
 
 def get_jobs_ordered_by_title():
     job_list = Job.objects.all().order_by('name')

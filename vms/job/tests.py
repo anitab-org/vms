@@ -1,15 +1,14 @@
-from django.contrib.auth.models import User
 from django.test import TestCase
+
 from event.models import Event
 from job.models import Job
 from job.services import *
-from volunteer.models import Volunteer
-from volunteer.services import *
 
 
 class JobMethodTests(TestCase):
 
     def test_delete_job(self):
+        """ Test delete_job(job_id) """
 
         e1 = Event(
                 name="Software Conference",
@@ -119,6 +118,7 @@ class JobMethodTests(TestCase):
         self.assertNotEqual(get_job_by_id(300), j3)
 
     def test_get_jobs_by_event_id(self):
+        """ Test get_jobs_by_event_id(e_id) """
 
         e1 = Event(
                 name="Software Conference",
