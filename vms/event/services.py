@@ -1,26 +1,29 @@
 from django.core.exceptions import ObjectDoesNotExist
+
 from event.models import Event
 
-#check if the event exists and is not empty
+
 def event_not_empty(event_id):
+    """ Check if the event exists and is not empty """
     result = True
     event = get_event_by_id(event_id)
     if not event:
         result = False
     return result
 
-#need to check that this event is not accociated with any jobs, 
-#otherwise the jobs that it is associated with will be cascade deleted
+
+# need to check that this event is not accociated with any jobs,
+# otherwise the jobs that it is associated with will be cascade deleted
 def delete_event(event_id):
 
     result = True
     event = get_event_by_id(event_id)
-	
+
     if event_not_empty(event_id):
-        #check if there are currently any jobs associated with this event
+        # check if there are currently any jobs associated with this event
         jobs_in_event = event.job_set.all()
 
-        #can only delete an event if no jobs are currently associated with it
+        # can only delete an event if no jobs are currently associated with it
         if event and (not jobs_in_event):
             event.delete()
         else:
@@ -29,6 +32,7 @@ def delete_event(event_id):
         result = False
 
     return result
+
 
 def get_event_by_id(event_id):
 
@@ -44,6 +48,7 @@ def get_event_by_id(event_id):
         result = event
 
     return result
+
 
 def get_events_ordered_by_name():
     event_list = Event.objects.all().order_by('name')
