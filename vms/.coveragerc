@@ -1,0 +1,10 @@
+# Configuration file for coverage.py
+[run]
+branch = True
+source = vms
+
+[report]
+ignore_errors = True
+
+[html]
+directory = coverage_html_report
