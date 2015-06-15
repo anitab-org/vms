@@ -1,36 +1,26 @@
 """
 Django settings for vms project.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
+Note: Currently development settings. Not suitable as is for production.
 """
 from django.core.urlresolvers import reverse_lazy
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'rs473)3n^fe0^t-^s$n)_%pl=75f_na7z5ee@(^xc-vn^bzr%a'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: run with debug turned off (DEBUG = False) in production!
 DEBUG = True
 
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
-# Make sure all apps are specified here
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -65,22 +55,19 @@ WSGI_APPLICATION = 'vms.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-# Change these database settings if your database engine, database name, username or password changes
+# Change these database settings if your database engine, database name,
+# username or password changes
 DATABASES = {
     'default': {
-        'ENGINE' : 'django.db.backends.postgresql_psycopg2',    #your database engine
-        'NAME' : 'vms',             #the name of your database
-        'USER' : 'myuser',          #your DBMS username
-        'PASSWORD' : 'mypassword',  #your DBMS password
-        'HOST' : 'localhost',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'vms',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
     }
 }
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -93,8 +80,6 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-
 # Specifies the directory where static files (CSS, JavasScript) are stored
 STATIC_URL = '/static/'
 
@@ -107,5 +92,6 @@ FILE_UPLOAD_PERMISSIONS = 0600
 
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0600
 
-# If user fails to authenticate, then they are redirected to the view specified in the reverse_lazy call
+# If user fails to authenticate, then they are redirected to the view
+# specified in the reverse_lazy call
 LOGIN_URL = reverse_lazy('auth:user_login')
