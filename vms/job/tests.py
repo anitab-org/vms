@@ -2,7 +2,12 @@ from django.test import TestCase
 
 from event.models import Event
 from job.models import Job
-from job.services import *
+from job.services import (
+                            delete_job,
+                            get_job_by_id,
+                            get_jobs_by_event_id,
+                            get_jobs_ordered_by_title
+                            )
 
 
 class JobMethodTests(TestCase):
