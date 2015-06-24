@@ -2,7 +2,10 @@ import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from organization.services import get_organization_by_name, get_organizations_ordered_by_name
+from organization.services import (
+                            get_organization_by_name,
+                            get_organizations_ordered_by_name
+                            )
 from shift.models import Shift, VolunteerShift
 from volunteer.services import get_volunteer_by_id
 
@@ -73,12 +76,18 @@ def clear_shift_hours(v_id, s_id):
     return result
 
 
-def delete_shift(shift_id):
+def delete_shift(s_id):
+    """
+    Check before deleting:
+    does the shift exist?
+    is a volunteer signed up for the shift?
+    """
 
     result = True
-    shift = get_shift_by_id(shift_id)
+    shift = get_shift_by_id(s_id)
+    num_slots_taken = VolunteerShift.objects.filter(shift_id=s_id).count()
 
-    if shift:
+    if shift and num_slots_taken == 0:
         shift.delete()
     else:
         result = False
@@ -124,9 +133,9 @@ def generate_report(volunteer_shift_list):
         report["logged_start_time"] = volunteer_shift.shift.start_time
         report["logged_end_time"] = volunteer_shift.shift.end_time
         report["duration"] = calculate_duration(
-                                                volunteer_shift.shift.start_time,
-                                                volunteer_shift.shift.end_time
-                                                )
+                        volunteer_shift.shift.start_time,
+                        volunteer_shift.shift.end_time
+                        )
 
         report_list.append(report)
 
