@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from organization.models import Organization
 
+
 class Volunteer(models.Model):
     first_name = models.CharField(
         max_length=30,
@@ -69,9 +70,9 @@ class Volunteer(models.Model):
             ),
         ],
     )
-    #Organization to Volunteer is a one-to-many relationship
+    # Organization to Volunteer is a one-to-many relationship
     organization = models.ForeignKey(Organization, null=True)
-    #EmailField automatically checks if email address is a valid format 
+    # EmailField automatically checks if email address is a valid format
     email = models.EmailField(max_length=45)
     websites = models.TextField(
         blank=True,
@@ -97,6 +98,10 @@ class Volunteer(models.Model):
             ),
         ],
     )
-    #all resumes are stored in /srv/vms/resume/
-    resume_file = models.FileField(upload_to='vms/resume/', max_length=75, blank=True)
+    # all resumes are stored in /srv/vms/resume/
+    resume_file = models.FileField(
+        upload_to='vms/resume/',
+        max_length=75,
+        blank=True
+        )
     user = models.OneToOneField(User)
