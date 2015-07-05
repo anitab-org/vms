@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from organization.models import Organization
 
+
 class Administrator(models.Model):
     first_name = models.CharField(
         max_length=20,
@@ -69,10 +70,10 @@ class Administrator(models.Model):
             ),
         ],
     )
-    #Organization to Volunteer is a one-to-many relationship
+    # Organization to Volunteer is a one-to-many relationship
     organization = models.ForeignKey(Organization, null=True)
-    #EmailField automatically checks if email address is a valid format 
-    email = models.EmailField(max_length=20)
+    # EmailField automatically checks if email address is a valid format
+    email = models.EmailField(max_length=45, unique=True)
     user = models.OneToOneField(User)
 
     def __unicode__(self):
