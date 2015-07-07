@@ -35,6 +35,23 @@ def add_hours(request, shift_id, volunteer_id):
     else:
         raise Http404
 
+def add_hours_manager(request, shift_id, volunteer_id):
+    if request.method == 'POST':
+        form = HoursForm(request.POST)
+        if form.is_valid():
+            start_time = form.cleaned_data['start_time']
+            end_time = form.cleaned_data['end_time']
+            try:
+                add_shift_hours(volunteer_id, shift_id, start_time, end_time)
+                return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
+            except:
+                raise Http404
+        else:
+            return render(request, 'shift/add_hours_manager.html', {'form' : form, 'shift_id' : shift_id, 'volunteer_id' : volunteer_id,})
+    else:
+        form = HoursForm()
+        return render(request, 'shift/add_hours_manager.html', {'form' : form, 'shift_id' : shift_id, 'volunteer_id' : volunteer_id,})
+
 #throwing an error when not signed in as administrator (will fix as the next task)
 @login_required
 def cancel(request, shift_id, volunteer_id):
@@ -87,6 +104,20 @@ def clear_hours(request, shift_id, volunteer_id):
             result = clear_shift_hours(volunteer_id, shift_id)
             if result:
                 return HttpResponseRedirect(reverse('shift:view_hours', args=(volunteer_id,)))
+            else:
+                raise Http404 
+        else:
+            return render(request, 'shift/clear_hours.html')
+    else:
+        raise Http404
+
+def clear_hours_manager(request, shift_id, volunteer_id):
+
+    if shift_id and volunteer_id:
+        if request.method == 'POST':
+            result = clear_shift_hours(volunteer_id, shift_id)
+            if result:
+                return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
             else:
                 raise Http404 
         else:
@@ -178,6 +209,30 @@ def edit_hours(request, shift_id, volunteer_id):
     else:
         raise Http404
 
+def edit_hours_manager(request, shift_id, volunteer_id):
+    if shift_id and volunteer_id:
+        volunteer_shift = get_volunteer_shift_by_id(volunteer_id, shift_id)
+        if volunteer_shift:
+            if request.method == 'POST':
+                form = HoursForm(request.POST)
+                if form.is_valid():
+                    start_time = form.cleaned_data['start_time']
+                    end_time = form.cleaned_data['end_time']
+                    try:
+                        edit_shift_hours(volunteer_id, shift_id, start_time, end_time)
+                        return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
+                    except:
+                        raise Http404
+                else:
+                    return render(request, 'shift/edit_hours_manager.html', {'form' : form, 'shift_id' : shift_id, 'volunteer_id' : volunteer_id})
+            else:
+                form = HoursForm(initial={'start_time' : volunteer_shift.start_time, 'end_time' : volunteer_shift.end_time})
+                return render(request, 'shift/edit_hours_manager.html', {'form' : form, 'shift_id' : shift_id, 'volunteer_id' : volunteer_id})
+        else:
+            raise Http404
+    else:
+        raise Http404
+
 @login_required
 def list_jobs(request):
     job_list = get_jobs_ordered_by_title()
@@ -214,7 +269,8 @@ def manage_volunteer_shifts(request, volunteer_id):
         if volunteer:
             #show only shifts that have no hours logged yet (since it doesn't make sense be able to cancel shifts that have already been logged)
             shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
-            return render(request, 'shift/manage_volunteer_shifts.html', {'shift_list' : shift_list, 'volunteer_id' : volunteer_id})
+            shift_list_with_hours = get_volunteer_shifts_with_hours(volunteer_id)
+            return render(request, 'shift/manage_volunteer_shifts.html', {'shift_list' : shift_list,'shift_list_with_hours' : shift_list_with_hours, 'volunteer_id' : volunteer_id})
         else:
             raise Http404
     else:
