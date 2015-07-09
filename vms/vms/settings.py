@@ -88,9 +88,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = '/srv/'
 
 # Uploaded files have read and write permissions to the owner only
-FILE_UPLOAD_PERMISSIONS = 0600
+FILE_UPLOAD_PERMISSIONS = 0o600
 
-FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0600
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o600
 
 # If user fails to authenticate, then they are redirected to the view
 # specified in the reverse_lazy call
