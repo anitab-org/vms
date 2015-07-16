@@ -7,7 +7,24 @@ from django.test import TestCase
 from event.models import Event
 from job.models import Job
 from shift.models import Shift, VolunteerShift
-from shift.services import add_shift_hours, calculate_duration, calculate_total_report_hours, cancel_shift_registration, clear_shift_hours, delete_shift, edit_shift_hours, generate_report, get_administrator_report, get_all_volunteer_shifts_with_hours, get_shift_by_id, get_shifts_by_job_id, get_shifts_ordered_by_date, get_shift_slots_remaining, get_shifts_with_open_slots, get_unlogged_shifts_by_volunteer_id, get_volunteer_report, get_volunteer_shift_by_id, get_volunteer_shifts_with_hours, is_signed_up, register
+from shift.services import (
+            add_shift_hours,
+            calculate_duration,
+            calculate_total_report_hours,
+            cancel_shift_registration,
+            clear_shift_hours, delete_shift,
+            edit_shift_hours, generate_report,
+            get_all_volunteer_shifts_with_hours,
+            get_shift_by_id, get_shifts_by_job_id,
+            get_shifts_ordered_by_date,
+            get_shift_slots_remaining,
+            get_shifts_with_open_slots,
+            get_unlogged_shifts_by_volunteer_id,
+            get_volunteer_shift_by_id,
+            get_volunteer_shifts_with_hours,
+            is_signed_up,
+            register
+            )
 from volunteer.models import Volunteer
 
 
@@ -639,13 +656,25 @@ class ShiftMethodTests(TestCase):
                 job=j1
                 )
 
+        s2 = Shift(
+                date="2011-11-11",
+                start_time="11:00",
+                end_time="12:00",
+                max_volunteers=3,
+                job=j1
+                )
+
         s1.save()
+        s2.save()
 
         self.assertTrue(delete_shift(s1.id))
         self.assertFalse(delete_shift(100))
 
-    def test_edit_shift_hours(self):
+        register(v1.id, s2.id)
+        self.assertFalse(delete_shift(s2.id))
 
+
+    def test_edit_shift_hours(self):
         u1 = User.objects.create_user('Yoshi')
 
         v1 = Volunteer(
