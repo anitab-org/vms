@@ -45,7 +45,7 @@
                         {% endif %}
                         {% if user.volunteer %} 
                             <li><a href="{% url 'shift:view_volunteer_shifts' user.volunteer.id %}">Upcoming Shifts</a></li>
-                            <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">Shift Hours</a></li>
+                            <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">Completed Shifts</a></li>
                             <li><a href="{% url 'event:list_sign_up' user.volunteer.id %}">Shift Sign Up</a></li>
                             <li><a href="{% url 'volunteer:report' user.volunteer.id %}">Report</a></li>
                             <li><a href="{% url 'volunteer:profile' user.volunteer.id %}">Profile</a></li>
