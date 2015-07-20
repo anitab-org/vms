@@ -1,4 +1,5 @@
 import os
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -6,12 +7,14 @@ from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+
 from organization.services import *
 from shift.services import *
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
 from volunteer.models import Volunteer
 from volunteer.services import * 
 from volunteer.validation import validate_file
+
 
 @login_required
 def download_resume(request, volunteer_id):
