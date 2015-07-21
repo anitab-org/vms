@@ -1,4 +1,5 @@
 import datetime
+from datetime import date, timedelta
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,12 +24,134 @@ from shift.services import (
             get_volunteer_shift_by_id,
             get_volunteer_shifts_with_hours,
             is_signed_up,
-            register
+            register,
+            send_reminder
             )
 from volunteer.models import Volunteer
 
 
 class ShiftMethodTests(TestCase):
+
+    def test_send_reminder(self):
+        
+
+        u1 = User.objects.create_user('Marina')
+        u2 = User.objects.create_user('Anna')
+
+        v1 = Volunteer(
+            first_name="Marina",
+            last_name="Tsvetaeva",
+            address="MyAddress",
+            city="MyCity",
+            state="MyState",
+            country="MyCountry",
+            phone_number="2374983247",
+            email="email1@gmail.com",
+            reminder_days=1,
+            user=u1
+            )
+
+        
+        
+        v2 = Volunteer(
+            first_name="Anna",
+            last_name="Akhmatova",
+            address="MyAddress",
+            city="MyCity",
+            state="MyState",
+            country="MyCountry",
+            phone_number="2374983247",
+            email="email2@gmail.com",
+            reminder_days=7,
+            user=u2
+            )
+        v1.save()
+        v2.save()
+
+        e1 = Event(
+                name="GHC 2015",
+                start_date="2015-07-22",
+                end_date="2015-08-23"
+                )
+
+        e1.save()
+
+        j1 = Job(
+            name="Volunteer Program Manager",
+            start_date="2015-07-22",
+            end_date="2015-08-23",
+            description="Volunteer Program Manager",
+            event=e1
+            )
+
+        j2 = Job(
+            name="Volunteer Coordinator",
+            start_date="2015-07-22",
+            end_date="2015-08-23",
+            description="Volunteer Coordinator",
+            event=e1
+            )
+
+        j1.save()
+        j2.save()
+
+        s1 = Shift(
+            date="2015-08-23",
+            start_time="9:00",
+            end_time="3:00",
+            max_volunteers=1,
+            address="Test address",
+            city="Atlanta",
+            state="Georgia",
+            country="USA",
+            venue="Near the south entrance",
+            job=j1
+            )
+
+        s2 = Shift(
+            date=date.today() + timedelta(7), #one week date
+            start_time="10:00",
+            end_time="4:00",
+            max_volunteers=2,
+            address="Test address",
+            city="Atlanta",
+            state="Georgia",
+            country="USA",
+            venue="Near the south entrance",
+            job=j1
+            )
+
+        s3 = Shift(
+            date=date.today() + timedelta(1), #tomorrow date
+            start_time="12:00",
+            end_time="6:00",
+            max_volunteers=4,
+            address="Test address",
+            city="Atlanta",
+            state="Georgia",
+            country="USA",
+            venue="Near the south entrance",
+            job=j2
+            )
+
+        s1.save()
+        s2.save()
+        s3.save()
+
+        # sign up
+        register(v1.id, s1.id)
+        register(v1.id, s2.id)
+        register(v1.id, s3.id)
+        register(v2.id, s1.id)
+        register(v2.id, s2.id)
+        register(v2.id, s3.id)
+
+        # test typical case
+        
+        result = send_reminder()       
+               
+        self.assertEqual(result,2)
+    
 
     def test_add_shift_hours(self):
 

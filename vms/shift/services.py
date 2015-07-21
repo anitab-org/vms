@@ -1,13 +1,15 @@
 import datetime
+from datetime import date
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 
 from organization.services import (
                             get_organization_by_name,
                             get_organizations_ordered_by_name
                             )
 from shift.models import Shift, VolunteerShift
-from volunteer.services import get_volunteer_by_id
+from volunteer.services import get_volunteer_by_id, get_all_volunteers
 
 
 def add_shift_hours(v_id, s_id, start_time, end_time):
@@ -59,6 +61,54 @@ def cancel_shift_registration(v_id, s_id):
             obj.delete()
     else:
         raise TypeError
+
+
+def send_reminder():
+    """
+    Send reminder email for all shifts and volunteers
+    days = 7 - one week reminder
+    days = 1 - one day reminder
+    A volunteer can specify days in the profile
+    !This function should be run on the server once a day!
+    """
+    notifications_number = 0    
+    for volunteer in get_all_volunteers():
+        days = volunteer.reminder_days
+        if days == 1:
+            email_word = " tomorrow."
+        else:
+            email_word = " in " + str(days) + " days."
+        v_id = volunteer.id
+        shift_list = get_unlogged_shifts_by_volunteer_id(v_id)
+        subject = "The Systers - VMS Volunteer Shift Reminder Mail"
+        for shift in shift_list:
+            date_shift = shift.date
+            days_before_shift = date_shift - date.today()
+            if days_before_shift.days == days:
+                message = "Dear " + volunteer.first_name + \
+                ",\n\nThis is your reminder that you have registered for the " + \
+                shift.job.name + " job at the " + shift.job.event.name + \
+                " event on " + str(shift.date) + \
+                ".\nThe shift you signed up starts" + \
+                email_word + \
+                "\n\nShift Start Time: " + str(shift.start_time) + \
+                "\nShift End Time: " + str(shift.end_time) + \
+                "\n\nAddress: " + shift.address + \
+                "\nVenue: " + shift.venue + \
+                "\nCity: " + shift.city + \
+                "\nState: " + shift.state + \
+                "\nCountry: " + shift.country + \
+                "\n\nThank you for registering!"
+                send_mail(
+                    subject,
+                    message,
+                    'noreply@systers.org',
+                    [volunteer.email],
+                    fail_silently=False
+                    )
+                notifications_number += 1
+                #print(message)
+    return notifications_number
 
 
 def clear_shift_hours(v_id, s_id):

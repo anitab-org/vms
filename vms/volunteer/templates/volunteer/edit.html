@@ -270,6 +270,28 @@
                         </div>
                     </div>
                 {% endif %}
+				{% if form.reminder_days.errors %}
+                    <div class="form-group has-error">
+                        <label class="col-md-2 control-label">Shift Reminder Days<br><i>How many days before a shift do you want to receive a reminder email?</i></label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" placeholder="Shift Reminder Days" name="reminder_days" value="{% if form.reminder_days.value %}{{ form.reminder_days.value }}{% endif %}">
+                            <p class="help-block">
+                                <strong>
+                                    {% for error in form.reminder_days.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Shift Reminder Days<br><i>How many days before a shift do you want to receive a reminder email?</i></label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" placeholder="Shift Reminder Days" name="reminder_days" value="{% if form.reminder_days.value %}{{ form.reminder_days.value }}{% endif %}">
+                        </div>
+                    </div>
+                {% endif %}
                 {% if resume_invalid %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">Upload Updated Resume</label>

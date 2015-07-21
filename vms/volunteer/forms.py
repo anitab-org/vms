@@ -66,5 +66,6 @@ class VolunteerForm(ModelForm):
             'websites',
             'description',
             'resume',
-            'resume_file'
+            'resume_file',
+            'reminder_days'
             ]

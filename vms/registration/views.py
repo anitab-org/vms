@@ -114,6 +114,7 @@ def signup_volunteer(request):
                 if organization:
                     volunteer.organization = organization
 
+                volunteer.reminder_days = 1
                 volunteer.save()
                 registered = True
 
