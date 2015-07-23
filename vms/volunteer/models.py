@@ -1,6 +1,11 @@
 from django.contrib.auth.models import User
-from django.core.validators import RegexValidator
+from django.core.validators import (
+            RegexValidator,
+            MaxValueValidator,
+            MinValueValidator
+            )
 from django.db import models
+
 from organization.models import Organization
 
 
@@ -104,4 +109,9 @@ class Volunteer(models.Model):
         max_length=75,
         blank=True
         )
+    reminder_days = models.IntegerField(
+        default=1,
+        validators=[MaxValueValidator(50), MinValueValidator(1)]
+        )
+
     user = models.OneToOneField(User)

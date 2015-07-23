@@ -40,12 +40,15 @@
                     <br>
                     <label><h4><span class="label label-info">Country</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.country }}
                     <br>
+					<label><h4><span class="label label-info">Shift Reminder Days</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.reminder_days }}
+                    <br>
                     {% if volunteer.organization %}
                         <label><h4><span class="label label-info">Organization</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.organization.name }}
                     {% elif volunteer.unlisted_organization  %}
                         <label><h4><span class="label label-info">Organization</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.unlisted_organization }}
                     {% else %}
                     {% endif %}
+					
                 </div>
             </div>
             {% if volunteer.websites %}
