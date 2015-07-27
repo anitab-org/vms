@@ -50,6 +50,22 @@ def get_event_by_id(event_id):
     return result
 
 
+def get_events_by_date(start_date, end_date):
+    is_valid = True
+    result = None
+    try:
+        event_list = Event.objects.filter(
+                start_date__gte=start_date,
+                start_date__lte=end_date
+                ).order_by('start_date')
+    except ObjectDoesNotExist:
+        is_valid = False
+
+    if is_valid:
+        result = event_list
+
+    return result
+
 def get_events_ordered_by_name():
     event_list = Event.objects.all().order_by('name')
     return event_list

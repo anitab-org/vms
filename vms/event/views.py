@@ -1,9 +1,11 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
-from event.forms import EventForm
+from event.forms import EventForm, EventDateForm
 from event.services import *
 
 
@@ -84,9 +86,30 @@ def list(request):
 
 @login_required
 def list_sign_up(request, volunteer_id):
-    event_list = get_events_ordered_by_name()
-    return render(
-        request,
-        'event/list_sign_up.html',
-        {'event_list': event_list, 'volunteer_id': volunteer_id}
-        )
+    if request.method == 'POST':
+        form = EventDateForm(request.POST)
+        if form.is_valid():
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+            
+            event_list = get_events_by_date(start_date, end_date)
+            
+            return render(
+                request,
+                'event/list_sign_up.html',
+                {'form' : form, 'event_list': event_list, 'volunteer_id': volunteer_id}
+                )
+        else:
+            event_list = get_events_ordered_by_name()
+            return render(
+                request,
+                'event/list_sign_up.html',
+                {'event_list': event_list, 'volunteer_id': volunteer_id}
+                )
+    else:
+        event_list = get_events_ordered_by_name()
+        return render(
+            request,
+            'event/list_sign_up.html',
+            {'event_list': event_list, 'volunteer_id': volunteer_id}
+            )
