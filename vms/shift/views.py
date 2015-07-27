@@ -573,23 +573,35 @@ def view_hours(request, volunteer_id):
 
 @login_required
 def view_volunteer_shifts(request, volunteer_id):
-    if volunteer_id:
-        volunteer = get_volunteer_by_id(volunteer_id)
-        if volunteer:
-            user = request.user
-            if int(user.volunteer.id) == int(volunteer_id):
-                shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
-                return render(
-                    request,
-                    'shift/volunteer_shifts.html',
-                    {'shift_list': shift_list, 'volunteer_id': volunteer_id, }
-                    )
+    user = request.user
+    vol = None
+
+    try:
+        vol = user.volunteer
+    except ObjectDoesNotExist:
+        pass
+
+    # check that a volunteer is logged in
+    if vol:
+        if volunteer_id:
+            volunteer = get_volunteer_by_id(volunteer_id)
+            if volunteer:
+                user = request.user
+                if int(user.volunteer.id) == int(volunteer_id):
+                    shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
+                    return render(
+                        request,
+                        'shift/volunteer_shifts.html',
+                        {'shift_list': shift_list, 'volunteer_id': volunteer_id, }
+                        )
+                else:
+                    return HttpResponse(status=403)
             else:
-                return HttpResponse(status=403)
+                raise Http404
         else:
             raise Http404
     else:
-        raise Http404
+        return HttpResponse(status=403)
 
 
 @login_required
