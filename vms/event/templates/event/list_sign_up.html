@@ -1,8 +1,32 @@
 {% extends "vms/base.html" %}
 
 {% block content %}
-    <div class="spacer"></div>
-    <a href="{% url 'shift:manage_volunteer_shifts' volunteer_id %}" class="btn btn-default">Return to Manage Shifts</a>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Search for the events that start</div>
+  <div class="panel-body"> 
+
+	<form class="form-horizontal" action="{% url 'event:list_sign_up' volunteer_id %}" method="post">
+	{% csrf_token %}
+
+	  
+	<div class="form-group">
+		<label class="col-md-1 control-label">From:</label>
+		<div class="col-md-2">
+		<input type="text" class="form-control" id="from" name="start_date" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
+		</div>
+ 
+		<label class="col-md-1 control-label">To:</label>
+		<div class="col-md-2">
+		<input type="text" class="form-control" id="to" name="end_date" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
+		</div>
+	
+		<button class="btn btn-primary" type="submit">Search</button> 
+	</div>
+	</div>
+</div>
+
+</form> 
     <div class="spacer"></div>
     {% if event_list %}
         <ul class="breadcrumb">
@@ -32,7 +56,7 @@
         </table>
     {% else %}
         <div class="alert alert-info">
-            There are currently no events.
+            There are no events.
         </div>
     {% endif %}
 {% endblock %}
