@@ -111,7 +111,8 @@ class Volunteer(models.Model):
         )
     reminder_days = models.IntegerField(
         default=1,
-        validators=[MaxValueValidator(50), MinValueValidator(1)]
+        validators=[MaxValueValidator(50), MinValueValidator(1)],
+        blank=True
         )
 
     user = models.OneToOneField(User)
