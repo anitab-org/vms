@@ -14,7 +14,8 @@ class ReportForm(forms.Form):
         max_length=75,
         required=False
         )
-    date = forms.DateField(required=False)
+    start_date = forms.DateField(required=False)
+    end_date = forms.DateField(required=False)
 
 
 class SearchVolunteerForm(forms.Form):
