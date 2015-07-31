@@ -122,8 +122,9 @@ def report(request, volunteer_id):
                 if form.is_valid():
                     event_name = form.cleaned_data['event_name']
                     job_name = form.cleaned_data['job_name']
-                    date = form.cleaned_data['date']
-                    report_list = get_volunteer_report(volunteer_id, event_name, job_name, date)
+                    start_date = form.cleaned_data['start_date']
+                    end_date = form.cleaned_data['end_date']
+                    report_list = get_volunteer_report(volunteer_id, event_name, job_name, start_date, end_date)
                     total_hours = calculate_total_report_hours(report_list)
                     return render(request, 'volunteer/report.html', {'form' : form, 'report_list' : report_list, 'total_hours' : total_hours, 'notification' : True})
                 else:
