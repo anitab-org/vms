@@ -58,7 +58,14 @@
                     <div class="form-group has-error">
                         <label class="col-md-3 control-label">Volunteer Organization</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" name="organization" value="{% if form.organization.value %}{{ form.organization.value }}{% endif %}">
+							
+                            <select id="select" class="form-control" name="organization">
+								<option value="">-- Select Organization --</option>
+								{% for organization in organization_list %}
+								<option value="{{ organization.name }}" {% if selected_organization == organization.name %}selected{% endif %}>{{ organization.name }}</option>
+								{% endfor %}
+							</select>
+							
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.organization.errors %}
@@ -72,7 +79,12 @@
                     <div class="form-group">
                         <label class="col-md-3 control-label">Volunteer Organization</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" name="organization" value="{% if form.organization.value %}{{ form.organization.value }}{% endif %}">
+                            <select id="select" class="form-control" name="organization">
+								<option value="">-- Select Organization --</option>
+								{% for organization in organization_list %}
+									<option value="{{ organization.name }}" {% if selected_organization == organization.name %}selected{% endif %}>{{ organization.name }}</option>
+								{% endfor %}
+							</select>
                         </div>
                     </div>
                 {% endif %}
@@ -119,11 +131,17 @@
                             <input class="form-control" type="text" name="job_name" value="{% if form.job_name.value %}{{ form.job_name.value }}{% endif %}">
                         </div>
                     </div>
-                {% endif %}
-                <div class="form-group">
-                    <label class="col-md-3 control-label">Date</label>
+                {% endif %}                
+				<div class="form-group">
+                    <label class="col-md-3 control-label">Start Date</label>
                     <div class="col-md-8">
-                        <input class="form-control" type="text" name="date" id="datepicker" value="{% if form.date.value %}{{ form.date.value }}{% endif %}">
+                        <input class="form-control" type="text" name="start_date" id="from" name="from" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
+                    </div>
+                </div>
+				<div class="form-group">
+                    <label class="col-md-3 control-label">End Date</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="text" name="end_date" id="to" name="to" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
                     </div>
                 </div>
             </fieldset>
