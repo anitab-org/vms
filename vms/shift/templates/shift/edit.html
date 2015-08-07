@@ -1,6 +1,10 @@
 {% extends "administrator/settings.html" %}
 
 {% block setting_content %}
+
+{% load static %}
+
+<script type="text/javascript" src="{% static 'vms/js/timepicker.js' %}"></script>
     <div class="spacer"></div>
     <div class="well">
         <form class="form-horizontal" action="{% url 'shift:edit' shift.id %}" method="post">
@@ -33,7 +37,12 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">Start Time</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="MM/DD/YYYY" type="text" name="start_time" value="{{ form.start_time.value|time:"H:i" }}">
+                            <div id="datetimepicker1" class="input-append">
+									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
+									<span class="add-on">	  
+										<span class="glyphicon glyphicon-time"></span>
+									</span>
+								</div> 
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.start_time.errors %}
@@ -47,7 +56,12 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Start Time</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="HH:MM" type="text" name="start_time" value="{{ form.start_time.value|time:"H:i" }}">
+                            <div id="datetimepicker1" class="input-append">
+									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
+									<span class="add-on">	  
+										<span class="glyphicon glyphicon-time"></span>
+									</span>
+								</div> 
                         </div>
                     </div>
                 {% endif %}
@@ -55,7 +69,12 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">End Time</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="HH:MM" type="text" name="end_time" value="{{ form.end_time.value|time:"H:i" }}">
+                             <div id="datetimepicker2" class="input-append">
+									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
+									<span class="add-on">	  
+										<span class="glyphicon glyphicon-time"></span>
+									</span>
+								</div>
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.end_time.errors %}
@@ -69,7 +88,12 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">End Time</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="HH:MM" type="text" name="end_time" value="{{ form.end_time.value|time:"H:i" }}">
+                             <div id="datetimepicker2" class="input-append">
+									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
+									<span class="add-on">	  
+										<span class="glyphicon glyphicon-time"></span>
+									</span>
+								</div>
                         </div>
                     </div>
                 {% endif %}
