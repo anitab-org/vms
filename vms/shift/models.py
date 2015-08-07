@@ -23,7 +23,7 @@ class Shift(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
@@ -33,7 +33,7 @@ class Shift(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
@@ -53,7 +53,7 @@ class Shift(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
@@ -64,7 +64,7 @@ class Shift(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,

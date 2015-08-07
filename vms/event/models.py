@@ -7,7 +7,7 @@ class Event(models.Model):
         max_length=75,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)]+$',
+                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$',
             ),
         ],
     )
@@ -18,7 +18,7 @@ class Event(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
@@ -28,7 +28,7 @@ class Event(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
@@ -48,7 +48,7 @@ class Event(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
@@ -59,7 +59,7 @@ class Event(models.Model):
         max_length=30,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
+                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
             ),
         ],
         blank=True,
