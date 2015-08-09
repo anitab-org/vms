@@ -99,7 +99,7 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">Country</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Country" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift Country" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% elif country %}{{ country }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.country.errors %}
@@ -113,7 +113,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Country</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Country" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift Country" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% elif country %}{{ country }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
@@ -121,7 +121,7 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">State</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift State" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift State" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% elif state %}{{ state }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.state.errors %}
@@ -135,7 +135,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">State</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift State" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift State" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% elif state %}{{ state }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
@@ -144,7 +144,7 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">City</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift City" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift City" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% elif city %}{{ city }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.city.errors %}
@@ -158,7 +158,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">City</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift City" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift City" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% elif city %}{{ city }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
@@ -167,7 +167,7 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">Address</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Address" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift Address" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% elif address %}{{ address }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.address.errors %}
@@ -181,7 +181,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Address</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Address" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift Address" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% elif address %}{{ address }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
@@ -190,7 +190,7 @@
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">Venue</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Venue" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift Venue" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% elif venue %}{{ venue }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.venue.errors %}
@@ -204,7 +204,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">Venue</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Venue" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% endif %}">
+                            <input class="form-control" placeholder="Shift Venue" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% elif venue %}{{ venue }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}

@@ -217,8 +217,9 @@ def create(request, job_id):
         return render(request, 'vms/no_admin_rights.html')
     else:
         if job_id:
+            job = get_job_by_id(job_id)
+            event = job.event
             if request.method == 'POST':
-                job = get_job_by_id(job_id)
                 if job:
                     form = ShiftForm(request.POST)
                     if form.is_valid():
@@ -236,10 +237,15 @@ def create(request, job_id):
                     raise Http404
             else:
                 form = ShiftForm()
+                country = event.country
+                state = event.state
+                city = event.city
+                address = event.address
+                venue = event.venue
                 return render(
                     request,
                     'shift/create.html',
-                    {'form': form, 'job_id': job_id, }
+                    {'form': form, 'job_id': job_id, 'country': country, 'state': state, 'city': city, 'address': address, 'venue': venue}
                     )
         else:
             raise Http404
@@ -330,7 +336,12 @@ def edit_hours(request, shift_id, volunteer_id):
                         start_time = form.cleaned_data['start_time']
                         end_time = form.cleaned_data['end_time']
                         try:
-                            edit_shift_hours(volunteer_id, shift_id, start_time, end_time)
+                            edit_shift_hours(
+                                volunteer_id,
+                                shift_id,
+                                start_time,
+                                end_time
+                                )
                             return HttpResponseRedirect(reverse('shift:view_hours', args=(volunteer_id,)))
                         except:
                             raise Http404
@@ -489,7 +500,11 @@ def manage_volunteer_shifts(request, volunteer_id):
                 # (since it doesn't make sense be able to cancel shifts that have already been logged)
                 shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
                 shift_list_with_hours = get_volunteer_shifts_with_hours(volunteer_id)
-                return render(request, 'shift/manage_volunteer_shifts.html', {'shift_list': shift_list,'shift_list_with_hours': shift_list_with_hours, 'volunteer_id': volunteer_id})
+                return render(
+                    request,
+                    'shift/manage_volunteer_shifts.html',
+                    {'shift_list': shift_list,'shift_list_with_hours': shift_list_with_hours, 'volunteer_id': volunteer_id}
+                    )
             else:
                 raise Http404
         else:
@@ -649,5 +664,5 @@ def volunteer_search(request):
         return render(
             request,
             'shift/volunteer_search.html',
-            {'form': form, 'has_searched' : False, 'volunteer_list' : volunteer_list}
+            {'form': form, 'has_searched': False, 'volunteer_list': volunteer_list}
             )
