@@ -1,6 +1,15 @@
+# Basic Python
+*.py[cod]
 *.pyc
+__pycache__
+
+# Vagrant
+.vagrant*
+
+# Vim
+*~
+*.swo
 *.swk
 *.swn
 *.swo
-*.swp
-.vagrant*
+*.swo
