@@ -198,7 +198,8 @@ def get_administrator_report(
                             organization,
                             event_name,
                             job_name,
-                            date
+                            start_date,
+                            end_date
                             ):
 
     volunteer_shift_list = get_all_volunteer_shifts_with_hours()
@@ -241,9 +242,10 @@ def get_administrator_report(
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__job__name__icontains=job_name
             )
-    if date:
+    if (start_date and end_date):
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__date=date
+            shift__date__gte=start_date,
+            shift__date__lte=end_date
             )
 
     report_list = generate_report(volunteer_shift_list)
@@ -358,7 +360,7 @@ def get_volunteer_report(v_id, event_name, job_name, start_date, end_date):
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__job__name__icontains=job_name
             )
-    if date:
+    if (start_date and end_date):
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__date__gte=start_date,
             shift__date__lte=end_date
