@@ -6,6 +6,7 @@ from django.core.validators import (
 from django.db import models
 
 from job.models import Job
+from event.models import Event
 from volunteer.models import Volunteer
 
 

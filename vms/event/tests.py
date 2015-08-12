@@ -1,12 +1,15 @@
 from django.test import TestCase
 
 from event.models import Event
+from job.models import Job
+from shift.models import Shift
 from event.services import (
         event_not_empty,
         delete_event,
         get_event_by_id,
         get_events_ordered_by_name,
-        get_events_by_date
+        get_events_by_date,
+        get_event_by_shift_id
         )
 
 
@@ -40,6 +43,67 @@ class EventMethodTests(TestCase):
         self.assertFalse(event_not_empty(100))
         self.assertFalse(event_not_empty(200))
         self.assertFalse(event_not_empty(300))
+
+    def test_get_event_by_shift_id(self):
+        e1 = Event(
+                name="Open Source Event",
+                start_date="2012-10-22",
+                end_date="2012-10-23"
+                )
+
+        e1.save()
+
+        j1 = Job(
+                name="Software Developer",
+                start_date="2012-10-22",
+                end_date="2012-10-23",
+                description="A software job",
+                event=e1
+                )
+
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2012-9-1",
+                end_date="2012-10-26",
+                description="A systems administrator job",
+                event=e1
+                )
+
+        j1.save()
+        j2.save()
+
+        s1 = Shift(
+                date="2012-10-23",
+                start_time="9:00",
+                end_time="3:00",
+                max_volunteers=1,
+                job=j1
+                )
+
+        s2 = Shift(
+                date="2012-10-23",
+                start_time="10:00",
+                end_time="4:00",
+                max_volunteers=2,
+                job=j1
+                )
+
+        s3 = Shift(
+                date="2012-10-23",
+                start_time="12:00",
+                end_time="6:00",
+                max_volunteers=4,
+                job=j2
+                )
+
+        s1.save()
+        s2.save()
+        s3.save()
+        
+        self.assertIsNotNone(get_event_by_shift_id(s1.id))
+        self.assertIsNotNone(get_event_by_shift_id(s2.id))
+        self.assertIsNotNone(get_event_by_shift_id(s3.id))
+
 
     def test_delete_event(self):
         """ Test delete_event(event_id) """

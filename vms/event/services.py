@@ -1,16 +1,36 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 from event.models import Event
+from job.models import Job
+from shift.models import Shift
 
 
 def event_not_empty(event_id):
-    """ Check if the event exists and is not empty """
+    """ Checks if the event exists and is not empty """
     result = True
     event = get_event_by_id(event_id)
     if not event:
         result = False
     return result
 
+
+def get_event_by_shift_id(shift_id):
+    """
+    Returns an event for the shift. Can be helpful for finding an event
+    """
+    is_valid = True
+    result = None
+
+    try:
+        shift = Shift.objects.get(pk=shift_id)
+        event = shift.job.event
+    except ObjectDoesNotExist:
+        is_valid = False
+
+    if is_valid:
+        result = event
+
+    return result
 
 # need to check that this event is not accociated with any jobs,
 # otherwise the jobs that it is associated with will be cascade deleted
