@@ -467,7 +467,7 @@ def list_shifts_sign_up(request, job_id, volunteer_id):
     if job_id:
         job = get_job_by_id(job_id)
         if job:
-            shift_list = get_shifts_with_open_slots(job_id)
+            shift_list = get_shifts_with_open_slots_for_volunteer(job_id, volunteer_id)
             return render(
                 request,
                 'shift/list_shifts_sign_up.html',

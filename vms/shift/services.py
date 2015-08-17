@@ -324,6 +324,28 @@ def get_shifts_with_open_slots(j_id):
     return shift_list
 
 
+def get_shifts_with_open_slots_for_volunteer(j_id, v_id):
+    """
+    Returns shifts with open slots
+    all except those for which the volunteer has signed up.
+    """
+    shift_list_by_date = get_shifts_ordered_by_date(j_id)
+    shift_list = []
+
+    for shift in shift_list_by_date:
+        slots_remaining = get_shift_slots_remaining(shift.id)
+        if slots_remaining > 0 and not is_signed_up(v_id, shift.id):
+            shift_map = {}
+            shift_map["id"] = shift.id
+            shift_map["date"] = shift.date
+            shift_map["start_time"] = shift.start_time
+            shift_map["end_time"] = shift.end_time
+            shift_map["slots_remaining"] = slots_remaining
+            shift_list.append(shift_map)
+
+    return shift_list
+
+
 def get_unlogged_shifts_by_volunteer_id(v_id):
 
     # get shifts that the volunteer signed up for and
