@@ -26,15 +26,22 @@
   </head>
   <body>
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
+		<div class="container-fluid">
+			<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</button>
                 <a class="navbar-brand" href="{% url 'home:index' %}">Systers</a>
             </div>
-            <div class="navbar-collapse collapse navbar-responsive-collapse">
-                <ul class="nav navbar-nav text-uppercase">
-                    <li><a href="#">About</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right text-uppercase">
+
+		<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
+			<ul class="nav navbar-nav text-uppercase">
+				<li><a href="#">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right text-uppercase">
                     {% if user.is_authenticated %}
                         {% if user.administrator %}
                             <li><a href="{% url 'volunteer:search' %}">Volunteer Search</a></li>
@@ -58,7 +65,7 @@
                 </ul>
             </div>
         </div>
-    </div>
+	</div>
     <div class="container">
         {% block content %}
         {% endblock %}
