@@ -94,7 +94,7 @@ You may come across a message that says `default: Warning: Remote connection dis
 
 File syncing will work properly after you receive this message: `default: Mounting shared folders`. Please wait for this message before proceeding to the next steps.
 
-Once the VM booted up (and you were able to receive the messages specified above), you can ssh onto the VM by running the command:
+Once the VM boots up (and you were able to receive the messages specified above), you can ssh onto the VM by running the command:
 
     vagrant ssh
 
