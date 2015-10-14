@@ -44,7 +44,7 @@ Documentation
 User and developer documentation for Systers Portal VMS project is generated 
 using [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 and available online for convenient reading at 
-[Read The Docs](http://vms.readthedocs.org/).
+[VMS Website](http://vms.readthedocs.org/).
 
 
 Google Summer of Code (GSoC) Development
