@@ -29,7 +29,7 @@ Clone the project from GitHub by running the following command:
 
 For my project, this would correspond to:
 
-    git clone git@github.com:Nerdylicious/vms-integrated.git
+    git clone https://github.com/Nerdylicious/vms-integrated.git
 
 ## Install Django and PostgreSQL
 
