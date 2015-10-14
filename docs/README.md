@@ -35,7 +35,7 @@ Documentation
 Documentation for Systers Portal is generated using [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 and available online at [Read The Docs](http://vms.readthedocs.org/)
 
-You can view the requirements document [here](docs/Systers_GSoC14_VMS_Requirements.pdf).
+You can view the requirements document [here](Systers_GSoC14_VMS_Requirements.pdf).
 
 Support
 -------
