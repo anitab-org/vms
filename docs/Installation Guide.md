@@ -151,6 +151,9 @@ We will now setup PostgreSQL by first running the postgres client as root:
 
     sudo -u postgres psql
 
+NOTE: Incase, you get an error - postgres: invalid argument: "psql". Then run the following command
+    sudo -u <insert postgres username here> psql
+
 Next, we will create a user called `vmsadmin` with a password `0xdeadbeef` (for now) with the permissions to be able to create roles, databases and to login with a password:
 
     create role vmsadmin with createrole createdb login password '0xdeadbeef';
@@ -165,9 +168,16 @@ sudo nano /etc/postgresql/x.x/main/pg_hba.conf
 ```
 (where x.x is the version number of postgres)
 
+NOTE: Incase you find a file not found error, then the postgresql installation has probably taken place in a different directory. Find the file using the following command
+    sudo find / -type f -iname pg_hba\.conf
+
+Now go the directory where the pg_hba.conf file is present.
+
 Change the line `local all postgres peer` to `local all postgres md5`
 
 Also, change the line `local all all peer` to `local all all md5`
+
+NOTE: Incase you dont find the entries, just add the entries as mentioned above.
 
 After making these changes, make sure to save the file.
 
@@ -217,6 +227,13 @@ To generate the database tables that correspond to the Django models, run the co
 
     python manage.py syncdb
 
+NOTE: Incase, you get the following error django.db.utils.ProgrammingError: relation "auth_user" does not exist, while running the above command do the following
+    python manage.py migrate auth
+    python manage.py migrate
+Now again try running the command 
+    python manage.py syncdb
+
+
 We do not want to create a superuser at this time, so when it asks you to create a superuser, say 'no':
 
     You just installed Djano's auth system, which means you don't have any superusers defined.
@@ -243,6 +260,11 @@ You will have to change the permissions on the **/srv** directory to read, write
 
     sudo chmod 777 /srv
 
+NOTE: Incase you can the error "/srv: No such file or directory" while running the above comment do the following
+    sudo mkdir /srv
+
+After creating the directory, then try to change the permissions i.e., run the following command (sudo chmod 777 /srv)
+
 ## Run Development Server
 
 Change directory to where you can find the **manage.py** file (this is located in the top level directory for the project).
@@ -251,7 +273,7 @@ Start the development server by running the command (this runs the development s
 
     python manage.py runserver [::]:8000
 
-You can now try out the project by going to [http://localhost:8001/home](http://localhost:8001/home) on a browser on your local machine.
+You can now try out the project by going to [http://localhost:8000/home](http://localhost:8000/home) on a browser on your local machine.
 
 ## Run Unit Tests
 
