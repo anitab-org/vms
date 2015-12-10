@@ -275,7 +275,7 @@ Start the development server by running the command (this runs the development s
 
     python manage.py runserver [::]:8000
 
-You can now try out the project by going to [http://localhost:8000/home](http://localhost:8000/home) on a browser on your local machine.
+You can now try out the project by going to [http://localhost:8001/home](http://localhost:8001/home) on a browser on your local machine.
 
 ## Run Unit Tests
 
