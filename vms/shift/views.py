@@ -10,7 +10,7 @@ from shift.models import Shift
 from shift.services import *
 from volunteer.forms import SearchVolunteerForm
 from volunteer.services import get_all_volunteers, search_volunteers
-
+from django.contrib import messages
 
 @login_required
 def add_hours(request, shift_id, volunteer_id):
@@ -223,15 +223,27 @@ def create(request, job_id):
                 if job:
                     form = ShiftForm(request.POST)
                     if form.is_valid():
-                        shift = form.save(commit=False)
-                        shift.job = job
-                        shift.save()
-                        return HttpResponseRedirect(reverse('shift:list_shifts', args=(job_id,)))
+                        start_date_job=job.start_date
+                        end_date_job=job.end_date
+                        shift_date=form.cleaned_data['date']
+                        if( shift_date >= start_date_job and shift_date <= end_date_job ):
+                            shift = form.save(commit=False)
+                            shift.job = job
+                            shift.save()
+                            return HttpResponseRedirect(reverse('shift:list_shifts', args=(job_id,)))
+                        else:
+                            messages.add_message(request, messages.INFO, 'Shift date should lie within Job dates')
+                            return render(
+                            request,
+                            'shift/create.html',
+                            {'form': form, 'job_id': job_id, 'job': job }
+                            )
+
                     else:
                         return render(
                             request,
                             'shift/create.html',
-                            {'form': form, 'job_id': job_id, }
+                            {'form': form, 'job_id': job_id, 'job': job }
                             )
                 else:
                     raise Http404
@@ -245,7 +257,7 @@ def create(request, job_id):
                 return render(
                     request,
                     'shift/create.html',
-                    {'form': form, 'job_id': job_id, 'country': country, 'state': state, 'city': city, 'address': address, 'venue': venue}
+                    {'form': form, 'job_id': job_id, 'country': country, 'state': state, 'city': city, 'address': address, 'venue': venue, 'job': job}
                     )
         else:
             raise Http404
@@ -539,7 +551,7 @@ def sign_up(request, shift_id, volunteer_id):
 
             if request.method == 'POST':
                 try:
-                    result = register(volunteer_id, shift_id)            
+                    result = register(volunteer_id, shift_id)
                     if result == "IS_VALID":
                         if admin:
                             return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
