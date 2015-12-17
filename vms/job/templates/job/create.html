@@ -1,6 +1,21 @@
 {% extends "administrator/settings.html" %}
 
 {% block setting_content %}
+<br>
+{% if messages %}
+
+<div class="alert alert-dismissible alert-danger">
+  <button type="button" class="close" data-dismiss="alert"></button>
+  <ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+</div>
+
+{% endif %}
+
+
     <div class="spacer"></div>
     {% if event_list %}
         <div class="well">
@@ -13,13 +28,21 @@
                             Event:
                         </label>
                         <div class="col-md-8">
-                            <select class="form-control" name="event_id">
+                            <select class="form-control" name="event_id" id="id" onchange="dates()">
                                 {% for event in event_list %}
-                                    <option value="{{ event.id }}">{{ event.name }}</option>
+                                    <option value="{{ event.id }}" event="{{ event }}">{{ event.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
+                    <p id="d"></p>
+                    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.8.3.min.js">
+                       function dates(){
+                            var event_id=document.getElementById("id");
+                            event=event_id.getAttribute("event");
+                            document.getElementById("d").innerHTML="Event starts by {{ event.start_date }} and ends by {{ event.end_date }}";
+                    </script>
+
                     {% if form.name.errors %}
                         <div class="form-group has-error">
                             <label class="col-md-2 control-label">Job Name</label>
