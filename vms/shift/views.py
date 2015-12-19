@@ -323,14 +323,14 @@ def edit(request, shift_id):
                 return render(
                     request,
                     'shift/edit.html',
-                    {'form': form, 'shift': shift}
+                    {'form': form, 'shift': shift, 'job': shift.job}
                     )
         else:
             form = ShiftForm(instance=shift)
             return render(
                 request,
                 'shift/edit.html',
-                {'form': form, 'shift': shift}
+                {'form': form, 'shift': shift, 'job': shift.job}
                 )
 
 

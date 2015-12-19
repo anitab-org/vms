@@ -11,6 +11,18 @@
             {% csrf_token %}
             <fieldset>
                 <legend>Edit Shift</legend>
+				<label class="col-md-2 control-label">Job Name</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ job.name }}</p>
+                </div>
+                <label class="col-md-2 control-label">Job Start Date</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ job.start_date }}</p>
+                </div>
+                <label class="col-md-2 control-label">Job End Date</label>
+                <div class="col-md-10">
+                    <p class="form-control-static">{{ job.end_date }}</p>
+                </div>
                 {% if form.date.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">Date</label>
