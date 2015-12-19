@@ -94,6 +94,10 @@ Once the VM download has completed, upon boot, it may ask you to choose an `Avai
 
 You may come across a message that says `default: Warning: Remote connection disconnect. Retrying...` This message means that the VM is still booting up which is why we cannot establish a connection with it. It is normal to wait on this message for a few minutes (~5 minutes in my case) before we are able to get a connection to the VM. You may need to wait a few minutes until you get a message saying `default: Machine booted and ready!`.
 
+You might be prompted for the virtual machine login and password.
+Enter "vagrant" as login and "vagrant" as password.
+After this the Virtual Machine will be booted completely and the command prompt appears.
+
 File syncing will work properly after you receive this message: `default: Mounting shared folders`. Please wait for this message before proceeding to the next steps.
 
 Once the VM boots up (and you were able to receive the messages specified above), you can ssh onto the VM by running the command:
