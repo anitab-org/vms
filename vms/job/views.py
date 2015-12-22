@@ -154,6 +154,7 @@ def list_sign_up(request, event_id, volunteer_id):
         event = get_event_by_id(event_id)
         if event:
             job_list = get_jobs_by_event_id(event_id)
+            job_list = remove_empty_jobs_for_volunteer(job_list, volunteer_id)
             return render(request, 'job/list_sign_up.html', {'event': event, 'job_list': job_list, 'volunteer_id': volunteer_id})
         else:
             raise Http404

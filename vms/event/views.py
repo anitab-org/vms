@@ -100,6 +100,7 @@ def list_sign_up(request, volunteer_id):
             end_date = form.cleaned_data['end_date']
             
             event_list = get_events_by_date(start_date, end_date)
+            event_list = remove_empty_events_for_volunteer(event_list, volunteer_id)
             
             return render(
                 request,
@@ -108,6 +109,7 @@ def list_sign_up(request, volunteer_id):
                 )
         else:
             event_list = get_events_ordered_by_name()
+            event_list = remove_empty_events_for_volunteer(event_list, volunteer_id)
             return render(
                 request,
                 'event/list_sign_up.html',
@@ -115,6 +117,7 @@ def list_sign_up(request, volunteer_id):
                 )
     else:
         event_list = get_events_ordered_by_name()
+        event_list = remove_empty_events_for_volunteer(event_list, volunteer_id)
         return render(
             request,
             'event/list_sign_up.html',

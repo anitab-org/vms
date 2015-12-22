@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from event.models import Event
 from job.models import Job
 from shift.models import Shift
-
+from job.services import get_jobs_by_event_id, remove_empty_jobs_for_volunteer
 
 def event_not_empty(event_id):
     """ Checks if the event exists and is not empty """
@@ -89,3 +89,14 @@ def get_events_by_date(start_date, end_date):
 def get_events_ordered_by_name():
     event_list = Event.objects.all().order_by('name')
     return event_list
+
+
+def remove_empty_events_for_volunteer(event_list, volunteer_id):
+    """ Removes all events from an event list without jobs or shifts """
+    new_event_list = []
+    for event in event_list:
+        job_list = get_jobs_by_event_id(event.id)
+        job_list = remove_empty_jobs_for_volunteer(job_list, volunteer_id)
+        if job_list:
+            new_event_list.append(event)
+    return new_event_list
