@@ -1,12 +1,17 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 from event.models import Event
 from job.models import Job
+from shift.services import register
+from shift.models import Shift
+from volunteer.models import Volunteer
 from job.services import (
                             delete_job,
                             get_job_by_id,
                             get_jobs_by_event_id,
-                            get_jobs_ordered_by_title
+                            get_jobs_ordered_by_title,
+                            remove_empty_jobs_for_volunteer
                             )
 
 
@@ -221,3 +226,111 @@ class JobMethodTests(TestCase):
         self.assertEqual(job_list[0].name, j3.name)
         self.assertEqual(job_list[1].name, j1.name)
         self.assertEqual(job_list[2].name, j2.name)
+
+    def test_remove_empty_jobs_for_volunteer(self):
+
+        e1 = Event(
+                name="Software Conference",
+                start_date="2012-10-22",
+                end_date="2012-10-25"
+                )
+
+        e1.save()
+        
+        #Job with shift that has slots available
+        j1 = Job(
+                name="Software Developer",
+                start_date="2012-10-22",
+                end_date="2012-10-23",
+                description="A software job",
+                event=e1
+                )
+        
+        #Job with shift volunteer will have already signed up for  
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2012-9-1",
+                end_date="2012-10-26",
+                description="A systems administrator job",
+                event=e1
+                )
+
+        #Job with shift that has no available slots
+        j3 = Job(
+                name="Project Manager",
+                start_date="2012-1-2",
+                end_date="2012-2-2",
+                description="A management job",
+                event=e1
+                )
+
+        #Job with no shifts
+        j4 = Job(
+                name="Information Technologist",
+                start_date="2012-11-2",
+                end_date="2012-12-2",
+                description="An IT job",
+                event=e1
+                )
+
+        j1.save()
+        j2.save()
+        j3.save()
+        j4.save()
+        
+        s1 = Shift(
+                date="2012-10-23",
+                start_time="9:00",
+                end_time="3:00",
+                max_volunteers=5,
+                job=j1
+                )
+
+        s2 = Shift(
+                date="2012-10-23",
+                start_time="10:00",
+                end_time="4:00",
+                max_volunteers=5,
+                job=j2
+                )
+
+        s3 = Shift(
+                date="2012-10-23",
+                start_time="12:00",
+                end_time="6:00",
+                max_volunteers=0,
+                job=j3
+                )
+
+        s1.save()
+        s2.save()
+        s3.save()
+        
+        u1 = User.objects.create_user('Yoshi')
+        
+        v1 = Volunteer(
+                    first_name="Yoshi",
+                    last_name="Turtle",
+                    address="Mario Land",
+                    city="Nintendo Land",
+                    state="Nintendo State",
+                    country="Nintendo Nation",
+                    phone_number="2374983247",
+                    email="yoshi@nintendo.com",
+                    user=u1
+                    )
+
+        v1.save()
+        
+        register(v1.id, s2.id)
+        
+        job_list = [j1, j2, j3, j4]
+        job_list = remove_empty_jobs_for_volunteer(job_list, v1.id)
+
+        #Only open and non empty jobs should be left
+        self.assertIn(j1, job_list)
+        self.assertNotIn(j2, job_list)
+        self.assertNotIn(j3, job_list)
+        self.assertNotIn(j4, job_list)
+            
+            
