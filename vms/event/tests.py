@@ -1,15 +1,19 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 from event.models import Event
 from job.models import Job
+from shift.services import register
 from shift.models import Shift
+from volunteer.models import Volunteer
 from event.services import (
         event_not_empty,
         delete_event,
         get_event_by_id,
         get_events_ordered_by_name,
         get_events_by_date,
-        get_event_by_shift_id
+        get_event_by_shift_id,
+        remove_empty_events_for_volunteer
         )
 
 
@@ -283,3 +287,143 @@ class EventMethodTests(TestCase):
         self.assertEqual(event_list[2], e1)
         self.assertEqual(event_list[3], e2)
         self.assertEqual(event_list[4], e4)
+
+    def test_remove_empty_events_for_volunteer(self):
+
+        #Event with job that has shift with open slots
+        e1 = Event(
+                name="Open Source Event",
+                start_date="2012-10-22",
+                end_date="2012-10-23"
+                )
+        
+        #Event with job and shift that volunteer already signed up for
+        e2 = Event(
+                name="Python Event",
+                start_date="2013-11-12",
+                end_date="2013-11-13"
+                )
+        
+        #Event with job and shift that have no slots remaining
+        e3 = Event(
+                name="Django Event",
+                start_date="2015-07-07",
+                end_date="2015-07-08"
+                )
+
+        #Event with job that has no shifts
+        e4 = Event(
+                name="Systers Event",
+                start_date="2015-07-07",
+                end_date="2015-07-08"
+                )
+
+        #Event with no jobs
+        e5 = Event(
+                name="Anita Borg Event",
+                start_date="2015-07-07",
+                end_date="2015-07-08"
+                )
+
+        e1.save()
+        e2.save()
+        e3.save()
+        e4.save()
+        e5.save()
+        
+        #Job with shift that has slots available
+        j1 = Job(
+                name="Software Developer",
+                start_date="2012-10-22",
+                end_date="2012-10-23",
+                description="A software job",
+                event=e1
+                )
+        
+        #Job with shift volunteer will have already signed up for  
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2012-9-1",
+                end_date="2012-10-26",
+                description="A systems administrator job",
+                event=e2
+                )
+
+        #Job with shift that has no available slots
+        j3 = Job(
+                name="Project Manager",
+                start_date="2012-1-2",
+                end_date="2012-2-2",
+                description="A management job",
+                event=e3
+                )
+
+        #Job with no shifts
+        j4 = Job(
+                name="Information Technologist",
+                start_date="2012-11-2",
+                end_date="2012-12-2",
+                description="An IT job",
+                event=e4
+                )
+
+        j1.save()
+        j2.save()
+        j3.save()
+        j4.save()
+        
+        s1 = Shift(
+                date="2012-10-23",
+                start_time="9:00",
+                end_time="3:00",
+                max_volunteers=5,
+                job=j1
+                )
+
+        s2 = Shift(
+                date="2012-10-23",
+                start_time="10:00",
+                end_time="4:00",
+                max_volunteers=5,
+                job=j2
+                )
+
+        s3 = Shift(
+                date="2012-10-23",
+                start_time="12:00",
+                end_time="6:00",
+                max_volunteers=0,
+                job=j3
+                )
+
+        s1.save()
+        s2.save()
+        s3.save()
+        
+        u1 = User.objects.create_user('Yoshi')
+        
+        v1 = Volunteer(
+                    first_name="Yoshi",
+                    last_name="Turtle",
+                    address="Mario Land",
+                    city="Nintendo Land",
+                    state="Nintendo State",
+                    country="Nintendo Nation",
+                    phone_number="2374983247",
+                    email="yoshi@nintendo.com",
+                    user=u1
+                    )
+
+        v1.save()
+        
+        register(v1.id, s2.id)
+        
+        event_list = [e1, e2, e3, e4, e5]
+        event_list = remove_empty_events_for_volunteer(event_list, v1.id)
+
+        #Only events with jobs that have open slots should remain
+        self.assertIn(e1, event_list)
+        self.assertNotIn(e2, event_list)
+        self.assertNotIn(e3, event_list)
+        self.assertNotIn(e4, event_list)
+        self.assertNotIn(e5, event_list)
