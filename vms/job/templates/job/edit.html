@@ -1,5 +1,7 @@
 {% extends "administrator/settings.html" %}
 
+{% load staticfiles %}
+
 {% block setting_content %}
     <div class="spacer"></div>
     {% if event_list %}
@@ -13,17 +15,28 @@
                             Event:
                         </label>
                         <div class="col-md-8">
-                            <select class="form-control" name="event_id">
+                            <select class="form-control" name="event_id" id="events" onchange="update_event_dates()">
                                 {% for event in event_list %}
                                     {% if event.name == job.event.name %}
-                                        <option selected value="{{ event.id }}">{{ event.name }}</option>
+                                        <option selected value="{{ event.id }}" start_date="{{ event.start_date }}" end_date="{{ event.end_date }}">{{ event.name }}</option>
                                     {% else %}
-                                        <option value="{{ event.id }}">{{ event.name }}</option>
+                                        <option value="{{ event.id }}" start_date="{{ event.start_date }}" end_date="{{ event.end_date }}">{{ event.name }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
+					<div class="form-group">
+						<label class="col-md-2 control-label">Event Start Date</label>
+						<div class="col-md-10">
+							<p class="form-control-static" id="start_date_here">start_date</p>
+						</div>
+						<label class="col-md-2 control-label">Event End Date</label>
+						<div class="col-md-10">
+							<p class="form-control-static" id="end_date_here">end_date</p>
+						</div>
+					</div>
+					<script src="{% static "vms/js/update-event-dates.js" %}"></script>
                     {% if form.name.errors %}
                         <div class="form-group has-error">
                             <label class="col-md-2 control-label">Job Name</label>
