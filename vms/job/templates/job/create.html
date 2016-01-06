@@ -1,5 +1,7 @@
 {% extends "administrator/settings.html" %}
 
+{% load staticfiles %}
+
 {% block setting_content %}
 <br>
 {% if messages %}
@@ -28,21 +30,24 @@
                             Event:
                         </label>
                         <div class="col-md-8">
-                            <select class="form-control" name="event_id" id="id" onchange="dates()">
+                            <select class="form-control" name="event_id" id="events" onchange="update_event_dates()">
                                 {% for event in event_list %}
-                                    <option value="{{ event.id }}" event="{{ event }}">{{ event.name }}</option>
+                                    <option value="{{ event.id }}" start_date="{{ event.start_date }}" end_date="{{ event.end_date }}">{{ event.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                     </div>
-                    <p id="d"></p>
-                    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.8.3.min.js">
-                       function dates(){
-                            var event_id=document.getElementById("id");
-                            event=event_id.getAttribute("event");
-                            document.getElementById("d").innerHTML="Event starts by {{ event.start_date }} and ends by {{ event.end_date }}";
-                    </script>
-
+					<div class="form-group">
+						<label class="col-md-2 control-label">Event Start Date</label>
+						<div class="col-md-10">
+							<p class="form-control-static" id="start_date_here">start_date</p>
+						</div>
+						<label class="col-md-2 control-label">Event End Date</label>
+						<div class="col-md-10">
+							<p class="form-control-static" id="end_date_here">end_date</p>
+						</div>
+					</div>
+                    <script src="{% static "vms/js/update-event-dates.js" %}"></script>
                     {% if form.name.errors %}
                         <div class="form-group has-error">
                             <label class="col-md-2 control-label">Job Name</label>
