@@ -18,16 +18,16 @@ Let's say that I am having trouble setting up the development environment for VM
 
 Well, here's how to approach the problem:
 
-1. What exactly is the error? In my case, I am receiving the error message below:
+####What exactly is the error? In my case, I am receiving the error message below:
 
 ![alt text](screenshots/error.png)
 
-2. Analyze the problem. What exactly is the error? Here, it is password authentication failed for user myuser
+####Analyze the problem. What exactly is the error? Here, it is password authentication failed for user myuser
 
-3. Now knowing this, Google this exact message.
+Now knowing this, Google this exact message.
 
 ![alt text](screenshots/Googled.png)
 
 As you can see, there are a huge variety of resources on the exact same issue. Many other people have experienced the same thing you are!
 
-4. If you still do not find the answer, though, then it is time to use Plan B. Shoot a message to systers-dev@systers.org with the screenshots and background information they will need to help you :)
+####If you still do not find the answer, though, then it is time to use Plan B. Shoot a message to systers-dev@systers.org with the screenshots and background information they will need to help you :)
