@@ -23,16 +23,24 @@ def add_hours(request, shift_id, volunteer_id):
                     start_time = form.cleaned_data['start_time']
                     end_time = form.cleaned_data['end_time']
                     try:
-                        add_shift_hours(
-                            volunteer_id,
-                            shift_id,
-                            start_time,
-                            end_time
-                            )
-                        return HttpResponseRedirect(reverse(
-                                'shift:view_hours',
-                                args=(volunteer_id,)
-                                ))
+			if(end_time>start_time):
+                        	 add_shift_hours(
+                           	 volunteer_id,
+                           	 shift_id,
+                           	 start_time,
+                           	 end_time
+                            	 )
+                        	 return HttpResponseRedirect(reverse(
+                                	'shift:view_hours',
+                                	args=(volunteer_id,)
+                                	))
+			else:
+				messages.add_message(request, messages.INFO, 'End time should be greater than start time')
+				return render(
+                        	request,
+                        	'shift/add_hours.html',
+                        	{'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, }
+                        	)
                     except:
                         raise Http404
                 else:
@@ -73,16 +81,24 @@ def add_hours_manager(request, shift_id, volunteer_id):
                 start_time = form.cleaned_data['start_time']
                 end_time = form.cleaned_data['end_time']
                 try:
-                    add_shift_hours(
-                        volunteer_id,
-                        shift_id,
-                        start_time,
-                        end_time
-                        )
-                    return HttpResponseRedirect(reverse(
-                        'shift:manage_volunteer_shifts',
-                        args=(volunteer_id, )
-                        ))
+                    if(end_time>start_time):
+                        	 add_shift_hours(
+                           	 volunteer_id,
+                           	 shift_id,
+                           	 start_time,
+                           	 end_time
+                            	 )
+                        	 return HttpResponseRedirect(reverse(
+                        	 'shift:manage_volunteer_shifts',
+                        	 args=(volunteer_id, )
+                        	 ))
+		    else:
+				messages.add_message(request, messages.INFO, 'End time should be greater than start time')
+				return render(
+                    		request,
+                    		'shift/add_hours_manager.html',
+                    		{'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, }
+                    		)
                 except:
                     raise Http404
             else:
@@ -348,13 +364,22 @@ def edit_hours(request, shift_id, volunteer_id):
                         start_time = form.cleaned_data['start_time']
                         end_time = form.cleaned_data['end_time']
                         try:
-                            edit_shift_hours(
+			    if(end_time>start_time):
+                        	edit_shift_hours(
                                 volunteer_id,
                                 shift_id,
                                 start_time,
                                 end_time
                                 )
-                            return HttpResponseRedirect(reverse('shift:view_hours', args=(volunteer_id,)))
+                            	return HttpResponseRedirect(reverse('shift:view_hours', args=(volunteer_id,)))
+			    else:
+				messages.add_message(request, messages.INFO, 'End time should be greater than start time')
+				return render(
+                        	request,
+                            	'shift/edit_hours.html',
+                            	{'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                            	)
+                            
                         except:
                             raise Http404
                     else:
@@ -400,8 +425,17 @@ def edit_hours_manager(request, shift_id, volunteer_id):
                         start_time = form.cleaned_data['start_time']
                         end_time = form.cleaned_data['end_time']
                         try:
-                            edit_shift_hours(volunteer_id, shift_id, start_time, end_time)
-                            return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
+			    if(end_time>start_time):
+                        	edit_shift_hours(volunteer_id, shift_id, start_time, end_time)
+                                return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
+			    else:
+				messages.add_message(request, messages.INFO, 'End time should be greater than start time')
+				return render(
+                        	request,
+                            	'shift/edit_hours_manager.html',
+                            	{'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                            	)
+                            
                         except:
                             raise Http404
                     else:
