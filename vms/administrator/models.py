@@ -58,8 +58,8 @@ class Administrator(models.Model):
         max_length=20,
         validators=[
             RegexValidator(
-                r'^\+?1?\d{9,15}$',
-                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.",
+                r'^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$',
+                message="Please enter a valid phone number",
             ),
         ],
     )
