@@ -15,6 +15,8 @@
 
 {% endif %}
 
+{% load i18n %}
+
 {% load static %}
 
 <script type="text/javascript" src="{% static 'vms/js/timepicker.js' %}"></script>
@@ -24,10 +26,10 @@
         <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>Edit Shift Hours</legend>
+                <legend>{% trans "Edit Shift Hours" %}</legend>
                 {% if form.start_time.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Start Time</label>
+                        <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
                         <div class="col-md-8">
                             <div id="datetimepicker1" class="input-append">
 									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
@@ -46,7 +48,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Start Time</label>
+                        <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
 							<div class="col-md-8">
 								<div id="datetimepicker1" class="input-append">
 									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
@@ -62,7 +64,7 @@
                 {% endif %}
                 {% if form.end_time.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">End Time</label>
+                        <label class="col-md-2 control-label">{% trans "End Time" %}</label>
                         <div class="col-md-8">
                             <div id="datetimepicker2" class="input-append">
 									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
@@ -81,7 +83,7 @@
                     </div>
                 {% else %}                    
 					<div class="form-group">
-                        <label class="col-md-2 control-label">End Time</label>
+                        <label class="col-md-2 control-label">{% trans "End Time" %}</label>
 							<div class="col-md-8">
 								<div id="datetimepicker2" class="input-append">
 									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
@@ -94,7 +96,7 @@
                 {% endif %}
                 <div class="form-group">
                     <div class="col-md-12 col-md-offset-2">
-                        <button class="btn btn-primary" type="submit">Save</button>
+                        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
                     </div>
                 </div>
             </fieldset>

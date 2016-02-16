@@ -1,5 +1,7 @@
 {% extends "administrator/settings.html" %}
 
+{% load i18n %}
+
 {% block setting_content %}
 <br>
 {% if messages %}
@@ -24,22 +26,22 @@
         <form class="form-horizontal" action="{% url 'shift:create' job_id %}" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>Create Shift</legend>
-                <label class="col-md-2 control-label">Job Name</label>
+                <legend>{% trans "Create Shift" %}</legend>
+                <label class="col-md-2 control-label">{% trans "Job Name" %}</label>
                 <div class="col-md-10">
                     <p class="form-control-static">{{ job.name }}</p>
                 </div>
-                <label class="col-md-2 control-label">Job Start Date</label>
+                <label class="col-md-2 control-label">{% trans "Job Start Date" %}</label>
                 <div class="col-md-10">
                     <p class="form-control-static">{{ job.start_date }}</p>
                 </div>
-                <label class="col-md-2 control-label">Job End Date</label>
+                <label class="col-md-2 control-label">{% trans "Job End Date" %}</label>
                 <div class="col-md-10">
                     <p class="form-control-static">{{ job.end_date }}</p>
                 </div>
                 {% if form.date.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Date</label>
+                        <label class="col-md-2 control-label">{% trans "Date" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="MM/DD/YYYY" type="text" name="date" value="{% if form.date.value %}{{ form.date.value }}{% endif %}">
                             <p class="help-block">
@@ -53,7 +55,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Date</label>
+                        <label class="col-md-2 control-label">{% trans "Date" %}</label>
                         <div class="col-md-8">
 							<input class="form-control" type="text" name="date" id="datepicker" value="{% if form.date.value %}{{ form.date.value }}{% endif %}">
                         </div>
@@ -61,7 +63,7 @@
                 {% endif %}
                 {% if form.start_time.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Start Time</label>
+                        <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
                         <div class="col-md-8">
                             <div id="datetimepicker1" class="input-append">
 									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
@@ -80,7 +82,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Start Time</label>
+                        <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
                         <div class="col-md-8">
                             <div id="datetimepicker1" class="input-append">
 									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
@@ -93,7 +95,7 @@
                 {% endif %}
                 {% if form.end_time.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">End Time</label>
+                        <label class="col-md-2 control-label">{% trans "End Time" %}</label>
                         <div class="col-md-8">
                             <div id="datetimepicker2" class="input-append">
 									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
@@ -112,7 +114,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">End Time</label>
+                        <label class="col-md-2 control-label">{% trans "End Time" %}</label>
                         <div class="col-md-8">
                             <div id="datetimepicker2" class="input-append">
 									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
@@ -125,9 +127,9 @@
                 {% endif %}
                 {% if form.max_volunteers.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Maximum number of volunteers that can sign up for this shift</label>
+                        <label class="col-md-2 control-label">{% trans "Maximum number of volunteers that can sign up for this shift" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Maximum number of volunteers" type="text" name="max_volunteers" value="{% if form.max_volunteers.value %}{{ form.max_volunteers.value }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Maximum number of volunteers{% endblocktrans %}" type="text" name="max_volunteers" value="{% if form.max_volunteers.value %}{{ form.max_volunteers.value }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.max_volunteers.errors %}
@@ -139,17 +141,17 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Maximum number of volunteers that can sign up for this shift</label>
+                        <label class="col-md-2 control-label">{% trans "Maximum number of volunteers that can sign up for this shift" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Maximum number of volunteers" type="text" name="max_volunteers" value="{% if form.max_volunteers.value %}{{ form.max_volunteers.value }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Maximum number of volunteers{% endblocktrans %}" type="text" name="max_volunteers" value="{% if form.max_volunteers.value %}{{ form.max_volunteers.value }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
 				{% if form.country.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Country</label>
+                        <label class="col-md-2 control-label">{% trans "Country" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Country" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% elif country %}{{ country }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift Country{% endblocktrans %}" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% elif country %}{{ country }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.country.errors %}
@@ -161,17 +163,17 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Country</label>
+                        <label class="col-md-2 control-label">{% trans "Country" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Country" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% elif country %}{{ country }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift Country{% endblocktrans %}" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% elif country %}{{ country }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
 				{% if form.state.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">State</label>
+                        <label class="col-md-2 control-label">{% trans "State" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift State" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% elif state %}{{ state }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift State{% endblocktrans %}" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% elif state %}{{ state }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.state.errors %}
@@ -183,18 +185,18 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">State</label>
+                        <label class="col-md-2 control-label">{% trans "State" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift State" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% elif state %}{{ state }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift State{% endblocktrans %}" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% elif state %}{{ state }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
 
 				{% if form.city.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">City</label>
+                        <label class="col-md-2 control-label">{% trans "City" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift City" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% elif city %}{{ city }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift City{% endblocktrans %}" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% elif city %}{{ city }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.city.errors %}
@@ -206,18 +208,18 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">City</label>
+                        <label class="col-md-2 control-label">{% trans "City" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift City" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% elif city %}{{ city }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift City{% endblocktrans %}" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% elif city %}{{ city }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
 
 				{% if form.address.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Address</label>
+                        <label class="col-md-2 control-label">{% trans "Address" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Address" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% elif address %}{{ address }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift Address{% endblocktrans %}" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% elif address %}{{ address }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.address.errors %}
@@ -229,18 +231,18 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Address</label>
+                        <label class="col-md-2 control-label">{% trans "Address" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Address" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% elif address %}{{ address }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift Address{% endblocktrans %}" type="text" name="address" value="{% if form.address.value %}{{ form.address.value }}{% elif address %}{{ address }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
 
 				{% if form.venue.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">Venue</label>
+                        <label class="col-md-2 control-label">{% trans "Venue" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Venue" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% elif venue %}{{ venue }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift Venue{% endblocktrans %}" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% elif venue %}{{ venue }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.venue.errors %}
@@ -252,15 +254,15 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">Venue</label>
+                        <label class="col-md-2 control-label">{% trans "Venue" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="Shift Venue" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% elif venue %}{{ venue }}{% endif %}">
+                            <input class="form-control" placeholder="{% blocktrans %}Shift Venue{% endblocktrans %}" type="text" name="venue" value="{% if form.venue.value %}{{ form.venue.value }}{% elif venue %}{{ venue }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
                 <div class="form-group">
                     <div class="col-md-12 col-md-offset-2">
-                        <button class="btn btn-primary" type="submit">Create</button>
+                        <button class="btn btn-primary" type="submit">{% trans "Create" %}</button>
                     </div>
                 </div>
             </fieldset>
