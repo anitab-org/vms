@@ -1,10 +1,12 @@
 {% extends "administrator/settings.html" %}
 
+{% load i18n %}
+
 {% block setting_content %}
     <div class="spacer"></div>
     {% if job.description %}
         <div class="panel panel-default">
-            <div class="panel-heading">Job Description</div>
+            <div class="panel-heading">{% trans "Job Description" %}</div>
             <div class="panel-body">
                 {{ job.description }}
             </div>
@@ -12,10 +14,10 @@
     {% endif %}
     <table class="table table-striped table-hover">
         <thead>
-            <th>Job Name</th>
-            <th>Event</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>{% trans "Job Name" %}</th>
+            <th>{% trans "Event" %}</th>
+            <th>{% trans "Start Date" %}</th>
+            <th>{% trans "End Date" %}</th>
         </thead>
         <tbody>
             <tr>
