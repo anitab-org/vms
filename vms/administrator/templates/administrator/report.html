@@ -1,18 +1,18 @@
 {% extends "vms/base.html" %}
-
+{% load i18n %}
 {% block content %}
     <div class="spacer"></div>
     <div class="alert alert-info">
-        Please enter any of the fields below to generate a report.
+        {% trans "Please enter any of the fields below to generate a report." %}
     </div>
     <div class="well">
         <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>Report</legend>
+                <legend>{% trans "Report" %}</legend>
                 {% if form.first_name.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-3 control-label">Volunteer First Name</label>
+                        <label class="col-md-3 control-label">{% trans "Volunteer First Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="first_name" value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}">
                             <p class="help-block">
@@ -26,7 +26,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Volunteer First Name</label>
+                        <label class="col-md-3 control-label">{% trans "Volunteer First Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="first_name" value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}">
                         </div>
@@ -34,7 +34,7 @@
                 {% endif %}
                 {% if form.last_name.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-3 control-label">Volunteer Last Name</label>
+                        <label class="col-md-3 control-label">{% trans "Volunteer Last Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="last_name" value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}">
                             <p class="help-block">
@@ -48,7 +48,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Volunteer Last Name</label>
+                        <label class="col-md-3 control-label">{% trans "Volunteer Last Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="last_name" value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}">
                         </div>
@@ -56,11 +56,11 @@
                 {% endif %}
                 {% if form.organization.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-3 control-label">Volunteer Organization</label>
+                        <label class="col-md-3 control-label">{% trans "Volunteer Organization" %}</label>
                         <div class="col-md-8">
 							
                             <select id="select" class="form-control" name="organization">
-								<option value="">-- Select Organization --</option>
+								<option value="">-- {% trans "Select Organization" %} --</option>
 								{% for organization in organization_list %}
 								<option value="{{ organization.name }}" {% if selected_organization == organization.name %}selected{% endif %}>{{ organization.name }}</option>
 								{% endfor %}
@@ -77,10 +77,10 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Volunteer Organization</label>
+                        <label class="col-md-3 control-label">{% trans "Volunteer Organization" %}</label>
                         <div class="col-md-8">
                             <select id="select" class="form-control" name="organization">
-								<option value="">-- Select Organization --</option>
+								<option value="">-- {% trans "Select Organization" %} --</option>
 								{% for organization in organization_list %}
 									<option value="{{ organization.name }}" {% if selected_organization == organization.name %}selected{% endif %}>{{ organization.name }}</option>
 								{% endfor %}
@@ -90,7 +90,7 @@
                 {% endif %}
                 {% if form.event_name.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-3 control-label">Event Name</label>
+                        <label class="col-md-3 control-label">{% trans "Event Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="event_name" value="{% if form.event_name.value %}{{ form.event_name.value }}{% endif %}">
                             <p class="help-block">
@@ -104,7 +104,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Event Name</label>
+                        <label class="col-md-3 control-label">{% trans "Event Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="event_name" value="{% if form.event_name.value %}{{ form.event_name.value }}{% endif %}">
                         </div>
@@ -112,7 +112,7 @@
                 {% endif %}
                 {% if form.job_name.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-3 control-label">Job Name</label>
+                        <label class="col-md-3 control-label">{% trans "Job Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="job_name" value="{% if form.job_name.value %}{{ form.job_name.value }}{% endif %}">
                             <p class="help-block">
@@ -126,20 +126,20 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Job Name</label>
+                        <label class="col-md-3 control-label">{% trans "Job Name" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" name="job_name" value="{% if form.job_name.value %}{{ form.job_name.value }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}                
 				<div class="form-group">
-                    <label class="col-md-3 control-label">Start Date</label>
+                    <label class="col-md-3 control-label">{% trans "Start Date" %}</label>
                     <div class="col-md-8">
                         <input class="form-control" type="text" name="start_date" id="from" name="from" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
                     </div>
                 </div>
 				<div class="form-group">
-                    <label class="col-md-3 control-label">End Date</label>
+                    <label class="col-md-3 control-label">{% trans "End Date" %}</label>
                     <div class="col-md-8">
                         <input class="form-control" type="text" name="end_date" id="to" name="to" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
                     </div>
@@ -147,31 +147,31 @@
             </fieldset>
             <div class="form-group">
                 <div class="col-md-12 col-md-offset-3">
-                    <button class="btn btn-primary" type="submit">Generate Report</button>
+                    <button class="btn btn-primary" type="submit">{% trans "Generate Report" %}</button>
                 </div>
             </div>
         </form>
     </div>
     {% if report_list %}
         <div class="well">
-            <legend>Report Statistics</legend>
-            <label><h4><span class="label label-default">Total Number of Shifts</span></h4></label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ report_list|length }}
+            <legend>{% trans "Report Statistics" %}</legend>
+            <label><h4><span class="label label-default">{% trans "Total Number of Shifts" %}</span></h4></label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ report_list|length }}
             <br>
-            <label><h4><span class="label label-default">Total Hours</span></h4></label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ total_hours }}
+            <label><h4><span class="label label-default">{% trans "Total Hours" %}</span></h4></label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ total_hours }}
         </div>
         <div class="well">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Volunteer Organization</th>
-                        <th>Event Name</th>
-                        <th>Job Name</th>
-                        <th>Date</th>
-                        <th>Logged Start Time</th>
-                        <th>Logged End Time</th>
-                        <th>Duration</th>
+                        <th>{% trans "First Name" %}</th>
+                        <th>{% trans "Last Name" %}</th>
+                        <th>{% trans "Volunteer Organization"%}</th>
+                        <th>{% trans "Event Name" %}</th>
+                        <th>{% trans "Job Name" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Logged Start Time" %}</th>
+                        <th>{% trans "Logged End Time" %}</th>
+                        <th>{% trans "Duration" %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -194,7 +194,7 @@
     {% else %}
         {% if notification %}
             <div class="alert alert-danger">
-                Your criteria did not return any results.
+                {% trans "Your criteria did not return any results." %}
             </div>
         {% endif %}
     {% endif %}
