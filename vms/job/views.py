@@ -127,7 +127,28 @@ def edit(request, job_id):
                 else:
                     raise Http404
                 job_to_edit.save()
-                return HttpResponseRedirect(reverse('job:list'))
+                
+		start_date_event=event.start_date
+                end_date_event=event.end_date
+                start_date_job=form.cleaned_data.get('start_date')
+                end_date_job=form.cleaned_data.get('end_date')
+                if(start_date_job>=start_date_event and end_date_job<=end_date_event):
+                    job = form.save(commit=False)
+                    if event:
+                        job.event = event
+                    else:
+                        raise Http404
+                    job.save()
+                    return HttpResponseRedirect(reverse('job:list'))
+                else:
+                    messages.add_message(request, messages.INFO, 'Job dates should lie within Event dates')
+                    return render(
+                    request,
+                    'job/edit.html',
+                    {'form': form, 'event_list': event_list , 'job': job}
+                    )
+		return HttpResponseRedirect(reverse('job:list'))
+
             else:
                 return render(
                     request,
