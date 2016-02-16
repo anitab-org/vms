@@ -1,9 +1,11 @@
 {% extends "vms/base.html" %}
 
+{% load i18n %}
+
 {% block content %}
 
 <div class="panel panel-default">
-  <div class="panel-heading">Search for the events that start</div>
+  <div class="panel-heading">{% trans "Search for the events that start" %}</div>
   <div class="panel-body"> 
 
 	<form class="form-horizontal" action="{% url 'event:list_sign_up' volunteer_id %}" method="post">
@@ -11,17 +13,17 @@
 
 	  
 	<div class="form-group">
-		<label class="col-md-1 control-label">From:</label>
+		<label class="col-md-1 control-label">{% trans "From:" %}</label>
 		<div class="col-md-2">
 		<input type="text" class="form-control" id="from" name="start_date" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
 		</div>
  
-		<label class="col-md-1 control-label">To:</label>
+		<label class="col-md-1 control-label">{% trans "To:" %}</label>
 		<div class="col-md-2">
 		<input type="text" class="form-control" id="to" name="end_date" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
 		</div>
 	
-		<button class="btn btn-primary" type="submit">Search</button> 
+		<button class="btn btn-primary" type="submit">{% trans "Search" %}</button> 
 	</div>
 	</div>
 </div>
@@ -30,15 +32,15 @@
     <div class="spacer"></div>
     {% if event_list %}
         <ul class="breadcrumb">
-            <li class="active">Events</li>
+            <li class="active">{% trans "Events" %}</li>
         </ul>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Event Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>View Jobs</th>
+                    <th>{% trans "Event Name" %}</th>
+                    <th>{% trans "Start Date" %}</th>
+                    <th>{% trans "End Date" %}</th>
+                    <th>{% trans "View Jobs" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,7 +50,7 @@
                         <td>{{ event.start_date }}</td>
                         <td>{{ event.end_date }}</td>
                         <td>
-                            <a href="{% url 'job:list_sign_up' event.id volunteer_id %}" class="btn btn-success btn-sm">View Jobs</a>
+                            <a href="{% url 'job:list_sign_up' event.id volunteer_id %}" class="btn btn-success btn-sm">{% trans "View Jobs" %}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -56,7 +58,7 @@
         </table>
     {% else %}
         <div class="alert alert-info">
-            There are no events.
+            {% trans "There are no events." %}
         </div>
     {% endif %}
 {% endblock %}
