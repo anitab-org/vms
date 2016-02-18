@@ -32,9 +32,10 @@ def get_event_by_shift_id(shift_id):
 
     return result
 
-# need to check that this event is not accociated with any jobs,
-# otherwise the jobs that it is associated with will be cascade deleted
 def delete_event(event_id):
+    """ 
+    Deletes an event if no jobs are associated with it
+    """
 
     result = True
     event = get_event_by_id(event_id)
