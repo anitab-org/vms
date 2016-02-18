@@ -118,7 +118,7 @@ def edit(request, job_id):
 
         if request.method == 'POST':
             form = JobForm(request.POST, instance=job)
-            
+
             if form.is_valid():
 
                 event_id = request.POST.get('event_id')
@@ -127,6 +127,14 @@ def edit(request, job_id):
                 end_date_event=event.end_date
                 start_date_job=form.cleaned_data.get('start_date')
                 end_date_job=form.cleaned_data.get('end_date')
+
+                job_edit = check_edit_job(job_id, start_date_job, end_date_job)
+                if not job_edit['result']:
+                    return render(
+                        request,
+                        'job/edit_error.html',
+                        {'count': job_edit['invalid_count']}
+                        )
 
                 if(start_date_job>=start_date_event and end_date_job<=end_date_event):
                     job_to_edit = form.save(commit=False)
