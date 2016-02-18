@@ -74,6 +74,15 @@ def edit(request, event_id):
         if request.method == 'POST':
             form = EventForm(request.POST, instance=event)
             if form.is_valid():
+                start_date_event = form.cleaned_data['start_date']
+                end_date_event = form.cleaned_data['end_date']
+                event_edit = check_edit_event(event_id, start_date_event, end_date_event)
+                if not event_edit['result']:
+                    return render(
+                        request,
+                        'event/edit_error.html',
+                        {'count': event_edit['invalid_count'], 'jobs': event_edit['invalid_jobs']}
+                        )
                 form.save()
                 return HttpResponseRedirect(reverse('event:list'))
             else:
