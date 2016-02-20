@@ -205,6 +205,8 @@ We will now create a database called `vms`:
 
     createdb -U vmsadmin vms;
 
+You will be prompted to enter a password, which is '0xdeadbeef'
+
 We can now login to the postgres client for the `vms` database:
 
     psql -U vmsadmin -d vms -h localhost -W
@@ -249,6 +251,8 @@ Check that the tables were created by starting the postgres client and viewing t
 ```
 psql -U vmsadmin -d vms -h localhost -W
 ```
+You will be prompted to enter a password, which is '0xdeadbeef'
+
 ```
 \dt
 ```
