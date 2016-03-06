@@ -37,7 +37,7 @@ For my project, this would correspond to:
 
 If you are installing and running the project on your local machine and not on the Systers VM, then you will need to download and install the following software:
 
-1. [Django](https://www.djangoproject.com/download/) (version >= 1.6.5)
+1. [Django](https://www.djangoproject.com/download/) (version >= 1.6.5 and version < 1.8)
 2. [PostgreSQL](http://www.postgresql.org/download/) (version >= 9.3.4)
 
 **You do not need to download and install Django and PostgreSQL if you are installing and running the project on the Systers VM, as Django and PostgreSQL are already included in the Systers VM.**
