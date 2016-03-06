@@ -1,25 +1,27 @@
 {% extends "vms/base.html" %}
 
+{% load i18n %}
+
 {% block content %}
     <div class="spacer"></div>
-    <a href="{% url 'shift:volunteer_search' %}" class="btn btn-default">Return to Volunteer Search</a>
+    <a href="{% url 'shift:volunteer_search' %}" class="btn btn-default">{% trans "Return to Volunteer Search" %}</a>
     <div class="spacer"></div>
-    <h2>Manage Shifts</h2>
+    <h2>{% trans "Manage Shifts" %}</h2>
     <hr>
     <div class="well well-sm">
-        <a href="{% url 'event:list_sign_up' volunteer_id %}" class="btn btn-success btn-sm">Assign Shift</a>
+        <a href="{% url 'event:list_sign_up' volunteer_id %}" class="btn btn-success btn-sm">{% trans "Assign Shift" %}</a>
     </div>
 	<br>
-	<h3>Upcoming Shifts</h3>
+	<h3>{% trans "Upcoming Shifts" %}</h3>
     {% if shift_list %}
         <table class="table table-striped table-hover">
             <thead>
-                <th>Job</th>
-                <th>Date</th>
-                <th>Scheduled Start Time</th>
-                <th>Scheduled End Time</th>
-                <th>Cancel Shift Registration</th>
-				<th>Log Hours</th>
+                <th>{% trans "Job" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Scheduled Start Time" %}</th>
+                <th>{% trans "Scheduled End Time" %}</th>
+                <th>{% trans "Cancel Shift Registration" %}</th>
+				<th>{% trans "Log Hours" %}</th>
             </thead>
             <tbody>
                 {% for shift in shift_list %}
@@ -29,11 +31,11 @@
                         <td>{{ shift.start_time }}</td>
                         <td>{{ shift.end_time }}</td>
                         <td>
-                            <a href="{% url 'shift:cancel' shift.id volunteer_id %}" class="btn btn-danger btn-sm">Cancel Shift Registration</a>
+                            <a href="{% url 'shift:cancel' shift.id volunteer_id %}" class="btn btn-danger btn-sm">{% trans "Cancel Shift Registration" %}</a>
                         </td>
 						
 						<td>						
-							<a href="{% url 'shift:add_hours_manager' shift.id volunteer_id %}" class="btn btn-success btn-sm">Log Hours</a>
+							<a href="{% url 'shift:add_hours_manager' shift.id volunteer_id %}" class="btn btn-success btn-sm">{% trans "Log Hours" %}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -41,20 +43,20 @@
         </table>
     {% else %}
         <div class="alert alert-info">
-            This volunteer does not have any upcoming shifts.
+            {% trans "This volunteer does not have any upcoming shifts." %}
         </div>
     {% endif %}
 	<br>
-	<h3>Shifts with Logged Hours</h3>
+	<h3>{% trans "Shifts with Logged Hours" %}</h3>
 	{% if shift_list_with_hours %}
         <table class="table table-striped table-hover">
             <thead>
-                <th>Job</th>
-                <th>Date</th>
-				<th>Logged Start Time</th>
-                <th>Logged End Time</th>
-				<th>Edit Hours</th>
-				<th>Clear Hours</th>
+                <th>{% trans "Job" %}</th>
+                <th>{% trans "Date" %}</th>
+				<th>{% trans "Logged Start Time" %}</th>
+                <th>{% trans "Logged End Time" %}</th>
+				<th>{% trans "Edit Hours" %}</th>
+				<th>{% trans "Clear Hours" %}</th>
             </thead>
             <tbody>
                 {% for shift_with_hours in shift_list_with_hours %}
@@ -65,10 +67,10 @@
                         <td>{{ shift_with_hours.end_time }}</td>					
 						
 						<td>						
-							<a href="{% url 'shift:edit_hours_manager' shift_with_hours.shift.id volunteer_id %}" class="btn btn-info btn-sm">Edit Hours</a>
+							<a href="{% url 'shift:edit_hours_manager' shift_with_hours.shift.id volunteer_id %}" class="btn btn-info btn-sm">{% trans "Edit Hours" %}</a>
                         </td>
 						<td>
-                            <a href="{% url 'shift:clear_hours_manager' shift_with_hours.shift.id volunteer_id %}" class="btn btn-default btn-sm">Clear Hours</a>
+                            <a href="{% url 'shift:clear_hours_manager' shift_with_hours.shift.id volunteer_id %}" class="btn btn-default btn-sm">{% trans "Clear Hours" %}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -76,7 +78,7 @@
         </table>
     {% else %}
         <div class="alert alert-info">
-            This volunteer does not have any shifts with logged hours.
+            {% trans "This volunteer does not have any shifts with logged hours." %}
         </div>
     {% endif %}
 {% endblock %}
