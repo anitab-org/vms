@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load i18n %}
 {% load staticfiles %}
 <html lang="en">
   <head>
@@ -39,28 +40,28 @@
 
 		<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
 			<ul class="nav navbar-nav text-uppercase">
-				<li><a href="#">About</a></li>
+				<li><a href="#">{% trans "About" %}</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right text-uppercase">
                     {% if user.is_authenticated %}
                         {% if user.administrator %}
-                            <li><a href="{% url 'volunteer:search' %}">Volunteer Search</a></li>
-                            <li><a href="{% url 'shift:volunteer_search' %}">Manage Volunteer Shifts</a></li>
-                            <li><a href="{% url 'administrator:report' %}">Report</a></li>
-                            <li><a href="{% url 'administrator:settings' %}">Events</a></li>
-                            <li><a href="{% url 'registration:signup_administrator' %}">Create Admin Account</a></li>
+                            <li><a href="{% url 'volunteer:search' %}">{% trans "Volunteer Search" %}</a></li>
+                            <li><a href="{% url 'shift:volunteer_search' %}">{% trans "Manage Volunteer Shifts" %}</a></li>
+                            <li><a href="{% url 'administrator:report' %}">{% trans "Report" %}</a></li>
+                            <li><a href="{% url 'administrator:settings' %}">{% trans "Events" %}</a></li>
+                            <li><a href="{% url 'registration:signup_administrator' %}">{% trans "Create Admin Account" %}</a></li>
                         {% endif %}
                         {% if user.volunteer %} 
-                            <li><a href="{% url 'shift:view_volunteer_shifts' user.volunteer.id %}">Upcoming Shifts</a></li>
-                            <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">Completed Shifts</a></li>
-                            <li><a href="{% url 'event:list_sign_up' user.volunteer.id %}">Shift Sign Up</a></li>
-                            <li><a href="{% url 'volunteer:report' user.volunteer.id %}">Report</a></li>
-                            <li><a href="{% url 'volunteer:profile' user.volunteer.id %}">Profile</a></li>
+                            <li><a href="{% url 'shift:view_volunteer_shifts' user.volunteer.id %}">{% trans "Upcoming Shifts" %}</a></li>
+                            <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">{% trans "Completed Shifts" %}</a></li>
+                            <li><a href="{% url 'event:list_sign_up' user.volunteer.id %}">{% trans "Shift Sign Up" %}</a></li>
+                            <li><a href="{% url 'volunteer:report' user.volunteer.id %}">{% trans "Report" %}</a></li>
+                            <li><a href="{% url 'volunteer:profile' user.volunteer.id %}">{% trans "Profile" %}</a></li>
                         {% endif %}
-                        <li><a href="{% url 'authentication:logout_process' %}">Log Out</a></li>
+                        <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
                     {% else %}
-                        <li><a href="{% url 'registration:signup_volunteer' %}">Sign Up</a></li>
-                        <li><a href="{% url 'authentication:login_process' %}">Log In</a></li>
+                        <li><a href="{% url 'registration:signup_volunteer' %}">{% trans "Sign Up" %}</a></li>
+                        <li><a href="{% url 'authentication:login_process' %}">{% trans "Log In" %}</a></li>
                     {% endif %}
                 </ul>
             </div>
