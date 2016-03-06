@@ -1,22 +1,22 @@
 {% extends "vms/base.html" %}
-
+{% load i18n %}
 {% block content %}
     <form class="login form-signin" role="form" method="POST" action="{% url 'authentication:login_process' %}">
         {% csrf_token %}
-        <h2>Please sign in</h2>
+        <h2>{% trans "Please sign in" %}</h2>
         <hr>
         {% if is_invalid_credentials %}
             <div class="alert alert-danger">
-                The username and/or password you specified are not correct.
+                {% trans "The username and/or password you specified are not correct." %}
             </div>
         {% endif %}
         {% if authentication_form.username.errors %}
             <div id="div_id_login" class="form-group has-error">
                 <label for="id_login" class="control-label requiredField">
-                    Username<span class="asteriskField">*</span>
+                    {% trans "Username" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input class="textinput textInput form-control" id="id_login" name="username" placeholder="Username" type="text" autofocus="autofocus" value="{{ authentication_form.username.value }}">
+                    <input class="textinput textInput form-control" id="id_login" name="username" placeholder="{% blocktrans %}Username{% endblocktrans %}" type="text" autofocus="autofocus" value="{{ authentication_form.username.value }}">
                     <p class="help-block">
                         <strong>
                             {% for error in authentication_form.username.errors %}
@@ -29,20 +29,20 @@
         {% else %}
             <div id="div_id_login" class="form-group">
                 <label for="id_login" class="control-label requiredField">
-                    Username<span class="asteriskField">*</span>
+                    {% trans "Username" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input class="textinput textInput form-control" id="id_login" name="username" placeholder="Username" type="text" autofocus="autofocus" value="{% if authentication_form.username.value %}{{ authentication_form.username.value }}{% endif %}">
+                    <input class="textinput textInput form-control" id="id_login" name="username" placeholder="{% blocktrans %}Username{% endblocktrans %}" type="text" autofocus="autofocus" value="{% if authentication_form.username.value %}{{ authentication_form.username.value }}{% endif %}">
                 </div>
             </div>
         {% endif %}
         {% if authentication_form.password.errors %}
             <div id="div_id_password" class="form-group has-error">
                 <label for="id_password" class="control-label" requiredField>
-                    Password<span class="asteriskField">*</span>
+                    {% trans "Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="control">
-                    <input class="textinput textInput form-control" id="id_password" name="password" placeholder="Password" type="password">
+                    <input class="textinput textInput form-control" id="id_password" name="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" type="password">
                 </div>
                 <p class="help-block">
                     <strong>
@@ -55,15 +55,15 @@
         {% else %}
             <div id="div_id_password" class="form-group">
                 <label for="id_password" class="control-label" requiredField>
-                    Password<span class="asteriskField">*</span>
+                    {% trans "Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="control">
-                    <input class="textinput textInput form-control" id="id_password" name="password" placeholder="Password" type="password">
+                    <input class="textinput textInput form-control" id="id_password" name="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" type="password">
                 </div>
             </div>
         {% endif %}
         <button class="primaryAction btn btn-lg btn-primary btn-block" type="submit">
-            Sign In
+            {% trans "Sign In" %}
         </button>
     </form>
 {% endblock %}
