@@ -92,21 +92,31 @@
                     <div class="form-group has-error">
                         <label class="col-md-3 control-label">Event Name</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" name="event_name" value="{% if form.event_name.value %}{{ form.event_name.value }}{% endif %}">
-                            <p class="help-block">
+                             <select id="select" class="form-control" name="event_name">
+								<option value="">-- Select Event --</option>
+								{% for event in event_list %}
+									<option value="">{{ event.name }}</option>
+								{% endfor %}
+							 </select>
+                             <p class="help-block">
                                 <strong>
                                     {% for error in form.event_name.errors %}
                                         {{ error }}
                                     {% endfor %}
                                 </strong>
-                            </p>
+                             </p>
                         </div>
                     </div>
                 {% else %}
                     <div class="form-group">
                         <label class="col-md-3 control-label">Event Name</label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" name="event_name" value="{% if form.event_name.value %}{{ form.event_name.value }}{% endif %}">
+                            <select id="select" class="form-control" name="event_name">
+								<option value="">-- Select Event --</option>
+								{% for event in event_list %}
+									<option value="">{{ event.name }}</option>
+								{% endfor %}
+							</select>
                         </div>
                     </div>
                 {% endif %}
@@ -131,7 +141,7 @@
                             <input class="form-control" type="text" name="job_name" value="{% if form.job_name.value %}{{ form.job_name.value }}{% endif %}">
                         </div>
                     </div>
-                {% endif %}                
+                {% endif %}
 				<div class="form-group">
                     <label class="col-md-3 control-label">Start Date</label>
                     <div class="col-md-8">
