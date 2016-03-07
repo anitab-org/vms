@@ -239,13 +239,18 @@ def create(request, job_id):
                         start_date_job=job.start_date
                         end_date_job=job.end_date
                         shift_date=form.cleaned_data['date']
-                        if( shift_date >= start_date_job and shift_date <= end_date_job ):
+                        shift_start_time=form.cleaned_data['start_time']
+                        shift_end_time=form.cleaned_data['end_time']
+                        if( shift_date >= start_date_job and shift_date <= end_date_job and shift_end_time > shift_start_time):
                             shift = form.save(commit=False)
                             shift.job = job
                             shift.save()
                             return HttpResponseRedirect(reverse('shift:list_shifts', args=(job_id,)))
                         else:
-                            messages.add_message(request, messages.INFO, 'Shift date should lie within Job dates')
+                            if (shift_date < start_date_job or shift_date > end_date_job):
+                                messages.add_message(request, messages.INFO, 'Shift date should lie within Job dates')
+                            if shift_end_time <= shift_start_time:
+                                messages.add_message(request, messages.INFO, 'Shift end time should be greater than start time')
                             return render(
                             request,
                             'shift/create.html',
