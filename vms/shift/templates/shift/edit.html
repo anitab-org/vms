@@ -41,7 +41,7 @@
                 </div>
                 {% if form.date.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "Date" %}</label>
+                        <label class="col-md-2 control-label">{% trans "Date" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="MM/DD/YYYY" type="text" name="date" value="{% if form.date.value %}{{ form.date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                             <p class="help-block">
@@ -55,7 +55,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "Date" %}</label>
+                        <label class="col-md-2 control-label">{% trans "Date" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="MM/DD/YYYY" type="text" name="date" value="{% if form.date.value %}{{ form.date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                         </div>
@@ -63,7 +63,7 @@
                 {% endif %}
                 {% if form.start_time.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
+                        <label class="col-md-2 control-label">{% trans "Start Time" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <div id="datetimepicker1" class="input-append">
 									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
@@ -82,7 +82,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
+                        <label class="col-md-2 control-label">{% trans "Start Time" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <div id="datetimepicker1" class="input-append">
 									<input data-format="hh:mm" name="start_time" type="text" value="{% if form.start_time.value %}{{ form.start_time.value|time:"H:i" }}{% endif %}"></input>
@@ -95,7 +95,7 @@
                 {% endif %}
                 {% if form.end_time.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "End Time" %}</label>
+                        <label class="col-md-2 control-label">{% trans "End Time" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                              <div id="datetimepicker2" class="input-append">
 									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
@@ -114,7 +114,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "End Time" %}</label>
+                        <label class="col-md-2 control-label">{% trans "End Time" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                              <div id="datetimepicker2" class="input-append">
 									<input data-format="hh:mm" name="end_time" type="text" value="{% if form.end_time.value %}{{ form.end_time.value|time:"H:i" }}{% endif %}"></input>
@@ -127,7 +127,7 @@
                 {% endif %}
                 {% if form.max_volunteers.errors %}
                     <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "Maximum number of volunteers that can sign up for this shift" %}</label>
+                        <label class="col-md-2 control-label">{% trans "Maximum number of volunteers that can sign up for this shift" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{% blocktrans %}Maximum number of volunteers{% endblocktrans %}" type="text" name="max_volunteers" value="{% if form.max_volunteers.value %}{{ form.max_volunteers.value }}{% endif %}">
                             <p class="help-block">
@@ -141,7 +141,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "Maximum number of volunteers that can sign up for this shift" %}</label>
+                        <label class="col-md-2 control-label">{% trans "Maximum number of volunteers that can sign up for this shift" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{% blocktrans %}Maximum number of volunteers{% endblocktrans %}" type="text" name="max_volunteers" value="{% if form.max_volunteers.value %}{{ form.max_volunteers.value }}{% endif %}">
                         </div>

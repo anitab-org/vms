@@ -56,7 +56,7 @@
 					<script src="{% static "vms/js/update-event-dates.js" %}"></script>
                     {% if form.name.errors %}
                         <div class="form-group has-error">
-                            <label class="col-md-2 control-label">{% trans "Job Name" %}</label>
+                            <label class="col-md-2 control-label">{% trans "Job Name" %}<span class="asteriskField">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" placeholder="{% blocktrans %}Job Name{% endblocktrans %}" type="text" name="name" value="{% if form.name.value %}{{ form.name.value }}{% endif %}">
                                 <p class="help-block">
@@ -70,7 +70,7 @@
                         </div>
                     {% else %}
                         <div class="form-group">
-                            <label class="col-md-2 control-label">{% trans "Job Name" %}</label>
+                            <label class="col-md-2 control-label">{% trans "Job Name" %}<span class="asteriskField">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" placeholder="{% blocktrans %}Job Name{% endblocktrans %}" type="text" name="name" value="{% if form.name.value %}{{ form.name.value }}{% endif %}">
                             </div>
@@ -100,7 +100,7 @@
                     {% endif %}
                     {% if form.start_date.errors %}
                         <div class="form-group has-error">
-                            <label class="col-md-2 control-label">{% trans "Start Date" %}</label>
+                            <label class="col-md-2 control-label">{% trans "Start Date" %}<span class="asteriskField">*</span></label>
                             <div class="col-md-8">
 							<input class="form-control" type="text" name="start_date" id="from" name="from" value="{% if form.start_date.value %}{{ form.start_date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                                 <p class="help-block">
@@ -114,7 +114,7 @@
                         </div>
                     {% else %}
                         <div class="form-group">
-                            <label class="col-md-2 control-label">{% trans "Start Date" %}</label>
+                            <label class="col-md-2 control-label">{% trans "Start Date" %}<span class="asteriskField">*</span></label>
                             <div class="col-md-8">
 							<input class="form-control" type="text" name="start_date" id="from" name="from" value="{% if form.start_date.value %}{{ form.start_date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                             </div>
@@ -122,7 +122,7 @@
                     {% endif %}
                     {% if form.end_date.errors %}
                         <div class="form-group has-error">
-                            <label class="col-md-2 control-label">{% trans "End Date" %}</label>
+                            <label class="col-md-2 control-label">{% trans "End Date" %}<span class="asteriskField">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" name="end_date" id="to" name="to" value="{% if form.end_date.value %}{{ form.end_date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                                 <p class="help-block">
@@ -136,7 +136,7 @@
                         </div>
                     {% else %}
                         <div class="form-group">
-                            <label class="col-md-2 control-label">{% trans "End Date" %}</label>
+                            <label class="col-md-2 control-label">{% trans "End Date" %}<span class="asteriskField">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" name="end_date" id="to" name="to" value="{% if form.end_date.value %}{{ form.end_date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                             </div>
