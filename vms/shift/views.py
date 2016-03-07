@@ -295,9 +295,15 @@ def delete(request, shift_id):
     else:
         if shift_id:
             if request.method == 'POST':
+                shift = get_shift_by_id(shift_id)
+                job_id = shift.job.id
                 result = delete_shift(shift_id)
                 if result:
-                    return HttpResponseRedirect(reverse('shift:list_jobs'))
+                    shift_list = get_shifts_by_job_id(job_id)
+                    if shift_list:
+                        return HttpResponseRedirect(reverse('shift:list_shifts', args=(job_id,)))
+                    else:
+                        return HttpResponseRedirect(reverse('shift:list_jobs'))
                 else:
                     return render(request, 'shift/delete_error.html')
             return render(
