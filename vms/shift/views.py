@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-
+from datetime import date
 from job.services import *
 from shift.forms import HoursForm, ShiftForm
 from shift.models import Shift
@@ -550,7 +550,13 @@ def list_shifts_sign_up(request, job_id, volunteer_id):
     if job_id:
         job = get_job_by_id(job_id)
         if job:
-            shift_list = get_shifts_with_open_slots_for_volunteer(job_id, volunteer_id)
+            shift_list = []
+            shift_list_all = get_shifts_with_open_slots_for_volunteer(job_id, volunteer_id)
+            for shift in shift_list_all:
+                sdate = shift["date"]
+                today = date.today()
+                if sdate >= today:
+                    shift_list.append(shift)
             return render(
                 request,
                 'shift/list_shifts_sign_up.html',
