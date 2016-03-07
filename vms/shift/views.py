@@ -326,58 +326,44 @@ def edit(request, shift_id):
         shift = None
         if shift_id:
             shift = get_shift_by_id(shift_id)
+            job=shift.job
 
         if request.method == 'POST':
-            form = ShiftForm(request.POST, instance=shift)
-            if form.is_valid():
-                shift_to_edit = form.save(commit=False)
-                
-		job=shift.job
-		if job:
-                    shift_to_edit.job = job
-                else:
-                    raise Http404
-		
-		start_date_job=job.start_date
-		end_date_job=job.end_date
-                shift_date=form.cleaned_data['date']
+            if job:
+                form = ShiftForm(request.POST, instance=shift)
+                if form.is_valid():
 
-		shift_start_time=form.cleaned_data['start_time']
-		shift_end_time=form.cleaned_data['end_time']
-		if( shift_date >= start_date_job and shift_date <= end_date_job ):
-			if(shift_end_time>shift_start_time):
-                            shift = form.save(commit=False)
-                            shift.job = job
-                            shift.save()
-                            return HttpResponseRedirect(reverse('shift:list_shifts', args=(shift.job.id,)))
+                    start_date_job = job.start_date
+                    end_date_job = job.end_date
+                    shift_date=form.cleaned_data['date']
+                    shift_start_time=form.cleaned_data['start_time']
+                    shift_end_time=form.cleaned_data['end_time']
 
-			else:
-			    messages.add_message(request, messages.INFO, 'Shift end time should be greater than start time')
-                            return render(
-                            request,
-                            'shift/edit.html',
-                            {'form': form, 'shift': shift, 'job': shift.job }
-                            )
-
-                else:
+                    #save when all conditions satisfied
+                    if( shift_date >= start_date_job and shift_date <= end_date_job and shift_end_time > shift_start_time):
+                        shift_to_edit = form.save(commit=False)
+                        shift_to_edit.job = job
+                        shift_to_edit.save()
+                        return HttpResponseRedirect(reverse('shift:list_shifts', args=(shift.job.id,)))
+                    else:
+                        if (shift_date < start_date_job or shift_date > end_date_job):
                             messages.add_message(request, messages.INFO, 'Shift date should lie within Job dates')
-                            return render(
-                    	    request,
+                        if shift_end_time <= shift_start_time:
+                            messages.add_message(request, messages.INFO, 'Shift end time should be greater than start time')
+                        return render(
+                            request,
                             'shift/edit.html',
                             {'form': form, 'shift': shift, 'job': shift.job}
                             )
-
-		shift_to_edit.save()
-                return HttpResponseRedirect(reverse(
-                    'shift:list_shifts',
-                    args=(shift.job.id, )
-                    ))
+                else:
+                    return render(
+                        request,
+                        'shift/edit.html',
+                        {'form': form, 'shift': shift, 'job': shift.job}
+                        )
             else:
-                return render(
-                    request,
-                    'shift/edit.html',
-                    {'form': form, 'shift': shift, 'job': shift.job}
-                    )
+                raise Http404
+
         else:
             form = ShiftForm(instance=shift)
             return render(
