@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+import datetime
+from datetime import date
 
 from event.models import Event
 from job.models import Job
@@ -9,6 +11,7 @@ from volunteer.models import Volunteer
 from event.services import (
         event_not_empty,
         delete_event,
+        check_edit_event,
         get_event_by_id,
         get_events_ordered_by_name,
         get_events_by_date,
@@ -138,6 +141,77 @@ class EventMethodTests(TestCase):
         self.assertFalse(delete_event(100))
         self.assertFalse(delete_event(200))
         self.assertFalse(delete_event(300))
+
+
+    def test_check_edit_event(self):
+
+        e1 = Event(
+                name="Open Source Event",
+                start_date="2012-10-3",
+                end_date="2012-10-24"
+                )
+
+        e2 = Event(
+                name="Python Event",
+                start_date="2013-11-3",
+                end_date="2013-11-15"
+                )
+
+        e1.save()
+        e2.save()
+
+        j1 = Job(
+                name="Software Developer",
+                start_date="2012-10-22",
+                end_date="2012-10-23",
+                description="A software job",
+                event=e1
+                )
+
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2012-10-8",
+                end_date="2012-10-16",
+                description="A systems administrator job",
+                event=e1
+                )
+
+        j1.save()
+        j2.save()
+
+        # test typical cases
+
+        start_date1 = datetime.date(2012, 10, 8)
+        start_date2 = datetime.date(2012, 10, 7)
+        start_date3 = datetime.date(2012, 10, 15)
+        start_date4 = datetime.date(2013, 10, 8)
+        start_date5 = datetime.date(2015, 11, 4)
+        start_date6 = datetime.date(2013, 11, 1)
+        start_date7 = datetime.date(2012, 10, 7)
+        stop_date1 = datetime.date(2012, 10, 23)
+        stop_date2 = datetime.date(2012, 10, 22)
+        stop_date3 = datetime.date(2012, 10, 26)
+        stop_date4 = datetime.date(2013, 10, 23)
+        stop_date5 = datetime.date(2015, 11, 6)
+        stop_date6 = datetime.date(2013, 11, 7)
+        stop_date7 = datetime.date(2013, 10, 22)
+
+        out1 = check_edit_event(e1.id, start_date1, stop_date1)
+        out2 = check_edit_event(e1.id, start_date2, stop_date2)
+        out3 = check_edit_event(e1.id, start_date3, stop_date3)
+        out4 = check_edit_event(e1.id, start_date4, stop_date4)
+        out5 = check_edit_event(e2.id, start_date5, stop_date5)
+        out6 = check_edit_event(100, start_date6, stop_date6)
+        out7 = check_edit_event(e1.id, start_date7, stop_date7)
+
+        self.assertTrue(out1['result'])
+        self.assertFalse(out2['result'])
+        self.assertFalse(out3['result'])
+        self.assertFalse(out4['result'])
+        self.assertTrue(out5['result'])
+        self.assertFalse(out6['result'])
+        self.assertTrue(out7['result'])
+
 
     def test_get_event_by_id(self):
         """ Test get_event_by_id(event_id) """

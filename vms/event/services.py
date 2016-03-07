@@ -32,9 +32,10 @@ def get_event_by_shift_id(shift_id):
 
     return result
 
-# need to check that this event is not accociated with any jobs,
-# otherwise the jobs that it is associated with will be cascade deleted
 def delete_event(event_id):
+    """ 
+    Deletes an event if no jobs are associated with it
+    """
 
     result = True
     event = get_event_by_id(event_id)
@@ -52,6 +53,31 @@ def delete_event(event_id):
         result = False
 
     return result
+
+def check_edit_event(event_id, new_start_date, new_end_date):
+    """
+    Checks if an event can be edited without resulting in invalid job or shift dates
+    """
+    result = True
+    invalid_count = 0
+    invalid_jobs = []
+    event = get_event_by_id(event_id)
+
+    if event_not_empty(event_id) and event:
+
+        jobs_in_event = event.job_set.all()
+        # check if there are currently any jobs associated with this event
+        if jobs_in_event:
+            for job in jobs_in_event:
+                if( job.start_date < new_start_date or job.end_date > new_end_date):
+                    result = False
+                    invalid_count += 1
+                    invalid_jobs.append(job.name)
+
+    else:
+        result = False
+
+    return {'result' : result, 'invalid_count': invalid_count, 'invalid_jobs': invalid_jobs}
 
 
 def get_event_by_id(event_id):

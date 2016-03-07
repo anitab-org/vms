@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+import datetime
+from datetime import date
 
 from event.models import Event
 from job.models import Job
@@ -8,6 +10,7 @@ from shift.models import Shift
 from volunteer.models import Volunteer
 from job.services import (
                             delete_job,
+                            check_edit_job,
                             get_job_by_id,
                             get_jobs_by_event_id,
                             get_jobs_ordered_by_title,
@@ -63,6 +66,83 @@ class JobMethodTests(TestCase):
         self.assertFalse(delete_job(100))
         self.assertFalse(delete_job(200))
         self.assertFalse(delete_job(300))
+
+    def test_check_edit_job(self):
+
+        e1 = Event(
+                name="Open Source Event",
+                start_date="2012-10-3",
+                end_date="2012-10-24"
+                )
+
+        e1.save()
+
+        j1 = Job(
+                name="Software Developer",
+                start_date="2012-10-22",
+                end_date="2012-10-23",
+                description="A software job",
+                event=e1
+                )
+
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2012-10-8",
+                end_date="2012-10-16",
+                description="A systems administrator job",
+                event=e1
+                )
+
+        j1.save()
+        j2.save()
+
+        s1 = Shift(
+                date="2012-10-23",
+                start_time="1:00",
+                end_time="3:00",
+                max_volunteers=5,
+                job=j1
+                )
+
+        s2 = Shift(
+                date="2012-10-25",
+                start_time="2:00",
+                end_time="4:00",
+                max_volunteers=5,
+                job=j1
+                )
+
+        s1.save()
+        s2.save()
+
+        # test typical cases
+
+        start_date1 = datetime.date(2012, 10, 23)
+        start_date2 = datetime.date(2012, 10, 25)
+        start_date3 = datetime.date(2012, 10, 2)
+        start_date4 = datetime.date(2013, 10, 8)
+        start_date5 = datetime.date(2015, 11, 4)
+        start_date6 = datetime.date(2013, 11, 1)
+        stop_date1 = datetime.date(2012, 10, 28)
+        stop_date2 = datetime.date(2012, 10, 29)
+        stop_date3 = datetime.date(2012, 10, 24)
+        stop_date4 = datetime.date(2013, 10, 20)
+        stop_date5 = datetime.date(2015, 11, 6)
+        stop_date6 = datetime.date(2013, 11, 7)
+
+        out1 = check_edit_job(j1.id, start_date1, stop_date1)
+        out2 = check_edit_job(j1.id, start_date2, stop_date2)
+        out3 = check_edit_job(j1.id, start_date3, stop_date3)
+        out4 = check_edit_job(j1.id, start_date4, stop_date4)
+        out5 = check_edit_job(j2.id, start_date5, stop_date5)
+        out6 = check_edit_job(100, start_date6, stop_date6)
+
+        self.assertTrue(out1['result'])
+        self.assertFalse(out2['result'])
+        self.assertFalse(out3['result'])
+        self.assertFalse(out4['result'])
+        self.assertTrue(out5['result'])
+        self.assertFalse(out6['result'])
 
     def test_get_job_by_id(self):
 

@@ -118,27 +118,31 @@ def edit(request, job_id):
 
         if request.method == 'POST':
             form = JobForm(request.POST, instance=job)
+
             if form.is_valid():
-                job_to_edit = form.save(commit=False)
+
                 event_id = request.POST.get('event_id')
                 event = get_event_by_id(event_id)
-                if event:
-                    job_to_edit.event = event
-                else:
-                    raise Http404
-                job_to_edit.save()
-                
-		start_date_event=event.start_date
+                start_date_event=event.start_date
                 end_date_event=event.end_date
                 start_date_job=form.cleaned_data.get('start_date')
                 end_date_job=form.cleaned_data.get('end_date')
+
+                job_edit = check_edit_job(job_id, start_date_job, end_date_job)
+                if not job_edit['result']:
+                    return render(
+                        request,
+                        'job/edit_error.html',
+                        {'count': job_edit['invalid_count']}
+                        )
+
                 if(start_date_job>=start_date_event and end_date_job<=end_date_event):
-                    job = form.save(commit=False)
+                    job_to_edit = form.save(commit=False)
                     if event:
-                        job.event = event
+                        job_to_edit.event = event
                     else:
                         raise Http404
-                    job.save()
+                    job_to_edit.save()
                     return HttpResponseRedirect(reverse('job:list'))
                 else:
                     messages.add_message(request, messages.INFO, 'Job dates should lie within Event dates')
@@ -147,7 +151,6 @@ def edit(request, job_id):
                     'job/edit.html',
                     {'form': form, 'event_list': event_list , 'job': job}
                     )
-		return HttpResponseRedirect(reverse('job:list'))
 
             else:
                 return render(
