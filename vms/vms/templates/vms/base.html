@@ -49,16 +49,40 @@
                             <li><a href="{% url 'shift:volunteer_search' %}">{% trans "Manage Volunteer Shifts" %}</a></li>
                             <li><a href="{% url 'administrator:report' %}">{% trans "Report" %}</a></li>
                             <li><a href="{% url 'administrator:settings' %}">{% trans "Events" %}</a></li>
-                            <li><a href="{% url 'registration:signup_administrator' %}">{% trans "Create Admin Account" %}</a></li>
+                     <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                              style="text-transform: capitalize; text-decoration: none;">{% trans user.administrator.first_name %}
+                                <span class="caret"></span></a>
+
+                            <ul class="dropdown-menu">
+                                    <li><a href="{% url 'registration:signup_administrator' %}">{% trans "Create Admin Account" %}</a></li>
+                                    <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
+                            </ul>
+                        </li>
+                      </ul>
+
                         {% endif %}
                         {% if user.volunteer %} 
                             <li><a href="{% url 'shift:view_volunteer_shifts' user.volunteer.id %}">{% trans "Upcoming Shifts" %}</a></li>
                             <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">{% trans "Completed Shifts" %}</a></li>
                             <li><a href="{% url 'event:list_sign_up' user.volunteer.id %}">{% trans "Shift Sign Up" %}</a></li>
                             <li><a href="{% url 'volunteer:report' user.volunteer.id %}">{% trans "Report" %}</a></li>
-                            <li><a href="{% url 'volunteer:profile' user.volunteer.id %}">{% trans "Profile" %}</a></li>
+
+            <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                              style="text-transform: capitalize; text-decoration: none;">{% trans user.volunteer.first_name %}
+                                <span class="caret"></span></a>
+
+                            <ul class="dropdown-menu">
+                                    <li><a href="{% url 'volunteer:profile' user.volunteer.id %}">{% trans "Profile" %}</a></li>
+                                    <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
+                            </ul>
+                        </li>
+             </ul>
+
                         {% endif %}
-                        <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
                     {% else %}
                         <li><a href="{% url 'registration:signup_volunteer' %}">{% trans "Sign Up" %}</a></li>
                         <li><a href="{% url 'authentication:login_process' %}">{% trans "Log In" %}</a></li>
