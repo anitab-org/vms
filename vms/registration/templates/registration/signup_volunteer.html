@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% load static %}
+
 {% block content %}
 
     <form class="signup form-signup" id="signup_form" method="post" action="{% url 'registration:signup_volunteer' %}" enctype="multipart/form-data">
@@ -298,7 +300,7 @@
             <label class="control-label">
                 {% trans "Organization" %}
             </label>
-            <select id="select" class="form-control" name="organization_name">
+            <select id="select" class="form-control" name="organization_name" onchange="hide_organization()">
                 <option value="0">-- {% trans "Select Organization" %} --</option>
                 {% for organization in organization_list %}
                     <option value="{{ organization.id }}">{{ organization.name }}</option>
@@ -331,6 +333,7 @@
                 </div>
             </div>
         {% endif %}
+        <script type="text/javascript" src="{% static 'vms/js/hide_organization.js' %}"></script>
         {% if volunteer_form.websites.errors %}
             <div id="div_id_websites" class="form-group has-error">
                 <label class="control-label" for="id_websites">
