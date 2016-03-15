@@ -7,7 +7,6 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
 from shift.services import *
-from event.services import *
 
 
 @login_required
@@ -21,10 +20,9 @@ def report(request):
         pass
     if not admin:
         return render(request, 'vms/no_admin_rights.html')
-
+        
     organization_list = get_organizations_ordered_by_name()
-    event_list=get_events_ordered_by_name()
-
+    
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
@@ -45,12 +43,12 @@ def report(request):
                 end_date
                 )
             total_hours = calculate_total_report_hours(report_list)
-            return render(request, 'administrator/report.html', {'form': form, 'report_list': report_list, 'total_hours': total_hours, 'notification': True, 'organization_list': organization_list, 'selected_organization': organization, 'event_list': event_list})
+            return render(request, 'administrator/report.html', {'form': form, 'report_list': report_list, 'total_hours': total_hours, 'notification': True, 'organization_list': organization_list, 'selected_organization': organization})
         else:
-            return render(request, 'administrator/report.html', {'form': form, 'notification': False, 'organization_list': organization_list, 'event_list': event_list})
+            return render(request, 'administrator/report.html', {'form': form, 'notification': False, 'organization_list': organization_list})
     else:
         form = ReportForm()
-        return render(request, 'administrator/report.html', {'form': form, 'notification': False, 'organization_list': organization_list, 'event_list': event_list})
+        return render(request, 'administrator/report.html', {'form': form, 'notification': False, 'organization_list': organization_list})
 
 
 @login_required
