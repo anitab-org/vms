@@ -89,7 +89,7 @@ def signup_administrator(request):
                        'organization_list': organization_list, })
 
     else:
-        return render(request, 'organization/add_organizations.html')
+        return render(request, 'home/home.html', {'error': True})
 
 
 def signup_volunteer(request):
@@ -178,4 +178,4 @@ def signup_volunteer(request):
                        'organization_list': organization_list, })
 
     else:
-        return render(request, 'organization/add_organizations.html')
+        return render(request, 'home/home.html', {'error': True})

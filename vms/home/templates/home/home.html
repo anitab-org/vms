@@ -27,5 +27,10 @@
                 <a class="btn btn-lg btn-primary" href="{% url 'authentication:login_process' %}">{% trans "Log In" %}</a>
             </p>
         {% endif %}
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+              You will need to have atleast one organisation to Sign up as a volunteer
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
