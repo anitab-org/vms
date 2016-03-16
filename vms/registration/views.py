@@ -9,6 +9,7 @@ from organization.services import (get_organizations_ordered_by_name,
 from volunteer.forms import VolunteerForm
 from volunteer.validation import validate_file
 from registration.forms import UserForm
+from registration.phone_validate import validate_phone
 
 
 def signup_administrator(request):
@@ -21,6 +22,7 @@ def signup_administrator(request):
     """
     registered = False
     organization_list = get_organizations_ordered_by_name()
+    phone_error = False
 
     if organization_list:
         if request.method == 'POST':
@@ -29,6 +31,22 @@ def signup_administrator(request):
                                                    prefix="admin")
 
             if user_form.is_valid() and administrator_form.is_valid():
+
+                ad_country = request.POST.get('admin-country')
+                ad_phone = request.POST.get('admin-phone_number')
+
+                if (ad_country and ad_phone):
+                    if not validate_phone(ad_country, ad_phone):
+                        phone_error = True
+                        return render(request,
+                                      'registration/signup_administrator.html',
+                                      {'user_form': user_form,
+                                       'administrator_form': administrator_form,
+                                       'registered': registered,
+                                       'phone_error': phone_error,
+                                       'organization_list': organization_list,
+                                       })
+
                 user = user_form.save()
                 user.set_password(user.password)
                 user.save()
@@ -55,7 +73,9 @@ def signup_administrator(request):
                               {'user_form': user_form,
                                'administrator_form': administrator_form,
                                'registered': registered,
-                               'organization_list': organization_list, })
+                               'phone_error': phone_error,
+                               'organization_list': organization_list,
+                               })
         else:
             user_form = UserForm(prefix="usr")
             administrator_form = AdministratorForm(prefix="admin")
@@ -65,6 +85,7 @@ def signup_administrator(request):
                       {'user_form': user_form,
                        'administrator_form': administrator_form,
                        'registered': registered,
+                       'phone_error': phone_error,
                        'organization_list': organization_list, })
 
     else:
@@ -75,6 +96,7 @@ def signup_volunteer(request):
 
     registered = False
     organization_list = get_organizations_ordered_by_name()
+    phone_error = False
 
     if organization_list:
         if request.method == 'POST':
@@ -87,6 +109,21 @@ def signup_volunteer(request):
 
             if user_form.is_valid() and volunteer_form.is_valid():
 
+                vol_country = request.POST.get('vol-country')
+                vol_phone = request.POST.get('vol-phone_number')
+                if (vol_country and vol_phone):
+                    if not validate_phone(vol_country, vol_phone):
+                        phone_error = True
+                        return render(request,
+                            'registration/signup_volunteer.html',
+                            {'user_form': user_form,
+                            'volunteer_form': volunteer_form,
+                            'registered': registered,
+                            'phone_error': phone_error,
+                            'organization_list': organization_list,
+                            })
+                        
+
                 if 'resume_file' in request.FILES:
                     my_file = volunteer_form.cleaned_data['resume_file']
                     if not validate_file(my_file):
@@ -95,6 +132,7 @@ def signup_volunteer(request):
                                       {'user_form': user_form,
                                        'volunteer_form': volunteer_form,
                                        'registered': registered,
+                                       'phone_error': phone_error,
                                        'organization_list': organization_list,
                                        })
 
@@ -126,6 +164,7 @@ def signup_volunteer(request):
                               {'user_form': user_form,
                                'volunteer_form': volunteer_form,
                                'registered': registered,
+                               'phone_error': phone_error,
                                'organization_list': organization_list, })
         else:
             user_form = UserForm(prefix="usr")
@@ -135,6 +174,7 @@ def signup_volunteer(request):
                       {'user_form': user_form,
                        'volunteer_form': volunteer_form,
                        'registered': registered,
+                       'phone_error': phone_error,
                        'organization_list': organization_list, })
 
     else:

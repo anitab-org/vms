@@ -274,12 +274,26 @@
                     {% trans "Phone Number" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="+999999999" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}">
+                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}">
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.phone_number.errors %}
                                 {{ error }}
                             {% endfor %}
+                        </strong>
+                    </p>
+                </div>
+            </div>
+        {% elif phone_error %}
+            <div id="div_id_phone_number" class="form-group has-error">
+                <label class="control-label requiredField" for="id_phone_number">
+                    Phone Number<span class="asteriskField">*</span>
+                </label>
+                <div class="controls">
+                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}">
+                    <p class="help-block">
+                        <strong>
+                            This phone number isn't valid for the selected country
                         </strong>
                     </p>
                 </div>
@@ -290,7 +304,7 @@
                     {% trans "Phone Number" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="+999999999" name="vol-phone_number" value="{% if volunteer_form.phone_number.value %}{{ volunteer_form.phone_number.value }}{% endif %}">
+                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{% if volunteer_form.phone_number.value %}{{ volunteer_form.phone_number.value }}{% endif %}">
                 </div>
             </div>
         {% endif %}
