@@ -57,7 +57,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">{% trans "Date" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="MM/DD/YYYY" type="text" name="date" value="{% if form.date.value %}{{ form.date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
+                            <input class="form-control" placeholder="MM/DD/YYYY" id="datepicker" type="text" name="date" value="{% if form.date.value %}{{ form.date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
