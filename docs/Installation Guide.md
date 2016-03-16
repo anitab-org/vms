@@ -13,11 +13,12 @@ This tutorial assumes that the user is installing and running the project under 
 5. [Download Systers Ubuntu Virtual Machine](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#download-systers-ubuntu-virtual-machine)
 6. [Using Vagrant](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#using-vagrant)
 7. [Install python-psycopg2 module](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-python-psycopg2-module)
-8. [Setup PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#setup-postgresql)
-9. [Generate Database Tables Corresponding to Django Models](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#generate-database-tables-corresponding-to-django-models)
-10. [Change Directory Permissions](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#change-directory-permissions)
-11. [Run Development Server](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#run-development-server)
-12. [Run Unit Tests](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#run-unit-tests)
+8. [Install django-cities-light and phonenumbers module](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-django-cities-light-and-phonenumber-module)
+9. [Setup PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#setup-postgresql)
+10. [Generate Database Tables Corresponding to Django Models](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#generate-database-tables-corresponding-to-django-models)
+11. [Change Directory Permissions](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#change-directory-permissions)
+12. [Run Development Server](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#run-development-server)
+13. [Run Unit Tests](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#run-unit-tests)
 
 ## Install git
 
@@ -37,7 +38,7 @@ For my project, this would correspond to:
 
 If you are installing and running the project on your local machine and not on the Systers VM, then you will need to download and install the following software:
 
-1. [Django](https://www.djangoproject.com/download/) (version >= 1.6.5 and version < 1.8)
+1. [Django](https://www.djangoproject.com/download/) (version >= 1.7 and version < 1.8)
 2. [PostgreSQL](http://www.postgresql.org/download/) (version >= 9.3.4)
 
 **You do not need to download and install Django and PostgreSQL if you are installing and running the project on the Systers VM, as Django and PostgreSQL are already included in the Systers VM.**
@@ -151,6 +152,11 @@ Example output on VM:
     Setting up python-psycopg2 (2.4.5-1build5) ...
     vagrant@vagrant-ubuntu-trusty-32:/vagrant/vms$
 
+## Install django-cities-light and phonenumbers module
+
+    sudo pip install django-cities-light
+    sudo pip install phonenumbers
+
 ## Setup PostgreSQL
 
 We will now setup PostgreSQL by first running the postgres client as root:
@@ -246,6 +252,13 @@ We do not want to create a superuser at this time, so when it asks you to create
 
     You just installed Djano's auth system, which means you don't have any superusers defined.
     Would you like to create one now? (yes/no): no
+
+In addition to this, you would also have to populate the database for django-cities-light. Run the following to do so:
+
+    python manage.py migrate
+    python manage.py cities_light
+
+This might take a bit of time. You might get a message saying 'No handlers could be found for logger cities_light'. This is because a logging module hasn't been configured separately.
 
 Check that the tables were created by starting the postgres client and viewing the tables using the `\dt` command.
 ```
