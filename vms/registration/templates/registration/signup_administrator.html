@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% load static %}
+
 {% block content %}
 
     <form class="signup form-signup" id="signup_form" method="post" action="{% url 'registration:signup_administrator' %}" enctype="multipart/form-data">
@@ -286,7 +288,7 @@
             <label class="control-label">
                 {% trans "Organization" %}
             </label>
-            <select id="select" class="form-control" name="organization_name">
+            <select id="select" class="form-control" name="organization_name" onchange="hide_organization()">
                 <option value="0">-- {% trans "Select Organization" %} --</option>
                 {% for organization in organization_list %}
                     <option value="{{ organization.id }}">{{ organization.name }}</option>
@@ -319,6 +321,7 @@
                 </div>
             </div>
         {% endif %}
+        <script type="text/javascript" src="{% static 'vms/js/hide_organization.js' %}"></script>
         <button type="submit" class="btn btn-lg btn-primary btn-block">{% trans "Create Account" %}</button>
         <!--<p>
             Already have an account? Then please <a href="{% url 'authentication:login_process' %}">sign in</a>.
