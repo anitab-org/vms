@@ -16,21 +16,38 @@ from django.contrib import messages
 def add_hours(request, shift_id, volunteer_id):
     if shift_id and volunteer_id:
         user = request.user
+
         if int(user.volunteer.id) == int(volunteer_id):
+	    shift = None
+            if shift_id:
+                shift = get_shift_by_id(shift_id)
             if request.method == 'POST':
                 form = HoursForm(request.POST)
                 if form.is_valid():
                     start_time = form.cleaned_data['start_time']
                     end_time = form.cleaned_data['end_time']
+                    shift_start_time=shift.start_time
+                    shift_end_time=shift.end_time
                     try:
-                        if(end_time>start_time):
-                            add_shift_hours(
-                                volunteer_id,
-                                shift_id,
-                                start_time,
-                                end_time
-                                )
-                            return HttpResponseRedirect(reverse('shift:view_hours',args=(volunteer_id,)))
+                    	if(end_time>start_time):
+                            if(start_time >= shift_start_time and end_time<=shift_end_time):
+                                add_shift_hours(
+                                    volunteer_id,
+                                    shift_id,
+                                    start_time,
+                                    end_time
+                                    )
+                                return HttpResponseRedirect(reverse(
+                                    'shift:view_hours',
+                                    args=(volunteer_id,)
+                                    ))
+                            else:
+                                messages.add_message(request, messages.INFO, 'Logged hours should be between shift hours')
+                                return render(
+                                    request,
+                                    'shift/add_hours.html',
+                                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, }
+                                    )
                         else:
                             messages.add_message(request, messages.INFO, 'End time should be greater than start time')
                             return render(
@@ -72,23 +89,38 @@ def add_hours_manager(request, shift_id, volunteer_id):
     if not admin:
         return render(request, 'vms/no_admin_rights.html')
     else:
+	shift = None
+        if shift_id:
+            shift = get_shift_by_id(shift_id)
+
         if request.method == 'POST':
             form = HoursForm(request.POST)
             if form.is_valid():
                 start_time = form.cleaned_data['start_time']
                 end_time = form.cleaned_data['end_time']
+                shift_start_time=shift.start_time
+                shift_end_time=shift.end_time
                 try:
                     if(end_time>start_time):
-                        add_shift_hours(
-                            volunteer_id,
-                            shift_id,
-                            start_time,
-                            end_time
-                            )
-                        return HttpResponseRedirect(reverse(
-                            'shift:manage_volunteer_shifts',
-                            args=(volunteer_id, )
-                            ))
+                        if(start_time >= shift_start_time and end_time<=shift_end_time):
+                            add_shift_hours(
+                                volunteer_id,
+                                shift_id,
+                                start_time,
+                                end_time
+                                )
+                            return HttpResponseRedirect(reverse(
+                                'shift:manage_volunteer_shifts',
+                                args=(volunteer_id, )
+                                ))
+                        else:
+                            messages.add_message(request, messages.INFO, 'Logged hours should be between shift hours')
+                            return render(
+                                request,
+                                'shift/add_hours_manager.html',
+                                {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, }
+                                )
+
                     else:
                         messages.add_message(request, messages.INFO, 'End time should be greater than start time')
                         return render(
@@ -386,6 +418,7 @@ def edit_hours(request, shift_id, volunteer_id):
 
     if shift_id and volunteer_id:
         volunteer_shift = get_volunteer_shift_by_id(volunteer_id, shift_id)
+        shift = get_shift_by_id(shift_id)
         user = request.user
         if int(user.volunteer.id) == int(volunteer_id):
             if volunteer_shift:
@@ -394,22 +427,35 @@ def edit_hours(request, shift_id, volunteer_id):
                     if form.is_valid():
                         start_time = form.cleaned_data['start_time']
                         end_time = form.cleaned_data['end_time']
+                        shift_start_time=shift.start_time
+                        shift_end_time=shift.end_time
                         try:
                             if(end_time>start_time):
-                                edit_shift_hours(
-                                    volunteer_id,
-                                    shift_id,
-                                    start_time,
-                                    end_time
-                                    )
-                                return HttpResponseRedirect(reverse('shift:view_hours', args=(volunteer_id,)))
+                                if(start_time >= shift_start_time and end_time<=shift_end_time):
+                                    edit_shift_hours(
+                                        volunteer_id,
+                                        shift_id,
+                                        start_time,
+                                        end_time
+                                        )
+                                    return HttpResponseRedirect(reverse('shift:view_hours', args=(volunteer_id,)))
+                                else:
+                                    messages.add_message(request, messages.INFO, 'Logged hours should be between shift hours')
+                                    return render(
+                                        request,
+                                        'shift/edit_hours.html',
+                                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                                        )
+
                             else:
                                 messages.add_message(request, messages.INFO, 'End time should be greater than start time')
                                 return render(
                                     request,
                                     'shift/edit_hours.html',
                                     {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
-                                    )                            
+                                    )
+
+
                         except:
                             raise Http404
                     else:
@@ -448,23 +494,36 @@ def edit_hours_manager(request, shift_id, volunteer_id):
     else:
         if shift_id and volunteer_id:
             volunteer_shift = get_volunteer_shift_by_id(volunteer_id, shift_id)
+            shift = get_shift_by_id(shift_id)
             if volunteer_shift:
                 if request.method == 'POST':
                     form = HoursForm(request.POST)
                     if form.is_valid():
                         start_time = form.cleaned_data['start_time']
                         end_time = form.cleaned_data['end_time']
+                        shift_start_time=shift.start_time
+                        shift_end_time=shift.end_time
                         try:
                             if(end_time>start_time):
-                                edit_shift_hours(volunteer_id, shift_id, start_time, end_time)
-                                return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
+                                if(start_time >= shift_start_time and end_time<=shift_end_time):
+                                    edit_shift_hours(volunteer_id, shift_id, start_time, end_time)
+                                    return HttpResponseRedirect(reverse('shift:manage_volunteer_shifts', args=(volunteer_id,)))
+                                else:
+                                    messages.add_message(request, messages.INFO, 'Logged hours should be between shift hours')
+                                    return render(
+                                        request,
+                                        'shift/edit_hours_manager.html',
+                                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                                        )
+
                             else:
                                 messages.add_message(request, messages.INFO, 'End time should be greater than start time')
                                 return render(
                                     request,
                                     'shift/edit_hours_manager.html',
                                     {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
-                                    )                            
+                                    )
+
                         except:
                             raise Http404
                     else:
