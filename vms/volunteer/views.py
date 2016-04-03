@@ -10,6 +10,8 @@ from django.shortcuts import render
 
 from organization.services import *
 from shift.services import *
+from event.services import get_signed_up_events_for_volunteer
+from job.services import get_signed_up_jobs_for_volunteer
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
 from volunteer.models import Volunteer
 from volunteer.services import * 
@@ -117,6 +119,8 @@ def report(request, volunteer_id):
     if volunteer:
         user = request.user
         if int(user.volunteer.id) == int(volunteer_id):
+            event_list = get_signed_up_events_for_volunteer(volunteer_id)
+            job_list = get_signed_up_jobs_for_volunteer(volunteer_id)
             if request.method == 'POST':
                 form = ReportForm(request.POST)
                 if form.is_valid():
@@ -126,12 +130,12 @@ def report(request, volunteer_id):
                     end_date = form.cleaned_data['end_date']
                     report_list = get_volunteer_report(volunteer_id, event_name, job_name, start_date, end_date)
                     total_hours = calculate_total_report_hours(report_list)
-                    return render(request, 'volunteer/report.html', {'form' : form, 'report_list' : report_list, 'total_hours' : total_hours, 'notification' : True})
+                    return render(request, 'volunteer/report.html', {'form' : form, 'report_list' : report_list, 'total_hours' : total_hours, 'notification' : True,  'job_list' : job_list, 'event_list' : event_list, 'selected_event': event_name, 'selected_job': job_name})
                 else:
-                    return render(request, 'volunteer/report.html', {'form' : form, 'notification' : False})
+                    return render(request, 'volunteer/report.html', {'form' : form, 'notification' : False, 'job_list' : job_list, 'event_list' : event_list})
             else:
                 form = ReportForm()
-                return render(request, 'volunteer/report.html', {'form' : form, 'notification' : False})
+                return render(request, 'volunteer/report.html', {'form' : form, 'notification' : False, 'job_list' : job_list, 'event_list' : event_list})
         else:
             return HttpResponse(status=403)
     else:
