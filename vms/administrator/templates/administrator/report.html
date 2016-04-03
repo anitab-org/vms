@@ -95,7 +95,7 @@
                             <select id="select" class="form-control" name="event_name">
 								<option value="">-- {% trans "Select Event" %} --</option>
 								{% for event in event_list %}
-									<option value="{{ event.name }}">{{ event.name }}</option>
+									<option value="{{ event.name }}" {% if selected_event == event.name %}selected{% endif %}>{{ event.name }}</option>
 								{% endfor %}
 							</select>
                             <p class="help-block">
@@ -114,7 +114,7 @@
                             <select id="select" class="form-control" name="event_name">
 								<option value="">-- {% trans "Select Event" %} --</option>
 								{% for event in event_list %}
-									<option value="{{ event.name }}">{{ event.name }}</option>
+									<option value="{{ event.name }}" {% if selected_event == event.name %}selected{% endif %}>{{ event.name }}</option>
 								{% endfor %}
 							</select>
                         </div>
