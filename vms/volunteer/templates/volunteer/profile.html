@@ -33,24 +33,20 @@
                     </h4>
                 </div>
                 <div class="panel-body">
+                <table>
                     <!-- Better to have css padding instead of nbsp to insert spaces -->
-                    <label><h4><span class="label label-info">{% trans "Email" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.email }}
-                    <br>
-                    <label><h4><span class="label label-info">{% trans "City" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.city }}
-                    <br>
-                    <label><h4><span class="label label-info">{% trans "State/Province" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.state }}
-                    <br>
-                    <label><h4><span class="label label-info">{% trans "Country" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.country }}
-                    <br>
-					<label><h4><span class="label label-info">{% trans "Shift Reminder Days" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.reminder_days }}
-                    <br>
-                    {% if volunteer.organization %}
-                        <label><h4><span class="label label-info">{% trans "Organization" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.organization.name }}
+                   <tr> <td><label><h4><span class="label label-info">Email</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.email }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">City</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.city }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">State/Province</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.state }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">Country</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.country }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">Shift Reminder Days</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.reminder_days }}</td></tr>
+                    <tr><td>{% if volunteer.organization %}
+                        <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.organization.name }}
                     {% elif volunteer.unlisted_organization  %}
-                        <label><h4><span class="label label-info">{% trans "Organization" %}</span></h4></label>&nbsp&nbsp&nbsp{{ volunteer.unlisted_organization }}
+                        <label><h4><span class="label label-info">Organization</span></h4></label>{{ volunteer.unlisted_organization }}
                     {% else %}
-                    {% endif %}
-					
+                    {% endif %}</td></tr>
+                </table>    
                 </div>
             </div>
             {% if volunteer.websites %}
