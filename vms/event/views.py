@@ -83,8 +83,12 @@ def edit(request, event_id):
                         'event/edit_error.html',
                         {'count': event_edit['invalid_count'], 'jobs': event_edit['invalid_jobs']}
                         )
-                form.save()
-                return HttpResponseRedirect(reverse('event:list'))
+                if start_date_event < datetime.date.today():
+                    messages.add_message(request, messages.INFO, 'Start date should be today\'s date or later.')
+                    return render(request, 'event/edit.html', {'form': form, })
+                else:
+                    form.save()
+                    return HttpResponseRedirect(reverse('event:list'))
             else:
                 return render(request, 'event/edit.html', {'form': form, })
         else:

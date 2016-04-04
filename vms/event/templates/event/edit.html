@@ -3,6 +3,19 @@
 {% load i18n %}
 
 {% block setting_content %}
+<br>
+{% if messages %}
+
+<div class="alert alert-dismissible alert-danger">
+  <button type="button" class="close" data-dismiss="alert"></button>
+  <ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+</div>
+
+{% endif %}
     <div class="spacer"></div>
     <div class="well">
         <form class="form-horizontal" action="" method="post">
