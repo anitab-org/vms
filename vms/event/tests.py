@@ -16,7 +16,8 @@ from event.services import (
         get_events_ordered_by_name,
         get_events_by_date,
         get_event_by_shift_id,
-        remove_empty_events_for_volunteer
+        get_signed_up_events_for_volunteer,
+        remove_empty_events_for_volunteer      
         )
 
 
@@ -361,6 +362,141 @@ class EventMethodTests(TestCase):
         self.assertEqual(event_list[2], e1)
         self.assertEqual(event_list[3], e2)
         self.assertEqual(event_list[4], e4)
+
+    def test_get_signed_up_events_for_volunteer(self):
+
+        # creating events, jobs and shifts for volunteer registration
+        e1 = Event(
+                name="django Event",
+                start_date="2015-10-22",
+                end_date="2015-10-25"
+                )     
+        e2 = Event(
+                name="Python Event",
+                start_date="2015-11-11",
+                end_date="2015-11-23"
+                )
+
+        e1.save()
+        e2.save()
+
+        j1 = Job(
+                name="Software Developer",
+                start_date="2015-10-22",
+                end_date="2015-10-23",
+                description="A software job",
+                event=e1
+                )  
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2015-11-12",
+                end_date="2015-11-15",
+                description="A systems administrator job",
+                event=e2
+                )
+
+        j1.save()
+        j2.save()
+
+        s1 = Shift(
+                date="2015-10-23",
+                start_time="3:00",
+                end_time="9:00",
+                max_volunteers=1,
+                job=j1
+                )
+        s2 = Shift(
+                date="2015-10-23",
+                start_time="4:00",
+                end_time="11:00",
+                max_volunteers=2,
+                job=j1
+                )
+        s3 = Shift(
+                date="2015-11-13",
+                start_time="6:00",
+                end_time="12:00",
+                max_volunteers=4,
+                job=j2
+                )
+
+        s1.save()
+        s2.save()
+        s3.save()
+
+        # creating volunteers who would register for the shifts
+        u1 = User.objects.create_user('Yoshi')
+        u2 = User.objects.create_user('John')
+        u3 = User.objects.create_user('Ash')
+        
+        v1 = Volunteer(
+                    first_name="Yoshi",
+                    last_name="Turtle",
+                    address="Mario Land",
+                    city="Nintendo Land",
+                    state="Nintendo State",
+                    country="Nintendo Nation",
+                    phone_number="2374983247",
+                    email="yoshi@nintendo.com",
+                    user=u1
+                    )
+
+        v2 = Volunteer(
+                    first_name="John",
+                    last_name="Doe",
+                    address="7 Alpine Street",
+                    city="Maplegrove",
+                    state="Wyoming",
+                    country="USA",
+                    phone_number="23454545",
+                    email="john@test.com",
+                    user=u2
+                    )
+
+        # volunteer who doesn't register for any shift
+        v3 = Volunteer(
+                    first_name="Ash",
+                    last_name="Ketchum",
+                    address="Pallet Town",
+                    city="Kanto",
+                    state="Gameboy",
+                    country="Japan",
+                    phone_number="23454545",
+                    email="ash@pikachu.com",
+                    user=u3
+                    )
+
+        v1.save()
+        v2.save()
+        v3.save()
+
+        # volunteer 1 registers for 3 shifts belonging to two events - registers for s3 first to check if sorting is successful
+        register(v1.id, s3.id)
+        register(v1.id, s2.id)
+        register(v1.id, s1.id)
+
+        # volunteer 2 registers for 2 shifts, where s1 has no available slots
+        register(v2.id, s1.id)
+        register(v2.id, s3.id)
+
+        event_list_for_vol_1 = get_signed_up_events_for_volunteer(v1.id)
+        event_list_for_vol_2 = get_signed_up_events_for_volunteer(v2.id)
+        event_list_for_vol_3 = get_signed_up_events_for_volunteer(v3.id)
+
+        # tests for returned events, their order and duplication for volunteer 1
+        self.assertEqual(len(event_list_for_vol_1), 2)
+        self.assertIn(e1.name, event_list_for_vol_1)
+        self.assertIn(e2.name, event_list_for_vol_1)
+        self.assertEqual(event_list_for_vol_1[0], e1.name)
+        self.assertEqual(event_list_for_vol_1[1], e2.name)
+
+        # tests for returned events for volunteer 2
+        self.assertEqual(len(event_list_for_vol_2), 1)
+        self.assertIn(e2.name, event_list_for_vol_2)
+        self.assertNotIn(e1.name, event_list_for_vol_2)
+
+        # test for returned events for unregistered volunteer 3
+        self.assertEqual(len(event_list_for_vol_3), 0)
 
     def test_remove_empty_events_for_volunteer(self):
 

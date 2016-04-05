@@ -14,6 +14,7 @@ from job.services import (
                             get_job_by_id,
                             get_jobs_by_event_id,
                             get_jobs_ordered_by_title,
+                            get_signed_up_jobs_for_volunteer,
                             remove_empty_jobs_for_volunteer
                             )
 
@@ -306,6 +307,135 @@ class JobMethodTests(TestCase):
         self.assertEqual(job_list[0].name, j3.name)
         self.assertEqual(job_list[1].name, j1.name)
         self.assertEqual(job_list[2].name, j2.name)
+
+    def test_get_signed_up_jobs_for_volunteer(self):
+
+        # creating events, jobs and shifts for volunteer registration
+        e1 = Event(
+                name="django Event",
+                start_date="2015-10-22",
+                end_date="2015-10-25"
+                )     
+
+        e1.save()
+
+        j1 = Job(
+                name="Software Developer",
+                start_date="2015-10-22",
+                end_date="2015-10-23",
+                description="A software job",
+                event=e1
+                )  
+        j2 = Job(
+                name="Systems Administrator",
+                start_date="2015-10-23",
+                end_date="2015-10-25",
+                description="A systems administrator job",
+                event=e1
+                )
+
+        j1.save()
+        j2.save()
+
+        s1 = Shift(
+                date="2015-10-23",
+                start_time="3:00",
+                end_time="9:00",
+                max_volunteers=1,
+                job=j1
+                )
+        s2 = Shift(
+                date="2015-10-23",
+                start_time="4:00",
+                end_time="11:00",
+                max_volunteers=2,
+                job=j1
+                )
+        s3 = Shift(
+                date="2015-10-24",
+                start_time="6:00",
+                end_time="12:00",
+                max_volunteers=4,
+                job=j2
+                )
+
+        s1.save()
+        s2.save()
+        s3.save()
+
+        # creating volunteers who would register for the shifts
+        u1 = User.objects.create_user('Yoshi')
+        u2 = User.objects.create_user('John')
+        u3 = User.objects.create_user('Ash')
+        
+        v1 = Volunteer(
+                    first_name="Yoshi",
+                    last_name="Turtle",
+                    address="Mario Land",
+                    city="Nintendo Land",
+                    state="Nintendo State",
+                    country="Nintendo Nation",
+                    phone_number="2374983247",
+                    email="yoshi@nintendo.com",
+                    user=u1
+                    )
+
+        v2 = Volunteer(
+                    first_name="John",
+                    last_name="Doe",
+                    address="7 Alpine Street",
+                    city="Maplegrove",
+                    state="Wyoming",
+                    country="USA",
+                    phone_number="23454545",
+                    email="john@test.com",
+                    user=u2
+                    )
+
+        # volunteer who doesn't register for any shift
+        v3 = Volunteer(
+                    first_name="Ash",
+                    last_name="Ketchum",
+                    address="Pallet Town",
+                    city="Kanto",
+                    state="Gameboy",
+                    country="Japan",
+                    phone_number="23454545",
+                    email="ash@pikachu.com",
+                    user=u3
+                    )
+
+        v1.save()
+        v2.save()
+        v3.save()
+
+        # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s3 first to check if sorting is successful
+        register(v1.id, s3.id)
+        register(v1.id, s2.id)
+        register(v1.id, s1.id)
+        
+        # volunteer 2 registers for 2 shifts, where s1 has no available slots
+        register(v2.id, s1.id)
+        register(v2.id, s3.id)
+
+        job_list_for_vol_1 = get_signed_up_jobs_for_volunteer(v1.id)
+        job_list_for_vol_2 = get_signed_up_jobs_for_volunteer(v2.id)
+        job_list_for_vol_3 = get_signed_up_jobs_for_volunteer(v3.id)
+
+        # tests for returned jobs, their order and duplication for volunteer 1
+        self.assertEqual(len(job_list_for_vol_1), 2)
+        self.assertIn(j1.name, job_list_for_vol_1)
+        self.assertIn(j2.name, job_list_for_vol_1)
+        self.assertEqual(job_list_for_vol_1[0], j1.name)
+        self.assertEqual(job_list_for_vol_1[1], j2.name)
+
+        # tests for returned jobs for volunteer 2
+        self.assertEqual(len(job_list_for_vol_2), 1)
+        self.assertIn(j2.name, job_list_for_vol_2)
+        self.assertNotIn(j1.name, job_list_for_vol_2)
+
+        # test for returned jobs for unregistered volunteer 3
+        self.assertEqual(len(job_list_for_vol_3), 0)
 
     def test_remove_empty_jobs_for_volunteer(self):
 
