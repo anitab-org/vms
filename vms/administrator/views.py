@@ -45,7 +45,7 @@ def report(request):
                 end_date
                 )
             total_hours = calculate_total_report_hours(report_list)
-            return render(request, 'administrator/report.html', {'form': form, 'report_list': report_list, 'total_hours': total_hours, 'notification': True, 'organization_list': organization_list, 'selected_organization': organization, 'event_list': event_list})
+            return render(request, 'administrator/report.html', {'form': form, 'report_list': report_list, 'total_hours': total_hours, 'notification': True, 'organization_list': organization_list, 'selected_organization': organization, 'event_list': event_list, 'selected_event': event_name})
         else:
             return render(request, 'administrator/report.html', {'form': form, 'notification': False, 'organization_list': organization_list, 'event_list': event_list})
     else:
