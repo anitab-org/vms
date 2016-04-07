@@ -16,6 +16,7 @@
                 <th>{% trans "Maximum # of Volunteers"%}</th>
                 <th>{% trans "Edit" %}</th>
                 <th>{% trans "Delete" %}</th>
+                <th>{% trans "View" %}</th>
             </thead>
             <tbody>
                 {% for shift in shift_list %}
@@ -29,6 +30,9 @@
                         </td>
                         <td>
                             <a href="{% url 'shift:delete' shift.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'shift:view_volunteers' shift.id %}" class="btn btn-default btn-sm">{% trans "View"%}</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -1,0 +1,119 @@
+{% extends "administrator/settings.html" %}
+
+{% load i18n %}
+
+{% block setting_content %}
+    <div class="spacer"></div>
+    <h2>{% trans "Shift Details" %}</h2>
+    <hr>
+    <table class="table table-striped table-hover">
+    	<thead>
+    		<th>{% trans "Job" %}</th>
+    		<th>{% trans "Event" %}</th>
+    		<th>{% trans "Date" %}</th>
+    		<th>{% trans "Start Time" %}</th>
+    		<th>{% trans "End Time" %}</th>
+    		<th>{% trans "Address" %}</th>
+    		<th>{% trans "City" %}</th>
+    		<th>{% trans "Total Slots" %}</th>
+    		<th>{% trans "Slots Remaining" %}</th>
+    	</thead>
+    	<tbody>
+    		<tr>
+    			<td>{{ shift.job.name }}</td>
+    			<td>{{ shift.job.event.name}}</td>
+    			<td>{{ shift.date }}</td>
+    			<td>{{ shift.start_time }}</td>
+    			<td>{{ shift.end_time }}</td>
+    			<td>{{ shift.address }}</td>
+    			<td>{{ shift.city }}</td>
+    			<td>{{ shift.max_volunteers }}</td>
+    			<td>{{ slots_remaining }}</td>
+    		</tr>
+    	</tbody>
+    </table>
+	<br>
+    {% if volunteer_list %}
+    	<h3>{% trans "Assigned Volunteers" %}</h3>
+    	<br>
+        <table class="table table-striped table-hover">
+            <thead>
+                <th>{% trans "First Name" %}</th>
+                <th>{% trans "Last Name" %}</th>
+                <th>{% trans "Address" %}</th>
+                <th>{% trans "City" %}</th>
+                <th>{% trans "State/Province" %}</th>
+                <th>{% trans "Country" %}</th>
+                <th>{% trans "Organization" %}</th>
+                <th>{% trans "Phone Number" %}</th>
+                <th>{% trans "Email" %}</th>
+            </thead>
+            <tbody>
+                {% for volunteer in volunteer_list %}
+                    <tr>
+                        <td>{{ volunteer.first_name }}</td>
+                        <td>{{ volunteer.last_name }}</td>
+                        <td>{{ volunteer.address }}</td>
+                        <td>{{ volunteer.city }}</td>
+                        <td>{{ volunteer.state }}</td>
+                        <td>{{ volunteer.country }}</td>
+                        <td>
+                        	{% if volunteer.organization.name %}
+                        		{{ volunteer.organization.name }}
+                        	{% elif volunteer.unlisted_organization %}                                    
+                        		{{ volunteer.unlisted_organization }}
+                        	{% else %}
+                        	{% endif %}
+                        </td>
+                        <td>{{ volunteer.phone_number }}</td>
+                        <td>{{ volunteer.email }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        {% if logged_volunteer_list %}
+        	<br>
+        	<h4 class="alert alert-success">{% trans "Logged hours" %}</h4>
+        	<table class="table table-striped table-hover">
+        		<thead>
+                	<th>{% trans "First Name" %}</th>
+               	 	<th>{% trans "Last Name" %}</th>
+               	 	<th>{% trans "Organization" %}</th>
+                	<th>{% trans "Start Time" %}</th>
+                	<th>{% trans "End time" %}</th>
+            	</thead>
+            	<tbody>
+                	{% for logged_volunteer in logged_volunteer_list %}
+                    	<tr>
+                        	<td>{{ logged_volunteer.volunteer.first_name }}</td>
+                        	<td>{{ logged_volunteer.volunteer.last_name }}</td>
+                        	<td>
+                        		{% if logged_volunteer.volunteer.organization.name %}
+                        			{{ logged_volunteer.volunteer.organization.name }}
+                        		{% elif logged_volunteer.volunteer.unlisted_organization %}                                    
+                        			{{ logged_volunteer.volunteer.unlisted_organization }}
+                        		{% else %}
+                        		{% endif %}
+                        	</td>
+                        	<td>{{ logged_volunteer.start_time }}</td>
+                        	<td>{{ logged_volunteer.end_time }}</td>
+                    	</tr>
+                	{% endfor %}
+            	</tbody>
+        	</table>
+        {% else %}
+        	<h3>{% trans "Logged Hours" %}</h3>
+        	<br>
+        	<div class="alert alert-success">
+            	{% trans "There are no logged hours at the moment" %}
+            </div>
+        {% endif %}
+    {% else %}
+    	<h3>{% trans "Assigned Volunteers" %}</h3>
+    	<br>
+        <div class="alert alert-success">
+            {% trans "There are currently no volunteers assigned to this shift. Please assign volunteers to view more details" %}
+        </div>
+    {% endif %}   
+{% endblock %}
