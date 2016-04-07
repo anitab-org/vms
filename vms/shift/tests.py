@@ -23,6 +23,8 @@ from shift.services import (
             get_unlogged_shifts_by_volunteer_id,
             get_volunteer_shift_by_id,
             get_volunteer_shifts_with_hours,
+            get_volunteers_by_shift_id,
+            get_logged_volunteers_by_shift_id,
             is_signed_up,
             register,
             send_reminder
@@ -1727,6 +1729,224 @@ class ShiftMethodTests(TestCase):
 
         self.assertIsNotNone(get_volunteer_shifts_with_hours(v1))
         self.assertIsNotNone(get_volunteer_shifts_with_hours(v2))
+
+    def test_get_volunteers_by_shift_id(self):
+
+        u1 = User.objects.create_user('Yoshi')
+        u2 = User.objects.create_user('John')
+        u3 = User.objects.create_user('Ash')
+
+        v1 = Volunteer(
+            first_name="Yoshi",
+            last_name="Turtle",
+            address="Mario Land",
+            city="Nintendo Land",
+            state="Nintendo State",
+            country="Nintendo Nation",
+            phone_number="2374983247",
+            email="yoshi@nintendo.com",
+            user=u1
+            )
+
+        v2 = Volunteer(
+            first_name="John",
+            last_name="Doe",
+            address="7 Alpine Street",
+            city="Maplegrove",
+            state="Wyoming",
+            country="USA",
+            phone_number="23454545",
+            email="john@test.com",
+            user=u2
+            )
+
+        v3 = Volunteer(
+            first_name="Ash",
+            last_name="Ketchum",
+            address="Pallet Town",
+            city="Kanto",
+            state="Gameboy",
+            country="Japan",
+            phone_number="23454545",
+            email="ash@pikachu.com",
+            user=u3
+            )
+
+        v1.save()
+        v2.save()
+        v3.save()
+
+        e1 = Event(
+            name="Open Source Event",
+            start_date="2015-10-22",
+            end_date="2015-10-26"
+            )
+
+        e1.save()
+
+        j1 = Job(
+            name="Software Developer",
+            start_date="2015-10-22",
+            end_date="2015-10-24",
+            description="A software job",
+            event=e1
+            )
+
+        j1.save()
+
+        # shift with limited slots
+        s1 = Shift(
+            date="2015-10-23",
+            start_time="1:00",
+            end_time="3:00",
+            max_volunteers=1,
+            job=j1
+            )
+
+        # shift with multiple volunteers
+        s2 = Shift(
+            date="2015-10-22",
+            start_time="9:00",
+            end_time="11:00",
+            max_volunteers=4,
+            job=j1
+            )
+
+        # shift with no volunteers
+        s3 = Shift(
+            date="2015-10-24",
+            start_time="2:00",
+            end_time="11:00",
+            max_volunteers=4,
+            job=j1
+            )
+
+        s1.save()
+        s2.save()
+        s3.save()
+
+        # sign up
+        register(v3.id, s1.id)
+        register(v1.id, s1.id)
+        register(v1.id, s2.id) 
+        register(v3.id, s2.id)
+        register(v2.id, s2.id)
+
+        # get volunteer lists 
+        volunteer_list_for_shift_1 = get_volunteers_by_shift_id(s1.id)
+        volunteer_list_for_shift_2 = get_volunteers_by_shift_id(s2.id)
+        volunteer_list_for_shift_3 = get_volunteers_by_shift_id(s3.id)
+
+        # test typical case
+        self.assertEqual(len(volunteer_list_for_shift_1), 1)
+        self.assertEqual(len(volunteer_list_for_shift_2), 3)
+        self.assertEqual(len(volunteer_list_for_shift_3), 0)
+
+        self.assertIn(v3, volunteer_list_for_shift_1)
+        self.assertNotIn(v1, volunteer_list_for_shift_1)
+        self.assertIn(v1, volunteer_list_for_shift_2)
+        self.assertIn(v2, volunteer_list_for_shift_2)
+        self.assertIn(v3, volunteer_list_for_shift_2)
+
+        #test order
+        self.assertEqual(volunteer_list_for_shift_2[0], v3)
+        self.assertEqual(volunteer_list_for_shift_2[1], v2)
+        self.assertEqual(volunteer_list_for_shift_2[2], v1)
+
+    def test_get_logged_volunteers_by_shift_id(self):
+
+        u1 = User.objects.create_user('Yoshi')
+        u2 = User.objects.create_user('John')
+        u3 = User.objects.create_user('Ash')
+
+        v1 = Volunteer(
+            first_name="Yoshi",
+            last_name="Turtle",
+            address="Mario Land",
+            city="Nintendo Land",
+            state="Nintendo State",
+            country="Nintendo Nation",
+            phone_number="2374983247",
+            email="yoshi@nintendo.com",
+            user=u1
+            )
+
+        v2 = Volunteer(
+            first_name="John",
+            last_name="Doe",
+            address="7 Alpine Street",
+            city="Maplegrove",
+            state="Wyoming",
+            country="USA",
+            phone_number="23454545",
+            email="john@test.com",
+            user=u2
+            )
+
+        v3 = Volunteer(
+            first_name="Ash",
+            last_name="Ketchum",
+            address="Pallet Town",
+            city="Kanto",
+            state="Gameboy",
+            country="Japan",
+            phone_number="23454545",
+            email="ash@pikachu.com",
+            user=u3
+            )
+
+        v1.save()
+        v2.save()
+        v3.save()
+
+        e1 = Event(
+            name="Open Source Event",
+            start_date="2015-10-22",
+            end_date="2015-10-26"
+            )
+
+        e1.save()
+
+        j1 = Job(
+            name="Software Developer",
+            start_date="2015-10-22",
+            end_date="2015-10-24",
+            description="A software job",
+            event=e1
+            )
+
+        j1.save()
+
+        s1 = Shift(
+            date="2015-10-23",
+            start_time="1:00",
+            end_time="4:00",
+            max_volunteers=5,
+            job=j1
+            )
+
+        s1.save()
+
+        # sign up
+        register(v3.id, s1.id)
+        register(v1.id, s1.id)
+        register(v2.id, s1.id)
+
+        start_time = datetime.time(hour=1, minute=0)
+        end_time = datetime.time(hour=2, minute=0)
+        add_shift_hours(v1.id, s1.id, start_time, end_time)
+
+        start_time = datetime.time(hour=2, minute=0)
+        end_time = datetime.time(hour=3, minute=0)
+        add_shift_hours(v3.id, s1.id, start_time, end_time)
+
+        # get volunteer list
+        logged_volunteer_list_for_shift = get_logged_volunteers_by_shift_id(s1.id)
+
+        # test typical case and order
+        self.assertEqual(len(logged_volunteer_list_for_shift), 2)
+        self.assertEqual(logged_volunteer_list_for_shift[0].volunteer, v3)
+        self.assertEqual(logged_volunteer_list_for_shift[1].volunteer, v1)
 
     def test_is_signed_up(self):
 
