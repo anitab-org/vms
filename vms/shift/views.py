@@ -806,3 +806,34 @@ def volunteer_search(request):
             'shift/volunteer_search.html',
             {'form': form, 'has_searched': False, 'volunteer_list': volunteer_list}
             )
+
+
+@login_required
+def view_volunteers(request, shift_id):
+    user = request.user
+    admin = None
+
+    try:
+        admin = user.administrator
+    except ObjectDoesNotExist:
+        pass
+
+    # check that an admin is logged in
+    if not admin:
+        return render(request, 'vms/no_admin_rights.html')
+    else:
+        if shift_id:
+            shift = get_shift_by_id(shift_id)
+            if shift:
+                volunteer_list = get_volunteers_by_shift_id(shift_id)
+                logged_volunteer_list = get_logged_volunteers_by_shift_id(shift_id)
+                slots_remaining = get_shift_slots_remaining(shift_id)
+                return render(
+                    request,
+                    'shift/list_volunteers.html',
+                    {'volunteer_list': volunteer_list, 'shift': shift, 'slots_remaining': slots_remaining, 'logged_volunteer_list': logged_volunteer_list}
+                    )
+            else:
+                raise Http404
+        else:
+            raise Http404

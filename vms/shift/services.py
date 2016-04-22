@@ -9,7 +9,9 @@ from organization.services import (
                             get_organizations_ordered_by_name
                             )
 from shift.models import Shift, VolunteerShift
+from volunteer.models import Volunteer
 from volunteer.services import get_volunteer_by_id, get_all_volunteers
+
 
 
 def add_shift_hours(v_id, s_id, start_time, end_time):
@@ -427,6 +429,33 @@ def get_volunteer_shifts_with_hours(v_id):
 
     return volunteer_shift_list
 
+def get_volunteers_by_shift_id(s_id):
+
+    volunteer_list = None
+
+    # get volunteers who have signed up for the shift
+    volunteer_list = Volunteer.objects.filter(volunteershift__shift_id=s_id)
+
+    # order by name
+    volunteer_list = volunteer_list.order_by(
+        'first_name', 'last_name'
+        )
+
+    return volunteer_list
+
+def get_logged_volunteers_by_shift_id(s_id):
+
+    logged_volunteer_list = None
+
+    # get volunteers who have signed up for the shift
+    logged_volunteer_list = VolunteerShift.objects.filter(shift_id=s_id, start_time__isnull=False, end_time__isnull=False)
+
+    # order by name
+    logged_volunteer_list = logged_volunteer_list.order_by(
+        'volunteer__first_name','volunteer__last_name'
+        )
+
+    return logged_volunteer_list
 
 def is_signed_up(v_id, s_id):
 
