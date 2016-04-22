@@ -1,3 +1,13 @@
 from django.contrib import admin
+from shift.models import Shift
+from shift.models import VolunteerShift
 
-# Register your models here.
+
+class ShiftAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(Shift, ShiftAdmin)
+
+
+class VolunteerShiftAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(VolunteerShift, VolunteerShiftAdmin)
