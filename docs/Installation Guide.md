@@ -30,9 +30,9 @@ Clone the project from GitHub by running the following command:
 
     git clone project_url_here
 
-For my project, this would correspond to:
+For this project, it would correspond to:
 
-    git clone https://github.com/Nerdylicious/vms-integrated.git
+    git clone https://github.com/systers/vms.git
 
 ## Install Django and PostgreSQL
 
@@ -56,27 +56,23 @@ Install VirtualBox and Vagrant by running the installers.
 
 ## Download Systers Ubuntu Virtual Machine
 
-A Vagrant file is located in the top level directory for the project (at [https://github.com/Nerdylicious/vms-pre-integration](https://github.com/Nerdylicious/vms-pre-integration)) found on GitHub. In case you do not have a copy of this Vagrant file, here are it's contents:
+A Vagrant file is located in the top level directory for the project (at [https://github.com/systers/vms](https://github.com/systers/vms)) found on GitHub. In case you do not have a copy of this Vagrant file, here are it's contents:
 ```
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure("2") do |config|
+  config.vm.box_url = "http://54.183.32.240/vagrant/box/systers-vms.box"
+  config.vm.box = "systers-vms-dev"
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    config.vm.provider :virtualbox do |vb|
+  config.vm.provider "virtualbox" do |vb|
     vb.gui=true
-end
-config.vm.box = "systers-vms-dev"
+  end
 
-config.vm.box_url = "http://54.183.32.240/vagrant/box/systers-vms.box"
-
-config.vm.network "forwarded_port", guest: 80, host: 8080
-config.vm.network "forwarded_port", guest: 8000, host:8001
-config.vm.network "private_network", ip: "192.168.33.10"
-config.vm.network "public_network"
-
+  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true
+  config.vm.network "forwarded_port", guest: 8000, host:8001
+  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "public_network"
 end
 ```
 Save this file as **Vagrantfile** (if you don't already have this file) in the top level directory for the project.
@@ -211,7 +207,7 @@ We will now create a database called `vms`:
 
     createdb -U vmsadmin vms;
 
-You will be prompted to enter a password, which is '0xdeadbeef'
+You will be prompted to enter a password, which is `0xdeadbeef`
 
 We can now login to the postgres client for the `vms` database:
 
@@ -264,7 +260,7 @@ Check that the tables were created by starting the postgres client and viewing t
 ```
 psql -U vmsadmin -d vms -h localhost -W
 ```
-You will be prompted to enter a password, which is '0xdeadbeef'
+You will be prompted to enter a password, which is `0xdeadbeef`
 
 ```
 \dt
