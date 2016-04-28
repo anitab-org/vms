@@ -84,7 +84,10 @@ def edit(request, event_id):
                         {'count': event_edit['invalid_count'], 'jobs': event_edit['invalid_jobs']}
                         )
                 if start_date_event < datetime.date.today():
+                    data = request.POST.copy()
+                    data['end_date'] = end_date_event
                     messages.add_message(request, messages.INFO, 'Start date should be today\'s date or later.')
+                    form = EventForm(data)
                     return render(request, 'event/edit.html', {'form': form, })
                 else:
                     form.save()
