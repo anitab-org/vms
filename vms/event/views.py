@@ -93,6 +93,9 @@ def edit(request, event_id):
                     form.save()
                     return HttpResponseRedirect(reverse('event:list'))
             else:
+                data = request.POST.copy()
+                data['end_date'] = form.cleaned_data['end_date']
+                form = EventForm(data)
                 return render(request, 'event/edit.html', {'form': form, })
         else:
             form = EventForm(instance=event)
