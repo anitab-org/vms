@@ -58,7 +58,7 @@ class TestAccessControl(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
         self.driver.maximize_window()
@@ -67,6 +67,7 @@ class TestAccessControl(LiveServerTestCase):
     def tearDown(self):
         self.driver.quit()
         super(TestAccessControl, self).tearDown()
+
 
     def test_correct_admin_credentials(self):
         '''
@@ -159,6 +160,7 @@ class TestAccessControl(LiveServerTestCase):
             'alert-danger'), None)
 
 
+
 class CheckURLAccess(LiveServerTestCase):
     '''
     CheckURLAccess contains methods to browse(via URL) a volunteer page view
@@ -215,8 +217,7 @@ class CheckURLAccess(LiveServerTestCase):
         self.driver.find_element_by_id('id_password').send_keys('admin')
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-        self.driver.get(self.live_server_url +
-                '/shift/view_volunteer_shifts/1')
+        self.driver.get(self.live_server_url + '/shift/view_volunteer_shifts/1')
         page_source = self.driver.page_source
         error = re.search('403', page_source)
         self.assertNotEqual(error, None)
@@ -225,6 +226,7 @@ class CheckURLAccess(LiveServerTestCase):
         page_source = self.driver.page_source
         error = re.search('403', page_source)
         self.assertNotEqual(error, None)
+
 
         self.driver.get(self.live_server_url + '/event/list_sign_up/1')
         page_source = self.driver.page_source
@@ -244,7 +246,7 @@ class CheckURLAccess(LiveServerTestCase):
     def test_volunteer_cannot_access_admin_urls(self):
         '''
         Method logins a volunteer and tries to surf admin page views through url.
-        The admin views should return a 403 error to deny access.
+        The admin views should return a no admin rights page.
         '''
         self.driver.get(self.live_server_url + self.authentication_page)
 
@@ -252,31 +254,60 @@ class CheckURLAccess(LiveServerTestCase):
         self.driver.find_element_by_id('id_password').send_keys('volunteer')
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-        self.driver.get(self.live_server_url + '/volunteer/search/')
-        page_source = self.driver.page_source
-        error = re.search('403', page_source)
-        self.assertNotEqual(error, None)
 
         self.driver.get(self.live_server_url + '/shift/volunteer_search/')
-        page_source = self.driver.page_source
-        error = re.search('403', page_source)
-        self.assertNotEqual(error, None)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-heading'),
+                None)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-body'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text,
+                'No Access')
+        self.assertEqual(self.driver.find_element_by_class_name('panel-body').text,
+                "You don't have administrator rights")
+        
 
         self.driver.get(self.live_server_url + '/administrator/report/')
-        page_source = self.driver.page_source
-        error = re.search('403', page_source)
-        self.assertNotEqual(error, None)
+        self.assertNotEqual(self.driver.find_element_by_class_name('panel-heading'),
+                None)
+        self.assertNotEqual(self.driver.find_element_by_class_name('panel-body'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text,
+                'No Access')
+        self.assertEqual(self.driver.find_element_by_class_name('panel-body').text,
+                "You don't have administrator rights")
+
+
+        self.driver.get(self.live_server_url + '/volunteer/search/')
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-heading'),
+                None)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-body'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text,
+                'No Access')
+        self.assertEqual(self.driver.find_element_by_class_name('panel-body').text,
+                "You don't have administrator rights")
+
 
         self.driver.get(self.live_server_url + '/administrator/settings/')
-        page_source = self.driver.page_source
-        error = re.search('403', page_source)
-        self.assertNotEqual(error, None)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-heading'),
+                None)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-body'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text,
+                'No Access')
+        self.assertEqual(self.driver.find_element_by_class_name('panel-body').text,
+                "You don't have administrator rights")
 
-        self.driver.get(self.live_server_url +
-                '/registration/signup_administrator/')
-        page_source = self.driver.page_source
-        error = re.search('403', page_source)
-        self.assertNotEqual(error, None)
+
+        self.driver.get(self.live_server_url + '/registration/signup_administrator/')
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-heading'),
+                None)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('panel-body'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text,
+                'No Access')
+        self.assertEqual(self.driver.find_element_by_class_name('panel-body').text,
+                "You don't have administrator rights")
 
 
 class CheckPageContent(LiveServerTestCase):
@@ -349,7 +380,7 @@ class CheckPageContent(LiveServerTestCase):
         self.assertNotEqual(self.driver.find_element_by_link_text(
             'Report'), None)
         self.assertNotEqual(self.driver.find_element_by_link_text(
-            'Settings'), None)
+            'Events'), None)
         self.assertNotEqual(self.driver.find_element_by_link_text(
             'Create Admin Account'), None)
         self.assertNotEqual(self.driver.find_element_by_link_text(
@@ -377,7 +408,7 @@ class CheckPageContent(LiveServerTestCase):
         self.assertNotEqual(self.driver.find_element_by_link_text(
             'Upcoming Shifts'), None)
         self.assertNotEqual(self.driver.find_element_by_link_text(
-            'Shift Hours'), None)
+            'Completed Shifts'), None)
         self.assertNotEqual(self.driver.find_element_by_link_text(
             'Shift Sign Up'), None)
         self.assertNotEqual(self.driver.find_element_by_link_text(
@@ -441,7 +472,7 @@ class CheckRedirection(LiveServerTestCase):
                 'volunteer').pk)
 
         self.authentication_page = '/authentication/login/'
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.driver = webdriver.Firefox()
         self.driver.maximize_window()
         super(CheckRedirection, self).setUp()
@@ -479,7 +510,7 @@ class CheckRedirection(LiveServerTestCase):
                 '/administrator/report/')
 
         settings_link =  self.driver.find_element_by_link_text(
-                'Settings').get_attribute('href')
+                'Events').get_attribute('href')
         self.assertEqual(settings_link, self.live_server_url + 
                 '/administrator/settings/')
 
@@ -512,7 +543,7 @@ class CheckRedirection(LiveServerTestCase):
                 '/shift/view_volunteer_shifts/' + self.volunteer_id)
 
         shift_hours_link =  self.driver.find_element_by_link_text(
-                'Shift Hours').get_attribute('href')
+                'Completed Shifts').get_attribute('href')
         self.assertEqual(shift_hours_link, self.live_server_url + 
                 '/shift/view_hours/' + self.volunteer_id)
 
