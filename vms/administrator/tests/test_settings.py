@@ -12,7 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 class Settings(LiveServerTestCase):
     '''
-    Settings Class contains UI testcases for `Settings` view in
+    Settings Class contains UI testcases for `Events` tab in
     Administrator profile. This view consists of Events, Jobs, Shifts,
     Organization tabs.
 
@@ -25,7 +25,7 @@ class Settings(LiveServerTestCase):
     Job:
         - Create Job without any event
         - Edit Job
-        - Delete Job without Assoicated Shift
+        - Delete Job without Associated Shift
         - Delete Job with Shifts
 
     Shift:
@@ -60,10 +60,11 @@ class Settings(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.settings_page = '/event/list/'
         self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(5)
         self.driver.maximize_window()
         super(Settings, self).setUp()
 
@@ -76,13 +77,13 @@ class Settings(LiveServerTestCase):
         self.driver.find_element_by_id('id_login').send_keys('admin')
         self.driver.find_element_by_id('id_password').send_keys('admin')
         self.driver.find_element_by_xpath('//form[1]').submit()
-        self.driver.find_element_by_link_text('Settings').click()
-
+        self.driver.find_element_by_link_text('Events').send_keys("\n")
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
 
     def test_event_tab(self):
         self.login_admin()
+        self.assertNotEqual(self.driver.find_element_by_link_text('Events'), None)
         self.assertEqual(self.driver.find_element_by_class_name(
             'alert-success').text,
             'There are currently no events. Please create events first.')
@@ -156,7 +157,7 @@ class Settings(LiveServerTestCase):
 
     def test_create_event(self):
         self.login_admin()
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
         
         # check event created
@@ -167,7 +168,7 @@ class Settings(LiveServerTestCase):
 
     def test_edit_event(self):
         self.login_admin()
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
         
         # create event
@@ -177,9 +178,9 @@ class Settings(LiveServerTestCase):
                 '//table//tbody//tr[1]//td[1]').text, 'event-name')
 
         self.assertEqual(self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]').text, 'Edit')
+                '//table//tbody//tr[1]//td[5]').text, 'Edit')
         self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
+                '//table//tbody//tr[1]//td[5]//a').click()
 
         self.driver.find_element_by_xpath(
                 '//input[@placeholder = "Event Name"]').clear()
@@ -191,13 +192,13 @@ class Settings(LiveServerTestCase):
                 '//input[@name = "start_date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_date"]').send_keys(
-                        '06/24/2015')
+                        '08/29/2016')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_date"]').send_keys(
-                        '06/24/2015')
+                        '12/21/2016')
 
         self.driver.find_element_by_xpath('//form[1]').submit()
 
@@ -209,7 +210,7 @@ class Settings(LiveServerTestCase):
 
     def test_delete_event_with_no_associated_job(self):
         self.login_admin()
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
         
         # create event
@@ -219,9 +220,9 @@ class Settings(LiveServerTestCase):
                 '//table//tbody//tr[1]//td[1]').text, 'event-name')
 
         self.assertEqual(self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[5]').text, 'Delete')
+                '//table//tbody//tr[1]//td[6]').text, 'Delete')
         self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[5]//a').click()
+                '//table//tbody//tr[1]//td[6]//a').click()
 
         self.assertNotEqual(self.driver.find_element_by_class_name(
             'panel-danger'), None)
@@ -239,12 +240,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
         
         # create event
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
         self.register_job_utility(job)
@@ -256,9 +256,9 @@ class Settings(LiveServerTestCase):
 
         # delete event
         self.assertEqual(self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[5]').text, 'Delete')
+                '//table//tbody//tr[1]//td[6]').text, 'Delete')
         self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[5]//a').click()
+                '//table//tbody//tr[1]//td[6]//a').click()
         
         # confirm to delete
         self.assertNotEqual(self.driver.find_element_by_class_name(
@@ -282,12 +282,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event first to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
         self.register_job_utility(job)
@@ -304,12 +303,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event first to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
         self.register_job_utility(job)
@@ -344,13 +342,13 @@ class Settings(LiveServerTestCase):
                 '//input[@name = "start_date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_date"]').send_keys(
-                        '06/24/2015')
+                        '08/30/2016')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_date"]').send_keys(
-                        '06/24/2015')
+                        '09/21/2016')
 
         self.driver.find_element_by_xpath('//form[1]').submit()
 
@@ -364,12 +362,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event first to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
         self.register_job_utility(job)
@@ -403,13 +400,12 @@ class Settings(LiveServerTestCase):
     def test_delete_job_with_associated_shifts(self):
         self.login_admin()
 
-        # register event
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        # register event first to create job
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.register_job_utility(job)
 
         # create shift
@@ -424,7 +420,7 @@ class Settings(LiveServerTestCase):
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "date"]').send_keys(
-                        '06/20/2015')
+                        '08/31/2016')
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
                         '09:00')
@@ -464,12 +460,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
-        # create job to create shift
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.register_job_utility(job)
 
         # create shift
@@ -484,7 +479,7 @@ class Settings(LiveServerTestCase):
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "date"]').send_keys(
-                        '06/20/2015')
+                        '09/01/2016')
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
                         '09:00')
@@ -503,12 +498,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
-        # create job to create shift
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.register_job_utility(job)
 
         # create shift
@@ -523,7 +517,7 @@ class Settings(LiveServerTestCase):
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "date"]').send_keys(
-                        '06/20/2015')
+                        '09/01/2016')
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
                         '09:00')
@@ -546,7 +540,7 @@ class Settings(LiveServerTestCase):
         self.driver.find_element_by_xpath('//input[@name = "date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "date"]').send_keys(
-                        '06/24/2015')
+                        '09/05/2016')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').clear()
@@ -572,7 +566,7 @@ class Settings(LiveServerTestCase):
             self.driver.find_element_by_class_name('help-block')
 
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'June 24, 2015')
+            '//table//tbody//tr[1]//td[1]').text, 'Sept. 5, 2016')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text, '10 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
@@ -584,12 +578,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '08/21/2016', '09/28/2016']
         self.register_event_utility(event)
 
-        # create job to create shift
-        job = ['event-name', 'job name', 'job description', '05/20/2015', 
-                '05/20/2015']
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
         self.register_job_utility(job)
 
         # create shift
@@ -604,7 +597,7 @@ class Settings(LiveServerTestCase):
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "date"]').send_keys(
-                        '06/20/2015')
+                        '09/05/2016')
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
                         '09:00')
@@ -813,3 +806,4 @@ class Settings(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
             '//div[2]/div[3]/p').text,
             'You cannot delete an organization that users are currently associated with.')
+

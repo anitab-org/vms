@@ -1,3 +1,4 @@
+
 from django.test import TestCase
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
@@ -38,11 +39,12 @@ class Report(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.report_page = '/administrator/report/'
         
         self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(5)
         self.driver.maximize_window()
         super(Report, self).setUp()
 
@@ -62,7 +64,7 @@ class Report(LiveServerTestCase):
     def logout(self):
         self.driver.find_element_by_link_text('Log Out').click()
 
-    def test_null_values_with_empty_datatset(self):
+    def test_null_values_with_empty_dataset(self):
         # should return no entries
         self.login('admin', 'admin')
         self.driver.find_element_by_link_text('Report').click()
@@ -94,17 +96,17 @@ class Report(LiveServerTestCase):
         # create shift and log hours
         event = Event.objects.create(
                     name = 'Hackathon',
-                    start_date = '2015-06-01',
-                    end_date = '2015-06-01')
+                    start_date = '2016-06-01',
+                    end_date = '2016-06-01')
 
         job = Job.objects.create(
                 name = 'Developer',
-                start_date = '2015-06-01',
-                end_date = '2015-06-01',
+                start_date = '2016-06-01',
+                end_date = '2016-06-01',
                 event = event)
 
         shift = Shift.objects.create(
-                date = '2015-06-01',
+                date = '2016-06-01',
                 start_time = '08:00',
                 end_time = '20:00',
                 max_volunteers = '2',
@@ -125,7 +127,7 @@ class Report(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[1]').text, 'Developer')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2015')
+            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2016')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text, '9 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
@@ -148,7 +150,7 @@ class Report(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[1]').text, 'first-name-one')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[6]').text, 'June 1, 2015')
+            '//table//tbody//tr[1]//td[6]').text, 'June 1, 2016')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[7]').text, '9 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
@@ -162,8 +164,7 @@ class Report(LiveServerTestCase):
 
         volunteer_user = User.objects.create_user(
                 username = 'volunteer-one',
-                password = 'volunteer-one',
-                email = 'vol@vol.com')
+                password = 'volunteer-one')
 
         volunteer = Volunteer.objects.create(
                 user = volunteer_user,
@@ -174,23 +175,24 @@ class Report(LiveServerTestCase):
                 state = 'state',
                 country = 'country',
                 phone_number = '9999999999',
+                email = 'vol@vol.com',
                 organization = Organization.objects.get(
                     name = 'organization-one'))
 
         # create shift and log hours
         event = Event.objects.create(
                     name = 'Hackathon',
-                    start_date = '2015-06-01',
-                    end_date = '2015-06-01')
+                    start_date = '2016-06-01',
+                    end_date = '2016-06-01')
 
         job = Job.objects.create(
                 name = 'Developer',
-                start_date = '2015-06-01',
-                end_date = '2015-06-01',
+                start_date = '2016-06-01',
+                end_date = '2016-06-01',
                 event = event)
 
         shift = Shift.objects.create(
-                date = '2015-06-01',
+                date = '2016-06-01',
                 start_time = '09:00',
                 end_time = '15:00',
                 max_volunteers = '2',
@@ -211,7 +213,7 @@ class Report(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[1]').text, 'Developer')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2015')
+            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2016')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text, '9 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
@@ -236,8 +238,7 @@ class Report(LiveServerTestCase):
 
         volunteer_user = User.objects.create_user(
                 username = parameters['volunteer']['username'],
-                password = parameters['volunteer']['password'],
-                email = parameters['volunteer']['email'])
+                password = parameters['volunteer']['password'])
 
         volunteer = Volunteer.objects.create(
                 user = volunteer_user,
@@ -248,6 +249,7 @@ class Report(LiveServerTestCase):
                 state = parameters['volunteer']['state'],
                 country = parameters['volunteer']['country'],
                 phone_number = parameters['volunteer']['phone-no'],
+                email = parameters['volunteer']['email'],
                 organization = Organization.objects.get(
                     name = parameters['org']))
 
@@ -282,7 +284,7 @@ class Report(LiveServerTestCase):
                 'volunteer' : {
                     'username' : 'uname1', 
                     'password' : 'uname1', 
-                    'email' : 'email@email.com',
+                    'email' : 'email1@email.com',
                     'first_name' : 'tom-fname',
                     'last_name' : 'tom-lname',
                     'address' : 'address',
@@ -292,16 +294,16 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-four',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobOneInEventFour',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2016-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '11:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
                     'start_time' : '09:30',
@@ -312,7 +314,7 @@ class Report(LiveServerTestCase):
                 'volunteer' : {
                     'username' : 'uname2', 
                     'password' : 'uname2', 
-                    'email' : 'email@email.com',
+                    'email' : 'email2@email.com',
                     'first_name' : 'peter-fname',
                     'last_name' : 'peter-lname',
                     'address' : 'address',
@@ -322,27 +324,27 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-one',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobOneInEventOne',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'date' : '2016-06-01',
+                    'start_time' : '18:00',
+                    'end_time' : '23:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
                     'start_time' : '19:00',
-                    'end_time' : '23:00'}}
+                    'end_time' : '20:00'}}
         self.register_dataset(parameters)
 
         parameters = {'org' : 'org-one',
                 'volunteer' : {
                     'username' : 'uname3', 
                     'password' : 'uname3', 
-                    'email' : 'email@email.com',
+                    'email' : 'email3@email.com',
                     'first_name' : 'tom-fname',
                     'last_name' : 'tom-lname',
                     'address' : 'address',
@@ -352,27 +354,27 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-four',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobTwoInEventFour',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2016-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '15:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
-                    'start_time' : '15:00',
-                    'end_time' : '18:30'}}
+                    'start_time' : '10:00',
+                    'end_time' : '11:30'}}
         self.register_dataset(parameters)
 
         parameters = {'org' : 'org-two',
                 'volunteer' : {
                     'username' : 'uname4', 
                     'password' : 'uname4', 
-                    'email' : 'email@email.com',
+                    'email' : 'email4@email.com',
                     'first_name' : 'harry-fname',
                     'last_name' : 'harry-lname',
                     'address' : 'address',
@@ -382,16 +384,16 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-one',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobTwoInEventOne',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2016-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '11:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
                     'start_time' : '09:00',
@@ -402,7 +404,7 @@ class Report(LiveServerTestCase):
                 'volunteer' : {
                     'username' : 'uname5', 
                     'password' : 'uname5', 
-                    'email' : 'email@email.com',
+                    'email' : 'email5@email.com',
                     'first_name' : 'harry-fname',
                     'last_name' : 'harry-lname',
                     'address' : 'address',
@@ -412,27 +414,27 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-two',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobOneInEventTwo',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2016-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '18:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
                     'start_time' : '12:00',
-                    'end_time' : '17:00'}}
+                    'end_time' : '15:00'}}
         self.register_dataset(parameters)
 
         parameters = {'org' : 'org-three',
                 'volunteer' : {
                     'username' : 'uname6', 
                     'password' : 'uname6', 
-                    'email' : 'email@email.com',
+                    'email' : 'email6@email.com',
                     'first_name' : 'sherlock-fname',
                     'last_name' : 'sherlock-lname',
                     'address' : 'address',
@@ -442,27 +444,27 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-two',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobOneInEventTwo',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2016-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '16:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
-                    'start_time' : '16:00',
-                    'end_time' : '18:00'}}
+                    'start_time' : '12:00',
+                    'end_time' : '14:00'}}
         self.register_dataset(parameters)
 
         parameters = {'org' : 'org-four',
                 'volunteer' : {
                     'username' : 'uname7', 
                     'password' : 'uname7', 
-                    'email' : 'email@email.com',
+                    'email' : 'email7@email.com',
                     'first_name' : 'harvey-fname',
                     'last_name' : 'harvey-lname',
                     'address' : 'address',
@@ -472,27 +474,27 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-one',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobThreeInEventOne',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2016-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '13:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
-                    'start_time' : '19:00',
-                    'end_time' : '19:30'}}
+                    'start_time' : '12:00',
+                    'end_time' : '12:30'}}
         self.register_dataset(parameters)
 
         parameters = {'org' : 'org-four',
                 'volunteer' : {
                     'username' : 'uname8', 
                     'password' : 'uname8', 
-                    'email' : 'email@email.com',
+                    'email' : 'email8@email.com',
                     'first_name' : 'mike-fname',
                     'last_name' : 'mike-lname',
                     'address' : 'address',
@@ -502,20 +504,20 @@ class Report(LiveServerTestCase):
                     'phone-no' : '9999999999'},
                 'event' : {
                     'name' : 'event-three',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-10'},
                 'job' : {
                     'name' : 'jobOneInEventThree',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2016-06-01',
+                    'end_date' : '2016-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
-                    'start_time' : '09:00',
+                    'date' : '2016-06-01',
+                    'start_time' : '01:00',
                     'end_time' : '10:00',
                     'max_volunteers' : '10'},
                 'vshift' : {
                     'start_time' : '01:00',
-                    'end_time' : '10:00'}}
+                    'end_time' : '04:00'}}
         self.register_dataset(parameters)
 
         self.login('admin', 'admin')
@@ -531,9 +533,9 @@ class Report(LiveServerTestCase):
         total_no_of_hours =  self.driver.find_element_by_xpath(
                 '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
 
-        # 2 shifts of 0.5 hrs and 3.5 hrs
+        # 2 shifts of 0.5 hrs and 1.5 hrs
         self.assertEqual(total_no_of_shifts, '2')
-        self.assertEqual(total_no_of_hours, '4.0')
+        self.assertEqual(total_no_of_hours, '2.0')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "first_name"]').clear()
@@ -547,9 +549,9 @@ class Report(LiveServerTestCase):
         total_no_of_hours =  self.driver.find_element_by_xpath(
                 '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
 
-        # 3 shifts of 0.5 hrs, 3:30 hrs and 4 hrs
+        # 3 shifts of 0.5 hrs, 1 hrs and 1.5 hrs
         self.assertEqual(total_no_of_shifts, '3')
-        self.assertEqual(total_no_of_hours, '8.0')
+        self.assertEqual(total_no_of_hours, '3.0')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "first_name"]').clear()
@@ -568,9 +570,9 @@ class Report(LiveServerTestCase):
         total_no_of_hours =  self.driver.find_element_by_xpath(
                 '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
 
-        # 1 shift of 3:30 hrs
+        # 1 shift of 1:30 hrs
         self.assertEqual(total_no_of_shifts, '1')
-        self.assertEqual(total_no_of_hours, '3.5')
+        self.assertEqual(total_no_of_hours, '1.5')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "first_name"]').clear()
@@ -590,9 +592,9 @@ class Report(LiveServerTestCase):
         total_no_of_hours =  self.driver.find_element_by_xpath(
                 '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
 
-        # 3 shifts of 0:30 hrs, 4:00 hrs, 1:00 hrs
+        # 3 shifts of 0:30 hrs, 1:00 hrs, 1:00 hrs
         self.assertEqual(total_no_of_shifts, '3')
-        self.assertEqual(total_no_of_hours, '5.5')
+        self.assertEqual(total_no_of_hours, '2.5')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "first_name"]').clear()
@@ -618,3 +620,4 @@ class Report(LiveServerTestCase):
         # 1 shift of 2:00 hrs
         self.assertEqual(total_no_of_shifts, '1')
         self.assertEqual(total_no_of_hours, '2.0')
+
