@@ -36,7 +36,7 @@ class ShiftSignUp(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
@@ -59,19 +59,19 @@ class ShiftSignUp(LiveServerTestCase):
     def register_event_utility(self):
         Event.objects.create(
                 name = 'event',
-                start_date = '2015-06-15',
-                end_date = '2015-06-15')
+                start_date = '2016-06-15',
+                end_date = '2016-06-16')
 
     def register_job_utility(self):
         Job.objects.create(
                 name = 'job',
-                start_date = '2015-06-15',
-                end_date = '2015-06-15',
+                start_date = '2016-06-15',
+                end_date = '2016-06-15',
                 event = Event.objects.get(name = 'event'))
 
     def register_shift_utility(self):
         Shift.objects.create(
-                date = '2015-06-15',
+                date = '2016-06-15',
                 start_time = '09:00',
                 end_time = '15:00',
                 max_volunteers ='6',
@@ -84,57 +84,8 @@ class ShiftSignUp(LiveServerTestCase):
         self.driver.find_element_by_link_text('Shift Sign Up').click()
 
         self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
-               'There are currently no events.')
+               'There are no events.')
 
-    def test_jobs_page_with_no_jobs(self):
-        self.login()
-
-        self.register_event_utility()
-
-        # open Shift Sign Up
-        self.driver.find_element_by_link_text('Shift Sign Up').click()
-
-        # on event page
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, 'View Jobs')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on jobs page with no jobs
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_tag_name('table')
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 'There are currently no jobs for event.')
-
-    def test_signup_shifts_with_no_shifts(self):
-        # login
-        self.login()
-
-        self.register_event_utility()
-        self.register_job_utility()
-
-        # open Shift Sign Up
-        self.driver.find_element_by_link_text('Shift Sign Up').click()
-
-        # on event page
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, 'View Jobs')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # on jobs page
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'job')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, 'View Shifts')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on shifts page with no shift
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_tag_name('table')
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 'There are currently no shifts for the job job.')
 
     def test_signup_shifts_with_registered_shifts(self):
         # login
@@ -179,7 +130,7 @@ class ShiftSignUp(LiveServerTestCase):
             'job')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text,
-            'June 15, 2015')
+            'June 15, 2016')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text,
             '9 a.m.')
@@ -231,33 +182,36 @@ class ShiftSignUp(LiveServerTestCase):
         self.driver.find_element_by_link_text('Shift Sign Up').click()
 
         # events page
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
+               'There are no events.')
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'View Jobs')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
+            self.driver.find_element_by_tag_name('table')
+            self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[4]').text, 'View Jobs')
 
-        # on jobs page
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'View Shifts')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
 
-        # on shifts page, sign up again
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'Sign Up')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
+    def test_empty_events(self):
+        self.login()
 
-        # confirm on shift sign up
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        self.register_event_utility()
 
-        # check error on signing up same shift
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-danger').text,
-            'Error\n\nYou have already signed up for this shift. Please sign up for a different shift.')
+        # open Shift Sign Up
+        self.driver.find_element_by_link_text('Shift Sign Up').click()
+
+        # on event page
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
+               'There are no events.')
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_tag_name('table')
+            self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[4]').text, 'View Jobs')
+
+        self.register_job_utility()
+
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
+               'There are no events.')
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_tag_name('table')
+            self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[4]').text, 'View Jobs')
 
