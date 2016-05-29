@@ -20,8 +20,7 @@ class ViewVolunteerShift(LiveServerTestCase):
     def setUp(self):
         volunteer_user = User.objects.create_user(
                 username = 'volunteer',
-                password = 'volunteer',
-                email = 'volunteer@volunteer.com')
+                password = 'volunteer')
 
         volunteer = Volunteer.objects.create(
                 user = volunteer_user,
@@ -30,6 +29,7 @@ class ViewVolunteerShift(LiveServerTestCase):
                 state = 'state',
                 country = 'country',
                 phone_number = '9999999999',
+                email = 'volunteer@volunteer.com',
                 unlisted_organization = 'organization')
 
         # create an org prior to registration. Bug in Code
@@ -38,7 +38,7 @@ class ViewVolunteerShift(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
@@ -59,8 +59,7 @@ class ViewVolunteerShift(LiveServerTestCase):
         '''
         test_volunteer_user = User.objects.create_user(
                 username = 'test_volunteer',
-                password = 'volunteer',
-                email = 'test_volunteer@volunteer.com')
+                password = 'volunteer')
 
         test_volunteer = Volunteer.objects.create(
                 user = test_volunteer_user,
@@ -69,6 +68,7 @@ class ViewVolunteerShift(LiveServerTestCase):
                 state = 'state',
                 country = 'country',
                 phone_number = '9999999999',
+                email = 'test_volunteer@volunteer.com',
                 unlisted_organization = 'organization')
 
         test_volunteer_id = Volunteer.objects.get(user__username = 'test_volunteer').pk
@@ -89,7 +89,7 @@ class ViewVolunteerShift(LiveServerTestCase):
     def test_view_without_any_assigned_shift(self):
         credentials = {'username' : 'volunteer', 'password' : 'volunteer'}
         self.login(credentials)
-        self.driver.find_element_by_link_text('Upcoming Shifts').click()
+        self.driver.find_element_by_link_text('Upcoming Shifts').send_keys("\n")
         self.assertEqual(self.driver.find_element_by_class_name(
             'alert-info').text, 'You do not have any upcoming shifts.')
 
@@ -130,52 +130,52 @@ class ViewVolunteerShift(LiveServerTestCase):
         parameters = {'org' : 'org-one',
                 'event' : { 
                     'name' : 'event-four',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2017-06-01',
+                    'end_date' : '2017-06-10'},
                 'job' : { 
                     'name' : 'jobOneInEventFour',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2017-06-01',
+                    'end_date' : '2017-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2017-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '15:00',
                     'max_volunteers' : '10'}}
 
         self.register_dataset(parameters)
         credentials = {'username' : 'volunteer', 'password' : 'volunteer'}
         self.login(credentials)
-        self.driver.find_element_by_link_text('Upcoming Shifts').click()
+        self.driver.find_element_by_link_text('Upcoming Shifts').send_keys("\n")
 
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[1]').text, 'jobOneInEventFour')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2015')
+            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text, '9 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, '10 a.m.')
+            '//table//tbody//tr[1]//td[4]').text, '3 p.m.')
 
     def test_log_hours_and_logged_shift_does_not_appear_in_upcoming_shifts(self):
         parameters = {'org' : 'org-one',
                 'event' : { 
                     'name' : 'event-four',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2017-06-01',
+                    'end_date' : '2017-06-10'},
                 'job' : { 
                     'name' : 'jobOneInEventFour',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2017-06-01',
+                    'end_date' : '2017-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2017-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '15:00',
                     'max_volunteers' : '10'}}
 
         self.register_dataset(parameters)
         credentials = {'username' : 'volunteer', 'password' : 'volunteer'}
         self.login(credentials)
-        self.driver.find_element_by_link_text('Upcoming Shifts').click()
+        self.driver.find_element_by_link_text('Upcoming Shifts').send_keys("\n")
 
         self.assertEqual(self.driver.find_element_by_xpath(
                 '//table//tbody//tr[1]//td[5]').text, 'Log Hours')
@@ -199,22 +199,22 @@ class ViewVolunteerShift(LiveServerTestCase):
         parameters = {'org' : 'org-one',
                 'event' : { 
                     'name' : 'event-four',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-10'},
+                    'start_date' : '2017-06-01',
+                    'end_date' : '2017-06-10'},
                 'job' : { 
                     'name' : 'jobOneInEventFour',
-                    'start_date' : '2015-06-01',
-                    'end_date' : '2015-06-01'},
+                    'start_date' : '2017-06-01',
+                    'end_date' : '2017-06-01'},
                 'shift' : {
-                    'date' : '2015-06-01',
+                    'date' : '2017-06-01',
                     'start_time' : '09:00',
-                    'end_time' : '10:00',
+                    'end_time' : '14:00',
                     'max_volunteers' : '10'}}
 
         self.register_dataset(parameters)
         credentials = {'username' : 'volunteer', 'password' : 'volunteer'}
         self.login(credentials)
-        self.driver.find_element_by_link_text('Upcoming Shifts').click()
+        self.driver.find_element_by_link_text('Upcoming Shifts').send_keys("\n")
 
         self.assertEqual(self.driver.find_element_by_xpath(
                 '//table//tbody//tr[1]//td[6]').text, 'Cancel Shift Registration')
@@ -223,7 +223,7 @@ class ViewVolunteerShift(LiveServerTestCase):
 
         self.assertEqual(self.driver.find_element_by_class_name(
             'panel-title').text, 'Cancel Shift Confirmation')
-        self.assertEqual(self.driver.find_element_by_tag_name('button').text,
+        self.assertEqual(self.driver.find_element_by_class_name('btn-danger').text,
                 'Yes, Cancel this Shift')
         self.driver.find_element_by_xpath('//form').submit()
 

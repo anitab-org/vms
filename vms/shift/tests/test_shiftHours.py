@@ -19,8 +19,7 @@ class ShiftHours(LiveServerTestCase):
     def setUp(self):
         volunteer_user = User.objects.create_user(
                 username = 'volunteer',
-                password = 'volunteer',
-                email = 'volunteer@volunteer.com')
+                password = 'volunteer')
 
         volunteer = Volunteer.objects.create(
                 user = volunteer_user,
@@ -29,6 +28,7 @@ class ShiftHours(LiveServerTestCase):
                 state = 'state',
                 country = 'country',
                 phone_number = '9999999999',
+                email = 'volunteer@volunteer.com',
                 unlisted_organization = 'organization')
 
         # create an org prior to registration. Bug in Code
@@ -36,7 +36,7 @@ class ShiftHours(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
@@ -53,9 +53,9 @@ class ShiftHours(LiveServerTestCase):
         self.driver.find_element_by_id('id_password').send_keys(credentials['password'])
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-    def test_view_without_any_unlogged_shift(self):
+    def test_view_with_unlogged_shift(self):
         self.login({'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Shift Hours').click()
+        self.driver.find_element_by_link_text('Completed Shifts').click()
 
         volunteer_id = Volunteer.objects.get(user__username = 'volunteer').pk
         self.assertEqual(self.driver.current_url, self.live_server_url + 
@@ -70,17 +70,17 @@ class ShiftHours(LiveServerTestCase):
         # create shift and log hours
         event = Event.objects.create(
                     name = 'event',
-                    start_date = '2015-06-15',
-                    end_date = '2015-06-17')
+                    start_date = '2017-06-15',
+                    end_date = '2017-06-17')
 
         job = Job.objects.create(
                 name = 'job',
-                start_date = '2015-06-15',
-                end_date = '2015-06-15',
+                start_date = '2017-06-15',
+                end_date = '2017-06-15',
                 event = event)
 
         shift = Shift.objects.create(
-                date = '2015-06-15',
+                date = '2017-06-15',
                 start_time = '09:00',
                 end_time = '15:00',
                 max_volunteers ='6',
@@ -93,10 +93,10 @@ class ShiftHours(LiveServerTestCase):
                 start_time = '12:00',
                 end_time = '13:00')
 
-    def test_view_with_unlogged_shift(self):
+    def test_view_with_logged_shift(self):
         self.register_dataset()
         self.login({'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Shift Hours').click()
+        self.driver.find_element_by_link_text('Completed Shifts').click()
 
         volunteer_id = Volunteer.objects.get(user__username = 'volunteer').pk
         self.assertEqual(self.driver.current_url, self.live_server_url + 
@@ -105,7 +105,7 @@ class ShiftHours(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[1]').text, 'job')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, 'June 15, 2015')
+            '//table//tbody//tr[1]//td[2]').text, 'June 15, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text, 'noon')
         self.assertEqual(self.driver.find_element_by_xpath(
@@ -118,7 +118,7 @@ class ShiftHours(LiveServerTestCase):
     def test_edit_hours(self):
         self.register_dataset()
         self.login({'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Shift Hours').click()
+        self.driver.find_element_by_link_text('Completed Shifts').click()
 
         volunteer_id = Volunteer.objects.get(user__username = 'volunteer').pk
         self.assertEqual(self.driver.current_url, self.live_server_url + 
@@ -140,23 +140,23 @@ class ShiftHours(LiveServerTestCase):
                 '//input[@name = "start_time"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
-                        '15:00')
+                        '10:00')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_time"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_time"]').send_keys(
-                        '20:00')
+                        '13:00')
         self.driver.find_element_by_xpath('//form[1]').submit()
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[3]').text, '3 p.m.')
+            '//table//tbody//tr[1]//td[3]').text, '10 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, '8 p.m.')
+            '//table//tbody//tr[1]//td[4]').text, '1 p.m.')
 
     def test_end_hours_less_than_start_hours(self):
         self.register_dataset()
         self.login({'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Shift Hours').click()
+        self.driver.find_element_by_link_text('Completed Shifts').click()
 
         volunteer_id = Volunteer.objects.get(user__username = 'volunteer').pk
         self.assertEqual(self.driver.current_url, self.live_server_url + 
@@ -178,13 +178,13 @@ class ShiftHours(LiveServerTestCase):
                 '//input[@name = "start_time"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
-                        '20:00')
+                        '14:00')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_time"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_time"]').send_keys(
-                        '15:00')
+                        '12:00')
         self.driver.find_element_by_xpath('//form[1]').submit()
 
         try:
@@ -195,7 +195,7 @@ class ShiftHours(LiveServerTestCase):
     def test_cancel_hours(self):
         self.register_dataset()
         self.login({'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Shift Hours').click()
+        self.driver.find_element_by_link_text('Completed Shifts').click()
 
         volunteer_id = Volunteer.objects.get(user__username = 'volunteer').pk
         self.assertEqual(self.driver.current_url, self.live_server_url + 

@@ -57,7 +57,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.shift_page = '/shift/volunteer_search/'
         self.volunteer_registration_page = '/registration/signup_volunteer/'
@@ -112,14 +112,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.register_volunteer(credentials)
 
         credentials = ['volunteer-two', 'volunteer-password',
-                'volunteer-two', 'volunteer-two', 'volunteer-email@systers.org',
+                'volunteer-two', 'volunteer-two', 'volunteer-email2@systers.org',
                 'volunteer-two', 'volunteer-two', 'volunteer-two',
                 'volunteer-two', '9999999999', 'volunteer-two']
 
         self.register_volunteer(credentials)
 
     def register_event_utility(self, event):
-        self.driver.find_element_by_link_text('Settings').click()
+        self.driver.find_element_by_link_text('Events').send_keys("\n")
         self.assertEqual(self.driver.current_url,
                 self.live_server_url +  self.settings_page)
 
@@ -176,12 +176,12 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '05/20/2017', '05/20/2017']
         self.register_event_utility(event)
 
         # create job to create shift
-        job = ['event-name', 'job name', 'job description', '05/20/2015',
-                '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '05/20/2017',
+                '05/20/2017']
         self.register_job_utility(job)
 
         # create shift
@@ -262,7 +262,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.driver.find_element_by_link_text('Assign Shift').click()
 
         self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
-               'There are currently no events.')
+               'There are no events.')
 
     def test_jobs_page_with_no_jobs(self):
         # register volunteers
@@ -272,7 +272,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.login_admin()
 
         # create events
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '05/20/2017', '05/20/2017']
         self.register_event_utility(event)
 
         # open manage volunteer shift
@@ -286,17 +286,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         self.driver.find_element_by_link_text('Assign Shift').click()
 
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on jobs page with no jobs
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_tag_name('table')
         self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 'There are currently no jobs for event-name.')
+            'alert-info').text,'There are no events.')
 
     def test_assign_shifts_with_no_shifts(self):
         # register volunteers
@@ -306,12 +297,12 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.login_admin()
 
         # create events
-        event = ['event-name', '05/20/2015', '05/20/2015']
+        event = ['event-name', '05/20/2017', '05/20/2017']
         self.register_event_utility(event)
 
         # create jobs
-        job = ['event-name', 'job name', 'job description', '05/20/2015',
-            '05/20/2015']
+        job = ['event-name', 'job name', 'job description', '05/20/2017',
+            '05/20/2017']
         self.register_job_utility(job)
 
         # open manage volunteer shift
@@ -325,31 +316,16 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         self.driver.find_element_by_link_text('Assign Shift').click()
 
-        # events shown in table
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on page2 with jobs
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text,
-            'job name')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on page3 with no shifts in job created
+        # no events shown in table
         self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text,
-            'There are currently no shifts for the job name job.')
+            'alert-info').text,'There are no events.')
 
     def test_assign_shifts_with_registered_shifts(self):
         # register volunteers
         self.register_test_dataset()
 
         # create shift to assign
-        shift = ['06/20/2015', '09:00', '15:00', '1']
+        shift = ['05/20/2017', '09:00', '15:00', '1']
         self.register_shift_utility(shift)
 
         # open manage volunteer shift
@@ -413,7 +389,7 @@ class ManageVolunteerShift(LiveServerTestCase):
             'job name')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text,
-            'June 20, 2015')
+            'May 20, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text,
             '9 a.m.')
@@ -426,7 +402,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.register_test_dataset()
 
         # create shift to assign, with only 1 volunteer required
-        shift = ['06/20/2015', '09:00', '15:00', '1']
+        shift = ['05/20/2017', '09:00', '15:00', '1']
         self.register_shift_utility(shift)
 
         # open manage volunteer shift
@@ -490,7 +466,7 @@ class ManageVolunteerShift(LiveServerTestCase):
             'job name')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text,
-            'June 20, 2015')
+            'May 20, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text,
             '9 a.m.')
@@ -516,37 +492,16 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         self.driver.find_element_by_link_text('Assign Shift').click()
 
-        # events shown in table
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'View Jobs')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on jobs page
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'View Shifts')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on shifts page, but shift not shown since slots are already
-        # filled.
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text,
-            'There are currently no shifts for the job name job.')
-        # no unassigned shifts left for this job
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('table')
-
+        #no events shown in table
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
+            'There are no events.')
+            
     def test_cancel_assigned_shift(self):
         # register volunteers
         self.register_test_dataset()
 
         # create shift to assign
-        shift = ['06/20/2015', '09:00', '15:00', '1']
+        shift = ['05/20/2017', '09:00', '15:00', '1']
         self.register_shift_utility(shift)
 
         # open manage volunteer shift
@@ -612,7 +567,7 @@ class ManageVolunteerShift(LiveServerTestCase):
             'job name')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text,
-            'June 20, 2015')
+            'May 20, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text,
             '9 a.m.')
@@ -660,7 +615,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.register_test_dataset()
 
         # create shift to assign, with slots = 2
-        shift = ['06/20/2015', '09:00', '15:00', '2']
+        shift = ['05/20/2017', '09:00', '15:00', '2']
         self.register_shift_utility(shift)
 
         # open manage volunteer shift
@@ -716,33 +671,6 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.driver.find_element_by_link_text('Assign Shift').click()
 
         # events page
-        with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'View Jobs')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text, 'There are no events.')
 
-        # arrived on jobs page
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'View Shifts')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # arrived on shifts page, assign shift to volunteer one
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text,
-            'Assign Shift')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[4]//a').click()
-
-        # confirm on shift assignment to volunteer-one
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-        # check error on assigning same shift to volunteer-one
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-danger').text,
-            'Error\n\nThis user is already signed up for this shift. Please assign a different shift.')
 
