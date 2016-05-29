@@ -38,7 +38,7 @@ class VolunteerProfile(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
         self.driver.maximize_window()

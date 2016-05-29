@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import Select
 
 from volunteer.models import Volunteer
 from organization.models import Organization #hack to pass travis,Bug in Code
@@ -36,7 +37,7 @@ class VolunteerReport(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.registration_page = '/registration/signup_volunteer/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
@@ -60,13 +61,13 @@ class VolunteerReport(LiveServerTestCase):
     def register_event_utility(self):
         Event.objects.create(
                 name = 'event',
-                start_date = '2015-06-15',
-                end_date = '2015-06-15')
+                start_date = '2015-06-11',
+                end_date = '2015-06-25')
 
     def register_job_utility(self):
         Job.objects.create(
                 name = 'job',
-                start_date = '2015-06-12',
+                start_date = '2015-06-15',
                 end_date = '2015-06-18',
                 event = Event.objects.get(name = 'event'))
 
@@ -87,7 +88,7 @@ class VolunteerReport(LiveServerTestCase):
 
     def test_report_without_any_created_shifts(self):
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
         self.driver.find_element_by_xpath('//form').submit()
         self.assertEqual(self.driver.find_element_by_class_name(
             'alert-danger').text, 'Your criteria did not return any results.')
@@ -99,7 +100,7 @@ class VolunteerReport(LiveServerTestCase):
         self.log_hours_utility()
 
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
         self.driver.find_element_by_xpath('//form').submit()
 
         total_no_of_shifts =  self.driver.find_element_by_xpath(
@@ -117,7 +118,7 @@ class VolunteerReport(LiveServerTestCase):
         self.register_shift_utility()
 
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
         self.driver.find_element_by_xpath('//form').submit()
         self.assertEqual(self.driver.find_element_by_class_name(
             'alert-danger').text, 'Your criteria did not return any results.')
@@ -129,9 +130,11 @@ class VolunteerReport(LiveServerTestCase):
         self.log_hours_utility()
 
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
         self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys('2015-06-15')
+                '//input[@name = "start_date"]').send_keys('2015-06-11')
+        self.driver.find_element_by_xpath(
+                '//input[@name = "end_date"]').send_keys('2015-07-30')
         self.driver.find_element_by_xpath('//form').submit()
 
         total_no_of_shifts =  self.driver.find_element_by_xpath(
@@ -145,9 +148,13 @@ class VolunteerReport(LiveServerTestCase):
 
         #incorrect date
         self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').clear()
+                '//input[@name = "start_date"]').clear()
         self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys('2015-07-15')
+                '//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath(
+                '//input[@name = "start_date"]').send_keys('2015-05-10')
+        self.driver.find_element_by_xpath(
+                '//input[@name = "end_date"]').send_keys('2015-06-01')
         self.driver.find_element_by_xpath('//form').submit()
         self.assertEqual(self.driver.find_element_by_class_name(
             'alert-danger').text, 'Your criteria did not return any results.')
@@ -159,9 +166,10 @@ class VolunteerReport(LiveServerTestCase):
         self.log_hours_utility()
 
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('event')
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
+        select = Select(self.driver.find_element_by_xpath('//select[@name = "event_name"]'))
+        select.select_by_visible_text('event')
+
         self.driver.find_element_by_xpath('//form').submit()
 
         total_no_of_shifts =  self.driver.find_element_by_xpath(
@@ -172,24 +180,6 @@ class VolunteerReport(LiveServerTestCase):
 
         self.assertEqual(total_no_of_shifts, '1')
         self.assertEqual(total_no_of_hours, '3.0')
-
-        #incorrect event
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('wrong-event')
-        self.driver.find_element_by_xpath('//form').submit()
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-danger').text, 'Your criteria did not return any results.')
-
-        #incorrect event format, should raise enter a valid value error
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('!@#$')
-        self.driver.find_element_by_xpath('//form').submit()
-        self.assertEqual(self.driver.find_element_by_xpath(
-            'html/body/div[2]/div[3]/form/fieldset/div[1]/div/p/strong').text, 'Enter a valid value.')
 
     def test_job_field(self):
         self.register_event_utility()
@@ -198,9 +188,9 @@ class VolunteerReport(LiveServerTestCase):
         self.log_hours_utility()
 
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').send_keys('job')
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
+        select = Select(self.driver.find_element_by_xpath('//select[@name = "job_name"]'))
+        select.select_by_visible_text('job')
         self.driver.find_element_by_xpath('//form').submit()
 
         total_no_of_shifts =  self.driver.find_element_by_xpath(
@@ -212,25 +202,6 @@ class VolunteerReport(LiveServerTestCase):
         self.assertEqual(total_no_of_shifts, '1')
         self.assertEqual(total_no_of_hours, '3.0')
 
-        #incorrect job
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').send_keys('wrongjob')
-        self.driver.find_element_by_xpath('//form').submit()
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-danger').text, 'Your criteria did not return any results.')
-
-        #incorrect job format, should raise enter a valid value error
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').send_keys('wrong-job')
-        self.driver.find_element_by_xpath('//form').submit()
-        self.assertEqual(self.driver.find_element_by_xpath(
-            'html/body/div[2]/div[3]/form/fieldset/div[2]/div/p/strong').text, 'Enter a valid value.')
-
-
     def test_intersection_of_fields(self):
         self.register_event_utility()
         self.register_job_utility()
@@ -238,13 +209,19 @@ class VolunteerReport(LiveServerTestCase):
         self.log_hours_utility()
 
         self.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
-        self.driver.find_element_by_link_text('Report').click()
+        self.driver.find_element_by_link_text('Report').send_keys("\n")
+        select1 = Select(self.driver.find_element_by_xpath('//select[@name = "event_name"]'))
+        select1.select_by_visible_text('event')
+        select2 = Select(self.driver.find_element_by_xpath('//select[@name = "job_name"]'))
+        select2.select_by_visible_text('job')
         self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('event')
+                '//input[@name = "start_date"]').clear()
         self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').send_keys('job')
+                '//input[@name = "end_date"]').clear()
         self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys('2015-06-15')
+                '//input[@name = "start_date"]').send_keys('2015-06-11')
+        self.driver.find_element_by_xpath(
+                '//input[@name = "end_date"]').send_keys('2015-07-30')
         self.driver.find_element_by_xpath('//form').submit()
 
         total_no_of_shifts =  self.driver.find_element_by_xpath(
@@ -257,18 +234,18 @@ class VolunteerReport(LiveServerTestCase):
         self.assertEqual(total_no_of_hours, '3.0')
 
         # event, job correct and date incorrect
+        select1 = Select(self.driver.find_element_by_xpath('//select[@name = "event_name"]'))
+        select1.select_by_visible_text('event')
+        select2 = Select(self.driver.find_element_by_xpath('//select[@name = "job_name"]'))
+        select2.select_by_visible_text('job')
         self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').clear()
+                '//input[@name = "start_date"]').clear()
         self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('event')
+                '//input[@name = "end_date"]').clear()
         self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').clear()
+                '//input[@name = "start_date"]').send_keys('2015-05-10')
         self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').send_keys('job')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys('2015-08-15')
+                '//input[@name = "end_date"]').send_keys('2015-06-01')
 
         self.driver.find_element_by_xpath('//form').submit()
         self.assertEqual(self.driver.find_element_by_class_name(

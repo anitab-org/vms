@@ -44,7 +44,7 @@ class SearchVolunteer(LiveServerTestCase):
         Organization.objects.create(
                 name = 'DummyOrg')
 
-        self.homepage = '/home/'
+        self.homepage = '/'
         self.registration_page = '/registration/signup_volunteer/'
         self.authentication_page = '/authentication/login/'
         self.driver = webdriver.Firefox()
@@ -114,19 +114,20 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-name', 'volunteer-last-nameq',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-cityq', 'volunteer-stateq', 'volunteer-countryq',
                 '9999999999', 'volunteer-organizationq']
 
         self.register_volunteer(credentials)
         self.login_admin()
 
-        self.driver.find_element_by_link_text('Volunteer Search').click()
+        #self.driver.find_element_by_link_text('Volunteer Search').click()
+        self.driver.get(self.live_server_url + '/volunteer/search/')
         self.assertEqual(self.driver.current_url, self.live_server_url +
                 '/volunteer/search/')
 
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -140,7 +141,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-name', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -153,14 +154,14 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").send_keys('e')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         self.assertEqual(len(result), 2)
 
         expected_result = ['volunteer-first-name', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -173,21 +174,21 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").send_keys('vol-')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").send_keys('volunteer-fail-test')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='first_name']").send_keys('!@#$%^&*()_')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
         self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
                 None)
 
@@ -202,7 +203,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-nameq', 'volunteer-last-name',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-cityq', 'volunteer-stateq', 'volunteer-countryq',
                 '9999999999', 'volunteer-organizationq']
 
@@ -215,7 +216,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -227,7 +228,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-nameq', 'volunteer-last-name',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -240,14 +241,14 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").send_keys('v')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         self.assertEqual(len(result), 2)
 
         expected_result = ['volunteer-first-nameq', 'volunteer-last-name',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -260,21 +261,21 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").send_keys('vol-')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").send_keys('volunteer-fail-test')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").send_keys('!@#$%^&*()_')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
         self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
                 None)
 
@@ -289,7 +290,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-nameq', 'volunteer-last-nameq',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-city', 'volunteer-stateq', 'volunteer-countryq',
                 '9999999999', 'volunteer-organizationq']
 
@@ -302,7 +303,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='city']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='city']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -314,7 +315,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-city', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -327,14 +328,14 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='city']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='city']").send_keys('v')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         self.assertEqual(len(result), 2)
 
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-city', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -347,21 +348,21 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='city']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='city']").send_keys('vol-')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='city']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='city']").send_keys('volunteer-fail-test')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='city']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='city']").send_keys('!@#$%^&*()_')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
         self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
                 None)
 
@@ -376,7 +377,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-nameq', 'volunteer-last-nameq',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-cityq', 'volunteer-state', 'volunteer-countryq',
                 '9999999999', 'volunteer-organizationq']
 
@@ -389,7 +390,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='state']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='state']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -401,7 +402,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-state',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -414,14 +415,14 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='state']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='state']").send_keys('v')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         self.assertEqual(len(result), 2)
 
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-state',
                 'volunteer-countryq', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -434,21 +435,21 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='state']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='state']").send_keys('vol-')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='state']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='state']").send_keys('volunteer-fail-test')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='state']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='state']").send_keys('!@#$%^&*()_')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
         self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
                 None)
 
@@ -463,7 +464,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-nameq', 'volunteer-last-nameq',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-cityq', 'volunteer-stateq', 'volunteer-country',
                 '9999999999', 'volunteer-organizationq']
 
@@ -476,7 +477,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='country']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -488,7 +489,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-country', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -501,14 +502,14 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='country']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('v')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         self.assertEqual(len(result), 2)
 
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-country', 'volunteer-organizationq', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -521,21 +522,21 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='country']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('vol-')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='country']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('volunteer-fail-test')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='country']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('!@#$%^&*()_')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
         self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
                 None)
 
@@ -550,7 +551,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-nameq', 'volunteer-last-nameq',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-cityq', 'volunteer-stateq', 'volunteer-countryq',
                 '9999999999', 'volunteer-organization']
 
@@ -563,7 +564,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -575,7 +576,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organization', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -588,14 +589,14 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('v')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         self.assertEqual(len(result), 2)
 
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organization', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -608,21 +609,21 @@ class SearchVolunteer(LiveServerTestCase):
 
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('vol-')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('volunteer-fail-test')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
 
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('!@#$%^&*()_')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
         self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
                 None)
 
@@ -637,7 +638,7 @@ class SearchVolunteer(LiveServerTestCase):
 
         credentials = ['volunteer-usernameq', 'volunteer-passwordq',
                 'volunteer-first-nameq', 'volunteer-last-nameq',
-                'volunteer-email@systers.orgq', 'volunteer-addressq',
+                'volunteer-email2@systers.orgq', 'volunteer-addressq',
                 'volunteer-cityq', 'volunteer-stateq', 'volunteer-countryq',
                 '9999999999', 'volunteer-organization']
 
@@ -660,7 +661,7 @@ class SearchVolunteer(LiveServerTestCase):
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('volunteer')
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('volunteer')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         search_results = self.driver.find_element_by_xpath('//table//tbody')
 
@@ -672,7 +673,7 @@ class SearchVolunteer(LiveServerTestCase):
         expected_result = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
                 'volunteer-countryq', 'volunteer-organization', '9999999999',
-                'volunteer-email@systers.orgq']
+                'volunteer-email2@systers.orgq']
         
         self.assertTrue(expected_result in result)
 
@@ -689,7 +690,7 @@ class SearchVolunteer(LiveServerTestCase):
         self.driver.find_element_by_css_selector(".form-control[name='country']").send_keys('wrong-country')
         self.driver.find_element_by_css_selector(".form-control[name='organization']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='organization']").send_keys('org')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
@@ -698,7 +699,7 @@ class SearchVolunteer(LiveServerTestCase):
         self.driver.find_element_by_css_selector(".form-control[name='last_name']").send_keys('volunteer')
         self.driver.find_element_by_css_selector(".form-control[name='city']").clear()
         self.driver.find_element_by_css_selector(".form-control[name='city']").send_keys('wrong-city')
-        self.driver.find_element_by_tag_name('button').click()
+        self.driver.find_element_by_class_name('btn').click()
 
         with self.assertRaises(NoSuchElementException):
             search_results = self.driver.find_element_by_xpath('//table//tbody')
