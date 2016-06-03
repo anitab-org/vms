@@ -57,8 +57,7 @@ for the contributions from our GSoC developers.
 * Timeline for GSOC 2016
        * [Development](https://docs.google.com/document/d/1YM_h1Xpyga_7ZkGzea6HacvShqIQF5hZIyDWoNNbw68/edit?usp=sharing)
        * [Testing](https://docs.google.com/document/d/1URRx6tAzpvlqYQOnXExJ9HnQ1syTP5I0JEXGD5HsCwo/edit)
-* [Timeline for GSoC 2015](https://docs.google.com/document/d/1bzKjyxWIXeqW45UjhsbM4wtlyNagiyueZTqxhtmD_A0/edit)
-* [Task list for GSoC 2015](https://docs.google.com/document/d/13GVI5yGsx4Aj1L0UYawPRo5ViyB7o-0v_UyMWyrOZMY/edit)
+* [Completed features during GSoC 2015](https://docs.google.com/document/d/1bzKjyxWIXeqW45UjhsbM4wtlyNagiyueZTqxhtmD_A0/edit)
 * [Completed features during GSoC 2014](https://docs.google.com/document/d/1wIHGmqTbufyGW9nKYt3vV-zZhdJEPfdxaOjegQ9qKEk/edit)
 
 
