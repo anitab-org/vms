@@ -294,9 +294,9 @@ Start the development server by running the command (this runs the development s
 
 You can now try out the project by going to [http://localhost:8001/home](http://localhost:8001/home) on a browser on your local machine.
 
-## Run Unit Tests
+## Run Unit and Functional Tests
 
-You can also run unit tests by running the command:
+You can also run unit and functional tests by running the command:
 
     python manage.py test name_of_app_here
 
@@ -312,6 +312,18 @@ python manage.py test shift
 ```
 ```
 python manage.py test organization
+```
+
+If you want to run only unit tests for an app, refer to its test_services file using the dot notation.
+
+For example, if you want to run unit tests for the event app:
+```
+python manage.py test event.tests.test_services
+```
+
+Smilarly, for job app it would be:
+```
+python manage.py test job.tests.test_services
 ```
 
 If you want to run all unit tests, run this command:
