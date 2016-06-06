@@ -55,4 +55,6 @@ The QA process is divided as follows:
 - For functional tests, a firefox window for each test will open up
   automatically and close after simulation of tests.
 
+## Tests Failing
+
 Note: The current setup uses one of the latest versions of Selenium. You will run into errors if the this version is incompatible with your firefox version and does not support it. In that case, follow [this](https://support.mozilla.org/en-US/kb/find-what-version-firefox-you-are-using) guide to find out your browser version and accordingly install a Selenium version compatible with it.
