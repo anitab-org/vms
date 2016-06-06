@@ -57,4 +57,21 @@ The QA process is divided as follows:
 
 ## Tests Failing
 
+There are 8 Failures. These are due to issue [#327](https://github.com/systers/vms/issues/327) :
+
+- test_report_with_empty_fields
+- test_job_field
+- test_intersection_of_fields
+- test_event_field
+- test_date_field
+- test_admin_cannot_access_volunteer_urls
+- test_cancel_assigned_shift
+- test_null_values_with_dataset
+- test_check_intersection_of_fields
+
+one error
+- in test_volunteer_cannot_access_admin_urls
+
+once [#325](https://github.com/systers/vms/issues/325) gets fixed this will automatically pass.
+
 Note: The current setup uses one of the latest versions of Selenium. You will run into errors if the this version is incompatible with your firefox version and does not support it. In that case, follow [this](https://support.mozilla.org/en-US/kb/find-what-version-firefox-you-are-using) guide to find out your browser version and accordingly install a Selenium version compatible with it.
