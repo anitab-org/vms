@@ -59,7 +59,7 @@ class VolunteerProfile(LiveServerTestCase):
 
     def test_details_tab(self):
         self.login()
-        self.driver.find_element_by_link_text('Profile').click()
+        self.driver.find_element_by_link_text('Profile').send_keys("\n")
         page_source = self.driver.page_source
 
         found_email = re.search('idonthave@gmail.com', page_source)
@@ -79,8 +79,8 @@ class VolunteerProfile(LiveServerTestCase):
 
     def test_edit_profile(self):
         self.login()
-        self.driver.find_element_by_link_text('Profile').click()
-        self.driver.find_element_by_link_text('Edit Profile').click()
+        self.driver.find_element_by_link_text('Profile').send_keys("\n")
+        self.driver.find_element_by_link_text('Edit Profile').send_keys("\n")
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "first_name"]').clear()
