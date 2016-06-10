@@ -27,6 +27,10 @@ class SignUpVolunteer(LiveServerTestCase):
     City Field:
         - Test Null Values
         - Test legit characters as per Models defined
+
+    Email Field:
+        - Test Null Values
+        - Test uniqueness of field
     '''
     def setUp(self):
         # create an org prior to registration. Bug in Code
@@ -64,6 +68,9 @@ class SignUpVolunteer(LiveServerTestCase):
 
         self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
                 None)
+        # verify that all of the fields are compulsory
+        self.assertEqual(len(self.driver.find_elements_by_class_name('help-block')),
+                11)
 
     def test_name_fields(self):
         # register valid volunteer user
@@ -325,3 +332,49 @@ class SignUpVolunteer(LiveServerTestCase):
                 self.volunteer_registration_page)
         self.assertEqual(self.driver.find_element_by_xpath("id('div_id_city')/div/p/strong").text,
                 'Enter a valid value.')
+
+    def test_email_field(self):
+
+        # register valid volunteer user
+        self.driver.get(self.live_server_url + self.volunteer_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('volunteer-username')
+        self.driver.find_element_by_id('id_password').send_keys('volunteer-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('volunteer-first-name')
+        self.driver.find_element_by_id('id_last_name').send_keys('volunteer-last-name')
+        self.driver.find_element_by_id('id_email').send_keys('volunteer-email@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('volunteer-address')
+        self.driver.find_element_by_id('id_city').send_keys('volunteer-city')
+        self.driver.find_element_by_id('id_state').send_keys('volunteer-state')
+        self.driver.find_element_by_id('id_country').send_keys('volunteer-country')
+        self.driver.find_element_by_id('id_phone_number').send_keys('9999999999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('volunteer-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify successful registration
+        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+                'You have successfully registered!')
+
+        # Try to register volunteer again with same email address
+        self.driver.get(self.live_server_url + self.volunteer_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('volunteer-username-1')
+        self.driver.find_element_by_id('id_password').send_keys('volunteer-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('volunteer-first-name')
+        self.driver.find_element_by_id('id_last_name').send_keys('volunteer-last-name')
+        self.driver.find_element_by_id('id_email').send_keys('volunteer-email@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('volunteer-address')
+        self.driver.find_element_by_id('id_city').send_keys('volunteer-city')
+        self.driver.find_element_by_id('id_state').send_keys('volunteer-state')
+        self.driver.find_element_by_id('id_country').send_keys('volunteer-country')
+        self.driver.find_element_by_id('id_phone_number').send_keys('9999999999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('volunteer-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify that volunteer wasn't registered
+        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
+                None)
+        self.assertEqual(self.driver.find_element_by_xpath("id('div_id_email')/div/p/strong").text,
+                'Volunteer with this Email already exists.')
