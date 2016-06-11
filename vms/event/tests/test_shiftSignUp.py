@@ -281,3 +281,54 @@ class ShiftSignUp(LiveServerTestCase):
 
         # on event page
         self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,'There are no events.')
+
+    def test_search_event(self):
+
+        self.register_event_utility()
+        self.register_job_utility()
+        self.register_shift_utility()
+
+        # Login as volunteer 1 and open Shift Sign Up
+        self.login()
+        self.driver.find_element_by_link_text('Shift Sign Up').click()
+
+        # enter date range in which an event starts
+        self.driver.find_element_by_id('from').send_keys('05/08/2016')
+        self.driver.find_element_by_id('to').send_keys('08/31/2017')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+        # verify that the event shows up
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text, 'event')
+
+        # enter date range in which no event starts
+        self.driver.find_element_by_id('from').clear()
+        self.driver.find_element_by_id('to').clear()
+        self.driver.find_element_by_id('from').send_keys('10/08/2016')
+        self.driver.find_element_by_id('to').send_keys('08/31/2017')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+        # verify that no event shows up on event page
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,'There are no events.')
+
+        # enter only incorrect starting date
+        self.driver.find_element_by_id('from').clear()
+        self.driver.find_element_by_id('to').clear()
+        self.driver.find_element_by_id('from').send_keys('10/08/2016')
+        # verify that no event shows up on event page
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,'There are no events.')
+
+        """# enter only correct starting date
+        self.driver.find_element_by_id('from').clear()
+        self.driver.find_element_by_id('from').send_keys('05/10/2016')
+        # verify that the event shows up
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text, 'event')"""
+
+        # enter only incorrect ending date
+        self.driver.find_element_by_id('from').clear()
+        self.driver.find_element_by_id('to').send_keys('10/08/2015')
+        # verify that no event shows up on event page
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,'There are no events.')
+
+        """# enter correct ending date
+        self.driver.find_element_by_id('to').clear()
+        self.driver.find_element_by_id('to').send_keys('06/15/2017')
+        # verify that the event shows up
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text, 'event')"""
