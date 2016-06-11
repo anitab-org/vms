@@ -19,8 +19,7 @@ class ShiftSignUp(LiveServerTestCase):
     def setUp(self):
         volunteer_user = User.objects.create_user(
                 username = 'volunteer',
-                password = 'volunteer',
-                email = 'volunteer@volunteer.com')
+                password = 'volunteer')
 
         Volunteer.objects.create(
                 user = volunteer_user,
@@ -29,6 +28,7 @@ class ShiftSignUp(LiveServerTestCase):
                 state = 'state',
                 country = 'country',
                 phone_number = '9999999999',
+                email = 'volunteer@volunteer.com',
                 unlisted_organization = 'organization')
 
         # create an org prior to registration. Bug in Code
@@ -59,19 +59,19 @@ class ShiftSignUp(LiveServerTestCase):
     def register_event_utility(self):
         Event.objects.create(
                 name = 'event',
-                start_date = '2016-06-15',
-                end_date = '2016-06-16')
+                start_date = '2016-05-10',
+                end_date = '2018-06-16')
 
     def register_job_utility(self):
         Job.objects.create(
                 name = 'job',
-                start_date = '2016-06-15',
-                end_date = '2016-06-15',
+                start_date = '2016-05-10',
+                end_date = '2017-06-15',
                 event = Event.objects.get(name = 'event'))
 
     def register_shift_utility(self):
         Shift.objects.create(
-                date = '2016-06-15',
+                date = '2017-06-15',
                 start_time = '09:00',
                 end_time = '15:00',
                 max_volunteers ='6',
@@ -130,7 +130,7 @@ class ShiftSignUp(LiveServerTestCase):
             'job')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text,
-            'June 15, 2016')
+            'June 15, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[3]').text,
             '9 a.m.')
@@ -215,3 +215,69 @@ class ShiftSignUp(LiveServerTestCase):
             self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[4]').text, 'View Jobs')
 
+    def test_shift_sign_up_with_outdated_shifts(self):
+        self.login()
+
+        self.register_event_utility()
+        self.register_job_utility()
+
+        # create outdated shift
+        Shift.objects.create(
+                date = '2016-05-11',
+                start_time = '09:00',
+                end_time = '15:00',
+                max_volunteers ='6',
+                job = Job.objects.get(name = 'job'))
+
+        # open Shift Sign Up
+        self.driver.find_element_by_link_text('Shift Sign Up').click()
+
+        # on event page
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[4]').text, 'View Jobs')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[4]//a').click()
+
+        # on jobs page
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[4]').text, 'View Shifts')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[4]//a').click()
+
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,'There are currently no shifts for the job job.')
+
+    def test_shift_sign_up_with_no_slots(self):
+
+        self.register_event_utility()
+        self.register_job_utility()
+
+        # create shift with no slot
+        shift_2 = Shift.objects.create(
+                date = '2016-05-11',
+                start_time = '09:00',
+                end_time = '15:00',
+                max_volunteers ='1',
+                job = Job.objects.get(name = 'job'))
+
+        # Create another volunteer
+        volunteer_user_2 = User.objects.create_user(
+                username = 'volunteer-2',
+                password = 'volunteer')
+
+        volunteer_2 = Volunteer.objects.create(
+                user = volunteer_user_2,
+                address = 'address',
+                city = 'city',
+                state = 'state',
+                country = 'country',
+                phone_number = '9999999999',
+                email = 'volunteer2@volunteer.com',
+                unlisted_organization = 'organization')
+
+        # Assign shift to the volunteer
+        VolunteerShift.objects.create(
+                shift = shift_2,
+                volunteer = volunteer_2)
+
+        # Login as volunteer 1 and open Shift Sign Up
+        self.login()
+        self.driver.find_element_by_link_text('Shift Sign Up').click()
+
+        # on event page
+        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,'There are no events.')
