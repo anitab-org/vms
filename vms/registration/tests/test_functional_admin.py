@@ -38,6 +38,9 @@ class SignUpAdmin(LiveServerTestCase):
     Organization Field:
         - Test Null Values
         - Test legit characters as per Models defined
+
+    Retention of fields:
+        - Field values are checked to see that they are not lost when the page gets reloaded
     '''
     def setUp(self):        
         # create an org prior to registration. Bug in Code
@@ -492,3 +495,62 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath("id('div_id_unlisted_organization')/div/p/strong").text,
                 "Enter a valid value.")
 
+    def test_field_value_retention(self):
+
+        # send invalid value in fields - first name, state, phone, organization
+        self.driver.get(self.live_server_url + self.admin_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('admin-username')
+        self.driver.find_element_by_id('id_password').send_keys('admin-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('admin-first-name-3')
+        self.driver.find_element_by_id('id_last_name').send_keys('admin-last-name')
+        self.driver.find_element_by_id('id_email').send_keys('email1@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('admin-address')
+        self.driver.find_element_by_id('id_city').send_keys('admin-city')
+        self.driver.find_element_by_id('id_state').send_keys('admin-state!')
+        self.driver.find_element_by_id('id_country').send_keys('admin-country')
+        self.driver.find_element_by_id('id_phone_number').send_keys('99999.!9999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('@#admin-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify that user wasn't registered and that field values are not erased
+        self.assertEqual(self.driver.current_url, self.live_server_url + self.admin_registration_page)
+        self.assertEqual(self.driver.find_element_by_id('id_username').get_attribute('value'),'admin-username')
+        self.assertEqual(self.driver.find_element_by_id('id_first_name').get_attribute('value'),'admin-first-name-3')
+        self.assertEqual(self.driver.find_element_by_id('id_last_name').get_attribute('value'),'admin-last-name')
+        self.assertEqual(self.driver.find_element_by_id('id_email').get_attribute('value'),'email1@systers.org')
+        self.assertEqual(self.driver.find_element_by_id('id_address').get_attribute('value'),'admin-address')
+        self.assertEqual(self.driver.find_element_by_id('id_city').get_attribute('value'),'admin-city')
+        self.assertEqual(self.driver.find_element_by_id('id_state').get_attribute('value'),'admin-state!')
+        self.assertEqual(self.driver.find_element_by_id('id_country').get_attribute('value'),'admin-country')
+        self.assertEqual(self.driver.find_element_by_id('id_phone_number').get_attribute('value'),'99999.!9999')
+        self.assertEqual(self.driver.find_element_by_id('id_unlisted_organization').get_attribute('value'),'@#admin-org')
+
+        # send invalid value in fields - last name, address, city, country
+        self.driver.get(self.live_server_url + self.admin_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('admin-username')
+        self.driver.find_element_by_id('id_password').send_keys('admin-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('admin-first-name')
+        self.driver.find_element_by_id('id_last_name').send_keys('admin-last-name-3')
+        self.driver.find_element_by_id('id_email').send_keys('email1@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('admin-address$@!')
+        self.driver.find_element_by_id('id_city').send_keys('admin-city#$')
+        self.driver.find_element_by_id('id_state').send_keys('admin-state')
+        self.driver.find_element_by_id('id_country').send_keys('admin-country 15')
+        self.driver.find_element_by_id('id_phone_number').send_keys('999999999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('admin-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify that user wasn't registered and that field values are not erased
+        self.assertEqual(self.driver.current_url, self.live_server_url + self.admin_registration_page)
+        self.assertEqual(self.driver.find_element_by_id('id_username').get_attribute('value'),'admin-username')
+        self.assertEqual(self.driver.find_element_by_id('id_first_name').get_attribute('value'),'admin-first-name')
+        self.assertEqual(self.driver.find_element_by_id('id_last_name').get_attribute('value'),'admin-last-name-3')
+        self.assertEqual(self.driver.find_element_by_id('id_email').get_attribute('value'),'email1@systers.org')
+        self.assertEqual(self.driver.find_element_by_id('id_address').get_attribute('value'),'admin-address$@!')
+        self.assertEqual(self.driver.find_element_by_id('id_city').get_attribute('value'),'admin-city#$')
+        self.assertEqual(self.driver.find_element_by_id('id_state').get_attribute('value'),'admin-state')
+        self.assertEqual(self.driver.find_element_by_id('id_country').get_attribute('value'),'admin-country 15')
+        self.assertEqual(self.driver.find_element_by_id('id_phone_number').get_attribute('value'),'999999999')
+        self.assertEqual(self.driver.find_element_by_id('id_unlisted_organization').get_attribute('value'),'admin-org')
