@@ -34,6 +34,10 @@ class SignUpAdmin(LiveServerTestCase):
         - Test Null Values
         - Test validity of number against country entered
         - Test legit characters as per Models defined
+
+    Organization Field:
+        - Test Null Values
+        - Test legit characters as per Models defined
     '''
     def setUp(self):        
         # create an org prior to registration. Bug in Code
@@ -313,6 +317,8 @@ class SignUpAdmin(LiveServerTestCase):
                 None)
         self.assertEqual(self.driver.find_element_by_class_name('messages').text,
                 'You have successfully registered!')
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.homepage)
 
         # Try to register admin again with same email address
         self.driver.get(self.live_server_url + self.admin_registration_page)
@@ -331,6 +337,8 @@ class SignUpAdmin(LiveServerTestCase):
         self.driver.find_element_by_xpath('//form[1]').submit()
 
         # verify that user wasn't registered
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.admin_registration_page)
         self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
                 None)
         self.assertEqual(self.driver.find_element_by_xpath("id('div_id_email')/div/p/strong").text,
@@ -359,6 +367,8 @@ class SignUpAdmin(LiveServerTestCase):
                 None)
         self.assertEqual(self.driver.find_element_by_class_name('messages').text,
                 'You have successfully registered!')
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.homepage)
 
         # Try to register admin with incorrect phone number for country
         self.driver.get(self.live_server_url + self.admin_registration_page)
@@ -377,6 +387,8 @@ class SignUpAdmin(LiveServerTestCase):
         self.driver.find_element_by_xpath('//form[1]').submit()
 
         # verify that user wasn't registered
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.admin_registration_page)
         self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
                 None)
         self.assertEqual(self.driver.find_element_by_xpath("id('div_id_phone_number')/div/p/strong").text,
@@ -399,8 +411,84 @@ class SignUpAdmin(LiveServerTestCase):
         self.driver.find_element_by_xpath('//form[1]').submit()
 
         # verify that user wasn't registered
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.admin_registration_page)
         self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
                 None)
         self.assertEqual(self.driver.find_element_by_xpath("id('div_id_phone_number')/div/p/strong").text,
                 "Please enter a valid phone number")
+
+    def test_organization_field(self):
+
+        # register valid admin user
+        self.driver.get(self.live_server_url + self.admin_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('admin-username')
+        self.driver.find_element_by_id('id_password').send_keys('admin-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('admin-first-name')
+        self.driver.find_element_by_id('id_last_name').send_keys('admin-last-name')
+        self.driver.find_element_by_id('id_email').send_keys('email@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('admin-address')
+        self.driver.find_element_by_id('id_city').send_keys('admin-city')
+        self.driver.find_element_by_id('id_state').send_keys('admin-state')
+        self.driver.find_element_by_id('id_country').send_keys('admin-country')
+        self.driver.find_element_by_id('id_phone_number').send_keys('999999999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('admin-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify successful registration
+        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+                'You have successfully registered!')
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.homepage)
+
+        # test numeric characters in organization
+        self.driver.get(self.live_server_url + self.admin_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('admin-username-1')
+        self.driver.find_element_by_id('id_password').send_keys('admin-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('admin-first-name')
+        self.driver.find_element_by_id('id_last_name').send_keys('admin-last-name')
+        self.driver.find_element_by_id('id_email').send_keys('email1@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('admin-address')
+        self.driver.find_element_by_id('id_city').send_keys('admin-city')
+        self.driver.find_element_by_id('id_state').send_keys('admin-state')
+        self.driver.find_element_by_id('id_country').send_keys('admin-country')
+        self.driver.find_element_by_id('id_phone_number').send_keys('999999999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('13 admin-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify successful registration
+        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
+                None)
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+                'You have successfully registered!')
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.homepage)
+
+        # Use invalid characters in organization
+        self.driver.get(self.live_server_url + self.admin_registration_page)
+
+        self.driver.find_element_by_id('id_username').send_keys('admin-username-2')
+        self.driver.find_element_by_id('id_password').send_keys('admin-password!@#$%^&*()_')
+        self.driver.find_element_by_id('id_first_name').send_keys('admin-first-name')
+        self.driver.find_element_by_id('id_last_name').send_keys('admin-last-name')
+        self.driver.find_element_by_id('id_email').send_keys('email2@systers.org')
+        self.driver.find_element_by_id('id_address').send_keys('admin-address')
+        self.driver.find_element_by_id('id_city').send_keys('admin-city')
+        self.driver.find_element_by_id('id_state').send_keys('admin-state')
+        self.driver.find_element_by_id('id_country').send_keys('admin-country')
+        self.driver.find_element_by_id('id_phone_number').send_keys('999999999')
+        self.driver.find_element_by_id('id_unlisted_organization').send_keys('!$&admin-org')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # verify that user wasn't registered
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                self.admin_registration_page)
+        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
+                None)
+        self.assertEqual(self.driver.find_element_by_xpath("id('div_id_unlisted_organization')/div/p/strong").text,
+                "Enter a valid value.")
 
