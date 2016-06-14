@@ -229,18 +229,14 @@ class Settings(LiveServerTestCase):
 
     def register_event_utility(self, event):
         self.driver.find_element_by_link_text('Create Event').click()
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + '/event/create/')
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/event/create/')
 
-        self.driver.find_element_by_xpath(
-                '//input[@placeholder = "Event Name"]').send_keys(
-                        event[0])
-        self.driver.find_element_by_xpath(
-                '//input[@name = "start_date"]').send_keys(
-                        event[1])
-        self.driver.find_element_by_xpath(
-                '//input[@name = "end_date"]').send_keys(
-                        event[2])
+        self.driver.find_element_by_xpath('//input[@placeholder = "Event Name"]').send_keys(
+                event[0])
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys(
+                event[1])
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys(
+                event[2])
         self.driver.find_element_by_xpath('//form[1]').submit()
 
     def register_job_utility(self, job):
@@ -255,6 +251,19 @@ class Settings(LiveServerTestCase):
         self.driver.find_element_by_xpath('//textarea[@name = "description"]').send_keys(job[2])
         self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys(job[3])
         self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys(job[4])
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+    def register_shift_utility(self, shift):
+
+        self.driver.find_element_by_xpath('//input[@name = "date"]').send_keys(
+                shift[0])
+        self.driver.find_element_by_xpath('//input[@name = "start_time"]').send_keys(
+                shift[1])
+        self.driver.find_element_by_xpath('//input[@name = "end_time"]').send_keys(
+                shift[2])
+        self.driver.find_element_by_xpath('//input[@name = "max_volunteers"]').send_keys(
+                shift[3])
+
         self.driver.find_element_by_xpath('//form[1]').submit()
 
     def test_create_event(self):
@@ -562,192 +571,122 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
         self.register_job_utility(job)
 
         # create shift
         self.driver.find_element_by_link_text('Shifts').click()
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + '/shift/list_jobs/')
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
 
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]/td[5]//a').click()
-
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
         self.driver.find_element_by_link_text('Create Shift').click()
 
-        self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys(
-                        '09/01/2016')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "start_time"]').send_keys(
-                        '09:00')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "end_time"]').send_keys(
-                        '12:00')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "max_volunteers"]').send_keys(
-                        '10')
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        # create shift
+        shift = ['08/30/2017','09:00', '12:00', '10']
+        self.register_shift_utility(shift)
 
-        self.assertNotEqual(self.driver.find_elements_by_xpath(
-                '//table//tbody'), None)
+        # verify that shift was created
+        self.assertNotEqual(self.driver.find_elements_by_xpath('//table//tbody'), None)
+        with self.assertRaises(NoSuchElementException):
+            self.driver.find_element_by_class_name('help-block')
 
     def test_edit_shift(self):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
         self.register_job_utility(job)
 
         # create shift
         self.driver.find_element_by_link_text('Shifts').click()
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + '/shift/list_jobs/')
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
 
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]/td[5]//a').click()
-
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
         self.driver.find_element_by_link_text('Create Shift').click()
 
-        self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys(
-                        '09/01/2016')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "start_time"]').send_keys(
-                        '09:00')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "end_time"]').send_keys(
-                        '12:00')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "max_volunteers"]').send_keys(
-                        '10')
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        # create shift
+        shift = ['08/30/2017','09:00', '12:00', '10']
+        self.register_shift_utility(shift)
 
-        self.assertNotEqual(self.driver.find_elements_by_xpath(
-                '//table//tbody'), None)
-
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[5]').text, 'Edit')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[5]//a').click()
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
         
         self.driver.find_element_by_xpath('//input[@name = "date"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys(
-                        '09/05/2016')
+        self.driver.find_element_by_xpath('//input[@name = "start_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "max_volunteers"]').clear()
 
-        self.driver.find_element_by_xpath(
-                '//input[@name = "start_time"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "start_time"]').send_keys(
-                        '10:00')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "end_time"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "end_time"]').send_keys(
-                        '13:00')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "max_volunteers"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "max_volunteers"]').send_keys(
-                        '5')
-
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        shift = ['09/05/2017','10:00', '13:00', '5']
+        self.register_shift_utility(shift)
 
         with self.assertRaises(NoSuchElementException):
             self.driver.find_element_by_class_name('help-block')
 
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'Sept. 5, 2016')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, '10 a.m.')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[3]').text, '1 p.m.')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, '5')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text,
+            'Sept. 5, 2017')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[2]').text, '10 a.m.')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[3]').text, '1 p.m.')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[4]').text, '5')
 
     def test_delete_shift(self):
         self.login_admin()
 
         # register event to create job
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
         self.register_job_utility(job)
 
         # create shift
         self.driver.find_element_by_link_text('Shifts').click()
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + '/shift/list_jobs/')
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
 
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]/td[5]//a').click()
-
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
         self.driver.find_element_by_link_text('Create Shift').click()
 
-        self.driver.find_element_by_xpath(
-                '//input[@name = "date"]').send_keys(
-                        '09/05/2016')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "start_time"]').send_keys(
-                        '09:00')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "end_time"]').send_keys(
-                        '12:00')
-        self.driver.find_element_by_xpath(
-                '//input[@name = "max_volunteers"]').send_keys(
-                        '10')
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        # create shift
+        shift = ['08/30/2017','09:00', '12:00', '10']
+        self.register_shift_utility(shift)
 
-        self.assertNotEqual(self.driver.find_elements_by_xpath(
-                '//table//tbody'), None)
+        self.assertNotEqual(self.driver.find_elements_by_xpath('//table//tbody'), None)
         
         # delete shift
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[6]').text, 'Delete')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[6]//a').click()
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]').text,
+            'Delete')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]//a').click()
 
         # confirm on delete
-        self.assertNotEqual(self.driver.find_element_by_class_name(
-            'panel-danger'), None)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'panel-heading').text, 'Delete Shift')
+        self.assertNotEqual(self.driver.find_element_by_class_name('panel-danger'), None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text, 'Delete Shift')
         self.driver.find_element_by_xpath('//form').submit()
 
         # check deletion of shift
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'job name')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[5]').text, 'Shifts')
-        self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[5]//a').click()
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-success').text,
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text,
+            'job name')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text,
+            'Shifts')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+        self.assertEqual(self.driver.find_element_by_class_name('alert-success').text,
             'There are currently no shifts. Please create shifts first.')
 
     def test_organization(self):
         self.login_admin()
 
         self.driver.find_element_by_link_text('Organizations').click()
-        self.assertEqual(self.driver.current_url, self.live_server_url + 
-                '/organization/list/')
+        self.assertEqual(self.driver.current_url, self.live_server_url + '/organization/list/')
 
         self.driver.find_element_by_link_text('Create Organization').click()
-        self.assertEqual(self.driver.current_url, self.live_server_url + 
-                '/organization/create/')
+        self.assertEqual(self.driver.current_url, self.live_server_url + '/organization/create/')
         
         # Test all valid characters for organization
         # [(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]
