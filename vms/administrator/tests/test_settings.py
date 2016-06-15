@@ -202,6 +202,86 @@ class Settings(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath("//form//div[6]/div/p/strong").text,
                 'This field is required.')
 
+    def test_null_values_in_create_shift(self):
+        self.login_admin()
+
+        # register event to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        # create shift
+        shift = ['','', '', '']
+        self.register_shift_utility(shift)
+
+        # verify that shift was not created and error messages appear as expected
+        self.assertEqual(len(self.driver.find_elements_by_class_name('help-block')),4)
+
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[4]/div/p/strong").text,
+                'This field is required.')
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[5]/div/p/strong").text,
+                'This field is required.')
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[6]/div/p/strong").text,
+                'This field is required.')
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[7]/div/p/strong").text,
+                'This field is required.')
+
+    def test_null_values_in_edit_shift(self):
+        self.login_admin()
+
+        # register event to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        # create shift
+        shift = ['08/30/2017','09:00', '12:00', '10']
+        self.register_shift_utility(shift)
+
+        # edit shift with null values
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+
+        self.driver.find_element_by_xpath('//input[@name = "date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "max_volunteers"]').clear()
+
+        shift = ['','', '', '']
+        self.register_shift_utility(shift)
+
+        # verify that shift was not edited and error messages appear as expected
+        self.assertEqual(len(self.driver.find_elements_by_class_name('help-block')),4)
+
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[4]/div/p/strong").text,
+                'This field is required.')
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[5]/div/p/strong").text,
+                'This field is required.')
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[6]/div/p/strong").text,
+                'This field is required.')
+        self.assertEqual(self.driver.find_element_by_xpath("//form//div[7]/div/p/strong").text,
+                'This field is required.')
+
     def test_job_tab_and_create_job_without_event(self):
         self.login_admin()
         self.driver.find_element_by_link_text('Jobs').click()
