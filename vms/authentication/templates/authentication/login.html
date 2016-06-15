@@ -49,7 +49,7 @@
                         {% for error in authentication_form.password.errors %}
                             {{ error }}
                         {% endfor %}
-                    </strong> 
+                    </strong>
                 </p>
             </div>
         {% else %}
@@ -61,6 +61,11 @@
                     <input class="textinput textInput form-control" id="id_password" name="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" type="password">
                 </div>
             </div>
+        {% endif %}
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            "Your username and password didn't match. Please try again."
+        </div> <!-- alert alert-danger -->
         {% endif %}
         <button class="primaryAction btn btn-lg btn-primary btn-block" type="submit">
             {% trans "Sign In" %}

@@ -18,7 +18,7 @@
     <link href="{% static "vms/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css" %}" rel="stylesheet">
     <link href="{% static "vms/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css" %}" rel="stylesheet">
     <link href="{% static "vms/datetimepicker/bootstrap-datetimepicker.min.css" %}" rel="stylesheet">
-	
+
     <script src="{% static "vms/jquery/jquery-1.11.1.min.js" %}"></script>
     <script src="{% static "vms/bootstrap-3.2.0-dist/js/bootstrap.min.js" %}"></script>
     <script src="{% static "vms/jquery-ui-1.11.4.custom/jquery-ui.min.js" %}"></script>
@@ -63,7 +63,7 @@
                       </ul>
 
                         {% endif %}
-                        {% if user.volunteer %} 
+                        {% if user.volunteer %}
                             <li><a href="{% url 'shift:view_volunteer_shifts' user.volunteer.id %}">{% trans "Upcoming Shifts" %}</a></li>
                             <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">{% trans "Completed Shifts" %}</a></li>
                             <li><a href="{% url 'event:list_sign_up' user.volunteer.id %}">{% trans "Shift Sign Up" %}</a></li>
