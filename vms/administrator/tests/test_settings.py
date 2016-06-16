@@ -4,6 +4,9 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from django.contrib.auth.models import User
 from administrator.models import Administrator
 from volunteer.models import Volunteer
+from event.models import Event
+from job.models import Job
+from shift.models import Shift, VolunteerShift
 from organization.models import Organization #hack to pass travis,Bug in Code
 
 from selenium import webdriver
@@ -83,6 +86,31 @@ class Settings(LiveServerTestCase):
         self.driver.find_element_by_link_text('Events').send_keys("\n")
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
+
+    def assign_shift(self, volunteer):
+        event = Event.objects.create(
+                    name = 'event',
+                    start_date = '2017-06-15',
+                    end_date = '2017-06-17')
+
+        job = Job.objects.create(
+                name = 'job',
+                start_date = '2017-06-15',
+                end_date = '2017-06-15',
+                event = event)
+
+        shift = Shift.objects.create(
+                date = '2017-06-15',
+                start_time = '09:00',
+                end_time = '15:00',
+                max_volunteers ='6',
+                job = job)
+
+        VolunteerShift.objects.create(
+                shift = shift,
+                volunteer = volunteer,
+                start_time = '12:00',
+                end_time = '13:00')
 
     def test_event_tab(self):
         self.login_admin()
@@ -758,6 +786,45 @@ class Settings(LiveServerTestCase):
         self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
         self.assertEqual(self.driver.find_element_by_class_name('alert-success').text,
             'There are currently no shifts. Please create shifts first.')
+
+    def test_delete_shift_with_volunteer(self):
+        self.login_admin()
+
+        # create volunteer for shift
+        volunteer_user = User.objects.create_user(
+                username = 'volunteer',
+                password = 'volunteer')
+
+        volunteer = Volunteer.objects.create(
+                user = volunteer_user,
+                address = 'address',
+                city = 'city',
+                state = 'state',
+                country = 'country',
+                phone_number = '9999999999',
+                email = 'volunteer@volunteer.com',
+                unlisted_organization = 'organization')
+
+        self.assign_shift(volunteer)
+        self.assertNotEqual(self.driver.find_element_by_link_text('Events'), None)
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+
+        # delete shift
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]').text,
+            'Delete')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]//a').click()
+
+        # confirm on delete
+        self.assertNotEqual(self.driver.find_element_by_class_name('panel-danger'), None)
+        self.assertEqual(self.driver.find_element_by_class_name('panel-heading').text, 'Delete Shift')
+        self.driver.find_element_by_xpath('//form').submit()
+
+        # check error message displayed and shift not deleted
+        self.assertEqual(self.driver.find_element_by_xpath("//div[2]/div[3]/p").text,
+            'You cannot delete a shift that a volunteer has signed up for.')
 
     def test_organization(self):
         self.login_admin()
