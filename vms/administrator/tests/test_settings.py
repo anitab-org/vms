@@ -38,6 +38,9 @@ class Settings(LiveServerTestCase):
         - Create Shift without any Job
         - Edit Shift
         - Delete shift
+        - Delete shift with volunteer
+        - Create/Edit Shift with invalid timing
+        - Create/Edit Shift with invalid date
 
     Organization:
         - Create Organization
@@ -762,9 +765,73 @@ class Settings(LiveServerTestCase):
         shift = ['09/05/2017','18:00', '13:00', '5']
         self.register_shift_utility(shift)
 
-        # verify that shift was not created and error message displayed
+        # verify that shift was not edited and error message displayed
         self.assertEqual(self.driver.find_element_by_class_name('messages').text,
             'Shift end time should be greater than start time')
+
+    def test_create_shift_with_invalid_date(self):
+        self.login_admin()
+
+        # register event to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        # create shift where date is not within job date range
+        shift = ['06/30/2017','12:00', '17:00', '5']
+        self.register_shift_utility(shift)
+
+        # verify that shift was not created and error message displayed
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Shift date should lie within Job dates')
+
+    def test_edit_shift_with_invalid_date(self):
+        self.login_admin()
+
+        # register event to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        # create shift
+        shift = ['08/30/2017','09:00', '12:00', '10']
+        self.register_shift_utility(shift)
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+
+        self.driver.find_element_by_xpath('//input[@name = "date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "max_volunteers"]').clear()
+
+        # edit shift with date not between job dates
+        shift = ['02/05/2017','04:00', '13:00', '2']
+        self.register_shift_utility(shift)
+
+        # verify that shift was not edited and error message displayed
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Shift date should lie within Job dates')
 
     def test_edit_shift(self):
         self.login_admin()
