@@ -561,13 +561,13 @@ class Settings(LiveServerTestCase):
                 '//input[@name = "start_date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_date"]').send_keys(
-                        '08/30/2016')
+                        '08/30/2017')
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_date"]').clear()
         self.driver.find_element_by_xpath(
                 '//input[@name = "end_date"]').send_keys(
-                        '09/21/2016')
+                        '09/21/2017')
 
         self.driver.find_element_by_xpath('//form[1]').submit()
 
@@ -581,11 +581,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event first to create job
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
         self.register_job_utility(job)
@@ -620,11 +620,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
 
         # register event first to create job
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
         self.register_job_utility(job)
 
         # create shift
@@ -639,7 +639,7 @@ class Settings(LiveServerTestCase):
 
         self.driver.find_element_by_xpath(
                 '//input[@name = "date"]').send_keys(
-                        '08/31/2016')
+                        '08/31/2017')
         self.driver.find_element_by_xpath(
                 '//input[@name = "start_time"]').send_keys(
                         '09:00')
@@ -701,6 +701,70 @@ class Settings(LiveServerTestCase):
         self.assertNotEqual(self.driver.find_elements_by_xpath('//table//tbody'), None)
         with self.assertRaises(NoSuchElementException):
             self.driver.find_element_by_class_name('help-block')
+
+    def test_create_shift_with_invalid_timings(self):
+        self.login_admin()
+
+        # register event to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        # create shift where end hours is less than start hours
+        shift = ['08/30/2017','14:00', '12:00', '5']
+        self.register_shift_utility(shift)
+
+        # verify that shift was not created and error message displayed
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Shift end time should be greater than start time')
+
+    def test_edit_shift_with_invalid_timings(self):
+        self.login_admin()
+
+        # register event to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        # create shift
+        shift = ['08/30/2017','09:00', '12:00', '10']
+        self.register_shift_utility(shift)
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+
+        self.driver.find_element_by_xpath('//input[@name = "date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_time"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "max_volunteers"]').clear()
+
+        # edit shift with end hours less than start hours
+        shift = ['09/05/2017','18:00', '13:00', '5']
+        self.register_shift_utility(shift)
+
+        # verify that shift was not created and error message displayed
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Shift end time should be greater than start time')
 
     def test_edit_shift(self):
         self.login_admin()
