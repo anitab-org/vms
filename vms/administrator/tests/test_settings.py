@@ -30,6 +30,7 @@ class Settings(LiveServerTestCase):
         - Null values in Create and edit job form
         - Create Job without any event
         - Edit Job
+        - Create/Edit Job with invalid dates
         - Delete Job without Associated Shift
         - Delete Job with Shifts
 
@@ -574,11 +575,178 @@ class Settings(LiveServerTestCase):
 
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-        # check event edited
+        # check job edited
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + '/job/list/')
         self.assertEqual(self.driver.find_element_by_xpath(
                 '//table//tbody//tr[1]//td[1]').text, 'changed job name')
+
+    def test_create_job_with_invalid_event_date(self):
+        self.login_admin()
+
+        # register event first to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job with start date outside range
+        job = ['event-name', 'job name', 'job description', '08/10/2017', '09/11/2017']
+        self.assertEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.register_job_utility(job)
+
+        # check job not created and proper error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Job dates should lie within Event dates')
+
+        self.driver.get(self.live_server_url + '/event/list/')
+
+        # create job with end date outside range
+        job = ['event-name', 'job name', 'job description', '08/30/2017', '09/11/2018']
+        self.assertEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.register_job_utility(job)
+
+        # check job not created and proper error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Job dates should lie within Event dates')
+
+    def test_edit_job_with_invalid_event_date(self):
+        self.login_admin()
+
+        # register event first to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.assertEqual(self.driver.current_url,
+                self.live_server_url + self.settings_page)
+        self.register_job_utility(job)
+
+        # edit job with start date outside event start date
+        self.assertEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]').text,
+            'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]//a').click()
+
+        self.driver.find_element_by_xpath('//input[@name = "name"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "name"]').send_keys(
+            'changed job name')
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').clear()
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').send_keys(
+            'changed-job-description')
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys(
+            '03/05/2017')
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys(
+            '09/11/2017')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check job not edited and proper error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Job dates should lie within Event dates')
+
+        # edit job with end date outside event end date
+        self.driver.find_element_by_xpath('//input[@name = "name"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "name"]').send_keys(
+            'changed job name')
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').clear()
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').send_keys(
+            'changed-job-description')
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys(
+            '09/14/2017')
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys(
+            '12/31/2017')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check job not edited and proper error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            'Job dates should lie within Event dates')
+
+    def test_edit_job_with_invalid_shift_date(self):
+        self.login_admin()
+
+        # register event first to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.assertEqual(self.driver.current_url,
+                self.live_server_url + self.settings_page)
+        self.register_job_utility(job)
+
+        # create shift
+        self.driver.find_element_by_link_text('Shifts').click()
+        self.assertEqual(self.driver.current_url,self.live_server_url + '/shift/list_jobs/')
+
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]/td[5]//a').click()
+        self.driver.find_element_by_link_text('Create Shift').click()
+
+        shift = ['08/30/2017','12:00', '15:00', '5']
+        self.register_shift_utility(shift)
+
+        self.driver.get(self.live_server_url + '/job/list/')
+
+        # edit job with date range such that the shift start date no longer falls in the range
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]').text,
+            'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]//a').click()
+
+        self.driver.find_element_by_xpath('//input[@name = "name"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "name"]').send_keys(
+            'changed job name')
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').clear()
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').send_keys(
+            'changed-job-description')
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys(
+            '09/01/2017')
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys(
+            '09/11/2017')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check job not edited and proper error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_xpath('//div[2]/div[3]/p').text,
+            'You cannot edit this job as 1 associated shift no longer lies within the new date range')
+
+        self.driver.get(self.live_server_url + '/job/list/')
+
+        # edit job with date range such that the shift start date no longer falls in the range
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]').text,
+            'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[6]//a').click()
+
+        # edit job with date range such that the shift end date no longer falls in the range
+        self.driver.find_element_by_xpath('//input[@name = "name"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "name"]').send_keys(
+            'changed job name')
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').clear()
+        self.driver.find_element_by_xpath('//textarea[@name = "description"]').send_keys(
+            'changed-job-description')
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys(
+            '08/22/2017')
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys(
+            '08/26/2017')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check job not edited and proper error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_xpath('//div[2]/div[3]/p').text,
+            'You cannot edit this job as 1 associated shift no longer lies within the new date range')
 
     def test_delete_job_without_associated_shift(self):
         self.login_admin()
