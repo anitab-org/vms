@@ -384,10 +384,9 @@ class Settings(LiveServerTestCase):
         self.register_event_utility(event)
         
         # check event created
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + self.settings_page)
-        self.assertEqual(self.driver.find_element_by_xpath(
-                '//table//tbody//tr[1]//td[1]').text, 'event-name')
+        self.assertEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text,
+            'event-name')
 
     def test_edit_event(self):
         self.login_admin()
@@ -431,9 +430,105 @@ class Settings(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
                 '//table//tbody//tr[1]//td[1]').text, 'changed-event-name')
 
+    def test_create_and_edit_event_with_invalid_start_date(self):
+        self.login_admin()
+        event = ['event-name', '05/17/2016', '09/28/2016']
+        self.register_event_utility(event)
+
+        # check event not created and error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            "Start date should be today's date or later.")
+
+        self.driver.get(self.live_server_url + self.settings_page)
+        event = ['event-name', '05/17/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text, 'event-name')
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+
+        self.driver.find_element_by_xpath('//input[@placeholder = "Event Name"]').clear()
+        self.driver.find_element_by_xpath('//input[@placeholder = "Event Name"]').send_keys(
+            'changed-event-name')
+
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys('01/05/2016')
+
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys('12/21/2016')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check event not edited and error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
+            "Start date should be today's date or later.")
+
+    def test_edit_event_with_elapsed_start_date(self):
+        self.login_admin()
+
+        # Create an event with elapsed start date
+        event = Event.objects.create(
+                    name = 'event-name',
+                    start_date = '2016-06-15',
+                    end_date = '2017-06-17')
+
+        self.driver.get(self.live_server_url + self.settings_page)
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text, 'event-name')
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+
+        # Try editing any one field - (event name in this case)
+        self.driver.find_element_by_xpath('//input[@placeholder = "Event Name"]').clear()
+        self.driver.find_element_by_xpath('//input[@placeholder = "Event Name"]').send_keys(
+            'changed-event-name')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check event not edited
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+
+        # Test for proper msg TBA later once it is implemented
+
+    def test_edit_event_with_invalid_job_date(self):
+        self.login_admin()
+
+        # create event
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
+        self.assertEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.register_job_utility(job)
+
+        self.driver.get(self.live_server_url + self.settings_page)
+
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[1]').text, 'event-name')
+        self.assertEqual(self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]').text, 'Edit')
+        self.driver.find_element_by_xpath('//table//tbody//tr[1]//td[5]//a').click()
+
+        # Edit event such that job is no longer in the new date range
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "start_date"]').send_keys('08/30/2017')
+
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').clear()
+        self.driver.find_element_by_xpath('//input[@name = "end_date"]').send_keys('09/21/2017')
+
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        # check event not edited and error message displayed
+        self.assertNotEqual(self.driver.current_url, self.live_server_url + self.settings_page)
+        self.assertEqual(self.driver.find_element_by_xpath('//div[2]/div[3]/p').text,
+            'You cannot edit this event as the following associated job no longer lies within the new date range :')
+
     def test_delete_event_with_no_associated_job(self):
         self.login_admin()
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
         
         # create event
@@ -463,11 +558,11 @@ class Settings(LiveServerTestCase):
         self.login_admin()
         
         # create event
-        event = ['event-name', '08/21/2016', '09/28/2016']
+        event = ['event-name', '08/21/2017', '09/28/2017']
         self.register_event_utility(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '08/29/2016', '09/11/2016']
+        job = ['event-name', 'job name', 'job description', '08/29/2017', '09/11/2017']
         self.assertEqual(self.driver.current_url,
                 self.live_server_url + self.settings_page)
         self.register_job_utility(job)
