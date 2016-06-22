@@ -9,7 +9,7 @@ The QA process is divided as follows:
 ## Few important points regarding CI:
 
 - `.travis.yml` is the config file to run the travis build
-- Build can be viewed at `http://travis.org/jayesh92/vms`
+- Build can be viewed at `https://travis-ci.org/systers/vms`
 - Status would be reflected in the badge in `README.md`
 
 ## Few important points regarding Functional Testing:
