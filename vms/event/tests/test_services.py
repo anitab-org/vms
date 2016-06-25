@@ -1,13 +1,11 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
 import datetime
 from datetime import date
 
-from event.models import Event
-from job.models import Job
 from shift.services import register
-from shift.models import Shift
-from volunteer.models import Volunteer
+from job.services import create_job_with_details
+from shift.services import create_shift_with_details
+from volunteer.services import create_volunteer_with_details
 from event.services import (
         event_not_empty,
         delete_event,
@@ -17,33 +15,28 @@ from event.services import (
         get_events_by_date,
         get_event_by_shift_id,
         get_signed_up_events_for_volunteer,
-        remove_empty_events_for_volunteer      
+        remove_empty_events_for_volunteer,
+        create_event_with_details      
         )
-
 
 class EventMethodTests(TestCase):
 
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
     def test_event_not_empty(self):
         """ Test event_not_empty(event_id) """
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-12",
-                end_date="2013-11-13"
-                )
-        e3 = Event(
-                name="Django Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
 
-        e1.save()
-        e2.save()
-        e3.save()
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        event_2 = ["Python Event","2013-11-12","2013-11-13"]
+        event_3 = ["Django Event","2015-07-07","2015-07-08"]
+
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
+        e3 = create_event_with_details(event_3)
 
         self.assertTrue(event_not_empty(e1.id))
         self.assertTrue(event_not_empty(e2.id))
@@ -52,89 +45,16 @@ class EventMethodTests(TestCase):
         self.assertFalse(event_not_empty(200))
         self.assertFalse(event_not_empty(300))
 
-    def test_get_event_by_shift_id(self):
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-
-        s1 = Shift(
-                date="2012-10-23",
-                start_time="9:00",
-                end_time="3:00",
-                max_volunteers=1,
-                job=j1
-                )
-
-        s2 = Shift(
-                date="2012-10-23",
-                start_time="10:00",
-                end_time="4:00",
-                max_volunteers=2,
-                job=j1
-                )
-
-        s3 = Shift(
-                date="2012-10-23",
-                start_time="12:00",
-                end_time="6:00",
-                max_volunteers=4,
-                job=j2
-                )
-
-        s1.save()
-        s2.save()
-        s3.save()
-        
-        self.assertIsNotNone(get_event_by_shift_id(s1.id))
-        self.assertIsNotNone(get_event_by_shift_id(s2.id))
-        self.assertIsNotNone(get_event_by_shift_id(s3.id))
-
-
     def test_delete_event(self):
         """ Test delete_event(event_id) """
 
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-12",
-                end_date="2013-11-13"
-                )
-        e3 = Event(
-                name="Django Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        event_2 = ["Python Event","2013-11-12","2013-11-13"]
+        event_3 = ["Django Event","2015-07-07","2015-07-08"]
 
-        e1.save()
-        e2.save()
-        e3.save()
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
+        e3 = create_event_with_details(event_3)
 
         self.assertTrue(delete_event(e1.id))
         self.assertTrue(delete_event(e2.id))
@@ -143,42 +63,139 @@ class EventMethodTests(TestCase):
         self.assertFalse(delete_event(200))
         self.assertFalse(delete_event(300))
 
+    def test_get_event_by_id(self):
+        """ Test get_event_by_id(event_id) """
+
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        event_2 = ["Python Event","2013-11-12","2013-11-13"]
+        event_3 = ["Django Event","2015-07-07","2015-07-08"]
+
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
+        e3 = create_event_with_details(event_3)
+
+        # test typical cases
+        self.assertIsNotNone(get_event_by_id(e1.id))
+        self.assertIsNotNone(get_event_by_id(e2.id))
+        self.assertIsNotNone(get_event_by_id(e3.id))
+
+        self.assertEqual(get_event_by_id(e1.id), e1)
+        self.assertEqual(get_event_by_id(e2.id), e2)
+        self.assertEqual(get_event_by_id(e3.id), e3)
+
+        self.assertIsNone(get_event_by_id(100))
+        self.assertIsNone(get_event_by_id(200))
+        self.assertIsNone(get_event_by_id(300))
+
+        self.assertNotEqual(get_event_by_id(100), e1)
+        self.assertNotEqual(get_event_by_id(200), e1)
+        self.assertNotEqual(get_event_by_id(300), e1)
+
+        self.assertNotEqual(get_event_by_id(100), e2)
+        self.assertNotEqual(get_event_by_id(200), e2)
+        self.assertNotEqual(get_event_by_id(300), e2)
+
+        self.assertNotEqual(get_event_by_id(100), e3)
+        self.assertNotEqual(get_event_by_id(200), e3)
+        self.assertNotEqual(get_event_by_id(300), e3)
+
+    def test_get_events_by_date(self):
+        """ Test get_events_by_date(start_date, end_date) """
+
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        event_2 = ["Python Event","2013-11-12","2013-11-13"]
+        event_3 = ["Django Event","2015-07-02","2015-07-03"]
+        event_4 = ["Systers Event","2015-07-25","2015-08-08"]
+        event_5 = ["Anita Borg Event","2015-07-07","2015-07-08"]
+
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
+        e3 = create_event_with_details(event_3)
+        e4 = create_event_with_details(event_4)
+        e5 = create_event_with_details(event_5)
+
+        # test typical cases
+        event_list = get_events_by_date('2015-07-01','2015-08-01')
+        self.assertIsNotNone(event_list)
+        
+        self.assertIn(e3, event_list)
+        self.assertIn(e4, event_list)
+        self.assertIn(e5, event_list)
+        self.assertEqual(len(event_list), 3)
+        
+        # test order
+        self.assertEqual(event_list[0], e3)
+        self.assertEqual(event_list[1], e5)
+        self.assertEqual(event_list[2], e4)
+
+    def test_get_events_ordered_by_name(self):
+        """ Test get_events_ordered_by_name() """
+
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        event_2 = ["Python Event","2013-11-12","2013-11-13"]
+        event_3 = ["Django Event","2015-07-07","2015-07-08"]
+        event_4 = ["Systers Event","2015-07-07","2015-07-08"]
+        event_5 = ["Anita Borg Event","2015-07-07","2015-07-08"]
+
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
+        e3 = create_event_with_details(event_3)
+        e4 = create_event_with_details(event_4)
+        e5 = create_event_with_details(event_5)
+
+        # test typical cases
+        event_list = get_events_ordered_by_name()
+        self.assertIsNotNone(event_list)
+        self.assertIn(e1, event_list)
+        self.assertIn(e2, event_list)
+        self.assertIn(e3, event_list)
+        self.assertIn(e4, event_list)
+        self.assertIn(e5, event_list)
+        self.assertEqual(len(event_list), 5)
+
+        # test order
+        self.assertEqual(event_list[0], e5)
+        self.assertEqual(event_list[1], e3)
+        self.assertEqual(event_list[2], e1)
+        self.assertEqual(event_list[3], e2)
+        self.assertEqual(event_list[4], e4)
+
+    def test_get_event_by_shift_id(self):
+
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        e1 = create_event_with_details(event_1)
+
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
+
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+
+        shift_1 = ["2012-10-23","9:00","3:00",1,j1]
+        shift_2 = ["2012-10-23","10:00","4:00",2,j1]
+        shift_3 = ["2012-10-23","12:00","6:00",4,j2]
+
+        s1 = create_shift_with_details(shift_1)
+        s2 = create_shift_with_details(shift_2)
+        s3 = create_shift_with_details(shift_3)
+
+        self.assertIsNotNone(get_event_by_shift_id(s1.id))
+        self.assertIsNotNone(get_event_by_shift_id(s2.id))
+        self.assertIsNotNone(get_event_by_shift_id(s3.id))
 
     def test_check_edit_event(self):
 
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-3",
-                end_date="2012-10-24"
-                )
+        event_1 = ["Open Source Event","2012-10-3","2012-10-24"]
+        event_2 = ["Python Event","2013-11-3","2013-11-15"]
 
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-3",
-                end_date="2013-11-15"
-                )
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
 
-        e1.save()
-        e2.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-10-8",
-                end_date="2012-10-16",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
 
         # test typical cases
 
@@ -213,262 +230,39 @@ class EventMethodTests(TestCase):
         self.assertFalse(out6['result'])
         self.assertTrue(out7['result'])
 
-
-    def test_get_event_by_id(self):
-        """ Test get_event_by_id(event_id) """
-
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-12",
-                end_date="2013-11-13"
-                )
-        e3 = Event(
-                name="Django Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
-
-        e1.save()
-        e2.save()
-        e3.save()
-
-        # test typical cases
-        self.assertIsNotNone(get_event_by_id(e1.id))
-        self.assertIsNotNone(get_event_by_id(e2.id))
-        self.assertIsNotNone(get_event_by_id(e3.id))
-
-        self.assertEqual(get_event_by_id(e1.id), e1)
-        self.assertEqual(get_event_by_id(e2.id), e2)
-        self.assertEqual(get_event_by_id(e3.id), e3)
-
-        self.assertIsNone(get_event_by_id(100))
-        self.assertIsNone(get_event_by_id(200))
-        self.assertIsNone(get_event_by_id(300))
-
-        self.assertNotEqual(get_event_by_id(100), e1)
-        self.assertNotEqual(get_event_by_id(200), e1)
-        self.assertNotEqual(get_event_by_id(300), e1)
-
-        self.assertNotEqual(get_event_by_id(100), e2)
-        self.assertNotEqual(get_event_by_id(200), e2)
-        self.assertNotEqual(get_event_by_id(300), e2)
-
-        self.assertNotEqual(get_event_by_id(100), e3)
-        self.assertNotEqual(get_event_by_id(200), e3)
-        self.assertNotEqual(get_event_by_id(300), e3)
-
-    def test_get_events_by_date(self):
-        """ Test get_events_by_date(start_date, end_date) """
-
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-12",
-                end_date="2013-11-13"
-                )
-        e3 = Event(
-                name="Django Event",
-                start_date="2015-07-02",
-                end_date="2015-07-03"
-                )
-        e4 = Event(
-                name="Systers Event",
-                start_date="2015-07-25",
-                end_date="2015-08-08"
-                )
-        e5 = Event(
-                name="Anita Borg Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
-
-        e1.save()
-        e2.save()
-        e3.save()
-        e4.save()
-        e5.save()
-
-        # test typical cases
-        event_list = get_events_by_date('2015-07-01','2015-08-01')
-        self.assertIsNotNone(event_list)
-        
-        self.assertIn(e3, event_list)
-        self.assertIn(e4, event_list)
-        self.assertIn(e5, event_list)
-        self.assertEqual(len(event_list), 3)
-        
-        # test order
-        self.assertEqual(event_list[0], e3)
-        self.assertEqual(event_list[1], e5)
-        self.assertEqual(event_list[2], e4)
-
-    def test_get_events_ordered_by_name(self):
-        """ Test get_events_ordered_by_name() """
-
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-12",
-                end_date="2013-11-13"
-                )
-        e3 = Event(
-                name="Django Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
-        e4 = Event(
-                name="Systers Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
-        e5 = Event(
-                name="Anita Borg Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
-
-        e1.save()
-        e2.save()
-        e3.save()
-        e4.save()
-        e5.save()
-
-        # test typical cases
-        event_list = get_events_ordered_by_name()
-        self.assertIsNotNone(event_list)
-        self.assertIn(e1, event_list)
-        self.assertIn(e2, event_list)
-        self.assertIn(e3, event_list)
-        self.assertIn(e4, event_list)
-        self.assertIn(e5, event_list)
-        self.assertEqual(len(event_list), 5)
-
-        # test order
-        self.assertEqual(event_list[0], e5)
-        self.assertEqual(event_list[1], e3)
-        self.assertEqual(event_list[2], e1)
-        self.assertEqual(event_list[3], e2)
-        self.assertEqual(event_list[4], e4)
-
     def test_get_signed_up_events_for_volunteer(self):
 
         # creating events, jobs and shifts for volunteer registration
-        e1 = Event(
-                name="django Event",
-                start_date="2015-10-22",
-                end_date="2015-10-25"
-                )     
-        e2 = Event(
-                name="Python Event",
-                start_date="2015-11-11",
-                end_date="2015-11-23"
-                )
+        event_1 = ["django Event","2015-10-22","2015-10-25"]
+        event_2 = ["Python Event","2015-11-11","2015-11-23"]
 
-        e1.save()
-        e2.save()
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2015-10-22",
-                end_date="2015-10-23",
-                description="A software job",
-                event=e1
-                )  
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2015-11-12",
-                end_date="2015-11-15",
-                description="A systems administrator job",
-                event=e2
-                )
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2015-11-12","2015-11-15","A systems administrator job",e2]
 
-        j1.save()
-        j2.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
 
-        s1 = Shift(
-                date="2015-10-23",
-                start_time="3:00",
-                end_time="9:00",
-                max_volunteers=1,
-                job=j1
-                )
-        s2 = Shift(
-                date="2015-10-23",
-                start_time="4:00",
-                end_time="11:00",
-                max_volunteers=2,
-                job=j1
-                )
-        s3 = Shift(
-                date="2015-11-13",
-                start_time="6:00",
-                end_time="12:00",
-                max_volunteers=4,
-                job=j2
-                )
+        shift_1 = ["2015-10-23","3:00","9:00",1,j1]
+        shift_2 = ["2015-10-23","4:00","11:00",2,j1]
+        shift_3 = ["2015-11-13","6:00","12:00",4,j2]
 
-        s1.save()
-        s2.save()
-        s3.save()
+        s1 = create_shift_with_details(shift_1)
+        s2 = create_shift_with_details(shift_2)
+        s3 = create_shift_with_details(shift_3)
 
         # creating volunteers who would register for the shifts
-        u1 = User.objects.create_user('Yoshi')
-        u2 = User.objects.create_user('John')
-        u3 = User.objects.create_user('Ash')
+        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
+        volunteer_2 = ['John',"John","Doe","7 Alpine Street","Maplegrove","Wyoming","USA","23454545","john@test.com"]
         
-        v1 = Volunteer(
-                    first_name="Yoshi",
-                    last_name="Turtle",
-                    address="Mario Land",
-                    city="Nintendo Land",
-                    state="Nintendo State",
-                    country="Nintendo Nation",
-                    phone_number="2374983247",
-                    email="yoshi@nintendo.com",
-                    user=u1
-                    )
-
-        v2 = Volunteer(
-                    first_name="John",
-                    last_name="Doe",
-                    address="7 Alpine Street",
-                    city="Maplegrove",
-                    state="Wyoming",
-                    country="USA",
-                    phone_number="23454545",
-                    email="john@test.com",
-                    user=u2
-                    )
-
         # volunteer who doesn't register for any shift
-        v3 = Volunteer(
-                    first_name="Ash",
-                    last_name="Ketchum",
-                    address="Pallet Town",
-                    city="Kanto",
-                    state="Gameboy",
-                    country="Japan",
-                    phone_number="23454545",
-                    email="ash@pikachu.com",
-                    user=u3
-                    )
+        volunteer_3 = ['Ash',"Ash","Ketchum","Pallet Town","Kanto","Gameboy","Japan","23454545","ash@pikachu.com"]
 
-        v1.save()
-        v2.save()
-        v3.save()
+        v1 = create_volunteer_with_details(volunteer_1)
+        v2 = create_volunteer_with_details(volunteer_2)
+        v3 = create_volunteer_with_details(volunteer_3)
 
         # volunteer 1 registers for 3 shifts belonging to two events - registers for s3 first to check if sorting is successful
         register(v1.id, s3.id)
@@ -501,130 +295,54 @@ class EventMethodTests(TestCase):
     def test_remove_empty_events_for_volunteer(self):
 
         #Event with job that has shift with open slots
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-22",
-                end_date="2012-10-23"
-                )
-        
+        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+
         #Event with job and shift that volunteer already signed up for
-        e2 = Event(
-                name="Python Event",
-                start_date="2013-11-12",
-                end_date="2013-11-13"
-                )
-        
+        event_2 = ["Python Event","2013-11-12","2013-11-13"]
+
         #Event with job and shift that have no slots remaining
-        e3 = Event(
-                name="Django Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
+        event_3 = ["Django Event","2015-07-07","2015-07-08"]
 
         #Event with job that has no shifts
-        e4 = Event(
-                name="Systers Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
+        event_4 = ["Systers Event","2015-07-07","2015-07-08"]
 
         #Event with no jobs
-        e5 = Event(
-                name="Anita Borg Event",
-                start_date="2015-07-07",
-                end_date="2015-07-08"
-                )
+        event_5 = ["Anita Borg Event","2015-07-07","2015-07-08"]
 
-        e1.save()
-        e2.save()
-        e3.save()
-        e4.save()
-        e5.save()
-        
+        e1 = create_event_with_details(event_1)
+        e2 = create_event_with_details(event_2)
+        e3 = create_event_with_details(event_3)
+        e4 = create_event_with_details(event_4)
+        e5 = create_event_with_details(event_5)
+
         #Job with shift that has slots available
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-        
-        #Job with shift volunteer will have already signed up for  
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e2
-                )
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+
+        #Job with shift volunteer will have already signed up for
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e2]
 
         #Job with shift that has no available slots
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e3
-                )
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e3]
 
         #Job with no shifts
-        j4 = Job(
-                name="Information Technologist",
-                start_date="2012-11-2",
-                end_date="2012-12-2",
-                description="An IT job",
-                event=e4
-                )
+        job_4 = ["Information Technologist","2012-11-2","2012-12-2","An IT job",e4]
 
-        j1.save()
-        j2.save()
-        j3.save()
-        j4.save()
-        
-        s1 = Shift(
-                date="2012-10-23",
-                start_time="9:00",
-                end_time="3:00",
-                max_volunteers=5,
-                job=j1
-                )
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+        j3 = create_job_with_details(job_3)
+        j4 = create_job_with_details(job_4)
 
-        s2 = Shift(
-                date="2012-10-23",
-                start_time="10:00",
-                end_time="4:00",
-                max_volunteers=5,
-                job=j2
-                )
+        shift_1 = ["2012-10-23","9:00","3:00",5,j1]
+        shift_2 = ["2012-10-23","10:00","4:00",5,j2]
+        shift_3 = ["2012-10-23","12:00","6:00",0,j3]
 
-        s3 = Shift(
-                date="2012-10-23",
-                start_time="12:00",
-                end_time="6:00",
-                max_volunteers=0,
-                job=j3
-                )
+        s1 = create_shift_with_details(shift_1)
+        s2 = create_shift_with_details(shift_2)
+        s3 = create_shift_with_details(shift_3)
 
-        s1.save()
-        s2.save()
-        s3.save()
-        
-        u1 = User.objects.create_user('Yoshi')
-        
-        v1 = Volunteer(
-                    first_name="Yoshi",
-                    last_name="Turtle",
-                    address="Mario Land",
-                    city="Nintendo Land",
-                    state="Nintendo State",
-                    country="Nintendo Nation",
-                    phone_number="2374983247",
-                    email="yoshi@nintendo.com",
-                    user=u1
-                    )
-
-        v1.save()
+        # creating volunteer
+        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
+        v1 = create_volunteer_with_details(volunteer_1)
         
         register(v1.id, s2.id)
         
