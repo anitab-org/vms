@@ -3,6 +3,19 @@ from django.core.exceptions import ObjectDoesNotExist
 from job.models import Job
 from shift.services import get_shifts_with_open_slots_for_volunteer, get_volunteer_shifts_with_hours, get_unlogged_shifts_by_volunteer_id
 
+def create_job_with_details(job):
+    
+    j1 = Job(
+        name=job[0],
+        start_date=job[1],
+        end_date=job[2],
+        description=job[3],
+        event=job[4]
+        )
+
+    j1.save()
+    return j1
+
 def job_not_empty(job_id):
     """ Check if the job exists and is not empty """
     result = True
