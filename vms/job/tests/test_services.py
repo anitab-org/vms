@@ -1,13 +1,10 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
 import datetime
 from datetime import date
 
-from event.models import Event
-from job.models import Job
-from shift.services import register
-from shift.models import Shift
-from volunteer.models import Volunteer
+from shift.services import register, create_shift_with_details
+from volunteer.services import create_volunteer_with_details
+from event.services import create_event_with_details
 from job.services import (
                             delete_job,
                             check_edit_job,
@@ -15,50 +12,32 @@ from job.services import (
                             get_jobs_by_event_id,
                             get_jobs_ordered_by_title,
                             get_signed_up_jobs_for_volunteer,
-                            remove_empty_jobs_for_volunteer
+                            remove_empty_jobs_for_volunteer,
+                            create_job_with_details
                             )
 
 
 class JobMethodTests(TestCase):
 
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
     def test_delete_job(self):
         """ Test delete_job(job_id) """
 
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
+        event_1 = ["Software Conference","2012-10-22","2012-10-25"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+        j3 = create_job_with_details(job_3)
 
         # test typical cases
         self.assertTrue(delete_job(j1.id))
@@ -70,51 +49,20 @@ class JobMethodTests(TestCase):
 
     def test_check_edit_job(self):
 
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-3",
-                end_date="2012-10-24"
-                )
+        event_1 = ["Software Conference","2012-10-3","2012-10-24"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
 
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-10-8",
-                end_date="2012-10-16",
-                description="A systems administrator job",
-                event=e1
-                )
+        shift_1 = ["2012-10-23","1:00","3:00",5,j1]
+        shift_2 = ["2012-10-25","2:00","4:00",5,j1]
 
-        j1.save()
-        j2.save()
-
-        s1 = Shift(
-                date="2012-10-23",
-                start_time="1:00",
-                end_time="3:00",
-                max_volunteers=5,
-                job=j1
-                )
-
-        s2 = Shift(
-                date="2012-10-25",
-                start_time="2:00",
-                end_time="4:00",
-                max_volunteers=5,
-                job=j1
-                )
-
-        s1.save()
-        s2.save()
+        s1 = create_shift_with_details(shift_1)
+        s2 = create_shift_with_details(shift_2)
 
         # test typical cases
 
@@ -147,41 +95,16 @@ class JobMethodTests(TestCase):
 
     def test_get_job_by_id(self):
 
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
+        event_1 = ["Software Conference","2012-10-22","2012-10-25"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+        j3 = create_job_with_details(job_3)
 
         # test typical cases
         self.assertIsNotNone(get_job_by_id(j1.id))
@@ -211,41 +134,16 @@ class JobMethodTests(TestCase):
     def test_get_jobs_by_event_id(self):
         """ Test get_jobs_by_event_id(e_id) """
 
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
+        event_1 = ["Software Conference","2012-10-22","2012-10-25"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+        j3 = create_job_with_details(job_3)
 
         # test typical case
         job_list = get_jobs_by_event_id(e1.id)
@@ -258,41 +156,16 @@ class JobMethodTests(TestCase):
 
     def test_get_jobs_ordered_by_title(self):
 
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
+        event_1 = ["Software Conference","2012-10-22","2012-10-25"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+        j3 = create_job_with_details(job_3)
 
         # test typical case
         job_list = get_jobs_ordered_by_title()
@@ -311,103 +184,33 @@ class JobMethodTests(TestCase):
     def test_get_signed_up_jobs_for_volunteer(self):
 
         # creating events, jobs and shifts for volunteer registration
-        e1 = Event(
-                name="django Event",
-                start_date="2015-10-22",
-                end_date="2015-10-25"
-                )     
+        event_1 = ["Software Conference","2012-10-22","2012-10-25"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
 
-        j1 = Job(
-                name="Software Developer",
-                start_date="2015-10-22",
-                end_date="2015-10-23",
-                description="A software job",
-                event=e1
-                )  
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2015-10-23",
-                end_date="2015-10-25",
-                description="A systems administrator job",
-                event=e1
-                )
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
 
-        j1.save()
-        j2.save()
+        shift_1 = ["2012-10-23","3:00","9:00",1,j1]
+        shift_2 = ["2012-10-23","4:00","11:00",2,j1]
+        shift_3 = ["2012-10-24","12:00","6:00",4,j2]
 
-        s1 = Shift(
-                date="2015-10-23",
-                start_time="3:00",
-                end_time="9:00",
-                max_volunteers=1,
-                job=j1
-                )
-        s2 = Shift(
-                date="2015-10-23",
-                start_time="4:00",
-                end_time="11:00",
-                max_volunteers=2,
-                job=j1
-                )
-        s3 = Shift(
-                date="2015-10-24",
-                start_time="6:00",
-                end_time="12:00",
-                max_volunteers=4,
-                job=j2
-                )
-
-        s1.save()
-        s2.save()
-        s3.save()
+        s1 = create_shift_with_details(shift_1)
+        s2 = create_shift_with_details(shift_2)
+        s3 = create_shift_with_details(shift_3)
 
         # creating volunteers who would register for the shifts
-        u1 = User.objects.create_user('Yoshi')
-        u2 = User.objects.create_user('John')
-        u3 = User.objects.create_user('Ash')
+        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
+        volunteer_2 = ['John',"John","Doe","7 Alpine Street","Maplegrove","Wyoming","USA","23454545","john@test.com"]
         
-        v1 = Volunteer(
-                    first_name="Yoshi",
-                    last_name="Turtle",
-                    address="Mario Land",
-                    city="Nintendo Land",
-                    state="Nintendo State",
-                    country="Nintendo Nation",
-                    phone_number="2374983247",
-                    email="yoshi@nintendo.com",
-                    user=u1
-                    )
-
-        v2 = Volunteer(
-                    first_name="John",
-                    last_name="Doe",
-                    address="7 Alpine Street",
-                    city="Maplegrove",
-                    state="Wyoming",
-                    country="USA",
-                    phone_number="23454545",
-                    email="john@test.com",
-                    user=u2
-                    )
-
         # volunteer who doesn't register for any shift
-        v3 = Volunteer(
-                    first_name="Ash",
-                    last_name="Ketchum",
-                    address="Pallet Town",
-                    city="Kanto",
-                    state="Gameboy",
-                    country="Japan",
-                    phone_number="23454545",
-                    email="ash@pikachu.com",
-                    user=u3
-                    )
+        volunteer_3 = ['Ash',"Ash","Ketchum","Pallet Town","Kanto","Gameboy","Japan","23454545","ash@pikachu.com"]
 
-        v1.save()
-        v2.save()
-        v3.save()
+        v1 = create_volunteer_with_details(volunteer_1)
+        v2 = create_volunteer_with_details(volunteer_2)
+        v3 = create_volunteer_with_details(volunteer_3)
 
         # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s3 first to check if sorting is successful
         register(v1.id, s3.id)
@@ -439,98 +242,36 @@ class JobMethodTests(TestCase):
 
     def test_remove_empty_jobs_for_volunteer(self):
 
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
+        event_1 = ["Software Conference","2012-10-22","2012-10-25"]
+        e1 = create_event_with_details(event_1)
 
-        e1.save()
-        
         #Job with shift that has slots available
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-        
-        #Job with shift volunteer will have already signed up for  
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+
+        #Job with shift volunteer will have already signed up for
+        job_2 = ["Systems Administrator","2012-9-1","2012-10-26","A systems administrator job",e1]
 
         #Job with shift that has no available slots
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
 
         #Job with no shifts
-        j4 = Job(
-                name="Information Technologist",
-                start_date="2012-11-2",
-                end_date="2012-12-2",
-                description="An IT job",
-                event=e1
-                )
+        job_4 = ["Information Technologist","2012-11-2","2012-12-2","An IT job",e1]
 
-        j1.save()
-        j2.save()
-        j3.save()
-        j4.save()
+        j1 = create_job_with_details(job_1)
+        j2 = create_job_with_details(job_2)
+        j3 = create_job_with_details(job_3)
+        j4 = create_job_with_details(job_3)
         
-        s1 = Shift(
-                date="2012-10-23",
-                start_time="9:00",
-                end_time="3:00",
-                max_volunteers=5,
-                job=j1
-                )
+        shift_1 = ["2012-10-23","3:00","9:00",5,j1]
+        shift_2 = ["2012-10-23","4:00","11:00",5,j2]
+        shift_3 = ["2012-10-24","12:00","6:00",0,j3]
 
-        s2 = Shift(
-                date="2012-10-23",
-                start_time="10:00",
-                end_time="4:00",
-                max_volunteers=5,
-                job=j2
-                )
-
-        s3 = Shift(
-                date="2012-10-23",
-                start_time="12:00",
-                end_time="6:00",
-                max_volunteers=0,
-                job=j3
-                )
-
-        s1.save()
-        s2.save()
-        s3.save()
+        s1 = create_shift_with_details(shift_1)
+        s2 = create_shift_with_details(shift_2)
+        s3 = create_shift_with_details(shift_3)
         
-        u1 = User.objects.create_user('Yoshi')
-        
-        v1 = Volunteer(
-                    first_name="Yoshi",
-                    last_name="Turtle",
-                    address="Mario Land",
-                    city="Nintendo Land",
-                    state="Nintendo State",
-                    country="Nintendo Nation",
-                    phone_number="2374983247",
-                    email="yoshi@nintendo.com",
-                    user=u1
-                    )
-
-        v1.save()
+        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
+        v1 = create_volunteer_with_details(volunteer_1)
         
         register(v1.id, s2.id)
         
@@ -542,5 +283,4 @@ class JobMethodTests(TestCase):
         self.assertNotIn(j2, job_list)
         self.assertNotIn(j3, job_list)
         self.assertNotIn(j4, job_list)
-            
-            
+        
