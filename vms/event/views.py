@@ -29,7 +29,7 @@ def is_admin(request):
 
 @login_required
 def create(request):
-    
+
     if is_admin(request):
         if request.method == 'POST':
             form = EventForm(request.POST)
@@ -92,11 +92,7 @@ def edit(request, event_id):
                 else:
                     form.save()
                     return HttpResponseRedirect(reverse('event:list'))
-            else:
-                data = request.POST.copy()
-                data['end_date'] = form.cleaned_data['end_date']
-                form = EventForm(data)
-                return render(request, 'event/edit.html', {'form': form, })
+            return render(request, 'event/edit.html', {'form': form, })
         else:
             form = EventForm(instance=event)
             return render(request, 'event/edit.html', {'form': form, })
@@ -117,10 +113,10 @@ def list_sign_up(request, volunteer_id):
         if form.is_valid():
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
-            
+
             event_list = get_events_by_date(start_date, end_date)
             event_list = remove_empty_events_for_volunteer(event_list, volunteer_id)
-            
+
             return render(
                 request,
                 'event/list_sign_up.html',
