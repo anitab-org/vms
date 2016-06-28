@@ -1,123 +1,114 @@
 from django.test import TestCase
+import unittest
 from organization.models import Organization
 from organization.services import *
 
-class OrganizationMethodTests(TestCase):
+class OrganizationMethodTests(unittest.TestCase):
 
-    def test_delete_organization(self):
-	
-        o1 = Organization(name = "Google")
-        o2 = Organization(name = "Yahoo")
-        o3 = Organization(name = "Ubisoft")
+    @classmethod
+    def setup_test_data(cls):
+        cls.o1 = Organization(name = "Google")
+        cls.o2 = Organization(name = "Yahoo")
+        cls.o3 = Organization(name = "Ubisoft")
 
-        o1.save()
-        o2.save()
-        o3.save()
-		
-        self.assertTrue(delete_organization(o1.id))
-        self.assertTrue(delete_organization(o2.id))
-        self.assertTrue(delete_organization(o3.id))
-        self.assertFalse(delete_organization(100))
-        self.assertFalse(delete_organization(200))
-        self.assertFalse(delete_organization(300))
+        cls.o1.save()
+        cls.o2.save()
+        cls.o3.save()
+
+    @classmethod
+    def setUpClass(cls):
+        cls.setup_test_data()
 		
     def test_get_organization_by_id(self):
 
-        o1 = Organization(name = "Google")
-        o2 = Organization(name = "Yahoo")
-        o3 = Organization(name = "Ubisoft")
-
-        o1.save()
-        o2.save()
-        o3.save()
-
         #test typical cases
-        self.assertIsNotNone(get_organization_by_id(o1.id))
-        self.assertIsNotNone(get_organization_by_id(o2.id))
-        self.assertIsNotNone(get_organization_by_id(o3.id))
+        self.assertIsNotNone(get_organization_by_id(self.o1.id))
+        self.assertIsNotNone(get_organization_by_id(self.o2.id))
+        self.assertIsNotNone(get_organization_by_id(self.o3.id))
 
-        self.assertEqual(get_organization_by_id(o1.id), o1)
-        self.assertEqual(get_organization_by_id(o2.id), o2)
-        self.assertEqual(get_organization_by_id(o3.id), o3)
+        self.assertEqual(get_organization_by_id(self.o1.id), self.o1)
+        self.assertEqual(get_organization_by_id(self.o2.id), self.o2)
+        self.assertEqual(get_organization_by_id(self.o3.id), self.o3)
 
         self.assertIsNone(get_organization_by_id(100))
         self.assertIsNone(get_organization_by_id(200))
         self.assertIsNone(get_organization_by_id(300))
 
-        self.assertNotEqual(get_organization_by_id(100), o1)
-        self.assertNotEqual(get_organization_by_id(200), o1)
-        self.assertNotEqual(get_organization_by_id(300), o1)
+        self.assertNotEqual(get_organization_by_id(100), self.o1)
+        self.assertNotEqual(get_organization_by_id(200), self.o1)
+        self.assertNotEqual(get_organization_by_id(300), self.o1)
 
-        self.assertNotEqual(get_organization_by_id(100), o2)
-        self.assertNotEqual(get_organization_by_id(200), o2)
-        self.assertNotEqual(get_organization_by_id(300), o2)
+        self.assertNotEqual(get_organization_by_id(100), self.o2)
+        self.assertNotEqual(get_organization_by_id(200), self.o2)
+        self.assertNotEqual(get_organization_by_id(300), self.o2)
 
-        self.assertNotEqual(get_organization_by_id(100), o3)
-        self.assertNotEqual(get_organization_by_id(200), o3)
-        self.assertNotEqual(get_organization_by_id(300), o3)
+        self.assertNotEqual(get_organization_by_id(100), self.o3)
+        self.assertNotEqual(get_organization_by_id(200), self.o3)
+        self.assertNotEqual(get_organization_by_id(300), self.o3)
 
     def test_get_organization_by_name(self):
 
-        o1 = Organization(name = "Google")
-        o2 = Organization(name = "Yahoo")
-        o3 = Organization(name = "Ubisoft")
-
-        o1.save()
-        o2.save()
-        o3.save()
-
         #test typical cases
-        self.assertIsNotNone(get_organization_by_name(o1.name))
-        self.assertIsNotNone(get_organization_by_name(o2.name))
-        self.assertIsNotNone(get_organization_by_name(o3.name))
+        self.assertIsNotNone(get_organization_by_name(self.o1.name))
+        self.assertIsNotNone(get_organization_by_name(self.o2.name))
+        self.assertIsNotNone(get_organization_by_name(self.o3.name))
 
-        self.assertEqual(get_organization_by_name(o1.name), o1)
-        self.assertEqual(get_organization_by_name(o2.name), o2)
-        self.assertEqual(get_organization_by_name(o3.name), o3)
+        self.assertEqual(get_organization_by_name(self.o1.name), self.o1)
+        self.assertEqual(get_organization_by_name(self.o2.name), self.o2)
+        self.assertEqual(get_organization_by_name(self.o3.name), self.o3)
 
         self.assertIsNone(get_organization_by_name("Apple"))
         self.assertIsNone(get_organization_by_name("IBM"))
         self.assertIsNone(get_organization_by_name("Cisco"))
 
-        self.assertNotEqual(get_organization_by_name("Apple"), o1)
-        self.assertNotEqual(get_organization_by_name("IBM"), o1)
-        self.assertNotEqual(get_organization_by_name("Cisco"), o1)
+        self.assertNotEqual(get_organization_by_name("Apple"), self.o1)
+        self.assertNotEqual(get_organization_by_name("IBM"), self.o1)
+        self.assertNotEqual(get_organization_by_name("Cisco"), self.o1)
 
-        self.assertNotEqual(get_organization_by_name("Apple"), o2)
-        self.assertNotEqual(get_organization_by_name("IBM"), o2)
-        self.assertNotEqual(get_organization_by_name("Cisco"), o2)
+        self.assertNotEqual(get_organization_by_name("Apple"), self.o2)
+        self.assertNotEqual(get_organization_by_name("IBM"), self.o2)
+        self.assertNotEqual(get_organization_by_name("Cisco"), self.o2)
 
-        self.assertNotEqual(get_organization_by_name("Apple"), o3)
-        self.assertNotEqual(get_organization_by_name("IBM"), o3)
-        self.assertNotEqual(get_organization_by_name("Cisco"), o3)
+        self.assertNotEqual(get_organization_by_name("Apple"), self.o3)
+        self.assertNotEqual(get_organization_by_name("IBM"), self.o3)
+        self.assertNotEqual(get_organization_by_name("Cisco"), self.o3)
 
     def test_get_organizations_ordered_by_name(self):
-
-        o1 = Organization(name = "Google")
-        o2 = Organization(name = "Yahoo")
-        o3 = Organization(name = "Ubisoft")
-        o4 = Organization(name = "IBM")
-        o5 = Organization(name = "Cisco")
-
-        o1.save()
-        o2.save()
-        o3.save()
-        o4.save()
-        o5.save()
 
         #test typical cases
         organization_list = get_organizations_ordered_by_name()
         self.assertIsNotNone(organization_list)
-        self.assertIn(o1, organization_list)
-        self.assertIn(o2, organization_list)
-        self.assertIn(o3, organization_list)
-        self.assertIn(o4, organization_list)
-        self.assertIn(o5, organization_list)
-        self.assertEqual(len(organization_list), 5)
+        self.assertIn(self.o1, organization_list)
+        self.assertIn(self.o2, organization_list)
+        self.assertIn(self.o3, organization_list)
+        self.assertEqual(len(organization_list), 3)
 
         #test order
-        self.assertEqual(organization_list[0], o5)
-        self.assertEqual(organization_list[1], o1)
-        self.assertEqual(organization_list[2], o4)
-        self.assertEqual(organization_list[3], o3)
-        self.assertEqual(organization_list[4], o2)
+        self.assertEqual(organization_list[0], self.o1)
+        self.assertEqual(organization_list[1], self.o3)
+        self.assertEqual(organization_list[2], self.o2)
+
+class DeleteOrganizationTests(unittest.TestCase):
+
+    @classmethod
+    def setup_test_data(cls):
+        cls.o1 = Organization(name = "Google")
+        cls.o2 = Organization(name = "Yahoo")
+        cls.o3 = Organization(name = "Ubisoft")
+
+        cls.o1.save()
+        cls.o2.save()
+        cls.o3.save()
+
+    @classmethod
+    def setUpClass(cls):
+        cls.setup_test_data()
+
+    def test_delete_organization(self):
+        
+        self.assertTrue(delete_organization(self.o1.id))
+        self.assertTrue(delete_organization(self.o2.id))
+        self.assertTrue(delete_organization(self.o3.id))
+        self.assertFalse(delete_organization(100))
+        self.assertFalse(delete_organization(200))
+        self.assertFalse(delete_organization(300))
