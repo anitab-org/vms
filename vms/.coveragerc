@@ -2,6 +2,9 @@
 [run]
 branch = True
 source = vms
+omit = 
+  */tests/*
+  vms/*
 
 [report]
 ignore_errors = True
