@@ -12,18 +12,6 @@ from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
 from volunteer.services import get_volunteer_by_id, get_all_volunteers
 
-
-def create_shift_with_details(shift):
-    s1 = Shift(
-        date=shift[0],
-        start_time=shift[1],
-        end_time=shift[2],
-        max_volunteers=shift[3],
-        job=shift[4]
-        )
-    s1.save()
-    return s1
-
 def add_shift_hours(v_id, s_id, start_time, end_time):
 
     volunteer_shift = get_volunteer_shift_by_id(v_id, s_id)

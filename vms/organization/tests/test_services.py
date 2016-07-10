@@ -2,6 +2,7 @@ from django.test import TestCase
 import unittest
 from organization.models import Organization
 from organization.services import *
+from shift.utils import clear_objects
 
 class OrganizationMethodTests(unittest.TestCase):
 
@@ -18,6 +19,10 @@ class OrganizationMethodTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.setup_test_data()
+
+    @classmethod
+    def tearDownClass(cls):
+        clear_objects()
 		
     def test_get_organization_by_id(self):
 

@@ -6,15 +6,6 @@ from shift.models import Shift
 from job.services import get_jobs_by_event_id, remove_empty_jobs_for_volunteer
 from shift.services import get_volunteer_shifts_with_hours, get_unlogged_shifts_by_volunteer_id
 
-def create_event_with_details(event):
-    e1 = Event(
-        name=event[0],
-        start_date=event[1],
-        end_date=event[2]
-        )
-    e1.save()
-    return e1
-
 def event_not_empty(event_id):
     """ Checks if the event exists and is not empty """
     result = True

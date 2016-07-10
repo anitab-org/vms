@@ -2,9 +2,8 @@ import unittest
 
 from organization.models import Organization
 from volunteer.models import Volunteer
-from shift.services import create_shift_with_details
-from event.services import create_event_with_details
-from job.services import create_job_with_details
+from shift.utils import create_volunteer_with_details, clear_objects
+
 from volunteer.services import (delete_volunteer,
                                 delete_volunteer_resume,
                                 get_all_volunteers,
@@ -12,8 +11,7 @@ from volunteer.services import (delete_volunteer,
                                 get_volunteer_resume_file_url,
                                 get_volunteers_ordered_by_first_name,
                                 has_resume_file,
-                                search_volunteers,
-                                create_volunteer_with_details)
+                                search_volunteers)
 
 
 class VolunteerMethodTests(unittest.TestCase):
@@ -27,6 +25,10 @@ class VolunteerMethodTests(unittest.TestCase):
         cls.v1 = create_volunteer_with_details(volunteer_1)
         cls.v2 = create_volunteer_with_details(volunteer_2)
         cls.v3 = create_volunteer_with_details(volunteer_3)
+
+    @classmethod
+    def tearDownClass(cls):
+        clear_objects()
 
     def test_delete_volunteer_resume(self):
         """ Tests delete_volunteer_resume(volunteer_id) """

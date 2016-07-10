@@ -3,10 +3,15 @@ import datetime
 from datetime import date
 
 from shift.models import VolunteerShift
+
 from shift.services import register
-from job.services import create_job_with_details
-from shift.services import create_shift_with_details
-from volunteer.services import create_volunteer_with_details
+from shift.utils import (
+        create_event_with_details,
+        create_job_with_details,
+        create_volunteer_with_details,
+        create_shift_with_details,
+        clear_objects
+        )
 from event.services import (
         event_not_empty,
         delete_event,
@@ -16,8 +21,7 @@ from event.services import (
         get_events_by_date,
         get_event_by_shift_id,
         get_signed_up_events_for_volunteer,
-        remove_empty_events_for_volunteer,
-        create_event_with_details      
+        remove_empty_events_for_volunteer    
         )
 
 def setUpModule():
@@ -61,9 +65,9 @@ def setUpModule():
     s4 = create_shift_with_details(shift_4)
 
 def tearDownModule():
-    pass
+    clear_objects()
 
-class EventOnlyTests(unittest.TestCase):
+class EventTests(unittest.TestCase):
 
     @classmethod
     def setup_test_data(cls):

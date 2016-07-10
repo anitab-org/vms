@@ -7,23 +7,6 @@ from organization.services import (
 from django.contrib.auth.models import User
 from volunteer.models import Volunteer
 
-
-def create_volunteer_with_details(volunteer):
-    u1 = User.objects.create_user(volunteer[0])
-    v1 = Volunteer(
-        first_name=volunteer[1],
-        last_name=volunteer[2],
-        address=volunteer[3],
-        city=volunteer[4],
-        state=volunteer[5],
-        country=volunteer[6],
-        phone_number=volunteer[7],
-        email=volunteer[8],
-        user=u1
-        )
-    v1.save()
-    return v1
-
 def delete_volunteer(volunteer_id):
     result = False
 
