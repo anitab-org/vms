@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
 from django.contrib.auth.models import User
@@ -9,8 +8,6 @@ from shift.models import Shift, VolunteerShift
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-
-from organization.models import Organization #hack to pass travis,Bug in Code
 
 
 class ShiftHours(LiveServerTestCase):
@@ -30,11 +27,6 @@ class ShiftHours(LiveServerTestCase):
                 phone_number = '9999999999',
                 email = 'volunteer@volunteer.com',
                 unlisted_organization = 'organization')
-
-        # create an org prior to registration. Bug in Code
-        # added to pass CI
-        Organization.objects.create(
-                name = 'DummyOrg')
 
         self.homepage = '/'
         self.authentication_page = '/authentication/login/'
@@ -191,6 +183,44 @@ class ShiftHours(LiveServerTestCase):
             self.driver.find_element_by_class_name('alert-danger')
         except NoSuchElementException:
             raise Exception("End hours greater than start hours")
+
+    def test_logged_hours_between_shift_hours(self):
+        self.register_dataset()
+        self.login({'username': 'volunteer', 'password': 'volunteer'})
+        self.driver.find_element_by_link_text('Completed Shifts').click()
+
+        volunteer_id = Volunteer.objects.get(user__username='volunteer').pk
+        self.assertEqual(self.driver.current_url, self.live_server_url +
+                         '/shift/view_hours/' + str(volunteer_id))
+
+        self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[3]').text, 'noon')
+        self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[4]').text, '1 p.m.')
+        self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[5]').text, 'Edit Hours')
+        self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[5]//a').click()
+
+        self.assertEqual(self.driver.find_element_by_xpath(
+            'html/body/div[2]/div[2]/form/fieldset/legend').text,
+            'Edit Shift Hours')
+        self.driver.find_element_by_xpath(
+            '//input[@name = "start_time"]').clear()
+        self.driver.find_element_by_xpath(
+            '//input[@name = "start_time"]').send_keys(
+            '10:00')
+
+        self.driver.find_element_by_xpath(
+            '//input[@name = "end_time"]').clear()
+        self.driver.find_element_by_xpath(
+            '//input[@name = "end_time"]').send_keys(
+            '16:00')
+        self.driver.find_element_by_xpath('//form[1]').submit()
+
+        self.assertEqual(
+            self.driver.find_element_by_class_name('alert-danger').text,
+            'Logged hours should be between shift hours')
 
     def test_cancel_hours(self):
         self.register_dataset()
