@@ -1,5 +1,4 @@
 import unittest
-
 from organization.models import Organization
 from volunteer.models import Volunteer
 from shift.utils import create_volunteer_with_details, clear_objects
@@ -28,6 +27,7 @@ class VolunteerMethodTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        # Destroys all objects created
         clear_objects()
 
     def test_delete_volunteer_resume(self):

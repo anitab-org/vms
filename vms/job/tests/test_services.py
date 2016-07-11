@@ -23,23 +23,31 @@ from job.services import (
                             )
 
 def setUpModule():
+    """
+    - Creates objects which can be reused by multiple test classes
+    - Creates jobs that can be used later for shift creation
+    """
 
     global e1, j1, j2, j3
-    event_1 = ["Software Conference","2012-10-3","2012-10-25"]
+    event_1 = ["Software Conference","2012-10-3","2012-11-25"]
     e1 = create_event_with_details(event_1)
 
     job_1 = ["Software Developer","2012-10-22","2012-10-25","A software job",e1]
     job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
-    job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
+    job_3 = ["Project Manager","2012-11-2","2012-11-12","A management job",e1]
 
     j1 = create_job_with_details(job_1)
     j2 = create_job_with_details(job_2)
     j3 = create_job_with_details(job_3)
 
 def tearDownModule():
+    # Destroys all objects created
     clear_objects()
 
-class JobOnlyTests(unittest.TestCase):
+class JobTests(unittest.TestCase):
+    '''
+    Contains tests which require only job objects, no shifts
+    '''
 
     @classmethod
     def setup_test_data(cls):
@@ -53,6 +61,7 @@ class JobOnlyTests(unittest.TestCase):
         cls.setup_test_data()
         
     def test_get_job_by_id(self):
+        """ Uses jobs j1,j2,j3 """
 
         # test typical cases
         self.assertIsNotNone(get_job_by_id(self.j1.id))
@@ -80,7 +89,8 @@ class JobOnlyTests(unittest.TestCase):
         self.assertNotEqual(get_job_by_id(300), self.j3)
 
     def test_get_jobs_by_event_id(self):
-        """ Test get_jobs_by_event_id(e_id) """
+        """ Test get_jobs_by_event_id(e_id) 
+        Uses jobs j1,j2,j3 and event e1 """
 
         # test typical case
         job_list = get_jobs_by_event_id(self.e1.id)
@@ -92,6 +102,7 @@ class JobOnlyTests(unittest.TestCase):
         self.assertIn(self.j3, job_list)
 
     def test_get_jobs_ordered_by_title(self):
+        """ Uses jobs j1,j2,j3 """
 
         # test typical case
         job_list = get_jobs_ordered_by_title()
@@ -138,6 +149,9 @@ class DeleteJobTest(unittest.TestCase):
         self.assertFalse(delete_job(300))
 
 class JobWithShiftTests(unittest.TestCase):
+    '''
+    Contains tests which require shift objects
+    '''
 
     @classmethod
     def setup_test_data(cls):
@@ -178,6 +192,7 @@ class JobWithShiftTests(unittest.TestCase):
         cls.setup_test_data()
 
     def test_check_edit_job(self):
+        """ Uses jobs j1,j2 """
 
         # test typical cases
         start_date1 = datetime.date(2012, 10, 23)
@@ -208,6 +223,7 @@ class JobWithShiftTests(unittest.TestCase):
         self.assertFalse(out6['result'])
 
     def test_get_signed_up_jobs_for_volunteer(self):
+        """ Uses jobs j1,j3, shifts s1,s2,s3 and volunteers v1,v2"""
 
         # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s1 first to check if sorting is successful
         register(self.v1.id, self.s1.id)
@@ -241,6 +257,7 @@ class JobWithShiftTests(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_remove_empty_jobs_for_volunteer(self):
+        """ Uses jobs j1,j2,j3,j4, shift s3 and volunteer v1 """
         
         # volunteer registers for a shift with multiple slots
         register(self.v1.id, self.s3.id)

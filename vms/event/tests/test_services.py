@@ -25,6 +25,9 @@ from event.services import (
         )
 
 def setUpModule():
+    """
+    Creates events, jobs and shifts which can be reused by multiple test classes
+    """
 
     global e1,e2,e3,e4,e5
     global j1,j2,j3,j4,j5
@@ -54,6 +57,7 @@ def setUpModule():
     j4 = create_job_with_details(job_4)
     j5 = create_job_with_details(job_5)
 
+    # shifts with limited, plenty and no slots
     shift_1 = ["2012-10-23","9:00","15:00",1,j1]
     shift_2 = ["2012-10-23","10:00","16:00",2,j1]
     shift_3 = ["2013-11-12","12:00","18:00",4,j2]
@@ -65,9 +69,13 @@ def setUpModule():
     s4 = create_shift_with_details(shift_4)
 
 def tearDownModule():
+    # Destroys all objects created
     clear_objects()
 
 class EventTests(unittest.TestCase):
+    '''
+    Contains tests which require only event objects
+    '''
 
     @classmethod
     def setup_test_data(cls):
@@ -161,6 +169,9 @@ class EventTests(unittest.TestCase):
         self.assertEqual(event_list[4], self.e4)
 
 class EventWithJobTests(unittest.TestCase):
+    '''
+    Contains tests which require jobs and shifts
+    '''
 
     @classmethod
     def setup_test_data(cls):
@@ -178,10 +189,12 @@ class EventWithJobTests(unittest.TestCase):
         pass
 
     def test_get_event_by_shift_id(self):
+        """ Uses shifts s1,s2 """
         self.assertIsNotNone(get_event_by_shift_id(self.s1.id))
         self.assertIsNotNone(get_event_by_shift_id(self.s2.id))
 
     def test_check_edit_event(self):
+        """ Uses events e4 and e5 """
 
         # test typical cases
         start_date1 = datetime.date(2012, 10, 8)
@@ -242,6 +255,9 @@ class DeleteEventTest(unittest.TestCase):
         self.assertFalse(delete_event(300))
 
 class EventWithVolunteerTest(unittest.TestCase):
+    '''
+    Contains tests which require only volunteer objects
+    '''
 
     @classmethod
     def setup_test_data(cls):
@@ -270,11 +286,14 @@ class EventWithVolunteerTest(unittest.TestCase):
 
     def test_remove_empty_events_for_volunteer(self):
         
-        """Event with job that has shift with open slots - e2
+        """
+        Uses Events e1,e2,e3,e4,e5, shift s2 and volunteer v1 where
+        with job that has shift with open slots - e2
         Event with job and shift that volunteer already signed up for - e1
         Event with job and shift that have no slots remaining - e4
         Event with job that has no shifts - e3
-        Event with no jobs - e5"""
+        Event with no jobs - e5
+        """
         
         
         register(self.v1.id, self.s2.id)
@@ -291,6 +310,7 @@ class EventWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_get_signed_up_events_for_volunteer(self):
+        """ Uses events e1,e2, volunteers v1,v2,v3 and shift s1,s2,s3"""
 
         # volunteer 1 registers for 3 shifts belonging to two events - registers for s3 first to check if sorting is successful
         register(self.v1.id, self.s3.id)
@@ -320,3 +340,4 @@ class EventWithVolunteerTest(unittest.TestCase):
         # test for returned events for unregistered volunteer 3
         self.assertEqual(len(event_list_for_vol_3), 0)
         VolunteerShift.objects.all().delete()
+        

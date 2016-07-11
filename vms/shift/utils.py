@@ -5,9 +5,13 @@ from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
 from organization.models import Organization
 
-# Contains common functions which need to be called by tests
+# Contains common functions which need to be frequently called by tests
 
 def clear_objects():
+    """
+    - Deletes objects from multiple tables
+    - Called once all tests in a module are completed
+    """
     
     VolunteerShift.objects.all().delete()
     Volunteer.objects.all().delete()
@@ -18,6 +22,9 @@ def clear_objects():
     Organization.objects.all().delete()
 
 def create_event_with_details(event):
+    """
+    Creates and returns event with passed name and dates
+    """
     e1 = Event(
         name=event[0],
         start_date=event[1],
@@ -27,6 +34,9 @@ def create_event_with_details(event):
     return e1
 
 def create_job_with_details(job):
+    """
+    Creates and returns job with passed name and dates
+    """
     
     j1 = Job(
         name=job[0],
@@ -40,6 +50,9 @@ def create_job_with_details(job):
     return j1
 
 def create_volunteer_with_details(volunteer):
+    """
+    Creates and returns volunteer with passed name and dates
+    """
     u1 = User.objects.create_user(volunteer[0])
     v1 = Volunteer(
         first_name=volunteer[1],
@@ -56,6 +69,9 @@ def create_volunteer_with_details(volunteer):
     return v1
 
 def create_shift_with_details(shift):
+    """
+    Creates and returns shift with passed name and dates
+    """
     s1 = Shift(
         date=shift[0],
         start_time=shift[1],
@@ -66,12 +82,29 @@ def create_shift_with_details(shift):
     s1.save()
     return s1
 
-def get_report_list(duration_list, report_list, total_hours):
+def set_shift_location(shift,loc):
+    """
+    Sets and returns shift with passed location details
+    """
+    shift.address=loc[0]
+    shift.city=loc[1]
+    shift.state=loc[2]
+    shift.country=loc[3]
+    shift.venue=loc[4]
+    
+    shift.save()
+    return shift
 
-	for duration in duration_list:
+def get_report_list(duration_list, report_list, total_hours):
+    """
+    - Contains steps to generate report list with passes parameters
+    - Called frequently by test case in shift unit tests
+    """
+
+    for duration in duration_list:
 		total_hours += duration
 		report = {}
 		report["duration"] = duration
 		report_list.append(report)
 
-	return (report_list, total_hours)
+    return (report_list, total_hours)

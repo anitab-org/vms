@@ -29,6 +29,10 @@ from shift.services import (
             )
 
 def setUpModule():
+    """
+    - Creates objects which can be reused by multiple test classes
+    - Creates shifts with limited slots and with multiple slots for use
+    """
 
     global e1
     global j1,j2
@@ -51,6 +55,7 @@ def setUpModule():
     s3 = create_shift_with_details(shift_3)
 
 def tearDownModule():
+    # Destroys all objects created
     clear_objects()
 
 class ShiftTests(unittest.TestCase):
@@ -255,6 +260,7 @@ class ShiftTests(unittest.TestCase):
                         )
 
     def test_get_shift_by_id(self):
+        """ Uses shifts s1 and s2 """
 
         # test typical cases
         self.assertIsNotNone(get_shift_by_id(self.s1.id))
@@ -277,11 +283,14 @@ class ShiftTests(unittest.TestCase):
         self.assertNotEqual(get_shift_by_id(300), self.s2)
 
     def test_get_shifts_by_job_id(self):
-        """ Test get_shifts_by_job_id(j_id) """
-
+        """ 
+        Test get_shifts_by_job_id(j_id) 
+        Uses job j1
+        """
         self.assertIsNotNone(get_shifts_by_job_id(j1.id))
 
     def test_get_shifts_ordered_by_date(self):
+        """ Uses shifts s1 and s2 """
 
         # test typical case
         shift_list = get_shifts_ordered_by_date(self.j1.id)
@@ -297,6 +306,10 @@ class ShiftTests(unittest.TestCase):
 
 class ShiftWithVolunteerTest(unittest.TestCase):
 
+    '''
+    Contains tests which require volunteer object
+    '''
+
     @classmethod
     def setup_test_data(cls):
 
@@ -307,6 +320,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         cls.s2 = s2
         cls.s3 = s3
 
+        # Create volunteers who will register for the shifts
         volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
         volunteer_2 = ['John',"John","Doe","7 Alpine Street","Maplegrove","Wyoming","USA","23454545","john@test.com"]
         volunteer_3 = ['Ash',"Ash","Ketchum","Pallet Town","Kanto","Gameboy","Japan","23454545","ash@pikachu.com"]
@@ -320,6 +334,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         cls.setup_test_data()
 
     def test_add_shift_hours(self):
+        """ Uses shifts s1, s2, s3 and volunteers v1,v2,v3 """
 
         # register will return an exception on error
         # (such as when invalid parameters are passed)
@@ -376,6 +391,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_cancel_shift_registration(self):
+        """ Uses shifts s1, s2, s3 and volunteers v1,v2 """
 
         # test cases when try to cancel when they aren't signed up for a shift
         with self.assertRaises(ObjectDoesNotExist):
@@ -420,6 +436,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_clear_shift_hours(self):
+        """ Uses shifts s1, s2, s3 and volunteer v1 """
 
         register(self.v1.id, self.s1.id)
         self.assertIsNotNone(VolunteerShift.objects.get(
@@ -479,6 +496,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_edit_shift_hours(self):
+        """ Uses shift s1 and volunteer v1 """
 
         register(self.v1.id, self.s1.id)
         self.assertIsNotNone(VolunteerShift.objects.get(
@@ -554,7 +572,8 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_generate_report(self):
-        # Tests test_generate_report(volunteer_shift_list) 
+        """ Uses shifts s1, s2, s3 and volunteer v1
+        Tests test_generate_report(volunteer_shift_list) """
 
         shift_list = [self.s1, self.s2, self.s3]
 
@@ -602,23 +621,25 @@ class ShiftWithVolunteerTest(unittest.TestCase):
 
     def test_get_all_volunteer_shifts_with_hours(self):
         #  Test get_all_volunteer_shifts_with_hours() 
-
         self.assertIsNotNone(get_all_volunteer_shifts_with_hours())
 
     def test_get_shift_slots_remaining(self):
-        # Test get_shift_slots_remaining(s_id)
+        """ Uses shifts s1, s2, s3
+        Tests get_shift_slots_remaining(s_id) """
 
         self.assertIsNotNone(get_shift_slots_remaining(self.s1.id))
         self.assertIsNotNone(get_shift_slots_remaining(self.s2.id))
         self.assertIsNotNone(get_shift_slots_remaining(self.s3.id))
 
     def test_get_shifts_with_open_slots(self):
-        # Test get_shifts_with_open_slots(j_id) 
+        """ Uses jobs j1, j2
+        Tests get_shifts_with_open_slots(j_id) """
 
         self.assertIsNotNone(get_shifts_with_open_slots(self.j1.id))
         self.assertIsNotNone(get_shifts_with_open_slots(self.j2.id))
 
     def test_get_unlogged_shifts_by_volunteer_id(self):
+        """ Uses shifts s1, s2, s3 and volunteer v1 """
 
         # sign up
         register(self.v1.id, self.s1.id)
@@ -638,6 +659,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_get_volunteer_shift_by_id(self):
+        """ Uses shifts s1,s2,s3 and volunteers v1,v2"""
 
         # test cases where signed up
         register(self.v1.id, self.s1.id)
@@ -691,7 +713,8 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_get_volunteer_shifts_with_hours(self):
-         # Test  get_volunteer_shifts_with_hours(v_id) 
+        """ Uses volunteers v1 and v2
+        Test get_volunteer_shifts_with_hours(v_id) """
 
         self.assertIsNotNone(get_volunteer_shifts_with_hours(self.v1))
         self.assertIsNotNone(get_volunteer_shifts_with_hours(self.v2))
@@ -700,6 +723,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_get_volunteers_by_shift_id(self):
+        """ Uses volunteers v1,v2,v3 and shifts s1,s2,s3 """
 
         # sign up
         register(self.v3.id, self.s1.id)
@@ -733,6 +757,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_get_logged_volunteers_by_shift_id(self):
+        """ Uses volunteers v1,v2,v3 and shift s3 """
 
         # sign up
         register(self.v3.id, self.s3.id)
@@ -759,6 +784,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_is_signed_up(self):
+        """ Uses volunteers v1,v2 and shifts s1,s2,s3 """
 
         # test cases where not signed up yet
         self.assertFalse(is_signed_up(self.v1.id, self.s1.id))
@@ -790,6 +816,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         VolunteerShift.objects.all().delete()
 
     def test_register(self):
+        """ Uses volunteers v1,v2 and shifts s1,s2,s3 """
 
         ERROR_CODE_ALREADY_SIGNED_UP = "ERROR_CODE_ALREADY_SIGNED_UP"
         ERROR_CODE_NO_SLOTS_REMAINING = "ERROR_CODE_NO_SLOTS_REMAINING"
@@ -881,31 +908,16 @@ class ShiftReminderTest(unittest.TestCase):
 
     def test_send_reminder(self):
 
+        location = ["Test address","Atlanta","Georgia","USA","Near the south entrance"]
+
+        set_shift_location(self.s1,location)
+        set_shift_location(self.s2,location)
+        set_shift_location(self.s3,location)
+
         self.v1.reminder_days=1
         self.v2.reminder_days=7
         self.v1.save()
         self.v2.save()
-
-        self.s1.address="Test address",
-        self.s1.city="Atlanta",
-        self.s1.state="Georgia",
-        self.s1.country="USA",
-        self.s1.venue="Near the south entrance"
-        self.s1.save()
-
-        self.s2.address="Test address",
-        self.s2.city="Atlanta",
-        self.s2.state="Georgia",
-        self.s2.country="USA",
-        self.s2.venue="Near the south entrance"
-        self.s2.save()
-
-        self.s3.address="Test address",
-        self.s3.city="Atlanta",
-        self.s3.state="Georgia",
-        self.s3.country="USA",
-        self.s3.venue="Near the south entrance"
-        self.s3.save()
 
         # sign up
         register(self.v1.id, self.s1.id)

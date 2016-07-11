@@ -1,4 +1,3 @@
-from django.test import TestCase
 import unittest
 from organization.models import Organization
 from organization.services import *
@@ -22,6 +21,7 @@ class OrganizationMethodTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        # Destroys all objects created
         clear_objects()
 		
     def test_get_organization_by_id(self):
