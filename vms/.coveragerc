@@ -2,6 +2,10 @@
 [run]
 branch = True
 source = vms
+omit = 
+  */tests/*
+  vms/*
+  manage.py
 
 [report]
 ignore_errors = True
