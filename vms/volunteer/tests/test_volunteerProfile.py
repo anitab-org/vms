@@ -1,182 +1,157 @@
-from django.test import TestCase
 from django.contrib.staticfiles.testing import LiveServerTestCase
-
-from django.contrib.auth.models import User
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
 from volunteer.models import Volunteer
-from organization.models import Organization #hack to pass travis,Bug in Code
+from shift.utils import create_volunteer_with_details
 
 import re
-
 
 class VolunteerProfile(LiveServerTestCase):
     '''
     '''
+    @classmethod
+    def setUpClass(cls):
+        cls.homepage = '/'
+        cls.authentication_page = '/authentication/login/'
+        cls.profile_first_name_path = '//input[@name = "first_name"]'
+        cls.profile_last_name_path = '//input[@name = "last_name"]'
+        cls.profile_email_path = '//input[@name = "email"]'
+        cls.profile_address_path = '//input[@name = "address"]'
+        cls.profile_city_path = '//input[@name = "city"]'
+        cls.profile_state_path = '//input[@name = "state"]'
+        cls.profile_country_path = '//input[@name = "country"]'
+        cls.profile_phone_path = '//input[@name = "phone_number"]'
+        cls.select_organization_path = '//select[@name = "organization_name"]'
+        cls.unlisted_organization_path = '//input[@name = "unlisted_organization"]'
+        cls.resume_file_path = '//input[@name = "resume_file"]'
+        cls.download_resume_path = './/*[@id="collapseResumeFile"]/div/form/button'
+        
+        cls.driver = webdriver.Firefox()
+        cls.driver.implicitly_wait(5)
+        cls.driver.maximize_window()
+        super(VolunteerProfile, cls).setUpClass()
+
     def setUp(self):
-        volunteer_user = User.objects.create_user(
-                username = 'Sherlock',
-                password = 'Holmes',
-                email = 'idonthave@gmail.com')
-
-        Volunteer.objects.create(
-                first_name = 'Sherlock',
-                last_name = 'Holmes',
-                user = volunteer_user,
-                email = 'idonthave@gmail.com',
-                address = '221-B Baker Street',
-                city = 'London',
-                state = 'London-State',
-                country = 'UK',
-                phone_number = '9999999999',
-                unlisted_organization = 'Detective')
-
-        # create an org prior to registration. Bug in Code
-        # added to pass CI
-        Organization.objects.create(
-                name = 'DummyOrg')
-
-        self.homepage = '/'
-        self.authentication_page = '/authentication/login/'
-        self.driver = webdriver.Firefox()
-        self.driver.maximize_window()
-        super(VolunteerProfile, self).setUp()
+        vol = ['Sherlock',"Sherlock","Holmes","221-B Baker Street","London","London-State","UK","9999999999","idonthave@gmail.com"]
+        self.v1 = create_volunteer_with_details(vol)
+        self.v1.unlisted_organization = 'Detective'
+        self.v1.save()
 
     def tearDown(self):
-        self.driver.quit()
-        super(VolunteerProfile, self).tearDown()
+        pass
 
-    def login(self):
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        super(VolunteerProfile, cls).tearDownClass()
+
+    def login(self, credentials):
         self.driver.get(self.live_server_url + self.authentication_page)
-        self.driver.find_element_by_id('id_login').send_keys('Sherlock')
-        self.driver.find_element_by_id('id_password').send_keys('Holmes')
+        self.driver.find_element_by_id('id_login').send_keys(credentials['username'])
+        self.driver.find_element_by_id('id_password').send_keys(credentials['password'])
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-        self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.homepage)
+    def login_correctly(self):
+        self.login({ 'username' : "Sherlock", 'password' : "volunteer"})
+
+    def navigate_to_profile(self):
+        self.driver.find_element_by_link_text('Profile').send_keys("\n")
+
+    def edit_profile(self):
+        self.driver.find_element_by_link_text('Edit Profile').send_keys("\n")
+
+    def fill_field(self, xpath, value):
+        self.driver.find_element_by_xpath(xpath).clear()
+        self.driver.find_element_by_xpath(xpath).send_keys(value)
 
     def test_details_tab(self):
-        self.login()
-        self.driver.find_element_by_link_text('Profile').send_keys("\n")
+        self.login_correctly()
+        self.navigate_to_profile()
         page_source = self.driver.page_source
 
-        found_email = re.search('idonthave@gmail.com', page_source)
+        found_email = re.search(self.v1.email, page_source)
         self.assertNotEqual(found_email, None)
 
-        found_city = re.search('London', page_source)
+        found_city = re.search(self.v1.city, page_source)
         self.assertNotEqual(found_city, None)
 
-        found_state = re.search('London-State', page_source)
+        found_state = re.search(self.v1.state, page_source)
         self.assertNotEqual(found_state, None)
 
-        found_country = re.search('UK', page_source)
+        found_country = re.search(self.v1.country, page_source)
         self.assertNotEqual(found_country, None)
 
-        found_org = re.search('Detective', page_source)
+        found_org = re.search(self.v1.unlisted_organization, page_source)
         self.assertNotEqual(found_org, None)
 
     def test_edit_profile(self):
-        self.login()
-        self.driver.find_element_by_link_text('Profile').send_keys("\n")
-        self.driver.find_element_by_link_text('Edit Profile').send_keys("\n")
+        self.login_correctly()
+        self.navigate_to_profile()
+        self.edit_profile()
 
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').send_keys('Harvey')
+        new_details = ['Harvey', 'Specter', 'hspecter@ps.com', 'Empire State Building', 'NYC', 'New York', 'USA', '9999999998', 'None', 'Lawyer']
 
+        self.fill_field(self.profile_first_name_path, new_details[0])
+        self.fill_field(self.profile_last_name_path, new_details[1])
+        self.fill_field(self.profile_email_path, new_details[2])
+        self.fill_field(self.profile_address_path, new_details[3])
+        self.fill_field(self.profile_city_path, new_details[4])
+        self.fill_field(self.profile_state_path, new_details[5])
+        self.fill_field(self.profile_country_path, new_details[6])
+        self.fill_field(self.profile_phone_path, new_details[7])
         self.driver.find_element_by_xpath(
-                '//input[@name = "last_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "last_name"]').send_keys('Specter')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "email"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "email"]').send_keys('hspecter@ps.com')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "address"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "address"]').send_keys('Empire State Building')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "city"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "city"]').send_keys('NYC')
-        
-        self.driver.find_element_by_xpath(
-                '//input[@name = "state"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "state"]').send_keys('New York')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "country"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "country"]').send_keys('USA')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "phone_number"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "phone_number"]').send_keys('9999999998')
-
-        self.driver.find_element_by_xpath(
-                '//select[@name = "organization_name"]').send_keys('None')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "unlisted_organization"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "unlisted_organization"]').send_keys('Lawyer')
+                self.select_organization_path).send_keys(new_details[8])
+        self.fill_field(self.unlisted_organization_path, new_details[9])
         self.driver.find_element_by_xpath('//form').submit()
 
         page_source = self.driver.page_source
 
-        found_email = re.search('idonthave@gmail.com', page_source)
+        found_email = re.search(self.v1.email, page_source)
         self.assertEqual(found_email, None)
 
-        found_city = re.search('London', page_source)
+        found_city = re.search(self.v1.city, page_source)
         self.assertEqual(found_city, None)
 
-        found_state = re.search('London-State', page_source)
+        found_state = re.search(self.v1.state, page_source)
         self.assertEqual(found_state, None)
 
-        found_country = re.search('UK', page_source)
+        found_country = re.search(self.v1.country, page_source)
         self.assertEqual(found_country, None)
 
-        found_org = re.search('Detective', page_source)
+        found_org = re.search(self.v1.unlisted_organization, page_source)
         self.assertEqual(found_org, None)
 
-        found_email = re.search('hspecter@ps.com', page_source)
+        found_email = re.search(new_details[2], page_source)
         self.assertNotEqual(found_email, None)
 
-        found_city = re.search('NYC', page_source)
+        found_city = re.search(new_details[4], page_source)
         self.assertNotEqual(found_city, None)
 
-        found_state = re.search('New York', page_source)
+        found_state = re.search(new_details[5], page_source)
         self.assertNotEqual(found_state, None)
 
-        found_country = re.search('USA', page_source)
+        found_country = re.search(new_details[6], page_source)
         self.assertNotEqual(found_country, None)
 
-        found_org = re.search('Lawyer', page_source)
+        found_org = re.search(new_details[9], page_source)
         self.assertNotEqual(found_org, None)
 
     def test_upload_resume(self):
         pass
         '''
         #Tested locally
-        self.login()
-        self.driver.find_element_by_link_text('Profile').click()
-        self.driver.find_element_by_link_text('Edit Profile').click()
+        self.login_correctly()
+        self.navigate_to_profile()
+        self.edit_profile()
 
         self.driver.find_element_by_xpath(
-                '//input[@name = "resume_file"]').send_keys('/home/jlahori/Downloads/water.pdf')
+                self.resume_file_path).send_keys('/home/jlahori/Downloads/water.pdf')
 
         self.driver.find_element_by_xpath('//form').submit()
         self.assertEqual(self.driver.find_element_by_xpath(
-            './/*[@id="collapseResumeFile"]/div/form/button').text,
+            self.download_resume_path).text,
             'Download Resume')
         '''
 
@@ -184,16 +159,16 @@ class VolunteerProfile(LiveServerTestCase):
         pass
         '''
         #Tested locally
-        self.login()
-        self.driver.find_element_by_link_text('Profile').click()
-        self.driver.find_element_by_link_text('Edit Profile').click()
+        self.login_correctly()
+        self.navigate_to_profile()
+        self.edit_profile()
 
         self.driver.find_element_by_xpath(
-                '//input[@name = "resume_file"]').send_keys('/home/jlahori/Downloads/ca.crt')
+                self.resume_file_path).send_keys('/home/jlahori/Downloads/ca.crt')
 
         self.driver.find_element_by_xpath('//form').submit()
         self.assertEqual(self.driver.find_element_by_xpath(
             'html/body/div[2]/div[2]/form/fieldset/div[13]/div/p/strong').text,
             'Uploaded file is invalid.')
         '''
-
+        
