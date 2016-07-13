@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
 from django.contrib.auth.models import User
@@ -490,6 +489,26 @@ class Settings(LiveServerTestCase):
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[1]').text, 'event-name')
 
+    # - commented out due to bug - desirable feature not yet implemented
+    """def test_duplicate_event(self):
+        self.login_admin()
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # check event created
+        self.assertEqual(self.driver.current_url,
+                         self.live_server_url + self.settings_page)
+        self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[1]').text, 'event-name')
+
+        event_2 = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event_2)
+
+        # TBA here - more checks depending on behaviour that should be reflected
+        # check event not created 
+        self.assertNotEqual(self.driver.current_url,
+                            self.live_server_url + self.settings_page)"""
+
     def test_edit_event(self):
         self.login_admin()
         event = ['event-name', '08/21/2016', '09/28/2016']
@@ -772,6 +791,43 @@ class Settings(LiveServerTestCase):
             '//table//tbody//tr[1]//td[1]').text, 'job name')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[2]').text, 'event-name')
+
+    # - commented out due to bug - desirable feature not yet implemented
+    """def test_duplicate_job(self):
+        self.login_admin()
+
+        # register event first to create job
+        event = ['event-name', '08/21/2017', '09/28/2017']
+        self.register_event_utility(event)
+
+        # create job
+        job = [
+            'event-name',
+            'job name',
+            'job description',
+            '08/29/2017',
+            '09/11/2017']
+        self.assertEqual(self.driver.current_url,
+                         self.live_server_url + self.settings_page)
+        self.register_job_utility(job)
+
+        # check job created
+        self.assertEqual(self.driver.current_url,
+                         self.live_server_url + '/job/list/')
+        self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[1]').text, 'job name')
+        self.assertEqual(self.driver.find_element_by_xpath(
+            '//table//tbody//tr[1]//td[2]').text, 'event-name')
+
+        # Create another job with same details within the same event
+        self.assertEqual(self.driver.current_url,
+                         self.live_server_url + '/job/list/')
+        self.register_job_utility(job)
+
+        # TBA here - more checks depending on logic that should be reflected
+        # check job not created - commented out due to bug
+        self.assertNotEqual(self.driver.current_url,
+                            self.live_server_url + '/job/list/')"""
 
     def test_edit_job(self):
         self.login_admin()
