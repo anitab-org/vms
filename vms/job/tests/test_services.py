@@ -1,13 +1,17 @@
-from django.test import TestCase
-from django.contrib.auth.models import User
+import unittest
 import datetime
 from datetime import date
 
-from event.models import Event
-from job.models import Job
+from shift.models import VolunteerShift
 from shift.services import register
-from shift.models import Shift
-from volunteer.models import Volunteer
+from shift.utils import (
+        create_event_with_details,
+        create_job_with_details,
+        create_volunteer_with_details,
+        create_shift_with_details,
+        clear_objects
+        )
+
 from job.services import (
                             delete_job,
                             check_edit_job,
@@ -15,109 +19,182 @@ from job.services import (
                             get_jobs_by_event_id,
                             get_jobs_ordered_by_title,
                             get_signed_up_jobs_for_volunteer,
-                            remove_empty_jobs_for_volunteer
+                            remove_empty_jobs_for_volunteer,
                             )
 
+def setUpModule():
+    """
+    - Creates objects which can be reused by multiple test classes
+    - Creates jobs that can be used later for shift creation
+    """
 
-class JobMethodTests(TestCase):
+    global e1, j1, j2, j3
+    event_1 = ["Software Conference","2012-10-3","2012-11-25"]
+    e1 = create_event_with_details(event_1)
+
+    job_1 = ["Software Developer","2012-10-22","2012-10-25","A software job",e1]
+    job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
+    job_3 = ["Project Manager","2012-11-2","2012-11-12","A management job",e1]
+
+    j1 = create_job_with_details(job_1)
+    j2 = create_job_with_details(job_2)
+    j3 = create_job_with_details(job_3)
+
+def tearDownModule():
+    # Destroys all objects created
+    clear_objects()
+
+class JobTests(unittest.TestCase):
+    '''
+    Contains tests which require only job objects, no shifts
+    '''
+
+    @classmethod
+    def setup_test_data(cls):
+        cls.e1 = e1
+        cls.j1 = j1
+        cls.j2 = j2
+        cls.j3 = j3
+
+    @classmethod
+    def setUpClass(cls):
+        cls.setup_test_data()
+        
+    def test_get_job_by_id(self):
+        """ Uses jobs j1,j2,j3 """
+
+        # test typical cases
+        self.assertIsNotNone(get_job_by_id(self.j1.id))
+        self.assertIsNotNone(get_job_by_id(self.j2.id))
+        self.assertIsNotNone(get_job_by_id(self.j3.id))
+
+        self.assertEqual(get_job_by_id(self.j1.id), self.j1)
+        self.assertEqual(get_job_by_id(self.j2.id), self.j2)
+        self.assertEqual(get_job_by_id(self.j3.id), self.j3)
+
+        # test non-existant cases
+        self.assertIsNone(get_job_by_id(100))
+        self.assertIsNone(get_job_by_id(200))
+        self.assertIsNone(get_job_by_id(300))
+        self.assertIsNone(get_job_by_id(400))
+
+        self.assertNotEqual(get_job_by_id(100), self.j1)
+        self.assertNotEqual(get_job_by_id(100), self.j2)
+        self.assertNotEqual(get_job_by_id(100), self.j3)
+        self.assertNotEqual(get_job_by_id(200), self.j1)
+        self.assertNotEqual(get_job_by_id(200), self.j2)
+        self.assertNotEqual(get_job_by_id(200), self.j3)
+        self.assertNotEqual(get_job_by_id(300), self.j1)
+        self.assertNotEqual(get_job_by_id(300), self.j2)
+        self.assertNotEqual(get_job_by_id(300), self.j3)
+
+    def test_get_jobs_by_event_id(self):
+        """ Test get_jobs_by_event_id(e_id) 
+        Uses jobs j1,j2,j3 and event e1 """
+
+        # test typical case
+        job_list = get_jobs_by_event_id(self.e1.id)
+        self.assertIsNotNone(job_list)
+        self.assertNotEqual(job_list, False)
+        self.assertEqual(len(job_list), 3)
+        self.assertIn(self.j1, job_list)
+        self.assertIn(self.j2, job_list)
+        self.assertIn(self.j3, job_list)
+
+    def test_get_jobs_ordered_by_title(self):
+        """ Uses jobs j1,j2,j3 """
+
+        # test typical case
+        job_list = get_jobs_ordered_by_title()
+        self.assertIsNotNone(job_list)
+        self.assertNotEqual(job_list, False)
+        self.assertEqual(len(job_list), 3)
+        self.assertIn(self.j1, job_list)
+        self.assertIn(self.j2, job_list)
+        self.assertIn(self.j3, job_list)
+
+        # test order
+        self.assertEqual(job_list[0].name, self.j3.name)
+        self.assertEqual(job_list[1].name, self.j1.name)
+        self.assertEqual(job_list[2].name, self.j2.name)
+
+class DeleteJobTest(unittest.TestCase):
+
+    @classmethod
+    def setup_test_data(cls):
+        event_1 = ["Software Conference","2012-10-3","2012-10-24"]
+        cls.e1 = create_event_with_details(event_1)
+
+        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
+        job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
+        job_3 = ["Project Manager","2012-1-2","2012-2-2","A management job",e1]
+
+        cls.j1 = create_job_with_details(job_1)
+        cls.j2 = create_job_with_details(job_2)
+        cls.j3 = create_job_with_details(job_3)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.setup_test_data()  
 
     def test_delete_job(self):
         """ Test delete_job(job_id) """
 
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
-
         # test typical cases
-        self.assertTrue(delete_job(j1.id))
-        self.assertTrue(delete_job(j2.id))
-        self.assertTrue(delete_job(j3.id))
+        self.assertTrue(delete_job(self.j1.id))
+        self.assertTrue(delete_job(self.j2.id))
+        self.assertTrue(delete_job(self.j3.id))
         self.assertFalse(delete_job(100))
         self.assertFalse(delete_job(200))
         self.assertFalse(delete_job(300))
 
+class JobWithShiftTests(unittest.TestCase):
+    '''
+    Contains tests which require shift objects
+    '''
+
+    @classmethod
+    def setup_test_data(cls):
+        cls.e1 = e1
+        cls.j1 = j1
+        cls.j3 = j3
+
+        # job with no shifts
+        cls.j2 = j2
+
+        # job with shift which has no slot
+        job_4 = ["Information Technologist","2012-11-2","2012-12-2","An IT job",e1]
+        cls.j4 = create_job_with_details(job_4)
+        
+        shift_1 = ["2012-10-23","1:00","3:00",1,cls.j1]
+        shift_2 = ["2012-10-25","2:00","4:00",2,cls.j1]
+        shift_3 = ["2012-10-24","12:00","18:00",4,cls.j3]
+
+        # shift with no slots
+        shift_4 = ["2012-11-7","12:00","18:00",0,cls.j4]
+
+        cls.s1 = create_shift_with_details(shift_1)
+        cls.s2 = create_shift_with_details(shift_2)
+        cls.s3 = create_shift_with_details(shift_3)
+        cls.s4 = create_shift_with_details(shift_4)
+
+        # creating volunteers who would register for the shifts
+        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
+        volunteer_2 = ['John',"John","Doe","7 Alpine Street","Maplegrove","Wyoming","USA","23454545","john@test.com"]
+        volunteer_3 = ['Ash',"Ash","Ketchum","Pallet Town","Kanto","Gameboy","Japan","23454545","ash@pikachu.com"]
+
+        cls.v1 = create_volunteer_with_details(volunteer_1)
+        cls.v2 = create_volunteer_with_details(volunteer_2)
+        cls.v3 = create_volunteer_with_details(volunteer_3)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.setup_test_data()
+
     def test_check_edit_job(self):
-
-        e1 = Event(
-                name="Open Source Event",
-                start_date="2012-10-3",
-                end_date="2012-10-24"
-                )
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-10-8",
-                end_date="2012-10-16",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-
-        s1 = Shift(
-                date="2012-10-23",
-                start_time="1:00",
-                end_time="3:00",
-                max_volunteers=5,
-                job=j1
-                )
-
-        s2 = Shift(
-                date="2012-10-25",
-                start_time="2:00",
-                end_time="4:00",
-                max_volunteers=5,
-                job=j1
-                )
-
-        s1.save()
-        s2.save()
+        """ Uses jobs j1,j2 """
 
         # test typical cases
-
         start_date1 = datetime.date(2012, 10, 23)
         start_date2 = datetime.date(2012, 10, 25)
         start_date3 = datetime.date(2012, 10, 2)
@@ -131,11 +208,11 @@ class JobMethodTests(TestCase):
         stop_date5 = datetime.date(2015, 11, 6)
         stop_date6 = datetime.date(2013, 11, 7)
 
-        out1 = check_edit_job(j1.id, start_date1, stop_date1)
-        out2 = check_edit_job(j1.id, start_date2, stop_date2)
-        out3 = check_edit_job(j1.id, start_date3, stop_date3)
-        out4 = check_edit_job(j1.id, start_date4, stop_date4)
-        out5 = check_edit_job(j2.id, start_date5, stop_date5)
+        out1 = check_edit_job(self.j1.id, start_date1, stop_date1)
+        out2 = check_edit_job(self.j1.id, start_date2, stop_date2)
+        out3 = check_edit_job(self.j1.id, start_date3, stop_date3)
+        out4 = check_edit_job(self.j1.id, start_date4, stop_date4)
+        out5 = check_edit_job(self.j2.id, start_date5, stop_date5)
         out6 = check_edit_job(100, start_date6, stop_date6)
 
         self.assertTrue(out1['result'])
@@ -145,402 +222,55 @@ class JobMethodTests(TestCase):
         self.assertTrue(out5['result'])
         self.assertFalse(out6['result'])
 
-    def test_get_job_by_id(self):
-
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
-
-        # test typical cases
-        self.assertIsNotNone(get_job_by_id(j1.id))
-        self.assertIsNotNone(get_job_by_id(j2.id))
-        self.assertIsNotNone(get_job_by_id(j3.id))
-
-        self.assertEqual(get_job_by_id(j1.id), j1)
-        self.assertEqual(get_job_by_id(j2.id), j2)
-        self.assertEqual(get_job_by_id(j3.id), j3)
-
-        # test non-existant cases
-        self.assertIsNone(get_job_by_id(100))
-        self.assertIsNone(get_job_by_id(200))
-        self.assertIsNone(get_job_by_id(300))
-        self.assertIsNone(get_job_by_id(400))
-
-        self.assertNotEqual(get_job_by_id(100), j1)
-        self.assertNotEqual(get_job_by_id(100), j2)
-        self.assertNotEqual(get_job_by_id(100), j3)
-        self.assertNotEqual(get_job_by_id(200), j1)
-        self.assertNotEqual(get_job_by_id(200), j2)
-        self.assertNotEqual(get_job_by_id(200), j3)
-        self.assertNotEqual(get_job_by_id(300), j1)
-        self.assertNotEqual(get_job_by_id(300), j2)
-        self.assertNotEqual(get_job_by_id(300), j3)
-
-    def test_get_jobs_by_event_id(self):
-        """ Test get_jobs_by_event_id(e_id) """
-
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
-
-        # test typical case
-        job_list = get_jobs_by_event_id(e1.id)
-        self.assertIsNotNone(job_list)
-        self.assertNotEqual(job_list, False)
-        self.assertEqual(len(job_list), 3)
-        self.assertIn(j1, job_list)
-        self.assertIn(j2, job_list)
-        self.assertIn(j3, job_list)
-
-    def test_get_jobs_ordered_by_title(self):
-
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
-
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
-
-        # test typical case
-        job_list = get_jobs_ordered_by_title()
-        self.assertIsNotNone(job_list)
-        self.assertNotEqual(job_list, False)
-        self.assertEqual(len(job_list), 3)
-        self.assertIn(j1, job_list)
-        self.assertIn(j2, job_list)
-        self.assertIn(j3, job_list)
-
-        # test order
-        self.assertEqual(job_list[0].name, j3.name)
-        self.assertEqual(job_list[1].name, j1.name)
-        self.assertEqual(job_list[2].name, j2.name)
-
     def test_get_signed_up_jobs_for_volunteer(self):
+        """ Uses jobs j1,j3, shifts s1,s2,s3 and volunteers v1,v2"""
 
-        # creating events, jobs and shifts for volunteer registration
-        e1 = Event(
-                name="django Event",
-                start_date="2015-10-22",
-                end_date="2015-10-25"
-                )     
-
-        e1.save()
-
-        j1 = Job(
-                name="Software Developer",
-                start_date="2015-10-22",
-                end_date="2015-10-23",
-                description="A software job",
-                event=e1
-                )  
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2015-10-23",
-                end_date="2015-10-25",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-
-        s1 = Shift(
-                date="2015-10-23",
-                start_time="3:00",
-                end_time="9:00",
-                max_volunteers=1,
-                job=j1
-                )
-        s2 = Shift(
-                date="2015-10-23",
-                start_time="4:00",
-                end_time="11:00",
-                max_volunteers=2,
-                job=j1
-                )
-        s3 = Shift(
-                date="2015-10-24",
-                start_time="6:00",
-                end_time="12:00",
-                max_volunteers=4,
-                job=j2
-                )
-
-        s1.save()
-        s2.save()
-        s3.save()
-
-        # creating volunteers who would register for the shifts
-        u1 = User.objects.create_user('Yoshi')
-        u2 = User.objects.create_user('John')
-        u3 = User.objects.create_user('Ash')
-        
-        v1 = Volunteer(
-                    first_name="Yoshi",
-                    last_name="Turtle",
-                    address="Mario Land",
-                    city="Nintendo Land",
-                    state="Nintendo State",
-                    country="Nintendo Nation",
-                    phone_number="2374983247",
-                    email="yoshi@nintendo.com",
-                    user=u1
-                    )
-
-        v2 = Volunteer(
-                    first_name="John",
-                    last_name="Doe",
-                    address="7 Alpine Street",
-                    city="Maplegrove",
-                    state="Wyoming",
-                    country="USA",
-                    phone_number="23454545",
-                    email="john@test.com",
-                    user=u2
-                    )
-
-        # volunteer who doesn't register for any shift
-        v3 = Volunteer(
-                    first_name="Ash",
-                    last_name="Ketchum",
-                    address="Pallet Town",
-                    city="Kanto",
-                    state="Gameboy",
-                    country="Japan",
-                    phone_number="23454545",
-                    email="ash@pikachu.com",
-                    user=u3
-                    )
-
-        v1.save()
-        v2.save()
-        v3.save()
-
-        # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s3 first to check if sorting is successful
-        register(v1.id, s3.id)
-        register(v1.id, s2.id)
-        register(v1.id, s1.id)
+        # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s1 first to check if sorting is successful
+        register(self.v1.id, self.s1.id)
+        register(self.v1.id, self.s3.id)
+        register(self.v1.id, self.s2.id)
         
         # volunteer 2 registers for 2 shifts, where s1 has no available slots
-        register(v2.id, s1.id)
-        register(v2.id, s3.id)
+        register(self.v2.id, self.s1.id)
+        register(self.v2.id, self.s3.id)
 
-        job_list_for_vol_1 = get_signed_up_jobs_for_volunteer(v1.id)
-        job_list_for_vol_2 = get_signed_up_jobs_for_volunteer(v2.id)
-        job_list_for_vol_3 = get_signed_up_jobs_for_volunteer(v3.id)
+        job_list_for_vol_1 = get_signed_up_jobs_for_volunteer(self.v1.id)
+        job_list_for_vol_2 = get_signed_up_jobs_for_volunteer(self.v2.id)
+        job_list_for_vol_3 = get_signed_up_jobs_for_volunteer(self.v3.id)
 
         # tests for returned jobs, their order and duplication for volunteer 1
         self.assertEqual(len(job_list_for_vol_1), 2)
-        self.assertIn(j1.name, job_list_for_vol_1)
-        self.assertIn(j2.name, job_list_for_vol_1)
-        self.assertEqual(job_list_for_vol_1[0], j1.name)
-        self.assertEqual(job_list_for_vol_1[1], j2.name)
+        self.assertIn(self.j1.name, job_list_for_vol_1)
+        self.assertIn(self.j3.name, job_list_for_vol_1)
+        self.assertEqual(job_list_for_vol_1[0], self.j3.name)
+        self.assertEqual(job_list_for_vol_1[1], self.j1.name)
 
         # tests for returned jobs for volunteer 2
         self.assertEqual(len(job_list_for_vol_2), 1)
-        self.assertIn(j2.name, job_list_for_vol_2)
-        self.assertNotIn(j1.name, job_list_for_vol_2)
+        self.assertIn(self.j3.name, job_list_for_vol_2)
+        self.assertNotIn(self.j1.name, job_list_for_vol_2)
 
         # test for returned jobs for unregistered volunteer 3
         self.assertEqual(len(job_list_for_vol_3), 0)
 
+        # Delete all registered shifts
+        VolunteerShift.objects.all().delete()
+
     def test_remove_empty_jobs_for_volunteer(self):
-
-        e1 = Event(
-                name="Software Conference",
-                start_date="2012-10-22",
-                end_date="2012-10-25"
-                )
-
-        e1.save()
+        """ Uses jobs j1,j2,j3,j4, shift s3 and volunteer v1 """
         
-        #Job with shift that has slots available
-        j1 = Job(
-                name="Software Developer",
-                start_date="2012-10-22",
-                end_date="2012-10-23",
-                description="A software job",
-                event=e1
-                )
+        # volunteer registers for a shift with multiple slots
+        register(self.v1.id, self.s3.id)
         
-        #Job with shift volunteer will have already signed up for  
-        j2 = Job(
-                name="Systems Administrator",
-                start_date="2012-9-1",
-                end_date="2012-10-26",
-                description="A systems administrator job",
-                event=e1
-                )
-
-        #Job with shift that has no available slots
-        j3 = Job(
-                name="Project Manager",
-                start_date="2012-1-2",
-                end_date="2012-2-2",
-                description="A management job",
-                event=e1
-                )
-
-        #Job with no shifts
-        j4 = Job(
-                name="Information Technologist",
-                start_date="2012-11-2",
-                end_date="2012-12-2",
-                description="An IT job",
-                event=e1
-                )
-
-        j1.save()
-        j2.save()
-        j3.save()
-        j4.save()
-        
-        s1 = Shift(
-                date="2012-10-23",
-                start_time="9:00",
-                end_time="3:00",
-                max_volunteers=5,
-                job=j1
-                )
-
-        s2 = Shift(
-                date="2012-10-23",
-                start_time="10:00",
-                end_time="4:00",
-                max_volunteers=5,
-                job=j2
-                )
-
-        s3 = Shift(
-                date="2012-10-23",
-                start_time="12:00",
-                end_time="6:00",
-                max_volunteers=0,
-                job=j3
-                )
-
-        s1.save()
-        s2.save()
-        s3.save()
-        
-        u1 = User.objects.create_user('Yoshi')
-        
-        v1 = Volunteer(
-                    first_name="Yoshi",
-                    last_name="Turtle",
-                    address="Mario Land",
-                    city="Nintendo Land",
-                    state="Nintendo State",
-                    country="Nintendo Nation",
-                    phone_number="2374983247",
-                    email="yoshi@nintendo.com",
-                    user=u1
-                    )
-
-        v1.save()
-        
-        register(v1.id, s2.id)
-        
-        job_list = [j1, j2, j3, j4]
-        job_list = remove_empty_jobs_for_volunteer(job_list, v1.id)
+        job_list = [self.j1, self.j2, self.j3, self.j4]
+        job_list = remove_empty_jobs_for_volunteer(job_list, self.v1.id)
 
         #Only open and non empty jobs should be left
-        self.assertIn(j1, job_list)
-        self.assertNotIn(j2, job_list)
-        self.assertNotIn(j3, job_list)
-        self.assertNotIn(j4, job_list)
-            
-            
+        self.assertIn(self.j1, job_list)
+        self.assertNotIn(self.j2, job_list)
+        self.assertNotIn(self.j3, job_list)
+        self.assertNotIn(self.j4, job_list)
+
+        # Delete all registered shifts
+        VolunteerShift.objects.all().delete()
+        
