@@ -8,6 +8,9 @@ class BasePage(object):
     def send_value_to_element_id(self, key, value):
     	self.driver.find_element_by_id(key).send_keys(value)
 
+    def send_value_to_xpath(self, key, value):
+        self.driver.find_element_by_xpath(key).send_keys(value)
+
     def element_by_xpath(self, path):
     	return self.driver.find_element_by_xpath(path)
 
@@ -21,6 +24,9 @@ class BasePage(object):
     def elements_by_class_name(self, class_name):
     	elements = self.driver.find_elements_by_class_name(class_name)  	
     	return elements if elements else None
+
+    def find_element_by_css_selector(self, selector):
+        return self.driver.find_element_by_css_selector(selector)
 
     def element_by_class_name(self,class_name):
         return self.driver.find_element_by_class_name(class_name)
