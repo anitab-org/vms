@@ -1,10 +1,11 @@
 from basePage import *
 from pom.locators.volunteerRegistrationPageLocators import *
+from pom.pageUrls import PageUrls
 
 class VolunteerRegistrationPage(BasePage):
     """Volunteer Registration page action methods here"""
 
-    volunteer_registration_page = '/registration/signup_volunteer/'
+    volunteer_registration_page = PageUrls.volunteer_registration_page
     success_message = "You have successfully registered!"
 
     def __init__(self, driver):

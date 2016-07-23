@@ -11,6 +11,10 @@ class BasePage(object):
     def element_by_xpath(self, path):
     	return self.driver.find_element_by_xpath(path)
 
+    def elements_by_xpath(self, path):
+        elements = self.driver.find_elements_by_xpath(path)
+        return elements if elements else None
+
     def get_page(self, base, relative_url):
     	self.driver.get(base + relative_url)
 
@@ -23,3 +27,10 @@ class BasePage(object):
 
     def get_value_for(self, field):
         return self.driver.find_element_by_id(field).get_attribute('value')
+
+    def click_link(self, link_text):
+        self.driver.find_element_by_link_text(link_text).click()
+
+    def find_link(self, link_text):
+        element = self.driver.find_element_by_link_text(link_text)
+        return element if element else None

@@ -1,10 +1,11 @@
 from basePage import *
 from pom.locators.adminRegistrationPageLocators import *
+from pom.pageUrls import PageUrls
 
 class AdminRegistrationPage(BasePage):
     """Admin Registration page action methods here"""
 
-    admin_registration_page = '/registration/signup_administrator/'
+    admin_registration_page = PageUrls.admin_registration_page
     success_message = "You have successfully registered!"
 
     def __init__(self, driver):
