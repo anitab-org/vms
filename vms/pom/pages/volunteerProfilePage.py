@@ -42,7 +42,7 @@ class VolunteerProfilePage(BasePage):
         return self.element_by_xpath(self.elements.DOWNLOAD_RESUME).text
 
     def get_invalid_format_error(self):
-        return self.driver.find_element_by_xpath(self.elements.INVALID_FORMAT_MESSAGE).text
+        return self.element_by_xpath(self.elements.INVALID_FORMAT_MESSAGE).text
 
     def submit_form(self):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()   

@@ -1,8 +1,11 @@
 from basePage import *
 from pom.locators.volunteerSearchPageLocators import *
 from pom.pages.authenticationPage import AuthenticationPage
+from pom.pageUrls import PageUrls
 
 class VolunteerSearchPage(BasePage):
+
+    volunteer_search_page = PageUrls.volunteer_search_page
 
     def __init__(self, driver):
         self.driver = driver

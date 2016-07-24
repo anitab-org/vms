@@ -40,3 +40,12 @@ class BasePage(object):
     def find_link(self, link_text):
         element = self.driver.find_element_by_link_text(link_text)
         return element if element else None
+
+    def element_by_id(self, id_name):
+        return self.driver.find_element_by_id(id_name)
+
+    def get_value_for_xpath(self, xpath):
+        return self.driver.find_element_by_xpath(xpath).get_attribute('value')
+
+    def element_by_tag_name(self, tag):
+        return self.driver.find_element_by_tag_name(tag)

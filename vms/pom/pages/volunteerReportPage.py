@@ -8,6 +8,7 @@ from pom.pages.authenticationPage import AuthenticationPage
 class VolunteerReportPage(BasePage):
 
     no_results_message = 'Your criteria did not return any results.'
+    live_server_url = ''
 
     def __init__(self, driver):
         self.driver = driver
@@ -16,8 +17,9 @@ class VolunteerReportPage(BasePage):
         self.elements = VolunteerReportPageLocators()
         super(VolunteerReportPage, self).__init__(driver)
 
-    def login_and_navigate_to_report_page(self, base_url):
-        self.authentication_page.login(base_url, { 'username' : 'volunteer', 'password' : 'volunteer'})
+    def login_and_navigate_to_report_page(self):
+        self.authentication_page.server_url = self.live_server_url
+        self.authentication_page.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
         self.home_page.get_volunteer_report_link().send_keys("\n")
 
     def get_event_job_selectors(self):

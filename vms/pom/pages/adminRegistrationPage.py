@@ -5,6 +5,7 @@ from pom.pageUrls import PageUrls
 class AdminRegistrationPage(BasePage):
     """Admin Registration page action methods here"""
 
+    live_server_url = ''
     admin_registration_page = PageUrls.admin_registration_page
     success_message = "You have successfully registered!"
 
@@ -45,8 +46,8 @@ class AdminRegistrationPage(BasePage):
     def submit_form(self):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()   
 
-    def get_admin_registration_page(self, base_url):
-        self.get_page(base_url, self.admin_registration_page)
+    def get_admin_registration_page(self):
+        self.get_page(self.live_server_url, self.admin_registration_page)
 
     def get_help_blocks(self):
         blocks = self.elements_by_class_name(self.elements.HELP_BLOCK)
@@ -88,7 +89,7 @@ class AdminRegistrationPage(BasePage):
     def get_organization_error_text(self):
         return self.element_by_xpath(self.elements.ORGANIZATION_ERROR ).text
 
-    def register_valid_details(self, base_url):
-        self.get_admin_registration_page(base_url)
+    def register_valid_details(self):
+        self.get_admin_registration_page()
         entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
         self.fill_registration_form(entry)

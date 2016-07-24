@@ -5,6 +5,7 @@ from pom.pageUrls import PageUrls
 class VolunteerRegistrationPage(BasePage):
     """Volunteer Registration page action methods here"""
 
+    live_server_url = ''
     volunteer_registration_page = PageUrls.volunteer_registration_page
     success_message = "You have successfully registered!"
 
@@ -45,8 +46,8 @@ class VolunteerRegistrationPage(BasePage):
     def submit_form(self):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()   
 
-    def get_volunteer_registration_page(self, base_url):
-        self.get_page(base_url, self.volunteer_registration_page)
+    def get_volunteer_registration_page(self):
+        self.get_page(self.live_server_url, self.volunteer_registration_page)
 
     def get_help_blocks(self):
         blocks = self.elements_by_class_name(self.elements.HELP_BLOCK)
@@ -88,7 +89,7 @@ class VolunteerRegistrationPage(BasePage):
     def get_organization_error_text(self):
         return self.element_by_xpath(self.elements.ORGANIZATION_ERROR ).text
 
-    def register_valid_details(self, base_url):
-        self.get_volunteer_registration_page(base_url)
+    def register_valid_details(self):
+        self.get_volunteer_registration_page()
         entry = ['volunteer-username','volunteer-password!@#$%^&*()_','volunteer-first-name','volunteer-last-name','volunteer-email@systers.org','volunteer-address','volunteer-city','volunteer-state','volunteer-country','9999999999','volunteer-org']
         self.fill_registration_form(entry)

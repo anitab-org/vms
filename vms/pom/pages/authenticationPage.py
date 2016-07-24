@@ -6,14 +6,16 @@ from pom.pageUrls import PageUrls
 class AuthenticationPage(BasePage):
 
     url = PageUrls.authentication_page
+    homepage = PageUrls.homepage
+    server_url = ''
 
     def __init__(self, driver):
         self.elements = AuthenticationPageLocators()
         self.home = HomePageLocators()
         super(AuthenticationPage, self).__init__(driver)
 
-    def login(self, base_url, credentials):
-        self.get_page(base_url, self.url)
+    def login(self,credentials):
+        self.get_page(self.server_url, self.url)
         self.send_value_to_element_id(self.elements.LOGIN_ID,credentials['username'])
         self.send_value_to_element_id(self.elements.LOGIN_PASSWORD,credentials['password'])
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()

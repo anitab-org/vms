@@ -6,6 +6,8 @@ class PageUrls(object):
 	logout_page = '/authentication/logout/'
 	shift_list_page = '/shift/list_jobs/'
 	job_list_page = '/job/list/'
+	event_list_page = '/event/list/'
+	organization_list_page = '/organization/list/'
 
 	administrator_report_page = '/administrator/report/'
 	admin_registration_page = '/registration/signup_administrator/'
