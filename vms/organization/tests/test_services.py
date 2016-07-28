@@ -1,7 +1,7 @@
 import unittest
 from organization.models import Organization
 from organization.services import *
-from shift.utils import clear_objects
+from shift.utils import clear_objects, create_volunteer_with_details
 
 class OrganizationMethodTests(unittest.TestCase):
 
@@ -99,21 +99,24 @@ class DeleteOrganizationTests(unittest.TestCase):
     def setup_test_data(cls):
         cls.o1 = Organization(name = "Google")
         cls.o2 = Organization(name = "Yahoo")
-        cls.o3 = Organization(name = "Ubisoft")
 
         cls.o1.save()
         cls.o2.save()
-        cls.o3.save()
+
+        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
+        cls.v1 = create_volunteer_with_details(volunteer_1)
+        cls.v1.organization = cls.o2
+        cls.v1.save()
 
     @classmethod
     def setUpClass(cls):
         cls.setup_test_data()
 
+    @classmethod
+    def tearDownClass(cls):
+        clear_objects()
+
     def test_delete_organization(self):
-        
         self.assertTrue(delete_organization(self.o1.id))
-        self.assertTrue(delete_organization(self.o2.id))
-        self.assertTrue(delete_organization(self.o3.id))
+        self.assertFalse(delete_organization(self.o2.id))
         self.assertFalse(delete_organization(100))
-        self.assertFalse(delete_organization(200))
-        self.assertFalse(delete_organization(300))

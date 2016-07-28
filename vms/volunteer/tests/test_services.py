@@ -41,9 +41,14 @@ class VolunteerMethodTests(unittest.TestCase):
 
     def test_get_all_volunteers(self):
         # Tests get_all_volunteers()
+        vol_list = get_all_volunteers()
 
         # test typical cases
-        self.assertIsNotNone(get_all_volunteers())
+        self.assertIsNotNone(vol_list)
+        self.assertTrue(len(vol_list), 3)
+        self.assertIn(self.v1, vol_list)
+        self.assertIn(self.v2, vol_list)
+        self.assertIn(self.v3, vol_list)
 
     def test_get_volunteer_by_id(self):
 
