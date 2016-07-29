@@ -2,105 +2,80 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-
+from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import DeleteView
+from django.views.generic import ListView
 from organization.forms import OrganizationForm
 from organization.services import *
+from organization.models import *
+from django.utils.decorators import method_decorator
+from django.core.urlresolvers import reverse_lazy
 
 
-@login_required
-def is_admin(request):
-    user = request.user
-    admin = None
 
-    try:
-        admin = user.administrator
-    except ObjectDoesNotExist:
-        pass
+class AdministratorLoginRequiredMixin(object):
 
-    # check that an admin is logged in
-    if admin is not None:
-        return True
-    else:
-        return False
-
-
-@login_required
-def create(request):
-    if is_admin(request):
-        if request.method == 'POST':
-            form = OrganizationForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(reverse('organization:list'))
-            else:
-                return render(
-                    request,
-                    'organization/create.html',
-                    {'form': form, }
-                    )
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        admin = None
+        try:
+            admin = user.administrator
+        except ObjectDoesNotExist:
+            pass
+        if not admin:
+            return render(request, 'vms/no_admin_rights.html')
         else:
-            form = OrganizationForm()
-            return render(
-                request,
-                'organization/create.html',
-                {'form': form, }
-                )
-    else:
-        return render(request, 'vms/no_admin_rights.html')
+            return super(AdministratorLoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-def delete(request, organization_id):
-    if is_admin(request):
-        if request.method == 'POST':
-            result = delete_organization(organization_id)
-            if result:
-                return HttpResponseRedirect(reverse('organization:list'))
-            else:
-                return render(request, 'organization/delete_error.html')
-        return render(
-            request,
-            'organization/delete.html',
-            {'organization_id': organization_id}
-            )
-    else:
-        return render(request, 'vms/no_admin_rights.html')
+class OrganizationCreateView(LoginRequiredMixin, AdministratorLoginRequiredMixin, FormView):
+    template_name = 'organization/create.html'
+    form_class = OrganizationForm
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('organization:list'))
 
 
-@login_required
-def edit(request, organization_id):
-    if is_admin(request):
-        organization = None
-        if organization_id:
-            organization = get_organization_by_id(organization_id)
+class OrganizationDeleteView(LoginRequiredMixin, AdministratorLoginRequiredMixin, DeleteView):
+    template_name = 'organization/delete.html'
+    success_url = reverse_lazy('organization:list')
+    model = Organization
 
-        if request.method == 'POST':
-            form = OrganizationForm(request.POST, instance=organization)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(reverse('organization:list'))
-            else:
-                return render(
-                    request,
-                    'organization/edit.html',
-                    {'form': form, }
-                    )
+    def get_object(self, queryset=None):
+        organization_id = self.kwargs['organization_id']
+        org = Organization.objects.get(pk=organization_id)
+        if org:
+            return org
+
+    def delete(self, request, *args, **kwargs):
+        org = self.get_object()
+        volunteers_in_organization = org.volunteer_set.all()
+        administrators_in_organization = org.administrator_set.all()
+        if org and (not volunteers_in_organization) and (not administrators_in_organization):
+            org.delete()
+            return HttpResponseRedirect(self.success_url)
         else:
-            form = OrganizationForm(instance=organization)
-            return render(
-                request,
-                'organization/edit.html',
-                {'form': form, }
-                )
-    else:
-        return render(request, 'vms/no_admin_rights.html')
+            return render(request, 'organization/delete_error.html')
 
 
-@login_required
-def list(request):
-    organization_list = get_organizations_ordered_by_name()
-    return render(
-        request,
-        'organization/list.html',
-        {'organization_list': organization_list}
-        )
+class OrganizationUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin, UpdateView):
+    model_form = Organization
+    template_name = 'organization/edit.html'
+    success_url = reverse_lazy('organization:list')
+
+    def get_object(self, queryset=None):
+        org_id = self.kwargs['organization_id']
+        obj = Organization.objects.get(pk=org_id)
+        return obj
+
+
+class OrganizationListView(LoginRequiredMixin, ListView):
+    model_form = Organization
+    template_name = "organization/list.html"
+
+    def get_queryset(self):
+        organizations = Organization.objects.all()
+        return organizations
