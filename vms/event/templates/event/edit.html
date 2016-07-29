@@ -84,7 +84,7 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">{% trans "End Date" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" name="end_date" id="to" name="to" value="{% if form.end_date.value %}{{ form.end_date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
+                            <input class="form-control" type="text" name="end_date" id="to" value="{% if form.end_date.value %}{{ form.end_date.value|date:"SHORT_DATE_FORMAT" }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
@@ -110,7 +110,7 @@
                         </div>
                     </div>
                 {% endif %}
-				
+
 				{% if form.state.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "State" %}</label>
@@ -133,7 +133,7 @@
                         </div>
                     </div>
                 {% endif %}
-				
+
 				{% if form.city.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "City" %}</label>
@@ -156,7 +156,7 @@
                         </div>
                     </div>
                 {% endif %}
-				
+
 				{% if form.address.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Address" %}</label>
@@ -179,7 +179,7 @@
                         </div>
                     </div>
                 {% endif %}
-				
+
 				{% if form.venue.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Venue" %}</label>

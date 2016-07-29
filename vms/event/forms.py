@@ -20,7 +20,6 @@ class EventForm(ModelForm):
             ]
 
     def clean(self):
-
         start_date = self.cleaned_data.get('start_date')
         end_date = self.cleaned_data.get('end_date')
 
