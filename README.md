@@ -1,7 +1,8 @@
 Systers Portal - VMS project
 ============================
 
-[![Build Status](https://travis-ci.org/systers/vms.svg?branch=develop)](https://travis-ci.org/systers/vms) [![Coverage Status](https://coveralls.io/repos/github/systers/vms/badge.svg?branch=develop)](https://coveralls.io/github/systers/vms?branch=develop)
+[![Build Status](https://travis-ci.org/systers/vms.svg?branch=develop)](https://travis-ci.org/systers/vms) [![Coverage Status](https://coveralls.io/repos/github/systers/vms/badge.svg?branch=develop)](https://coveralls.io/github/systers/vms?branch=develop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
 
 Systers has many volunteers that offer their skills, time, and commitment to
 our vision and projects. The **Volunteer Management System** (VMS) will
