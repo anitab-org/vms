@@ -1,37 +1,28 @@
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-from django.contrib.auth.models import User
-from administrator.models import Administrator
-from event.models import Event
-from job.models import Job
+from shift.utils import (
+    create_admin,
+    create_event_with_details,
+    create_job_with_details
+    )
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-
 
 class JobDetails(LiveServerTestCase):
     '''
     Contains Tests for View Job Details Page
     '''
-
     def setUp(self):
-        admin_user = User.objects.create_user(
-            username='admin',
-            password='admin')
-
-        Administrator.objects.create(
-            user=admin_user,
-            address='address',
-            city='city',
-            state='state',
-            country='country',
-            email='admin@admin.com',
-            phone_number='9999999999',
-            unlisted_organization='organization')
-
+        create_admin()
         self.homepage = '/'
         self.authentication_page = '/authentication/login/'
         self.job_list_page = '/job/list/'
+        self.job_name_path = '//table[1]//tr//td[1]'
+        self.job_event_path = '//table[1]//tr//td[2]'
+        self.job_start_date_path = '//table[1]//tr//td[3]'
+        self.job_end_date_path = '//table[1]//tr//td[4]'
+
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(5)
         self.driver.maximize_window()
@@ -49,36 +40,31 @@ class JobDetails(LiveServerTestCase):
             'id_password').send_keys(credentials['password'])
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-    def register_job_utility(self, ):
+    def register_job(self):
 
         # create shift and log hours
-        event = Event.objects.create(
-            name='event',
-            start_date='2017-06-15',
-            end_date='2017-06-17')
+        created_event = create_event_with_details(['event', '2017-06-15', '2017-06-17'])
+        created_job = create_job_with_details(['job', '2017-06-15', '2017-06-18', '', created_event])
 
-        job = Job.objects.create(
-            name='job',
-            start_date='2017-06-15',
-            end_date='2017-06-18',
-            event=event)
+        return created_job
 
-        return job
+    def login_admin(self):
+        self.login({'username': 'admin', 'password': 'admin'})
 
     def navigate_to_job_details_view(self):
         self.driver.get(self.live_server_url + self.job_list_page)
 
     def test_job_details_view(self):
-        self.login({'username': 'admin', 'password': 'admin'})
-        shift = self.register_job_utility()
+        self.login_admin()
+        job = self.register_job()
         self.navigate_to_job_details_view()
 
         # verify details
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table[1]//tr//td[1]').text, 'job')
+            self.job_name_path).text, job.name)
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table[1]//tr//td[3]').text, 'June 15, 2017')
+            self.job_start_date_path).text, 'June 15, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table[1]//tr//td[4]').text, 'June 18, 2017')
+            self.job_end_date_path).text, 'June 18, 2017')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table[1]//tr//td[2]').text, 'event')
+            self.job_event_path).text, job.event.name)

@@ -1,9 +1,11 @@
 from event.models import Event
 from job.models import Job
+from administrator.models import Administrator
 from django.contrib.auth.models import User
 from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
 from organization.models import Organization
+from cities_light.models import Country
 
 # Contains common functions which need to be frequently called by tests
 
@@ -53,7 +55,10 @@ def create_volunteer_with_details(volunteer):
     """
     Creates and returns volunteer with passed name and dates
     """
-    u1 = User.objects.create_user(volunteer[0])
+    u1 = User.objects.create_user(
+        username = volunteer[0],
+        password = 'volunteer'
+        )
     v1 = Volunteer(
         first_name=volunteer[1],
         last_name=volunteer[2],
@@ -65,6 +70,7 @@ def create_volunteer_with_details(volunteer):
         email=volunteer[8],
         user=u1
         )
+
     v1.save()
     return v1
 
@@ -81,6 +87,22 @@ def create_shift_with_details(shift):
         )
     s1.save()
     return s1
+
+def log_hours_with_details(volunteer, shift, start, end):
+    logged_shift = VolunteerShift.objects.create(
+        shift = shift,
+        volunteer = volunteer,
+        start_time = start,
+        end_time = end
+        )
+
+    return logged_shift
+
+def create_organization_with_details(org_name):
+    org = Organization.objects.create(
+        name = org_name)
+
+    return org
 
 def set_shift_location(shift,loc):
     """
@@ -102,9 +124,104 @@ def get_report_list(duration_list, report_list, total_hours):
     """
 
     for duration in duration_list:
-		total_hours += duration
-		report = {}
-		report["duration"] = duration
-		report_list.append(report)
+        total_hours += duration
+        report = {}
+        report["duration"] = duration
+        report_list.append(report)
 
     return (report_list, total_hours)
+
+def create_organization():
+    org = Organization.objects.create(
+        name = 'DummyOrg')
+
+    return org
+
+def create_country():
+    Country.objects.create(
+        name_ascii = 'India',
+        slug ='india',
+        geoname_id = '1269750',
+        alternate_names = '',
+        name = 'India',
+        code2 = 'IN',
+        code3 = 'IND',
+        continent = 'AS',
+        tld = 'in',
+        phone = '91')
+
+def create_admin():
+
+    user_1 = User.objects.create_user(
+        username = 'admin',
+        password = 'admin'
+        )
+
+    admin = Administrator.objects.create(
+        user = user_1,
+        address = 'address',
+        city = 'city',
+        state = 'state',
+        country = 'country',
+        phone_number = '9999999999',
+        email = 'admin@admin.com',
+        unlisted_organization = 'organization')
+
+    return admin
+
+def create_volunteer():
+
+    user_1 = User.objects.create_user(
+        username = 'volunteer',
+        password = 'volunteer'
+        )
+
+    volunteer = Volunteer.objects.create(
+        user = user_1,
+        address = 'address',
+        city = 'city',
+        state = 'state',
+        country = 'country',
+        phone_number = '9999999999',
+        email = 'volunteer@volunteer.com',
+        unlisted_organization = 'organization')
+
+    return volunteer
+
+def register_event_utility():
+    Event.objects.create(
+        name = 'event',
+        start_date = '2016-05-10',
+        end_date = '2018-06-16'
+        )
+
+def register_job_utility():
+    Job.objects.create(
+        name = 'job',
+        start_date = '2016-05-10',
+        end_date = '2017-06-15',
+        event = Event.objects.get(name = 'event')
+        )
+
+def register_shift_utility():
+    Shift.objects.create(
+        date = '2017-06-15',
+        start_time = '09:00',
+        end_time = '15:00',
+        max_volunteers ='6',
+        job = Job.objects.get(name = 'job')
+        )
+
+def register_volunteer_for_shift_utility(shift, volunteer):
+        vol_shift = VolunteerShift.objects.create(
+            shift=shift,
+            volunteer=volunteer)
+        return vol_shift
+
+def log_hours_utility():
+    VolunteerShift.objects.create(
+        shift = Shift.objects.get(job__name = 'job'),
+        volunteer = Volunteer.objects.get(user__username = 'volunteer'),
+        start_time = '09:00',
+        end_time = '12:00'
+        )

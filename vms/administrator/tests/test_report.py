@@ -1,16 +1,18 @@
-
-from django.test import TestCase
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-from django.contrib.auth.models import User
 from django.db import IntegrityError
+from selenium.webdriver.support.ui import Select
 
-from administrator.models import Administrator
-from volunteer.models import Volunteer
-from event.models import Event
-from job.models import Job
-from shift.models import Shift, VolunteerShift
-from organization.models import Organization #hack to pass travis,Bug in Code
+from shift.utils import (
+    create_admin,
+    create_volunteer,
+    create_organization_with_details,
+    create_event_with_details,
+    create_job_with_details,
+    create_shift_with_details,
+    log_hours_with_details,
+    register_volunteer_for_shift_utility
+    )
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -19,38 +21,33 @@ from selenium.common.exceptions import NoSuchElementException
 class Report(LiveServerTestCase):
     '''
     '''
+
+    @classmethod
+    def setUpClass(cls):
+        cls.homepage = '/'
+        cls.authentication_page = '/authentication/login/'
+        cls.report_page = '/administrator/report/'
+        cls.report_shift_summary_path = '//div[2]/div[4]'
+
+        cls.driver = webdriver.Firefox()
+        cls.driver.implicitly_wait(5)
+        cls.driver.maximize_window()
+        super(Report, cls).setUpClass()
+
     def setUp(self):
-        admin_user = User.objects.create_user(
-                username = 'admin',
-                password = 'admin',
-                email = 'admin@admin.com')
-
-        Administrator.objects.create(
-                user = admin_user,
-                address = 'address',
-                city = 'city',
-                state = 'state',
-                country = 'country',
-                phone_number = '9999999999',
-                unlisted_organization = 'organization')
-
-        # create an org prior to registration. Bug in Code
-        # added to pass CI
-        Organization.objects.create(
-                name = 'DummyOrg')
-
-        self.homepage = '/'
-        self.authentication_page = '/authentication/login/'
-        self.report_page = '/administrator/report/'
-        
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(5)
-        self.driver.maximize_window()
-        super(Report, self).setUp()
+        create_admin()
+        self.login_admin()
 
     def tearDown(self):
-        self.driver.quit()
-        super(Report, self).tearDown()
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        super(Report, cls).tearDownClass()
+
+    def login_admin(self):
+        self.login('admin', 'admin')
 
     def login(self, username, password):
         self.driver.get(self.live_server_url + self.authentication_page)
@@ -58,234 +55,161 @@ class Report(LiveServerTestCase):
         self.driver.find_element_by_id('id_password').send_keys(password)
         self.driver.find_element_by_xpath('//form[1]').submit()
 
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + self.homepage)
-
     def logout(self):
         self.driver.find_element_by_link_text('Log Out').click()
 
-    def test_null_values_with_empty_dataset(self):
-        # should return no entries
-        self.login('admin', 'admin')
+    def go_to_admin_report(self):
         self.driver.find_element_by_link_text('Report').click()
+
+    def fill_report_form(self, info):
+        self.driver.find_element_by_xpath(
+                '//input[@name = "first_name"]').clear()
+        self.driver.find_element_by_xpath(
+                '//input[@name = "last_name"]').clear()
+        [select1, select2, select3] = self.get_event_job_organization_selectors()
+
+        self.driver.find_element_by_xpath(
+                '//input[@name = "first_name"]').send_keys(info[0])
+        self.driver.find_element_by_xpath(
+                '//input[@name = "last_name"]').send_keys(info[1])
+
+        """select1.select_by_visible_text(info[2])
+        select2.select_by_visible_text(info[3])
+        select3.select_by_visible_text(info[4])"""
+
         self.driver.find_element_by_xpath('//form[1]').submit()
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-danger').text, 'Your criteria did not return any results.')
+
+    def get_event_job_organization_selectors(self):
+        select1 = Select(self.driver.find_element_by_xpath('//select[@name = "event_name"]'))
+        select2 = Select(self.driver.find_element_by_xpath('//select[@name = "job_name"]'))
+        select3 = Select(self.driver.find_element_by_xpath('//select[@name = "organization"]'))
+        return (select1, select2, select3)
+
+    def verify_shift_details(self, total_shifts, hours):
+        total_no_of_shifts =  self.driver.find_element_by_xpath(
+                self.report_shift_summary_path).text.split(' ')[10].strip('\nTotal')
+
+        total_no_of_hours =  self.driver.find_element_by_xpath(
+                self.report_shift_summary_path).text.split(' ')[-1].strip('\n')
+        
+        self.assertEqual(total_no_of_shifts, total_shifts)
+        self.assertEqual(total_no_of_hours, hours)
 
 #Failing test case which has been documented
 #Test commented out to prevent travis build failure
 
     """def test_null_values_with_dataset(self):
         # register dataset
-        org = Organization.objects.create(name = 'organization-one')
-
-        volunteer_user = User.objects.create_user(
-                username = 'volunteer-one',
-                password = 'volunteer-one',
-                email = 'vol@vol.com')
-
-        volunteer = Volunteer.objects.create(
-                user = volunteer_user,
-                first_name = 'first-name-one',
-                last_name = 'last-name-one',
-                address = 'address',
-                city = 'city',
-                state = 'state',
-                country = 'country',
-                phone_number = '9999999999',
-                unlisted_organization = Organization.objects.get(
-                    name = 'organization-one'))
+        org = create_organization_with_details('organization-one')
+        volunteer = create_volunteer()
+        volunteer.organization = org
+        volunteer.save()
 
         # create shift and log hours
-        event = Event.objects.create(
-                    name = 'Hackathon',
-                    start_date = '2016-06-01',
-                    end_date = '2016-06-01')
+        # register event first to create job
+        event = ['Hackathon', '2017-08-21', '2017-09-28']
+        created_event = create_event_with_details(event)
 
-        job = Job.objects.create(
-                name = 'Developer',
-                start_date = '2016-06-01',
-                end_date = '2016-06-01',
-                event = event)
+        # create job
+        job = ['Developer', '2017-08-21', '2017-08-30', '',created_event]
+        created_job = create_job_with_details(job)
 
-        shift = Shift.objects.create(
-                date = '2016-06-01',
-                start_time = '08:00',
-                end_time = '20:00',
-                max_volunteers = '2',
-                job = job)
+        # create shift
+        shift = ['2017-08-21', '09:00', '15:00', '10', created_job]
+        created_shift = create_shift_with_details(shift)
 
-        VolunteerShift.objects.create(
-                shift = shift,
-                volunteer = volunteer,
-                start_time = '09:00',
-                end_time = '15:00')
-
-        # check logged hours in volunteer-one's profile
-        self.login('volunteer-one', 'volunteer-one')
-        self.driver.get(self.live_server_url +
-                '/shift/view_hours/' + str(Volunteer.objects.get(
-                    user__username = 'volunteer-one').pk))
-
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'Developer')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2016')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[3]').text, '9 a.m.')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, '3 p.m.')
-        self.logout()
+        logged_shift = log_hours_with_details(volunteer, created_shift, "09:00", "12:00")
 
         # check admin report with null fields, should return the above shift
-        self.login('admin', 'admin')
         self.driver.get(self.live_server_url + self.report_page)
-        self.driver.find_element_by_xpath('//form[1]').submit()
-        total_no_of_shifts =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[10].strip('\nTotal')
-
-        total_no_of_hours =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
-
-        self.assertEqual(total_no_of_shifts, '1')
-        self.assertEqual(total_no_of_hours, '6.0')
+        self.fill_report_form(['','','','',''])
+        self.verify_shift_details('1','3.0')
 
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'first-name-one')
+            '//table//tbody//tr[1]//td[1]').text, created_event.name)
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[6]').text, 'June 1, 2016')
+            '//table//tbody//tr[1]//td[6]').text, 'Aug. 21, 2016')
         self.assertEqual(self.driver.find_element_by_xpath(
             '//table//tbody//tr[1]//td[7]').text, '9 a.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[8]').text, '3 p.m.')
+            '//table//tbody//tr[1]//td[8]').text, '12 p.m.')
         self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[9]').text, '6.0')"""
+            '//table//tbody//tr[1]//td[9]').text, '3.0')"""
 
-    def test_only_logged_shifts_are_reported(self):
-        # register dataset
-        org = Organization.objects.create(name = 'organization-one')
-
-        volunteer_user = User.objects.create_user(
-                username = 'volunteer-one',
-                password = 'volunteer-one')
-
-        volunteer = Volunteer.objects.create(
-                user = volunteer_user,
-                first_name = 'first-name-one',
-                last_name = 'last-name-one',
-                address = 'address',
-                city = 'city',
-                state = 'state',
-                country = 'country',
-                phone_number = '9999999999',
-                email = 'vol@vol.com',
-                organization = Organization.objects.get(
-                    name = 'organization-one'))
-
-        # create shift and log hours
-        event = Event.objects.create(
-                    name = 'Hackathon',
-                    start_date = '2016-06-01',
-                    end_date = '2016-06-01')
-
-        job = Job.objects.create(
-                name = 'Developer',
-                start_date = '2016-06-01',
-                end_date = '2016-06-01',
-                event = event)
-
-        shift = Shift.objects.create(
-                date = '2016-06-01',
-                start_time = '09:00',
-                end_time = '15:00',
-                max_volunteers = '2',
-                job = job)
-
-        # shift is assigned to volunteer-one, but hours have not been logged
-        VolunteerShift.objects.create(
-                shift = shift,
-                volunteer = volunteer)
-
-        # check shift assigned to volunteer-one
-        # view being accessed `/shift/view_volunteer_shift`
-        self.login('volunteer-one', 'volunteer-one')
-        self.driver.get(self.live_server_url +
-                '/shift/view_volunteer_shifts/' + str(Volunteer.objects.get(
-                    user__username = 'volunteer-one').pk))
-
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[1]').text, 'Developer')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[2]').text, 'June 1, 2016')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[3]').text, '9 a.m.')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[4]').text, '3 p.m.')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            '//table//tbody//tr[1]//td[5]//a').text, 'Log Hours')
-        self.logout()
-
-        # check admin report with null fields, should return the above shift
-        self.login('admin', 'admin')
-        self.driver.get(self.live_server_url + self.report_page)
-        self.driver.find_element_by_xpath('//form[1]').submit()
+    def test_null_values_with_empty_dataset(self):
+        # should return no entries
+        self.go_to_admin_report()
+        self.fill_report_form(['','','','',''])
         self.assertEqual(self.driver.find_element_by_class_name(
             'alert-danger').text, 'Your criteria did not return any results.')
 
-    def register_dataset(self, parameters):
-        try:
-            org = Organization.objects.create(name = parameters['org'])
-        except IntegrityError:
-            org = Organization.objects.get(name = parameters['org'])
+    def test_only_logged_shifts_are_reported(self):
+        # register dataset
+        org = create_organization_with_details('organization-one')
+        volunteer = create_volunteer()
+        volunteer.organization = org
+        volunteer.save()
 
+        # register event first to create job
+        event = ['Hackathon', '2017-08-21', '2017-09-28']
+        created_event = create_event_with_details(event)
 
-        volunteer_user = User.objects.create_user(
-                username = parameters['volunteer']['username'],
-                password = parameters['volunteer']['password'])
+        # create job
+        job = ['Developer', '2017-08-21', '2017-08-30', '',created_event]
+        created_job = create_job_with_details(job)
 
-        volunteer = Volunteer.objects.create(
-                user = volunteer_user,
-                first_name = parameters['volunteer']['first_name'],
-                last_name = parameters['volunteer']['last_name'],
-                address = parameters['volunteer']['address'],
-                city = parameters['volunteer']['city'],
-                state = parameters['volunteer']['state'],
-                country = parameters['volunteer']['country'],
-                phone_number = parameters['volunteer']['phone-no'],
-                email = parameters['volunteer']['email'],
-                organization = Organization.objects.get(
-                    name = parameters['org']))
-
-        # create shift and log hours
-        event = Event.objects.create(
-                    name = parameters['event']['name'],
-                    start_date = parameters['event']['start_date'],
-                    end_date = parameters['event']['end_date'])
-
-        job = Job.objects.create(
-                name = parameters['job']['name'],
-                start_date = parameters['job']['start_date'],
-                end_date = parameters['job']['end_date'],
-                event = event)
-
-        shift = Shift.objects.create(
-                date = parameters['shift']['date'],
-                start_time = parameters['shift']['start_time'],
-                end_time = parameters['shift']['end_time'],
-                max_volunteers = parameters['shift']['max_volunteers'],
-                job = job)
+        # create shift
+        shift = ['2017-08-21', '09:00', '15:00', '10', created_job]
+        created_shift = create_shift_with_details(shift)
 
         # shift is assigned to volunteer-one, but hours have not been logged
-        VolunteerShift.objects.create(
-                shift = shift,
-                volunteer = volunteer,
-                start_time = parameters['vshift']['start_time'],
-                end_time = parameters['vshift']['end_time'])
+        volunteer_shift = register_volunteer_for_shift_utility(created_shift, volunteer)
+
+        # check admin report with null fields, should not return the above shift
+        self.driver.get(self.live_server_url + self.report_page)
+        self.fill_report_form(['','','','',''])
+        self.assertEqual(self.driver.find_element_by_class_name(
+            'alert-danger').text, 'Your criteria did not return any results.')
 
 #Failing test case which has been documented
 #Test commented out to prevent travis build failure
 
     """def test_check_intersection_of_fields(self):
+
+        self.create_dataset()
+
+        self.login_admin()
+        self.go_to_admin_report()
+
+        search_parameters_1 = ['tom','','','','']
+        self.fill_report_form(search_parameters_1)
+
+        self.verify_shift_details('2','2.0')
+
+        search_parameters_2 = ['','','','','org-one']
+        self.fill_report_form(search_parameters_2)
+
+        self.verify_shift_details('3','3.0')
+
+        search_parameters_3 = ['','','event-four','Two','']
+        self.fill_report_form(search_parameters_3)
+
+        # 1 shift of 1:30 hrs
+        self.verify_shift_details('1','1.5')
+
+        search_parameters_4 = ['','','one','','']
+        self.fill_report_form(search_parameters_4)
+
+        # 3 shifts of 0:30 hrs, 1:00 hrs, 1:00 hrs
+        self.verify_shift_details('3','2.5')
+
+        # check case-insensitive
+        search_parameters_5 = ['','sherlock','two','','']
+        self.fill_report_form(search_parameters_5)
+
+        self.verify_shift_details('1','2.0')
+
+    def create_dataset(self):
         parameters = {'org' : 'org-one',
                 'volunteer' : {
                     'username' : 'uname1', 
@@ -524,106 +448,4 @@ class Report(LiveServerTestCase):
                 'vshift' : {
                     'start_time' : '01:00',
                     'end_time' : '04:00'}}
-        self.register_dataset(parameters)
-
-        self.login('admin', 'admin')
-        self.driver.get(self.live_server_url + self.report_page)
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').send_keys('tom')
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-        total_no_of_shifts =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[10].strip('\nTotal')
-
-        total_no_of_hours =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
-
-        # 2 shifts of 0.5 hrs and 1.5 hrs
-        self.assertEqual(total_no_of_shifts, '2')
-        self.assertEqual(total_no_of_hours, '2.0')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "organization"]').send_keys('org-one')
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-        total_no_of_shifts =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[10].strip('\nTotal')
-
-        total_no_of_hours =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
-
-        # 3 shifts of 0.5 hrs, 1 hrs and 1.5 hrs
-        self.assertEqual(total_no_of_shifts, '3')
-        self.assertEqual(total_no_of_hours, '3.0')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "organization"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('event-four')
-        # searching for jobTwoInEventFour
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').send_keys('Two')
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-        total_no_of_shifts =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[10].strip('\nTotal')
-
-        total_no_of_hours =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
-
-        # 1 shift of 1:30 hrs
-        self.assertEqual(total_no_of_shifts, '1')
-        self.assertEqual(total_no_of_hours, '1.5')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "organization"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('one')
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-        total_no_of_shifts =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[10].strip('\nTotal')
-
-        total_no_of_hours =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
-
-        # 3 shifts of 0:30 hrs, 1:00 hrs, 1:00 hrs
-        self.assertEqual(total_no_of_shifts, '3')
-        self.assertEqual(total_no_of_hours, '2.5')
-
-        self.driver.find_element_by_xpath(
-                '//input[@name = "first_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "organization"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "job_name"]').clear()
-        self.driver.find_element_by_xpath(
-                '//input[@name = "last_name"]').send_keys('sherlock')
-        # check case-insensitive
-        self.driver.find_element_by_xpath(
-                '//input[@name = "event_name"]').send_keys('two')
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-        total_no_of_shifts =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[10].strip('\nTotal')
-
-        total_no_of_hours =  self.driver.find_element_by_xpath(
-                '//div[2]/div[4]').text.split(' ')[-1].strip('\n')
-
-        # 1 shift of 2:00 hrs
-        self.assertEqual(total_no_of_shifts, '1')
-        self.assertEqual(total_no_of_hours, '2.0')"""
-
+        self.register_dataset(parameters)"""
