@@ -3,6 +3,9 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+from pom.pages.authenticationPage import AuthenticationPage
+from pom.pages.volunteerSearchPage import VolunteerSearchPage
+
 from shift.utils import (
     create_admin,
     create_volunteer_with_details
@@ -26,23 +29,17 @@ class SearchVolunteer(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.homepage = '/'
-        cls.authentication_page = '/authentication/login/'
-        cls.volunteer_search = '/volunteer/search/'
-        cls.first_name_field = ".form-control[name='first_name']"
-        cls.last_name_field = ".form-control[name='last_name']"
-        cls.city_field = ".form-control[name='city']"
-        cls.state_field = ".form-control[name='state']"
-        cls.country_field = ".form-control[name='country']"
-        cls.org_field = ".form-control[name='organization']"
-
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
+        cls.search_page = VolunteerSearchPage(cls.driver)
+        cls.authentication_page = AuthenticationPage(cls.driver)
         super(SearchVolunteer, cls).setUpClass()
 
     def setUp(self):
         create_admin()
+        self.login_admin()
+        self.search_page.get_page(self.live_server_url, self.search_page.volunteer_search_page)
 
     def tearDown(self):
         pass
@@ -52,61 +49,14 @@ class SearchVolunteer(LiveServerTestCase):
         cls.driver.quit()
         super(SearchVolunteer, cls).tearDownClass()
 
-    def login(self, credentials):
-        self.driver.get(self.live_server_url + self.authentication_page)
-        self.driver.find_element_by_id('id_login').send_keys(credentials['username'])
-        self.driver.find_element_by_id('id_password').send_keys(credentials['password'])
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
     def login_admin(self):
         '''
         Utility function to login an admin user to perform all tests.
         '''
-        self.login({ 'username' : 'admin', 'password' : 'admin'})
-        self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.homepage)
+        self.authentication_page.server_url = self.live_server_url
+        self.authentication_page.login({ 'username' : 'admin', 'password' : 'admin'})
 
-    def submit_form(self):
-        self.driver.find_element_by_class_name('btn').click()
-
-    def search_first_name_field(self, search_text):
-        self.driver.find_element_by_css_selector(self.first_name_field).clear()
-        self.driver.find_element_by_css_selector(self.first_name_field).send_keys(search_text)
-
-    def search_last_name_field(self, search_text):
-        self.driver.find_element_by_css_selector(self.last_name_field).clear()
-        self.driver.find_element_by_css_selector(self.last_name_field).send_keys(search_text)
-
-    def search_city_field(self, search_text):
-        self.driver.find_element_by_css_selector(self.city_field).clear()
-        self.driver.find_element_by_css_selector(self.city_field).send_keys(search_text)
-
-    def search_state_field(self, search_text):
-        self.driver.find_element_by_css_selector(self.state_field).clear()
-        self.driver.find_element_by_css_selector(self.state_field).send_keys(search_text)
-
-    def search_country_field(self, search_text):
-        self.driver.find_element_by_css_selector(self.country_field).clear()
-        self.driver.find_element_by_css_selector(self.country_field).send_keys(search_text)
-
-    def search_organization_field(self, search_text):
-        self.driver.find_element_by_css_selector(self.org_field).clear()
-        self.driver.find_element_by_css_selector(self.org_field).send_keys(search_text)
-
-    def get_search_results(self):
-        search_results = self.driver.find_element_by_xpath('//table//tbody')
-        return search_results
-
-    def get_results_list(self, search_results):
-
-        result = []
-        for tr in search_results.find_elements_by_tag_name('tr'):
-            row = tr.text.split()
-            result.append(row)
-
-        return result
-
-    def test_volunteer_first_name_field(self):            
+    def test_volunteer_first_name_field(self):         
         credentials_1 = ['volunteer-username', 'VOLUNTEER-FIRST-NAME', 'volunteer-last-name',
                 'volunteer-address', 'volunteer-city', 'volunteer-state',
                 'volunteer-country', '9999999999', 'volunteer-email@systers.org',
@@ -120,46 +70,43 @@ class SearchVolunteer(LiveServerTestCase):
 
         v2 = create_volunteer_with_details(credentials_2)
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
-
         expected_result_one = credentials_1[1:-1]
         expected_result_two = credentials_2[1:-1]
         
-        self.search_first_name_field('volunteer')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page = self.search_page
+        search_page.search_first_name_field('volunteer')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         self.assertEqual(len(result), 2)
 
         self.assertTrue(expected_result_two in result)
         self.assertTrue(expected_result_one in result)
 
-        self.search_first_name_field('e')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_first_name_field('e')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         self.assertEqual(len(result), 2)
 
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_first_name_field('vol-')
-        self.submit_form()
+        search_page.search_first_name_field('vol-')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_first_name_field('volunteer-fail-test')
-        self.submit_form()
+        search_page.search_first_name_field('volunteer-fail-test')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_first_name_field('!@#$%^&*()_')
-        self.submit_form()
-        self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
-                None)
+        search_page.search_first_name_field('!@#$%^&*()_')
+        search_page.submit_form()
+        self.assertNotEqual(search_page.get_help_block(),None)
 
     def test_volunteer_last_name_field(self):            
         credentials_1 = ['volunteer-username', 'volunteer-first-name', 'VOLUNTEER-LAST-NAME',
@@ -172,46 +119,43 @@ class SearchVolunteer(LiveServerTestCase):
                 '9999999999', 'volunteer-email2@systers.orgq', 'volunteer-organizationq']
         v2 = create_volunteer_with_details(credentials_2)
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
-
         expected_result_one = credentials_1[1:-1]
         expected_result_two = credentials_2[1:-1]
 
-        self.search_last_name_field('volunteer')
-        self.submit_form()
+        search_page = self.search_page
+        search_page.search_last_name_field('volunteer')
+        search_page.submit_form()
 
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
 
         self.assertTrue(expected_result_two in result)
         self.assertTrue(expected_result_one in result)
 
-        self.search_last_name_field('v')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_last_name_field('v')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         self.assertEqual(len(result), 2)
 
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_last_name_field('vol-')
-        self.submit_form()
+        search_page.search_last_name_field('vol-')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_last_name_field('volunteer-fail-test')
-        self.submit_form()
+        search_page.search_last_name_field('volunteer-fail-test')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_last_name_field('!@#$%^&*()_')
-        self.submit_form()
-        self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
-                None)
+        search_page.search_last_name_field('!@#$%^&*()_')
+        search_page.submit_form()
+        self.assertNotEqual(search_page.get_help_block(),None)
 
     def test_volunteer_city_field(self):            
         credentials_1 = ['volunteer-username', 'volunteer-first-name', 'volunteer-last-name',
@@ -226,46 +170,44 @@ class SearchVolunteer(LiveServerTestCase):
 
         v2 = create_volunteer_with_details(credentials_2)
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
+        search_page = self.search_page
 
         expected_result_one = credentials_1[1:-1]
         expected_result_two = credentials_2[1:-1]
 
-        self.search_city_field('volunteer')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_city_field('volunteer')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         self.assertEqual(len(result), 2)
         
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_city_field('v')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_city_field('v')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         self.assertEqual(len(result), 2)
 
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_city_field('vol-')
-        self.submit_form()
+        search_page.search_city_field('vol-')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_city_field('volunteer-fail-test')
-        self.submit_form()
+        search_page.search_city_field('volunteer-fail-test')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_city_field('!@#$%^&*()_')
-        self.submit_form()
-        self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
-                None)
+        search_page.search_city_field('!@#$%^&*()_')
+        search_page.submit_form()
+        self.assertNotEqual(search_page.get_help_block(),None)
 
     def test_volunteer_state_field(self):            
         credentials_1 = ['volunteer-username', 'volunteer-first-name', 'volunteer-last-name',
@@ -280,46 +222,44 @@ class SearchVolunteer(LiveServerTestCase):
 
         v2 = create_volunteer_with_details(credentials_2)
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
+        search_page = self.search_page
 
         expected_result_one = credentials_1[1:-1]
         expected_result_two = credentials_2[1:-1]
 
-        self.search_state_field('volunteer')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_state_field('volunteer')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
 
         self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_two in result)
         self.assertTrue(expected_result_one in result)
 
-        self.search_state_field('v')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_state_field('v')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         
         self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_two in result)
         self.assertTrue(expected_result_one in result)
 
-        self.search_state_field('vol-')
-        self.submit_form()
+        search_page.search_state_field('vol-')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_state_field('volunteer-fail-test')
-        self.submit_form()
+        search_page.search_state_field('volunteer-fail-test')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_state_field('!@#$%^&*()_')
-        self.submit_form()
-        self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
-                None)
+        search_page.search_state_field('!@#$%^&*()_')
+        search_page.submit_form()
+        self.assertNotEqual(search_page.get_help_block(), None)
 
     def test_volunteer_country_field(self):            
         credentials_1 = ['volunteer-username', 'volunteer-first-name', 'volunteer-last-name',
@@ -334,46 +274,44 @@ class SearchVolunteer(LiveServerTestCase):
 
         v2 = create_volunteer_with_details(credentials_2)
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
+        search_page = self.search_page
 
         expected_result_one = credentials_1[1:-1]
         expected_result_two = credentials_2[1:-1]
 
-        self.search_country_field('volunteer')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_country_field('volunteer')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
         
         self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_two in result)
         self.assertTrue(expected_result_one in result)
 
-        self.search_country_field('v')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_country_field('v')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
 
         self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_two in result)
         self.assertTrue(expected_result_one in result)
 
-        self.search_country_field('vol-')
-        self.submit_form()
+        search_page.search_country_field('vol-')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_country_field('volunteer-fail-test')
-        self.submit_form()
+        search_page.search_country_field('volunteer-fail-test')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_country_field('!@#$%^&*()_')
-        self.submit_form()
-        self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
-                None)
+        search_page.search_country_field('!@#$%^&*()_')
+        search_page.submit_form()
+        self.assertNotEqual(search_page.get_help_block(), None)
 
     def test_volunteer_organization_field(self):            
         credentials_1 = ['volunteer-username', 'volunteer-first-name', 'volunteer-last-name',
@@ -393,8 +331,7 @@ class SearchVolunteer(LiveServerTestCase):
         v1.save()
         v2.save()
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
+        search_page = self.search_page
 
         expected_result_one = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
@@ -406,40 +343,39 @@ class SearchVolunteer(LiveServerTestCase):
                 'volunteer-country', 'VOLUNTEER-ORGANIZATION', '9999999999',
                 'volunteer-email@systers.org']
 
-        self.search_organization_field('volunteer')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_organization_field('volunteer')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
 
         self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_organization_field('v')
-        self.submit_form()
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_page.search_organization_field('v')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
 
         self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_organization_field('vol-')
-        self.submit_form()
+        search_page.search_organization_field('vol-')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_organization_field('volunteer-fail-test')
-        self.submit_form()
+        search_page.search_organization_field('volunteer-fail-test')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
 
-        self.search_organization_field('!@#$%^&*()_')
-        self.submit_form()
-        self.assertNotEqual(self.driver.find_element_by_class_name('help-block'),
-                None)
+        search_page.search_organization_field('!@#$%^&*()_')
+        search_page.submit_form()
+        self.assertNotEqual(search_page.get_help_block(),None)
 
     def test_intersection_of_all_fields(self):            
         credentials_1 = ['volunteer-username', 'volunteer-first-name', 'volunteer-last-name',
@@ -459,19 +395,18 @@ class SearchVolunteer(LiveServerTestCase):
         v1.save()
         v2.save()
 
-        self.login_admin()
-        self.driver.get(self.live_server_url + self.volunteer_search)
+        search_page = self.search_page
 
-        self.search_first_name_field('volunteer')
-        self.search_last_name_field('volunteer')
-        self.search_city_field('volunteer')
-        self.search_state_field('volunteer')
-        self.search_country_field('volunteer')
-        self.search_organization_field('volunteer')
-        self.submit_form()
+        search_page.search_first_name_field('volunteer')
+        search_page.search_last_name_field('volunteer')
+        search_page.search_city_field('volunteer')
+        search_page.search_state_field('volunteer')
+        search_page.search_country_field('volunteer')
+        search_page.search_organization_field('volunteer')
+        search_page.submit_form()
 
-        search_results = self.get_search_results()
-        result = self.get_results_list(search_results)
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
 
         expected_result_one = ['volunteer-first-nameq', 'volunteer-last-nameq',
                 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
@@ -486,17 +421,17 @@ class SearchVolunteer(LiveServerTestCase):
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
-        self.search_first_name_field('volunteer')
-        self.search_country_field('wrong-country')
-        self.search_organization_field('org')
-        self.submit_form()
+        search_page.search_first_name_field('volunteer')
+        search_page.search_country_field('wrong-country')
+        search_page.search_organization_field('org')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
         
-        self.search_last_name_field('volunteer')
-        self.search_city_field('wrong-city')
-        self.submit_form()
+        search_page.search_last_name_field('volunteer')
+        search_page.search_city_field('wrong-city')
+        search_page.submit_form()
 
         with self.assertRaises(NoSuchElementException):
-            search_results = self.get_search_results()
+            search_results = search_page.get_search_results()
