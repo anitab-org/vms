@@ -648,6 +648,10 @@ class Settings(LiveServerTestCase):
         with self.assertRaises(NoSuchElementException):
             settings.get_help_block()
 
+        # database check to ensure that shift created with proper job
+        self.assertEqual(len(Shift.objects.all()), 1)
+        self.assertNotEqual(len(Shift.objects.filter(job=created_job)), 0)
+
     def test_create_shift_with_invalid_timings(self):
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -670,6 +674,9 @@ class Settings(LiveServerTestCase):
         # verify that shift was not created and error message displayed
         self.assertEqual(settings.get_warning_context(),
             'Shift end time should be greater than start time')
+
+        # database check to ensure that shift is not created
+        self.assertEqual(len(Shift.objects.all()), 0)
 
     def test_edit_shift_with_invalid_timings(self):
         # register event first to create job
@@ -697,6 +704,10 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(),
             'Shift end time should be greater than start time')
 
+        # database check to ensure that shift was not edited
+        self.assertEqual(len(Shift.objects.all()), 1)
+        self.assertNotEqual(len(Shift.objects.filter(date=created_shift.date)), 0)
+
     def test_create_shift_with_invalid_date(self):
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -719,6 +730,9 @@ class Settings(LiveServerTestCase):
         # verify that shift was not created and error message displayed
         self.assertEqual(settings.get_warning_context(),
             'Shift date should lie within Job dates')
+
+        # database check to ensure that shift was not created
+        self.assertEqual(len(Shift.objects.all()), 0)
 
     def test_edit_shift_with_invalid_date(self):
         # register event first to create job
@@ -746,6 +760,10 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(),
             'Shift date should lie within Job dates')
 
+        # database check to ensure that shift was not edited
+        self.assertEqual(len(Shift.objects.all()), 1)
+        self.assertNotEqual(len(Shift.objects.filter(date=created_shift.date)), 0)
+
     def test_edit_shift(self):
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -764,7 +782,7 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_shift_list_view()
         settings.go_to_edit_shift_page()
 
-        # edit shift with date not between job dates
+        # edit shift with date between job dates
         shift = ['08/25/2017', '10:00', '13:00', '2']
         settings.fill_shift_form(shift)
 
@@ -772,6 +790,10 @@ class Settings(LiveServerTestCase):
             settings.get_help_block()
 
         self.assertEqual(settings.get_shift_date(), 'Aug. 25, 2017')
+
+        # database check to ensure that shift was edited
+        self.assertEqual(len(Shift.objects.all()), 1)
+        self.assertEqual(len(Shift.objects.filter(date=created_shift.date)), 0)
 
     def test_delete_shift(self):
         # register event first to create job
