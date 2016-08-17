@@ -8,6 +8,9 @@ from pom.pageUrls import PageUrls
 import re
 
 from organization.models import Organization
+from django.contrib.auth.models import User
+from administrator.models import Administrator
+
 from shift.utils import create_organization, create_country
 
 class SignUpAdmin(LiveServerTestCase):
@@ -92,6 +95,10 @@ class SignUpAdmin(LiveServerTestCase):
         # verify that 10 of the fields are compulsory
         self.assertEqual(len(blocks),10)
 
+        # database check to verify that user, administrator are not created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
+
     def test_successful_registration(self):
         page = self.page
         page.live_server_url = self.live_server_url
@@ -99,6 +106,16 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_message_box_text(),
                 page.success_message)
+
+        # database check to verify that user, administrator are created with correct credentials
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
+        # check that empty list not returned for added filters
+        self.assertNotEqual(len(User.objects.filter(
+            username='admin-username')), 0)
+        self.assertNotEqual(len(Administrator.objects.filter(
+            email='admin-email@systers.org')), 0)
 
     def test_name_fields(self):
         # register valid admin user
@@ -121,6 +138,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_username_error_text(),
                 'User with this Username already exists.')
 
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # test numeric characters in first-name, last-name
         page.get_admin_registration_page()
 
@@ -131,6 +152,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_first_name_error_text(),'Enter a valid value.')
         self.assertEqual(page.get_last_name_error_text(),'Enter a valid value.')
 
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # test special characters in first-name, last-name
         page.get_admin_registration_page()
 
@@ -140,6 +165,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertNotEqual(page.get_help_blocks(),None)
         self.assertEqual(page.get_first_name_error_text(),'Enter a valid value.')
         self.assertEqual(page.get_last_name_error_text(),'Enter a valid value.')
+
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
         # test length of first-name, last-name not exceed 30
         page.get_admin_registration_page()
@@ -153,6 +182,10 @@ class SignUpAdmin(LiveServerTestCase):
 
         error_message = page.get_last_name_error_text()
         self.assertTrue(bool(re.search(r'Ensure this value has at most 20 characters', str(error_message))))
+
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_location_fields(self):
         # test numeric characters in address, city, state, country
@@ -173,6 +206,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_state_error_text(),'Enter a valid value.')
         self.assertEqual(page.get_country_error_text(),'Enter a valid value.')
 
+        # database check to verify that user, administrator is not created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
+
         # test special characters in address, city, state, country
         page.get_admin_registration_page()
 
@@ -188,6 +225,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_city_error_text(),'Enter a valid value.')
         self.assertEqual(page.get_state_error_text(),'Enter a valid value.')
         self.assertEqual(page.get_country_error_text(),'Enter a valid value.')
+
+        # database check to verify that user, administrator is not created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
 
     def test_email_field(self):
 
@@ -215,6 +256,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_email_error_text(),
                 'Administrator with this Email already exists.')
 
+        # database check to verify that no user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
     def test_phone_field(self):
 
         page = self.page
@@ -231,6 +276,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(self.driver.current_url, self.live_server_url +
                 PageUrls.homepage)
 
+        # database check to verify that user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # Try to register admin with incorrect phone number for country
         page.get_admin_registration_page()
 
@@ -244,6 +293,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_phone_error_text(),
                 "This phone number isn't valid for the selected country")
 
+        # database check to verify that no new user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # Use invalid characters in phone number
         page.get_admin_registration_page()
 
@@ -255,6 +308,10 @@ class SignUpAdmin(LiveServerTestCase):
                 page.admin_registration_page)
         self.assertNotEqual(page.get_help_blocks(),None)
         self.assertEqual(page.get_phone_error_text(),"Please enter a valid phone number")
+
+        # database check to verify that no new user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_organization_field(self):
 
@@ -272,6 +329,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(self.driver.current_url, self.live_server_url +
                 PageUrls.homepage)
 
+        # database check to verify that user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # Use invalid characters in organization
         page.get_admin_registration_page()
 
@@ -283,6 +344,10 @@ class SignUpAdmin(LiveServerTestCase):
                 page.admin_registration_page)
         self.assertNotEqual(page.get_help_blocks(),None)
         self.assertEqual(page.get_organization_error_text(),"Enter a valid value.")
+
+        # database check to verify that no new user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_field_value_retention(self):
 
@@ -299,6 +364,10 @@ class SignUpAdmin(LiveServerTestCase):
         details = ['admin-username','admin-first-name-3','admin-last-name','email1@systers.org','admin-address','admin-city','admin-state','admin-country','99999.!9999','@#admin-org']
         self.verify_field_values(details)
 
+        # database check to verify that no user, administrator is created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
+
         # send invalid value in fields - last name, address, city, country
         page.get_admin_registration_page()
 
@@ -309,3 +378,7 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(self.driver.current_url, self.live_server_url + page.admin_registration_page)
         details = ['admin-username','admin-first-name','admin-last-name-3','email1@systers.org','admin-address$@!','admin-city#$','admin-state','admin-country 15','99999.!9999','@#admin-org']
         self.verify_field_values(details)
+
+        # database check to verify that no user, administrator is created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
