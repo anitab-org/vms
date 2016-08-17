@@ -7,6 +7,7 @@ from pom.pages.manageShiftPage import ManageShiftPage
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+from shift.models import VolunteerShift, Shift
 from shift.utils import (
     create_admin,
     create_volunteer_with_details,
@@ -245,6 +246,11 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.select_volunteer(1)
         self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
+        # database check to ensure volunteer has been assigned the shift
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertNotEqual(len(VolunteerShift.objects.filter(
+            volunteer_id=v1.id, shift_id = s1.id)), 0)
+
     def test_slots_remaining_in_shift(self):
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
@@ -336,6 +342,9 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.select_volunteer(1)
         self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
+        # database check to ensure volunteer is registered
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+
         # cancel assigned shift
         self.assertEqual(manage_shift_page.get_cancel_shift().text, 'Cancel Shift Registration')
         manage_shift_page.cancel_shift()
@@ -355,6 +364,9 @@ class ManageVolunteerShift(LiveServerTestCase):
         slots_after_cancellation = sign_up_page.get_remaining_slots()
         self.assertEqual(slots_remaining_before_assignment,
                 slots_after_cancellation)
+
+        # database check to ensure registration is cancelled
+        self.assertEqual(len(VolunteerShift.objects.all()), 0)
 
     def test_assign_same_shift_to_volunteer_twice(self):
         sign_up_page = self.sign_up_page

@@ -189,28 +189,34 @@ def create_volunteer():
     return volunteer
 
 def register_event_utility():
-    Event.objects.create(
+    event = Event.objects.create(
         name = 'event',
         start_date = '2016-05-10',
         end_date = '2018-06-16'
         )
 
+    return event
+
 def register_job_utility():
-    Job.objects.create(
+    job = Job.objects.create(
         name = 'job',
         start_date = '2016-05-10',
         end_date = '2017-06-15',
         event = Event.objects.get(name = 'event')
         )
 
+    return job
+
 def register_shift_utility():
-    Shift.objects.create(
+    shift = Shift.objects.create(
         date = '2017-06-15',
         start_time = '09:00',
         end_time = '15:00',
         max_volunteers ='6',
         job = Job.objects.get(name = 'job')
         )
+
+    return shift
 
 def register_volunteer_for_shift_utility(shift, volunteer):
         vol_shift = VolunteerShift.objects.create(

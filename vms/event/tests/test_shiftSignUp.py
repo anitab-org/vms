@@ -1,6 +1,7 @@
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
 from job.models import Job
+from shift.models import VolunteerShift
 
 from pom.pages.eventSignUpPage import EventSignUpPage
 from pom.pages.authenticationPage import AuthenticationPage
@@ -31,7 +32,7 @@ class ShiftSignUp(LiveServerTestCase):
         super(ShiftSignUp, cls).setUpClass()
 
     def setUp(self):
-        create_volunteer()
+        self.volunteer = create_volunteer()
         self.login_volunteer()
 
     def tearDown(self):
@@ -53,9 +54,9 @@ class ShiftSignUp(LiveServerTestCase):
 
     def test_signup_shifts_with_registered_shifts(self):
 
-        register_event_utility()
-        register_job_utility()
-        register_shift_utility()
+        created_event = register_event_utility()
+        created_job = register_job_utility()
+        created_shift = register_shift_utility()
 
         sign_up_page = self.sign_up_page
 
@@ -83,7 +84,12 @@ class ShiftSignUp(LiveServerTestCase):
         self.assertEqual(sign_up_page.get_shift_start_time(),'9 a.m.')
         self.assertEqual(sign_up_page.get_shift_end_time(),'3 p.m.')
 
-    def test_signup_for_same_shift_again(self):
+        # database check to ensure volunteer has signed up for the shift
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertNotEqual(len(VolunteerShift.objects.filter(
+            volunteer_id=self.volunteer.id, shift_id = created_shift.id)), 0)
+
+    """def test_signup_for_same_shift_again(self):
 
         register_event_utility()
         register_job_utility()
@@ -207,7 +213,8 @@ class ShiftSignUp(LiveServerTestCase):
         # verify that no event shows up on event page
         self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
 
-        """# enter only incorrect starting date
+        # comm
+        # enter only incorrect starting date
         date = ['10/08/2016', '']
         sign_up_page.fill_search_form(date)
         # verify that no event shows up on event page

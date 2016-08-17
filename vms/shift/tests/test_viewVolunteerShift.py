@@ -4,6 +4,8 @@ from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.manageShiftPage import ManageShiftPage
 
+from shift.models import VolunteerShift
+
 from shift.utils import (
     create_volunteer,
     create_event_with_details,
@@ -133,3 +135,6 @@ class ViewVolunteerShift(LiveServerTestCase):
             upcoming_shift_page.no_shift_message)
         with self.assertRaises(NoSuchElementException):
             upcoming_shift_page.get_result_container()
+
+        # database check to ensure shift registration is cancelled
+        self.assertEqual(len(VolunteerShift.objects.all()), 0)

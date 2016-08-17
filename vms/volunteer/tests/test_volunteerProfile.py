@@ -101,6 +101,18 @@ class VolunteerProfile(LiveServerTestCase):
         found_org = re.search(new_details[9], page_source)
         self.assertNotEqual(found_org, None)
 
+        # database check to ensure that profile has been updated
+        self.assertEqual(len(Volunteer.objects.all()), 1)
+        self.assertNotEqual(len(Volunteer.objects.filter(
+            first_name = new_details[0],
+            last_name = new_details[1],
+            email=new_details[2],
+            address = new_details[3],
+            city = new_details[4],
+            state = new_details[5],
+            country = new_details[6],
+            phone_number = new_details[7])), 0)
+
     def test_upload_resume(self):
         pass
         '''
