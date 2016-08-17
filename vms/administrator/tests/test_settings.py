@@ -867,6 +867,10 @@ class Settings(LiveServerTestCase):
         settings.fill_organization_form('Org-name 92:4 CA')
         self.assertEqual(settings.get_org_name(), 'Org-name 92:4 CA')
 
+        # database check to ensure that organization is created
+        self.assertEqual(len(Organization.objects.all()), 1)
+        self.assertNotEqual(len(Organization.objects.filter(name='Org-name 92:4 CA')), 0)
+
     def test_replication_of_organization(self):
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -882,6 +886,9 @@ class Settings(LiveServerTestCase):
 
         self.assertEqual(settings.get_help_block().text,
             'Organization with this Name already exists.')
+        
+        # database check to ensure that duplicate organization is created
+        self.assertEqual(len(Organization.objects.all()), 1)
 
     def test_edit_org(self):
         # create org
@@ -902,6 +909,10 @@ class Settings(LiveServerTestCase):
 
         self.assertTrue('changed-organization' in org_list)
 
+        # database check to ensure that organization is edited
+        self.assertEqual(len(Organization.objects.all()), 1)
+        self.assertNotEqual(len(Organization.objects.filter(name='changed-organization')), 0)
+
     def test_delete_org_without_associated_users(self):
         # create org
         org = create_organization()
@@ -915,6 +926,9 @@ class Settings(LiveServerTestCase):
         # check org deleted
         with self.assertRaises(NoSuchElementException):
             settings.element_by_xpath('//table//tbody//tr[1]')
+
+        # database check to ensure that organization is deleted
+        self.assertEqual(len(Organization.objects.all()), 0)
 
     def test_delete_org_with_associated_users(self):
         # create org
@@ -934,3 +948,7 @@ class Settings(LiveServerTestCase):
         self.assertNotEqual(settings.get_danger_message(), None)
         self.assertEqual(settings.get_template_error_message(),
             'You cannot delete an organization that users are currently associated with.')
+
+        # database check to ensure that organization is not deleted
+        self.assertEqual(len(Organization.objects.all()), 1)
+        self.assertNotEqual(len(Organization.objects.filter(name=org.name)), 0)
