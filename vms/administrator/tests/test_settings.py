@@ -341,6 +341,9 @@ class Settings(LiveServerTestCase):
         with self.assertRaises(NoSuchElementException):
             settings.get_results()
 
+        # database check to ensure that event is deleted
+        self.assertEqual(len(Event.objects.all()), 0)
+
     def test_delete_event_with_associated_job(self):
         event = ['event-name', '2017-08-21', '2017-09-28']
         created_event = create_event_with_details(event)
@@ -366,6 +369,10 @@ class Settings(LiveServerTestCase):
         # check event NOT deleted
         settings.navigate_to_event_list_view()
         self.assertEqual(settings.get_event_name(), 'event-name')
+
+        # database check to ensure that event is not deleted
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertNotEqual(len(Event.objects.filter(name = created_event.name)), 0)
 
     def test_create_job(self):
 
@@ -595,6 +602,9 @@ class Settings(LiveServerTestCase):
         with self.assertRaises(NoSuchElementException):
             settings.get_results()
 
+        # database check to ensure that job is deleted
+        self.assertEqual(len(Job.objects.all()), 0)
+
     def test_delete_job_with_associated_shifts(self):
 
         # register event first to create job
@@ -623,6 +633,10 @@ class Settings(LiveServerTestCase):
         # check job NOT deleted
         settings.navigate_to_job_list_view()
         self.assertEqual(settings.get_job_name(), 'job')
+
+        # database check to ensure that job is not deleted
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertNotEqual(len(Job.objects.filter(name = created_job.name)), 0)
 
     def test_create_shift(self):
         # register event first to create job
@@ -821,6 +835,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_message_context(),
             'There are currently no shifts. Please create shifts first.')
 
+        # database check to ensure that shift is deleted
+        self.assertEqual(len(Shift.objects.all()), 0)
+
     def test_delete_shift_with_volunteer(self):
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -849,6 +866,10 @@ class Settings(LiveServerTestCase):
         # check error message displayed and shift not deleted
         self.assertEqual(settings.get_template_error_message(),
             'You cannot delete a shift that a volunteer has signed up for.')
+
+        # database check to ensure that shift is not deleted
+        self.assertEqual(len(Shift.objects.all()), 1)
+        self.assertNotEqual(len(Shift.objects.filter(date = created_shift.date)), 0)
 
     def test_organization(self):
 
