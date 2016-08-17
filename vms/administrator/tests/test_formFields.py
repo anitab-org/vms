@@ -5,6 +5,8 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.eventsPageLocators import *
 
 from event.models import Event
+from job.models import Job
+from shift.models import Shift
 
 from shift.utils import (
     create_admin,
@@ -16,7 +18,6 @@ from shift.utils import (
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
-
 
 class FormFields(LiveServerTestCase):
     '''
@@ -107,6 +108,7 @@ class FormFields(LiveServerTestCase):
         # expected
         self.assertNotEqual(self.driver.current_url,self.live_server_url +
             settings.event_list_page)
+
         """self.assertEqual(len(settings.get_help_blocks()),3)
 
         self.assertEqual(settings.get_event_name_error(),'This field is required.')
@@ -141,6 +143,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_job_start_date_error(), 'This field is required.')
         self.assertEqual(settings.get_job_end_date_error(), 'This field is required.')
 
+        # database check to ensure that job not created
+        self.assertEqual(len(Job.objects.all()), 0)
+
     def test_null_values_in_edit_job(self):
 
         # register event first to create job
@@ -169,6 +174,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_job_name_error(), 'This field is required.')
         self.assertEqual(settings.get_job_start_date_error(), 'This field is required.')
         self.assertEqual(settings.get_job_end_date_error(), 'This field is required.')
+
+        # database check to ensure that job not edited
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertNotEqual(len(Job.objects.filter(name=created_job.name)), 0)
 
     def test_null_values_in_create_shift(self):
 
@@ -286,6 +295,9 @@ class FormFields(LiveServerTestCase):
             settings.create_job_page)
         self.check_job_form_values(invalid_job)
 
+        # database check to ensure that job not created
+        self.assertEqual(len(Job.objects.all()), 0)
+
         # now create job and edit it
         # verify that job was not edited and that field values are not
         # erased
@@ -300,6 +312,10 @@ class FormFields(LiveServerTestCase):
         self.assertNotEqual(self.driver.current_url, self.live_server_url +
                             settings.job_list_page)
         #self.check_job_form_values(invalid_job)
+
+        # database check to ensure that job not edited
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertEqual(len(Job.objects.filter(name=invalid_job[0])), 0)
 
     def test_field_value_retention_for_shift(self):
         event = ['event-name', '2017-08-21', '2017-09-28']

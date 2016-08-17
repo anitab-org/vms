@@ -5,6 +5,9 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.eventsPageLocators import *
 
 from event.models import Event
+from job.models import Job
+from shift.models import Shift
+from organization.models import Organization
 
 from shift.utils import (
     create_admin,
@@ -382,7 +385,11 @@ class Settings(LiveServerTestCase):
         # check job created
         settings.navigate_to_job_list_view()
         self.assertEqual(settings.get_job_name(), 'job name')
-        self.assertEqual(settings.get_job_event(), created_event.name)"""
+        self.assertEqual(settings.get_job_event(), created_event.name)
+
+        # database check to ensure that correct job created
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertNotEqual(len(Job.objects.filter(name=job[1])), 0)
 
     # - commented out due to bug - desirable feature not yet implemented
     """def test_duplicate_job(self):
@@ -406,12 +413,15 @@ class Settings(LiveServerTestCase):
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
 
+        # database check to ensure that job not created
+        self.assertEqual(len(Job.objects.all()), 1)
+
         # TBA here - more checks depending on logic that should be reflected
         # check job not created - commented out due to bug
         self.assertNotEqual(self.driver.current_url,
                             self.live_server_url + settings.job_list_page)"""
 
-    """def test_edit_job(self):
+    def test_edit_job(self):
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
         created_event = create_event_with_details(event)
@@ -434,6 +444,10 @@ class Settings(LiveServerTestCase):
                          self.live_server_url + settings.job_list_page)
         self.assertEqual(settings.get_job_name(), 'changed job name')
 
+        # database check to ensure that job edited correctly
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertNotEqual(len(Job.objects.filter(name=edit_job[1])), 0)
+
     def test_create_job_with_invalid_event_date(self):
 
         # register event first to create job
@@ -454,6 +468,9 @@ class Settings(LiveServerTestCase):
             self.live_server_url + settings.job_list_page)
         self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
 
+        # database check to ensure that job not created
+        self.assertEqual(len(Job.objects.all()), 0)
+
         # create job with end date outside range
         job = [
             'event-name',
@@ -468,6 +485,9 @@ class Settings(LiveServerTestCase):
         self.assertNotEqual(self.driver.current_url,self.live_server_url +
             settings.job_list_page)
         self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
+
+        # database check to ensure that job not created
+        self.assertEqual(len(Job.objects.all()), 0)
 
     def test_edit_job_with_invalid_event_date(self):
 
@@ -496,6 +516,10 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(),
             'Job dates should lie within Event dates')
 
+        # database check to ensure that job not edited
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertEqual(len(Job.objects.filter(name=invalid_job_one[1])), 0)
+
         invalid_job_two = ['event-name','changed job name','job description',
             '2017-09-14', '2017-12-31']
         settings.navigate_to_job_list_view()
@@ -507,6 +531,10 @@ class Settings(LiveServerTestCase):
             self.live_server_url +settings.job_list_page)
         self.assertEqual(settings.get_warning_context(),
             'Job dates should lie within Event dates')
+
+        # database check to ensure that job not edited
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertEqual(len(Job.objects.filter(name=invalid_job_two[1])), 0)
 
     def test_edit_job_with_invalid_shift_date(self):
         # register event first to create job
@@ -538,6 +566,10 @@ class Settings(LiveServerTestCase):
             self.live_server_url +settings.job_list_page)
         self.assertEqual(settings.get_template_error_message(),
             'You cannot edit this job as 1 associated shift no longer lies within the new date range')
+
+        # database check to ensure that job not edited
+        self.assertEqual(len(Job.objects.all()), 1)
+        self.assertNotEqual(len(Job.objects.filter(name=created_job.name)), 0)
 
     def test_delete_job_without_associated_shift(self):
         # register event first to create job
