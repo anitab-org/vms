@@ -4,6 +4,8 @@ from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.eventsPageLocators import *
 
+from event.models import Event
+
 from shift.utils import (
     create_admin,
     create_event_with_details,
@@ -85,6 +87,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_event_start_date_error(), 'This field is required.')
         self.assertEqual(settings.get_event_end_date_error(), 'This field is required.')
 
+        # database check to ensure that event not created
+        self.assertEqual(len(Event.objects.all()), 0)
+
     # Parts of test commented out, as they are throwing server error
     def test_null_values_in_edit_event(self):
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -107,6 +112,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_event_name_error(),'This field is required.')
         self.assertEqual(settings.get_event_start_date_error(),'This field is required.')
         self.assertEqual(settings.get_event_end_date_error(),'This field is required.')"""
+
+        # database check to ensure that event not edited
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertEqual(len(Event.objects.filter(name=edited_event[0])), 0)
 
     def test_null_values_in_create_job(self):
 
@@ -227,7 +236,6 @@ class FormFields(LiveServerTestCase):
         settings.go_to_create_event_page()
 
         invalid_event = ['event-name!@', '07/21/2016', '09/28/2017']
-
         settings.fill_event_form(invalid_event)
 
         # verify that event was not created and that field values are not
@@ -235,6 +243,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(self.driver.current_url, self.live_server_url +
             settings.create_event_page)
         self.check_event_form_values(invalid_event)
+
+        # database check to ensure that event not created
+        self.assertEqual(len(Event.objects.all()), 0)
 
         # now create an event and edit it
         # verify that event was not edited and that field values are not
@@ -247,6 +258,10 @@ class FormFields(LiveServerTestCase):
         self.assertNotEqual(self.driver.current_url, self.live_server_url +
             settings.create_event_page)
         # self.check_event_form_values(invalid_event)
+
+        # database check to ensure that event not edited
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertEqual(len(Event.objects.filter(name=invalid_event[0])), 0)
 
     def test_field_value_retention_for_job(self):
         event = ['event-name', '2017-08-21', '2017-09-28']

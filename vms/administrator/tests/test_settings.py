@@ -4,6 +4,8 @@ from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.eventsPageLocators import *
 
+from event.models import Event
+
 from shift.utils import (
     create_admin,
     create_event_with_details,
@@ -172,6 +174,10 @@ class Settings(LiveServerTestCase):
             self.live_server_url + settings.event_list_page)
         self.assertEqual(settings.get_event_name(), 'event-name')
 
+        # database check to see if correct event created
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertNotEqual(len(Event.objects.filter(name=event[0])), 0)
+
     # - commented out due to bug - desirable feature not yet implemented
     """def test_duplicate_event(self):
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -186,8 +192,10 @@ class Settings(LiveServerTestCase):
         settings.go_to_create_event_page()
         settings.fill_event_form(event)
 
+        # database check to verify that event is not created
+        self.assertEqual(len(Event.objects.all()), 1)
+
         # TBA here - more checks depending on behaviour that should be reflected
-        # check event not created 
         self.assertNotEqual(self.driver.current_url,
                             self.live_server_url + settings.event_list_page)"""
 
@@ -211,12 +219,16 @@ class Settings(LiveServerTestCase):
                          self.live_server_url + settings.event_list_page)
         self.assertEqual(settings.get_event_name(), 'new-event-name')
 
+        # database check to see if event edited with correct details
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertNotEqual(len(Event.objects.filter(name=edited_event[0])), 0)
+
     def test_create_and_edit_event_with_invalid_start_date(self):
         
         settings = self.settings
         settings.live_server_url = self.live_server_url
         settings.go_to_create_event_page()
-        invalid_event = ['event-name', '05/17/2016', '09/28/2016']
+        invalid_event = ['event-name-invalid', '05/17/2016', '09/28/2016']
         settings.fill_event_form(invalid_event)
 
         # check event not created and error message displayed
@@ -224,6 +236,9 @@ class Settings(LiveServerTestCase):
             self.live_server_url + settings.event_list_page)
         self.assertEqual(settings.get_warning_context(),
             "Start date should be today's date or later.")
+
+        # database check to see that no event created
+        self.assertEqual(len(Event.objects.all()), 0)
 
         settings.navigate_to_event_list_view()
         settings.go_to_create_event_page()
@@ -241,6 +256,10 @@ class Settings(LiveServerTestCase):
             self.live_server_url +settings.event_list_page)
         self.assertEqual(settings.get_warning_context(),
             "Start date should be today's date or later.")
+
+        # database check to ensure that event not edited
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertEqual(len(Event.objects.filter(name=invalid_event[0])), 0)
 
     def test_edit_event_with_elapsed_start_date(self):
         elapsed_event = ['event-name', '2016-05-21', '2017-08-09']
@@ -267,6 +286,10 @@ class Settings(LiveServerTestCase):
 
         # Test for proper msg TBA later once it is implemented
 
+        # database check to ensure that event not edited
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertNotEqual(len(Event.objects.filter(name=elapsed_event[0])), 0)
+
     def test_edit_event_with_invalid_job_date(self):
         event = ['event-name', '2017-08-21', '2017-09-28']
         created_event = create_event_with_details(event)
@@ -283,7 +306,7 @@ class Settings(LiveServerTestCase):
         settings.go_to_edit_event_page()
 
         # Edit event such that job is no longer in the new date range
-        new_event = ['event-name', '2017-08-30', '2017-09-21']
+        new_event = ['new-event-name', '2017-08-30', '2017-09-21']
         settings.fill_event_form(new_event)
 
         # check event not edited and error message displayed
@@ -292,6 +315,10 @@ class Settings(LiveServerTestCase):
         self.assertEqual(
             settings.element_by_xpath(self.elements.TEMPLATE_ERROR_MESSAGE).text,
             'You cannot edit this event as the following associated job no longer lies within the new date range :')
+
+        # database check to ensure that event not edited
+        self.assertEqual(len(Event.objects.all()), 1)
+        self.assertEqual(len(Event.objects.filter(name=new_event[0])), 0)
 
     def test_delete_event_with_no_associated_job(self):
         event = ['event-name', '2017-08-21', '2017-09-28']
@@ -355,7 +382,7 @@ class Settings(LiveServerTestCase):
         # check job created
         settings.navigate_to_job_list_view()
         self.assertEqual(settings.get_job_name(), 'job name')
-        self.assertEqual(settings.get_job_event(), created_event.name)
+        self.assertEqual(settings.get_job_event(), created_event.name)"""
 
     # - commented out due to bug - desirable feature not yet implemented
     """def test_duplicate_job(self):
@@ -384,7 +411,7 @@ class Settings(LiveServerTestCase):
         self.assertNotEqual(self.driver.current_url,
                             self.live_server_url + settings.job_list_page)"""
 
-    def test_edit_job(self):
+    """def test_edit_job(self):
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
         created_event = create_event_with_details(event)
