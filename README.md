@@ -70,6 +70,11 @@ Support
 If you are having issues, please let us know.
 We have a mailing list located at: systers-dev@systers.org
 
+Communicate
+-----------
+
+The best way to connect with the maintainers is through GitHub comments. Feel free to discuss more about an issue by commenting on it or asking questions. We also have Systers Slack channel, you can request an invite [here](http://systers.io/slack-systers-opensource/). If there is something you want to discuss privately with the maintainer and you are being hesitant to discuss it on above medium's, then drop an email.
+
 
 License
 -------
