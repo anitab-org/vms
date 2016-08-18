@@ -7,15 +7,20 @@ from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-
+from django.views.generic.detail import DetailView
+from django.views.generic import ListView
+from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 from organization.services import *
 from shift.services import *
 from event.services import get_signed_up_events_for_volunteer
 from job.services import get_signed_up_jobs_for_volunteer
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
+from django.views.generic.edit import FormView, UpdateView
 from volunteer.models import Volunteer
-from volunteer.services import * 
+from volunteer.services import *
 from volunteer.validation import validate_file
+from django.views.generic import View
+from django.core.urlresolvers import reverse_lazy
 
 
 @login_required
@@ -25,7 +30,7 @@ def download_resume(request, volunteer_id):
         if request.method == 'POST':
             basename = get_volunteer_resume_file_url(volunteer_id)
             if basename:
-                filename = settings.MEDIA_ROOT + basename 
+                filename = settings.MEDIA_ROOT + basename
                 wrapper = FileWrapper(file(filename))
                 response = HttpResponse(wrapper)
                 response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(filename)
@@ -35,7 +40,7 @@ def download_resume(request, volunteer_id):
                 raise Http404
     else:
         return HttpResponse(status=403)
-        
+
 @login_required
 def delete_resume(request, volunteer_id):
     user = request.user
@@ -47,100 +52,115 @@ def delete_resume(request, volunteer_id):
             except:
                 raise Http404
     else:
-        return HttpResponse(status=403)  
+        return HttpResponse(status=403)
 
-@login_required
-def edit(request, volunteer_id):
+'''
+ The View to edit Volunteer Profile
+'''
 
-    volunteer = get_volunteer_by_id(volunteer_id)
-    if volunteer:
-        user = request.user
-        if int(user.volunteer.id) == int(volunteer_id):
-            organization_list = get_organizations_ordered_by_name()
-            if request.method == 'POST':
-                form = VolunteerForm(request.POST, request.FILES, instance=volunteer)
-                if form.is_valid():
-                    #if a resume has been uploaded
-                    if 'resume_file' in request.FILES:
-                        my_file = form.cleaned_data['resume_file']
-                        if validate_file(my_file):
-                            #delete an old uploaded resume if it exists
-                            has_file = has_resume_file(volunteer_id)
-                            if has_file:
-                                try:
-                                    delete_volunteer_resume(volunteer_id)
-                                except:
-                                    raise Http404
-                        else:
-                            return render(request, 'volunteer/edit.html', {'form' : form, 'organization_list' : organization_list, 'volunteer' : volunteer, 'resume_invalid' : True,})
-                    
-                    volunteer_to_edit = form.save(commit=False)
+class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
+    form_class = VolunteerForm
+    template_name = 'volunteer/edit.html'
+    success_url = reverse_lazy('volunteer:profile')
 
-                    organization_id = request.POST.get('organization_name')
-                    organization = get_organization_by_id(organization_id)
-                    if organization:
-                        volunteer_to_edit.organization = organization
-                    else:
-                        volunteer_to_edit.organization = None
+    def get_object(self, queryset=None):
+        volunteer_id = self.kwargs['volunteer_id']
+        obj = Volunteer.objects.get(pk=volunteer_id)
+        return obj
 
-                    #update the volunteer
-                    volunteer_to_edit.save()
-                    return HttpResponseRedirect(reverse('volunteer:profile', args=(volunteer_id,)))
-                else:
-                    print (form.errors)
-                    return render(request, 'volunteer/edit.html', {'form' : form, 'organization_list' : organization_list, 'volunteer' : volunteer,})
+    def form_valid(self, form):
+        volunteer_id = self.kwargs['volunteer_id']
+        volunteer = get_volunteer_by_id(volunteer_id)
+        organization_list = get_organizations_ordered_by_name()
+        if 'resume_file' in self.request.FILES:
+            my_file = form.cleaned_data['resume_file']
+            if validate_file(my_file):
+                # delete an old uploaded resume if it exists
+                has_file = has_resume_file(volunteer_id)
+                if has_file:
+                    try:
+                        delete_volunteer_resume(volunteer_id)
+                    except:
+                        raise Http404
             else:
-                #create a form to change an existing volunteer
-                form = VolunteerForm(instance=volunteer)
-                return render(request, 'volunteer/edit.html', {'form' : form, 'organization_list' : organization_list, 'volunteer' : volunteer,})
+                return render(self.request, 'volunteer/edit.html',
+                              {'form': form, 'organization_list': organization_list, 'volunteer': volunteer,
+                               'resume_invalid': True,})
+
+        volunteer_to_edit = form.save(commit=False)
+
+        organization_id = self.request.POST.get('organization_name')
+        organization = get_organization_by_id(organization_id)
+        if organization:
+            volunteer_to_edit.organization = organization
+        else:
+            volunteer_to_edit.organization = None
+
+        # update the volunteer
+        volunteer_to_edit.save()
+        return HttpResponseRedirect(reverse('volunteer:profile', args=(volunteer_id,)))
+
+'''
+  The view to diaplay Volunteer profile.
+  It uses DetailView which is a generic class-based views are designed to display data.
+'''
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    template_name = 'volunteer/profile.html'
+
+    def get_object(self, queryset=None):
+        volunteer_id = self.kwargs['volunteer_id']
+        obj = Volunteer.objects.get(id=self.kwargs['volunteer_id'])
+        if obj:
+            return obj
         else:
             return HttpResponse(status=403)
-    else:
-        raise Http404
-        
-@login_required
-def profile(request, volunteer_id):
 
-    volunteer = get_volunteer_by_id(volunteer_id)
-    if volunteer:
-        user = request.user
-        if int(user.volunteer.id) == int(volunteer_id):
-            return render(request, 'volunteer/profile.html', {'volunteer' : volunteer})
-        else:
-            return HttpResponse(status=403)
-    else:
-        #if Http404 is raised at any point in a view function, Django will catch it and return the standard
-        #error page, along with an HTTP error code 404
-        raise Http404
+'''
+  The view generate Report.
+  GenerateReportView calls two other views(ShowFormView, ShowReportListView) within it.
+'''
 
-@login_required
-def report(request, volunteer_id):
-    volunteer = get_volunteer_by_id(volunteer_id)
-    if volunteer:
-        user = request.user
-        if int(user.volunteer.id) == int(volunteer_id):
-            event_list = get_signed_up_events_for_volunteer(volunteer_id)
-            job_list = get_signed_up_jobs_for_volunteer(volunteer_id)
-            if request.method == 'POST':
-                form = ReportForm(request.POST)
-                if form.is_valid():
-                    event_name = form.cleaned_data['event_name']
-                    job_name = form.cleaned_data['job_name']
-                    start_date = form.cleaned_data['start_date']
-                    end_date = form.cleaned_data['end_date']
-                    report_list = get_volunteer_report(volunteer_id, event_name, job_name, start_date, end_date)
-                    total_hours = calculate_total_report_hours(report_list)
-                    return render(request, 'volunteer/report.html', {'form' : form, 'report_list' : report_list, 'total_hours' : total_hours, 'notification' : True,  'job_list' : job_list, 'event_list' : event_list, 'selected_event': event_name, 'selected_job': job_name})
-                else:
-                    return render(request, 'volunteer/report.html', {'form' : form, 'notification' : False, 'job_list' : job_list, 'event_list' : event_list})
-            else:
-                form = ReportForm()
-                return render(request, 'volunteer/report.html', {'form' : form, 'notification' : False, 'job_list' : job_list, 'event_list' : event_list})
-        else:
-            return HttpResponse(status=403)
-    else:
-        raise Http404
+class GenerateReportView(LoginRequiredMixin, View):
 
+    def get(self, request, *args, **kwargs):
+        view = ShowFormView.as_view()
+        return view(request, *args,**kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = ShowReportListView.as_view()
+        return view(request, *args, **kwargs)
+
+class ShowFormView(LoginRequiredMixin, FormView):
+    """
+    Displays the form
+    """
+    model = Volunteer
+    form_class = ReportForm
+    template_name = "volunteer/report.html"
+
+
+
+class ShowReportListView(LoginRequiredMixin, ListView):
+    """
+    Generate the report using ListView
+    """
+    template_name = "volunteer/report.html"
+
+    def post(self, request, *args, **kwargs):
+        volunteer_id = self.kwargs['volunteer_id']
+        event_list = get_signed_up_events_for_volunteer(volunteer_id)
+        job_list = get_signed_up_jobs_for_volunteer(volunteer_id)
+        event_name = self.request.POST['event_name']
+        job_name = self.request.POST['job_name']
+        start_date = self.request.POST['start_date']
+        end_date = self.request.POST['end_date']
+        report_list = get_volunteer_report(volunteer_id, event_name, job_name, start_date, end_date)
+        total_hours = calculate_total_report_hours(report_list)
+        return render(request, 'volunteer/report.html',
+                      {'report_list': report_list, 'total_hours': total_hours, 'notification': True,
+                       'job_list': job_list, 'event_list': event_list, 'selected_event': event_name,
+                       'selected_job': job_name})
 @login_required
 def search(request):
     if request.method == 'POST':
