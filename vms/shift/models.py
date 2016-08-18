@@ -1,8 +1,8 @@
 from django.core.validators import (
-        MaxValueValidator,
-        MinValueValidator,
-        RegexValidator
-        )
+    MaxValueValidator,
+    MinValueValidator,
+    RegexValidator
+)
 from django.db import models
 
 from job.models import Job
@@ -11,6 +11,7 @@ from volunteer.models import Volunteer
 
 
 class Shift(models.Model):
+    id = models.AutoField(primary_key=True)
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
