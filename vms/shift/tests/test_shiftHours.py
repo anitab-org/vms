@@ -6,6 +6,8 @@ from selenium.common.exceptions import NoSuchElementException
 from pom.pages.completedShiftsPage import CompletedShiftsPage
 from pom.pages.authenticationPage import AuthenticationPage
 
+from shift.models import VolunteerShift
+
 from shift.utils import (
     create_volunteer,
     create_event_with_details,
@@ -81,6 +83,11 @@ class ShiftHours(LiveServerTestCase):
         self.assertEqual(completed_shifts_page.get_shift_start_time(), '10 a.m.')
         self.assertEqual(completed_shifts_page.get_shift_end_time(), '1 p.m.')
 
+        # database check to ensure logged hours are edited
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertNotEqual(len(VolunteerShift.objects.filter(
+            start_time='10:00', end_time='13:00')), 0)
+
     def test_end_hours_less_than_start_hours(self):
         self.register_dataset()
         completed_shifts_page = self.completed_shifts_page
@@ -93,6 +100,11 @@ class ShiftHours(LiveServerTestCase):
         except NoSuchElementException:
             raise Exception("End hours greater than start hours")
 
+        # database check to ensure logged hours are not edited
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertNotEqual(len(VolunteerShift.objects.filter(
+            start_time='12:00', end_time='13:00')), 0)
+
     def test_logged_hours_between_shift_hours(self):
         self.register_dataset()
         completed_shifts_page = self.completed_shifts_page
@@ -101,6 +113,11 @@ class ShiftHours(LiveServerTestCase):
         completed_shifts_page.edit_hours('10:00','16:00')
         self.assertEqual(completed_shifts_page.get_danger_box().text,
             'Logged hours should be between shift hours')
+
+        # database check to ensure logged hours are not edited
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertNotEqual(len(VolunteerShift.objects.filter(
+            start_time='12:00', end_time='13:00')), 0)
 
     def test_cancel_hours(self):
         self.register_dataset()
@@ -117,3 +134,8 @@ class ShiftHours(LiveServerTestCase):
 
         with self.assertRaises(NoSuchElementException):
             self.assertEqual(completed_shifts_page.get_shift_job(), 'job')
+
+        # database check to ensure logged hours are cleared
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertEqual(len(VolunteerShift.objects.filter(
+            start_time__isnull=False, end_time__isnull=False)), 0)
