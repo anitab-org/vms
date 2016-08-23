@@ -2,9 +2,9 @@
 
 The QA process is divided as follows:
 
-- Continuous Intergation: Used travis to setup CI for VMS Project
-- Functional Testing: Used Selnium to write UI tests from an end-users perspective.(black-box tests)
-- Unit Testing: Valeria is writing unit-tests for the codebase.(white-box tests)
+- Continuous Integration: Used travis to setup CI for VMS Project
+- Functional Testing: Used Selenium to write UI tests from an end-users perspective.(black-box tests)
+- Unit Testing: Unit-tests have been written for services in the codebase.(white-box tests)
 
 ## Few important points regarding CI:
 
@@ -15,7 +15,7 @@ The QA process is divided as follows:
 ## Few important points regarding Functional Testing:
 
 - Selenium, a browser automation tool is used to simulate the functionality.
-  python APIs for selnium are used in the tests.
+  python APIs for selenium are used in the tests.
 
 - Django provides a class `LiveServerTestCase`. What this does is that, It
   setups a Virtual Django Sever in the background which can be used by 
@@ -35,43 +35,15 @@ The QA process is divided as follows:
 - Each app contains a `tests` folder containing the unit-tests and functional
   tests and an `__init__.py` to let django consider it as a package.
 
-- Currently, only functional tests for admin views have been written.
+## Few important points regarding design pattern for Selenium tests:
 
-## Steps to run tests:
+- The tests follow the page object model design. Pages in vms have been broken into 
+  objects which model their behaviour. The `pom` folder contains the architecture setup
+  for this design.
 
-- Currently, used `python 2.7`
-- Clone project: `git clone https://github.com/systers/vms.git`
-- In the root folder of the project, startup a new virtual environment
-  `virtualenv -p /usr/bin/python2.7 venv`
-- Activate virtualenv, `source venv/bin/activate`
-- Install dependencies: `pip install -r requirements.txt`
-- `cd vms`
-- To run, `python manage.py runserver`. Browse 
-  `http://127.0.0.1:8000`
-- To execute tests `python manage.py test`. This will run all unit-tests and
-  all functional-tests across all apps. To execute tests of only a particular
-  app, run `python manage.py test <app_name>`
-- If all tests pass, `OK` will be received at the end.
-- For functional tests, a firefox window for each test will open up
-  automatically and close after simulation of tests.
+- Each test file interacts with respective page objects and reuses their methods.
+  To locate elements on the page both pages and tests use static locators defined in 
+  `pom/locators` folder. `pom/pages` folder contains the pages mapping to vms.
 
-## Tests Failing
-
-There are 8 Failures. These are due to issue [#327](https://github.com/systers/vms/issues/327) :
-
-- test_report_with_empty_fields
-- test_job_field
-- test_intersection_of_fields
-- test_event_field
-- test_date_field
-- test_admin_cannot_access_volunteer_urls
-- test_cancel_assigned_shift
-- test_null_values_with_dataset
-- test_check_intersection_of_fields
-
-one error
-- in test_volunteer_cannot_access_admin_urls
-
-once [#325](https://github.com/systers/vms/issues/325) gets fixed this will automatically pass.
-
-Note: The current setup uses one of the latest versions of Selenium. You will run into errors if the this version is incompatible with your firefox version and does not support it. In that case, follow [this](https://support.mozilla.org/en-US/kb/find-what-version-firefox-you-are-using) guide to find out your browser version and accordingly install a Selenium version compatible with it.
+- To follow up changes in UI with changes in tests, the modifications need to be made only
+  in the relevant locators/urls/page file.
