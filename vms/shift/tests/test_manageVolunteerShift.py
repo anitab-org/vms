@@ -1,8 +1,13 @@
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
+from pom.pages.eventSignUpPage import EventSignUpPage
+from pom.pages.authenticationPage import AuthenticationPage
+from pom.pages.manageShiftPage import ManageShiftPage
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+from shift.models import VolunteerShift, Shift
 from shift.utils import (
     create_admin,
     create_volunteer_with_details,
@@ -10,7 +15,6 @@ from shift.utils import (
     create_job_with_details,
     create_shift_with_details
     )
-
 
 class ManageVolunteerShift(LiveServerTestCase):
     '''
@@ -41,10 +45,6 @@ class ManageVolunteerShift(LiveServerTestCase):
     '''
     @classmethod
     def setUpClass(cls):
-        cls.homepage = '/'
-        cls.shift_page = '/shift/volunteer_search/'
-        cls.authentication_page = '/authentication/login/'
-        cls.settings_page = '/event/list/'
 
         cls.volunteer_1 = ['volunteer-one', 'volunteer-one', 'volunteer-one',
                 'volunteer-one', 'volunteer-one', 'volunteer-one', 'volunteer-one',
@@ -53,23 +53,17 @@ class ManageVolunteerShift(LiveServerTestCase):
                 'volunteer-two', 'volunteer-two', 'volunteer-two', 'volunteer-two',
                 '9999999999', 'volunteer-email2@systers.org', 'volunteer-two']
 
-        cls.job_name_path = '//table//tbody//tr[1]//td[1]'
-        cls.job_date_path = '//table//tbody//tr[1]//td[2]'
-        cls.job_stime_path = '//table//tbody//tr[1]//td[3]'
-        cls.job_etime_path = '//table//tbody//tr[1]//td[4]'
-        cls.view_jobs_path = '//table//tbody//tr[1]//td[4]'
-        cls.view_shifts_path = '//table//tbody//tr[1]//td[4]'
-        cls.assign_shifts_path = '//table//tbody//tr[1]//td[4]'
-        cls.slots_remaining_path = '//table//tbody//tr[1]//td[5]'
-        cls.cancel_shift_path = '//table//tbody//tr[1]//td[5]'
-
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
+        cls.sign_up_page = EventSignUpPage(cls.driver)
+        cls.manage_shift_page = ManageShiftPage(cls.driver)
+        cls.authentication_page = AuthenticationPage(cls.driver)
         super(ManageVolunteerShift, cls).setUpClass()
 
     def setUp(self):
         create_admin()
+        self.login_admin()
 
     def tearDown(self):
         pass
@@ -79,31 +73,9 @@ class ManageVolunteerShift(LiveServerTestCase):
         cls.driver.quit()
         super(ManageVolunteerShift, cls).tearDownClass()
 
-    def login(self, credentials):
-        self.driver.get(self.live_server_url + self.authentication_page)
-        self.driver.find_element_by_id('id_login').send_keys(credentials['username'])
-        self.driver.find_element_by_id('id_password').send_keys(credentials['password'])
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
-    def navigate_to_manage_shift_page(self):
-        self.driver.find_element_by_link_text('Manage Volunteer Shifts').click()
-        self.assertEqual(self.driver.current_url,
-                self.live_server_url + self.shift_page)
-
     def login_admin(self):
-        self.login({ 'username' : 'admin', 'password' : 'admin'})
-
-    def select_volunteer(self, number):
-        link_path = '//table//tbody//tr[' + str(number) + ']//td[10]//a'
-        self.driver.find_element_by_xpath(link_path).click()
-
-    def navigate_to_shift_assignment_page(self):
-        self.driver.find_element_by_xpath(
-                self.view_jobs_path + "//a").click()
-        self.driver.find_element_by_xpath(
-                self.view_shifts_path + "//a").click()
-        self.driver.find_element_by_xpath(
-                self.assign_shifts_path + "//a").click()
+        self.authentication_page.server_url = self.live_server_url
+        self.authentication_page.login({ 'username' : 'admin', 'password' : 'admin'})
 
     def create_shift(self, shift):
         # register event to create job
@@ -121,85 +93,87 @@ class ManageVolunteerShift(LiveServerTestCase):
         return s1
 
     def check_job_details(self, details):
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.job_name_path).text, details[0])
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.job_date_path).text, details[1])
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.job_stime_path).text, details[2])
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.job_etime_path).text, details[3])
-
-    def assign_shift(self):
-        self.driver.find_element_by_link_text('Assign Shift').click()
+        sign_up_page = self.sign_up_page
+        self.assertEqual(sign_up_page.get_shift_job(), details[0])
+        self.assertEqual(sign_up_page.get_shift_date(), details[1])
+        self.assertEqual(sign_up_page.get_shift_start_time(), details[2])
+        self.assertEqual(sign_up_page.get_shift_end_time(), details[3])
 
     def test_table_layout(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
         shift = ['09:00', '15:00', '1']
         s1 = self.create_shift(shift)
 
-        self.login_admin()
+        self.manage_shift_page.live_server_url = self.live_server_url
         # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
+        self.manage_shift_page.navigate_to_manage_shift_page()
 
         # volunteer-one does not have any registered shifts
-        self.select_volunteer(1)
-        self.assign_shift()
+        manage_shift_page.select_volunteer(1)
+        manage_shift_page.assign_shift()
 
         # events shown in table
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.view_jobs_path).text, 'View Jobs')
-        self.driver.find_element_by_xpath(
-                self.view_jobs_path + "//a").click()
+            sign_up_page.get_info_box()
+        self.assertEqual(sign_up_page.get_view_jobs(), 'View Jobs')
+        sign_up_page.click_to_view_jobs()
 
         # arrived on page2 with jobs
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.view_shifts_path).text, 'View Shifts')
-        self.driver.find_element_by_xpath(
-                self.view_shifts_path + "//a").click()
+        self.assertEqual(sign_up_page.get_view_shifts(), 'View Shifts')
+        sign_up_page.click_to_view_shifts()
 
         # arrived on page3 with shifts, assign shift to volunteer one
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.assign_shifts_path).text, 'Assign Shift')
+        self.assertEqual(sign_up_page.get_sign_up(), 'Assign Shift')
 
     def test_landing_page_without_any_registered_volunteers(self):
-        self.login_admin()
-        self.navigate_to_manage_shift_page()
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+        # open manage volunteer shift
+        self.manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.navigate_to_manage_shift_page()
+        
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_tag_name('tr')
+            manage_shift_page.find_table_row()
 
     def test_landing_page_with_registered_volunteers(self):
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteer
         v1 = create_volunteer_with_details(self.volunteer_1)
 
-        # login admin user
-        self.login_admin()
-        self.navigate_to_manage_shift_page()
+        manage_shift_page.navigate_to_manage_shift_page()
 
-        self.assertNotEqual(self.driver.find_element_by_tag_name('tr'), None)
-        self.select_volunteer(1)
-        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
-               'This volunteer does not have any upcoming shifts.')
+        self.assertNotEqual(manage_shift_page.find_table_row(), None)
+        manage_shift_page.select_volunteer(1)
+        self.assertEqual(manage_shift_page.get_info_box(),manage_shift_page.no_volunteer_shift_message)
 
     def test_events_page_with_no_events(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
-        # login admin user
-        self.login_admin()
-        self.navigate_to_manage_shift_page()
+        self.manage_shift_page.live_server_url = self.live_server_url
+        # open manage volunteer shift
+        self.manage_shift_page.navigate_to_manage_shift_page()
 
-        self.select_volunteer(1)
-        self.assign_shift()
+        manage_shift_page.select_volunteer(1)
+        manage_shift_page.assign_shift()
 
-        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
-               'There are no events.')
+        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
 
     def test_jobs_page_with_no_jobs(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
@@ -207,17 +181,18 @@ class ManageVolunteerShift(LiveServerTestCase):
         event = ['event-name', '2017-05-20', '2017-05-20']
         e1 = create_event_with_details(event)
 
-        # login admin
-        self.login_admin()
         # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
-        self.select_volunteer(1)
-        self.assign_shift()
+        manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.select_volunteer(1)
+        manage_shift_page.assign_shift()
 
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text,'There are no events.')
+        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
 
     def test_assign_shifts_with_no_shifts(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
@@ -229,52 +204,58 @@ class ManageVolunteerShift(LiveServerTestCase):
         job = ['job name', '2017-05-20', '2017-05-20', 'job description', e1]
         j1 = create_job_with_details(job)
 
-        # login admin
-        self.login_admin()
         # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
-        self.select_volunteer(1)
-        self.assign_shift()
+        manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.select_volunteer(1)
+        manage_shift_page.assign_shift()
 
         # no events shown in table
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text,'There are no events.')
+        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
 
     def test_assign_shifts_with_registered_shifts(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
         shift = ['09:00', '15:00', '1']
         s1 = self.create_shift(shift)
 
-        self.login_admin()
-        # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
-
         # volunteer-one does not have any registered shifts
-        self.select_volunteer(1)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 
-            'This volunteer does not have any upcoming shifts.')
+        manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.select_volunteer(1)
+        self.assertEqual(manage_shift_page.get_info_box(), 
+            manage_shift_page.no_volunteer_shift_message)
 
-        self.assign_shift()
+        manage_shift_page.assign_shift()
 
         # events shown in table
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.navigate_to_shift_assignment_page()
+            sign_up_page.get_info_box()
+        manage_shift_page.navigate_to_shift_assignment_page()
 
         # confirm on shift assignment to volunteer-one
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        manage_shift_page.submit_form()
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-danger')
+            sign_up_page.get_danger_box()
 
         # check shift assignment to volunteer-one
-        self.navigate_to_manage_shift_page()
-        self.select_volunteer(1)
+        manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.select_volunteer(1)
         self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
+        # database check to ensure volunteer has been assigned the shift
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+        self.assertNotEqual(len(VolunteerShift.objects.filter(
+            volunteer_id=v1.id, shift_id = s1.id)), 0)
+
     def test_slots_remaining_in_shift(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
         v2 = create_volunteer_with_details(self.volunteer_2)
@@ -282,153 +263,146 @@ class ManageVolunteerShift(LiveServerTestCase):
         shift = ['09:00', '15:00', '1']
         s1 = self.create_shift(shift)
 
-        self.login_admin()
         # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
+        manage_shift_page.navigate_to_manage_shift_page()
 
         # volunteer-one does not have any registered shifts
-        self.select_volunteer(1)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 
-            'This volunteer does not have any upcoming shifts.')
+        manage_shift_page.select_volunteer(1)
+        self.assertEqual(manage_shift_page.get_info_box(), 
+            manage_shift_page.no_volunteer_shift_message)
 
-        self.assign_shift()
+        manage_shift_page.assign_shift()
 
         # events shown in table
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.navigate_to_shift_assignment_page()
+            sign_up_page.get_info_box()
+        manage_shift_page.navigate_to_shift_assignment_page()
 
         # confirm on shift assignment to volunteer-one
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        manage_shift_page.submit_form()
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-danger')
+            sign_up_page.get_danger_box()
 
         # check shift assignment to volunteer-one
-        self.navigate_to_manage_shift_page()
-        self.select_volunteer(1)
+        manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.select_volunteer(1)
         self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
         # open manage volunteer shift again to assign shift to volunteer two
-        self.navigate_to_manage_shift_page()
+        manage_shift_page.navigate_to_manage_shift_page()
 
         # volunteer-two does not have any registered shifts
-        self.select_volunteer(2)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 
-            'This volunteer does not have any upcoming shifts.')
+        manage_shift_page.select_volunteer(2)
+        self.assertEqual(manage_shift_page.get_info_box(), 
+            manage_shift_page.no_volunteer_shift_message)
 
-        self.assign_shift()
+        manage_shift_page.assign_shift()
 
         #no events shown in table
-        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text,
-            'There are no events.')
+        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
             
     def test_cancel_assigned_shift(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
         shift = ['09:00', '15:00', '1']
         s1 = self.create_shift(shift)
 
-        self.login_admin()
         # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
+        manage_shift_page.navigate_to_manage_shift_page()
 
         # volunteer-one does not have any registered shifts
-        self.select_volunteer(1)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 
-            'This volunteer does not have any upcoming shifts.')
+        manage_shift_page.select_volunteer(1)
+        self.assertEqual(manage_shift_page.get_info_box(), 
+            manage_shift_page.no_volunteer_shift_message)
 
-        self.assign_shift()
+        manage_shift_page.assign_shift()
 
         # events shown in table
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.driver.find_element_by_xpath(
-                self.view_jobs_path + "//a").click()
-        self.driver.find_element_by_xpath(
-                self.view_shifts_path + "//a").click()
+            sign_up_page.get_info_box().text
+        sign_up_page.click_to_view_jobs()
+        sign_up_page.click_to_view_shifts()
 
         # arrived on shifts page, assign shift to volunteer one
-        slots_remaining_before_assignment = self.driver.find_element_by_xpath(
-                self.slots_remaining_path).text
-        self.driver.find_element_by_xpath(
-                self.assign_shifts_path + "//a").click()
+        slots_remaining_before_assignment = sign_up_page.get_remaining_slots()
+        sign_up_page.click_to_sign_up()
 
         # confirm on shift assignment to volunteer-one
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        sign_up_page.submit_form()
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-danger')
+            sign_up_page.get_danger_box()
 
         # check shift assignment to volunteer-one
-        self.navigate_to_manage_shift_page()
-        self.select_volunteer(1)
+        manage_shift_page.navigate_to_manage_shift_page()
+        manage_shift_page.select_volunteer(1)
         self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
+        # database check to ensure volunteer is registered
+        self.assertEqual(len(VolunteerShift.objects.all()), 1)
+
         # cancel assigned shift
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.cancel_shift_path).text, 'Cancel Shift Registration')
-        self.driver.find_element_by_xpath(
-                self.cancel_shift_path + "//a").click()
-        self.assertNotEqual(self.driver.find_element_by_class_name(
-            'panel-danger'), None)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'btn-danger').text, 'Yes, Cancel this Shift')
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        self.assertEqual(manage_shift_page.get_cancel_shift().text, 'Cancel Shift Registration')
+        manage_shift_page.cancel_shift()
+        self.assertNotEqual(manage_shift_page.get_cancellation_box(), None)
+        self.assertEqual(manage_shift_page.get_cancellation_message(), 'Yes, Cancel this Shift')
+        manage_shift_page.submit_form()
 
         # check cancelled shift reflects in volunteer shift details
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text,
-            'This volunteer does not have any upcoming shifts.')
+        self.assertEqual(manage_shift_page.get_info_box(),
+            manage_shift_page.no_volunteer_shift_message)
 
         # check slots remaining increases by one, after cancellation of
         # assigned shift
-        self.assign_shift()
-        self.driver.find_element_by_xpath(
-                self.view_jobs_path + "//a").click()
-        self.driver.find_element_by_xpath(
-                self.view_shifts_path + "//a").click()
-        slots_after_cancellation = self.driver.find_element_by_xpath(
-                self.slots_remaining_path).text
+        manage_shift_page.assign_shift()
+        sign_up_page.click_to_view_jobs()
+        sign_up_page.click_to_view_shifts()
+        slots_after_cancellation = sign_up_page.get_remaining_slots()
         self.assertEqual(slots_remaining_before_assignment,
                 slots_after_cancellation)
 
+        # database check to ensure registration is cancelled
+        self.assertEqual(len(VolunteerShift.objects.all()), 0)
+
     def test_assign_same_shift_to_volunteer_twice(self):
+        sign_up_page = self.sign_up_page
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
         # register volunteers
         v1 = create_volunteer_with_details(self.volunteer_1)
 
         shift = ['09:00', '15:00', '1']
         s1 = self.create_shift(shift)
 
-        self.login_admin()
         # open manage volunteer shift
-        self.navigate_to_manage_shift_page()
+        manage_shift_page.navigate_to_manage_shift_page()
 
         # volunteer-one does not have any registered shifts
-        self.select_volunteer(1)
-        self.assertEqual(self.driver.find_element_by_class_name(
-            'alert-info').text, 
-            'This volunteer does not have any upcoming shifts.')
+        manage_shift_page.select_volunteer(1)
+        self.assertEqual(manage_shift_page.get_info_box(),
+            manage_shift_page.no_volunteer_shift_message)
 
-        self.assign_shift()
+        manage_shift_page.assign_shift()
 
         # events shown in table
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-info')
-        self.navigate_to_shift_assignment_page()
+            sign_up_page.get_info_box()
+        manage_shift_page.navigate_to_shift_assignment_page()
 
         # confirm on shift assignment to volunteer-one
-        self.driver.find_element_by_xpath('//form[1]').submit()
+        manage_shift_page.submit_form()
         with self.assertRaises(NoSuchElementException):
-            self.driver.find_element_by_class_name('alert-danger')
+            sign_up_page.get_danger_box()
 
         # assign same shift to voluteer-one again
         # Check volunteer-one has one registered shift now
-        self.assertEqual(self.driver.find_element_by_xpath(
-            self.job_name_path).text, 'job name')
-        self.assign_shift()
+        self.assertEqual(sign_up_page.get_shift_job(), 'job name')
+        manage_shift_page.assign_shift()
 
         # events page
-        self.assertEqual(self.driver.find_element_by_class_name('alert-info').text, 'There are no events.')
+        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)

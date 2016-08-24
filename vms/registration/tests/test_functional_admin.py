@@ -3,9 +3,14 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+from pom.pages.adminRegistrationPage import AdminRegistrationPage
+from pom.pageUrls import PageUrls
 import re
 
 from organization.models import Organization
+from django.contrib.auth.models import User
+from administrator.models import Administrator
+
 from shift.utils import create_organization, create_country
 
 class SignUpAdmin(LiveServerTestCase):
@@ -42,36 +47,10 @@ class SignUpAdmin(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.homepage = '/'
-        cls.admin_registration_page = '/registration/signup_administrator/'
-        cls.authentication_page = '/authentication/login/'
-
-        cls.username = 'id_username'
-        cls.password = 'id_password'
-        cls.first_name = 'id_first_name'
-        cls.last_name = 'id_last_name'
-        cls.email = 'id_email'
-        cls.address = 'id_address'
-        cls.city = 'id_city'
-        cls.state = 'id_state'
-        cls.country = 'id_country'
-        cls.phone = 'id_phone_number'
-        cls.organization = 'id_unlisted_organization'
-
-        cls.username_error = "id('div_id_username')/div/p/strong"
-        cls.first_name_error = "id('div_id_first_name')/div/p/strong"
-        cls.last_name_error = "id('div_id_last_name')/div/p/strong"
-        cls.email_error = "id('div_id_email')/div/p/strong"
-        cls.address_error = "id('div_id_address')/div/p/strong"
-        cls.city_error = "id('div_id_city')/div/p/strong"
-        cls.state_error = "id('div_id_state')/div/p/strong"
-        cls.country_error = "id('div_id_country')/div/p/strong"
-        cls.phone_error = "id('div_id_phone_number')/div/p/strong"
-        cls.organization_error = "id('div_id_unlisted_organization')/div/p/strong"
-
         cls.driver = webdriver.Firefox()
         cls.driver.maximize_window()
         super(SignUpAdmin, cls).setUpClass()
+        cls.page = AdminRegistrationPage(cls.driver)
 
     def setUp(self):
         # create an org prior to registration. Bug in Code
@@ -89,281 +68,317 @@ class SignUpAdmin(LiveServerTestCase):
         cls.driver.quit()
         super(SignUpAdmin, cls).tearDownClass()
 
-    def fill_registration_form(self, info):
-        self.driver.find_element_by_id(self.username).send_keys(info[0])
-        self.driver.find_element_by_id(self.password).send_keys(info[1])
-        self.driver.find_element_by_id(self.first_name).send_keys(info[2])
-        self.driver.find_element_by_id(self.last_name).send_keys(info[3])
-        self.driver.find_element_by_id(self.email).send_keys(info[4])
-        self.driver.find_element_by_id(self.address).send_keys(info[5])
-        self.driver.find_element_by_id(self.city).send_keys(info[6])
-        self.driver.find_element_by_id(self.state).send_keys(info[7])
-        self.driver.find_element_by_id(self.country).send_keys(info[8])
-        self.driver.find_element_by_id(self.phone).send_keys(info[9])
-        self.driver.find_element_by_id(self.organization).send_keys(info[10])
-        self.driver.find_element_by_xpath('//form[1]').submit()
-
     def verify_field_values(self, info):
-        self.assertEqual(self.driver.find_element_by_id(self.username).get_attribute('value'),info[0])
-        self.assertEqual(self.driver.find_element_by_id(self.first_name).get_attribute('value'),info[1])
-        self.assertEqual(self.driver.find_element_by_id(self.last_name).get_attribute('value'),info[2])
-        self.assertEqual(self.driver.find_element_by_id(self.email).get_attribute('value'),info[3])
-        self.assertEqual(self.driver.find_element_by_id(self.address).get_attribute('value'),info[4])
-        self.assertEqual(self.driver.find_element_by_id(self.city).get_attribute('value'),info[5])
-        self.assertEqual(self.driver.find_element_by_id(self.state).get_attribute('value'),info[6])
-        self.assertEqual(self.driver.find_element_by_id(self.country).get_attribute('value'),info[7])
-        self.assertEqual(self.driver.find_element_by_id(self.phone).get_attribute('value'),info[8])
-        self.assertEqual(self.driver.find_element_by_id(self.organization).get_attribute('value'),info[9])
-
-    def register_valid_details(self):
-        self.driver.get(self.live_server_url + self.admin_registration_page)
-        entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page = self.page
+        values = page.get_field_values()
+        self.assertEqual(values['username'],info[0])
+        self.assertEqual(values['first_name'],info[1])
+        self.assertEqual(values['last_name'],info[2])
+        self.assertEqual(values['email'],info[3])
+        self.assertEqual(values['address'],info[4])
+        self.assertEqual(values['city'],info[5])
+        self.assertEqual(values['state'],info[6])
+        self.assertEqual(values['country'],info[7])
+        self.assertEqual(values['phone'],info[8])
+        self.assertEqual(values['organization'],info[9])
 
     def test_null_values(self):
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.get_admin_registration_page()
 
         entry = ['','','','','','','','','','','']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
+        blocks = page.get_help_blocks()
+        self.assertNotEqual(blocks, None)
         # verify that 10 of the fields are compulsory
-        self.assertEqual(len(self.driver.find_elements_by_class_name('help-block')),
-                10)
+        self.assertEqual(len(blocks),10)
+
+        # database check to verify that user, administrator are not created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
 
     def test_successful_registration(self):
-        self.register_valid_details()
-        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
-                None)
-        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
-                'You have successfully registered!')
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertEqual(page.get_help_blocks(), None)
+        self.assertEqual(page.get_message_box_text(),
+                page.success_message)
+
+        # database check to verify that user, administrator are created with correct credentials
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
+        # check that empty list not returned for added filters
+        self.assertNotEqual(len(User.objects.filter(
+            username='admin-username')), 0)
+        self.assertNotEqual(len(Administrator.objects.filter(
+            email='admin-email@systers.org')), 0)
 
     def test_name_fields(self):
         # register valid admin user
-        self.register_valid_details()
-
-        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
-                None)
-        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
-                'You have successfully registered!')
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(page.get_message_box_text(),page.success_message)
 
         # register a user again with username same as already registered user
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.homepage)
+                PageUrls.homepage)
 
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.username_error).text,
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_username_error_text(),
                 'User with this Username already exists.')
 
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # test numeric characters in first-name, last-name
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-1','admin-password!@#$%^&*()_','admin-first-name-1','admin-last-name-1','admin-email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.first_name_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.last_name_error).text,
-                'Enter a valid value.')
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_first_name_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_last_name_error_text(),'Enter a valid value.')
+
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
         # test special characters in first-name, last-name
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username','admin-password!@#$%^&*()_','name-!@#$%^&*()_','name-!@#$%^&*()_','admin-email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.first_name_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.last_name_error).text,
-                'Enter a valid value.')
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_first_name_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_last_name_error_text(),'Enter a valid value.')
+
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
         # test length of first-name, last-name not exceed 30
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name-!@#$%^&*()_','admin-last-name-!@#$%^&*()_','admin-email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        error_message = self.driver.find_element_by_xpath(self.first_name_error).text
+        self.assertNotEqual(page.get_help_blocks(),None)
+        error_message = page.get_first_name_error_text()
         self.assertTrue(bool(re.search(r'Ensure this value has at most 20 characters', str(error_message))))
 
-        error_message = self.driver.find_element_by_xpath(self.last_name_error).text,
+        error_message = page.get_last_name_error_text()
         self.assertTrue(bool(re.search(r'Ensure this value has at most 20 characters', str(error_message))))
+
+        # database check to verify that new user, administrator are not created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_location_fields(self):
         # test numeric characters in address, city, state, country
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.get_admin_registration_page()
 
         entry = ['admin-username-1','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','email1@systers.org','123 New-City address','1 admin-city','007 admin-state','54 admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
+        self.assertNotEqual(page.get_help_blocks(),None)
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.admin_registration_page)
+                page.admin_registration_page)
 
         #verify that messages are displayed for city, state and country but not address
-        self.assertEqual(len(self.driver.find_elements_by_class_name('help-block')),
-                3)
-        self.assertEqual(self.driver.find_element_by_xpath(self.city_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.state_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.country_error).text,
-                'Enter a valid value.')
+        self.assertEqual(len(page.get_help_blocks()),3)
+        self.assertEqual(page.get_city_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_state_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_country_error_text(),'Enter a valid value.')
+
+        # database check to verify that user, administrator is not created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
 
         # test special characters in address, city, state, country
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-2','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','email2@systers.org','admin-address!@#$()','!$@%^#&admin-city','!$@%^#&admin-state','&%^*admin-country!@$#','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
+        self.assertNotEqual(page.get_help_blocks(),None)
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.admin_registration_page)
+                page.admin_registration_page)
 
         # verify that messages are displayed for all fields
-        self.assertEqual(self.driver.find_element_by_xpath(self.address_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.city_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.state_error).text,
-                'Enter a valid value.')
-        self.assertEqual(self.driver.find_element_by_xpath(self.country_error).text,
-                'Enter a valid value.')
+        self.assertEqual(page.get_address_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_city_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_state_error_text(),'Enter a valid value.')
+        self.assertEqual(page.get_country_error_text(),'Enter a valid value.')
+
+        # database check to verify that user, administrator is not created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
 
     def test_email_field(self):
 
+        page = self.page
+        page.live_server_url = self.live_server_url
         # register valid admin user
-        self.register_valid_details()
+        page.register_valid_details()
 
         # verify successful registration
-        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
-                None)
-        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
-                'You have successfully registered!')
+        self.assertNotEqual(page.get_message_box(),None)
+        self.assertEqual(page.get_message_box_text(),page.success_message)
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.homepage)
+                PageUrls.homepage)
 
         # Try to register admin again with same email address
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-1','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify that user wasn't registered
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.admin_registration_page)
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.email_error).text,
+                page.admin_registration_page)
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_email_error_text(),
                 'Administrator with this Email already exists.')
+
+        # database check to verify that no user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_phone_field(self):
 
+        page = self.page
+        page.live_server_url = self.live_server_url
         # register valid admin user with valid phone number for country
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email@systers.org','admin-address','admin-city','admin-state','India','022 2403 6606','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify successful registration
-        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
-                None)
-        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
-                'You have successfully registered!')
+        self.assertNotEqual(page.get_message_box(),None)
+        self.assertEqual(page.get_message_box_text(),page.success_message)
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.homepage)
+                PageUrls.homepage)
+
+        # database check to verify that user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
         # Try to register admin with incorrect phone number for country
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-1','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email1@systers.org','admin-address','admin-city','admin-state','India','237937913','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify that user wasn't registered
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.admin_registration_page)
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.phone_error).text,
+                page.admin_registration_page)
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_phone_error_text(),
                 "This phone number isn't valid for the selected country")
 
+        # database check to verify that no new user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
+
         # Use invalid characters in phone number
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-1','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email1@systers.org','admin-address','admin-city','admin-state','India','23&79^37913','admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify that user wasn't registered
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.admin_registration_page)
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.phone_error).text,
-                "Please enter a valid phone number")
+                page.admin_registration_page)
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_phone_error_text(),"Please enter a valid phone number")
+
+        # database check to verify that no new user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_organization_field(self):
 
+        page = self.page
+        page.live_server_url = self.live_server_url
         # test numeric characters in organization
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-1','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','13 admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify successful registration
-        self.assertNotEqual(self.driver.find_elements_by_class_name('messages'),
-                None)
-        self.assertEqual(self.driver.find_element_by_class_name('messages').text,
-                'You have successfully registered!')
+        self.assertNotEqual(page.get_message_box(),None)
+        self.assertEqual(page.get_message_box_text(),page.success_message)
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.homepage)
+                PageUrls.homepage)
+
+        # database check to verify that user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
         # Use invalid characters in organization
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username-2','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','email2@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','!$&admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify that user wasn't registered
         self.assertEqual(self.driver.current_url, self.live_server_url +
-                self.admin_registration_page)
-        self.assertNotEqual(self.driver.find_elements_by_class_name('help-block'),
-                None)
-        self.assertEqual(self.driver.find_element_by_xpath(self.organization_error).text,
-                "Enter a valid value.")
+                page.admin_registration_page)
+        self.assertNotEqual(page.get_help_blocks(),None)
+        self.assertEqual(page.get_organization_error_text(),"Enter a valid value.")
+
+        # database check to verify that no new user, administrator is created
+        self.assertEqual(len(User.objects.all()),1)
+        self.assertEqual(len(Administrator.objects.all()),1)
 
     def test_field_value_retention(self):
 
+        page = self.page
+        page.live_server_url = self.live_server_url
         # send invalid value in fields - first name, state, phone, organization
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name-3','admin-last-name','email1@systers.org','admin-address','admin-city','admin-state','admin-country','99999.!9999','@#admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify that user wasn't registered and that field values are not erased
+        self.assertEqual(self.driver.current_url, self.live_server_url + page.admin_registration_page)
         details = ['admin-username','admin-first-name-3','admin-last-name','email1@systers.org','admin-address','admin-city','admin-state','admin-country','99999.!9999','@#admin-org']
         self.verify_field_values(details)
 
+        # database check to verify that no user, administrator is created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
+
         # send invalid value in fields - last name, address, city, country
-        self.driver.get(self.live_server_url + self.admin_registration_page)
+        page.get_admin_registration_page()
 
         entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name','admin-last-name-3','email1@systers.org','admin-address$@!','admin-city#$','admin-state','admin-country 15','99999.!9999','@#admin-org']
-        self.fill_registration_form(entry)
+        page.fill_registration_form(entry)
 
         # verify that user wasn't registered and that field values are not erased
+        self.assertEqual(self.driver.current_url, self.live_server_url + page.admin_registration_page)
         details = ['admin-username','admin-first-name','admin-last-name-3','email1@systers.org','admin-address$@!','admin-city#$','admin-state','admin-country 15','99999.!9999','@#admin-org']
         self.verify_field_values(details)
+
+        # database check to verify that no user, administrator is created
+        self.assertEqual(len(User.objects.all()),0)
+        self.assertEqual(len(Administrator.objects.all()),0)
