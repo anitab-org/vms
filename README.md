@@ -78,19 +78,6 @@ License
 The project is licensed under the [GNU GENERAL PUBLIC LICENSE](https://github.com/systers/vms/blob/master/LICENSE).
 
 
-Project Contributors
---------------------
-A heartfelt thank you to our wonderful contributors of software, guidance, and
-encouragement. We value all of your efforts, and we present this list in no
-particular order. Thank you!
 
--  Irish Medina
--  Valeria Bogdanova
--  Tapasweni Pathak
--  Rose Robinson
--  Carol Willing
--  Jayesh Lahori
--  Vanda Niemi
--  Stephen J. Turnbull
--  Shaifali Agrawal
--  Ana Balica
+A heartfelt thank you to all wonderful contributors of software, guidance, and
+encouragement.
