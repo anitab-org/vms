@@ -11,10 +11,6 @@ reporting.
 
 **This project is under active development.** 
 
-Project developer for GSoC 2016
-* [Amrutha S](http://systers.org/systers-dev/doku.php/amrutha_sangeeth) 
-* [Vatsala Swaroop](http://systers.org/systers-dev/doku.php/vatsala_swaroop)
-
 Features
 --------
 
@@ -57,9 +53,9 @@ Google Summer of Code (GSoC) Development
 We are pleased to participate in the Google Summer of Code and are grateful
 for the contributions from our GSoC developers.
 
-* Timeline for GSOC 2016
-       * [Development](https://docs.google.com/document/d/1YM_h1Xpyga_7ZkGzea6HacvShqIQF5hZIyDWoNNbw68/edit?usp=sharing)
-       * [Testing](https://docs.google.com/document/d/1URRx6tAzpvlqYQOnXExJ9HnQ1syTP5I0JEXGD5HsCwo/edit)
+* Completed features during GSoC 2016
+       * [Development](https://github.com/systers/vms/wiki/GSoC'16---Migrating-VMS-from-Function-based-views-to-Class-based-views)
+       * [Testing](https://github.com/systers/vms/wiki/GSOC-16--Work-:-AUT-VMS-%5Bvatsala%5D)
 * [Completed features during GSoC 2015](https://docs.google.com/document/d/1bzKjyxWIXeqW45UjhsbM4wtlyNagiyueZTqxhtmD_A0/edit)
 * [Completed features during GSoC 2014](https://docs.google.com/document/d/1wIHGmqTbufyGW9nKYt3vV-zZhdJEPfdxaOjegQ9qKEk/edit)
 
