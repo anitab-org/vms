@@ -19,12 +19,12 @@ from administrator.models import *
 class AdministratorSignupView(TemplateView):
     """
     Administrator and Volunteer signup is implemented as a TemplateView that
-    displays the signup form
-    This method is responsible for displaying the register user view
+    displays the signup form.
+    This method is responsible for displaying the register user view.
     Register Admin or volunteer is judged on the basis of users
     access rights.
     Only if user is registered and logged in and registered as an
-    admin user, he/she is allowed to register others as an admin user
+    admin user, he/she is allowed to register others as an admin user.
     """
     registered = False
     organization_list = get_organizations_ordered_by_name()
