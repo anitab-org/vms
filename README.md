@@ -36,6 +36,10 @@ Contribute
 
 - Issue Tracker: [vms/issues](http://github.com/systers/vms/issues)
 - Source Code: [vms](http://github.com/systers/vms/)
+- Linking pull request to an issue
+   
+  When you create a pull request, use closes #id_of_issue or fixes #id_of_issue. It will link the issue with your pull request. It also 
+  automatically closes the issue if your pull request gets merged. 
 
 
 Documentation
