@@ -91,7 +91,7 @@ class SignUpVolunteer(LiveServerTestCase):
         blocks = page.get_help_blocks()
         self.assertNotEqual(blocks, None)
         # verify that all of the fields are compulsory
-        self.assertEqual(len(blocks),11)
+        self.assertEqual(len(blocks),10)
 
         # database check to verify that user, volunteer are not created
         self.assertEqual(len(User.objects.all()),0)
