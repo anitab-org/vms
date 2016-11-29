@@ -378,7 +378,7 @@
             <label class="control-label">{% trans "Upload a Resume" %}</label>
             {{ volunteer_form.resume_file }}
         </div>
-        {% if volunteer_form.resume.errors %}
+        {% if not volunteer_form.resume.errors %}
             <div id="div_id_resume" class="form-group has-error">
                 <label class="control-label" for="id_resume">
                     {% trans "Resume" %}
