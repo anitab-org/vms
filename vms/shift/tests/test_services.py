@@ -556,7 +556,10 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         # register will return an exception on error
         # (such as when invalid parameters are passed)
         # if an exception does get raised, this test will automatically fail
+        start_time = datetime.time(hour=9, minute=0)
+        end_time = datetime.time(hour=10, minute=0)
         register(self.v1.id, self.s1.id)
+        add_shift_hours(self.v1.id, self.s1.id, start_time, end_time)
         volunteer_shift_1 = VolunteerShift.objects.get(
                                 volunteer_id=self.v1.id,
                                 shift_id=self.s1.id
@@ -564,6 +567,7 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         self.assertIsNotNone(volunteer_shift_1)
 
         register(self.v1.id, self.s2.id)
+        add_shift_hours(self.v1.id, self.s2.id, start_time, end_time)
         volunteer_shift_2 = VolunteerShift.objects.get(
                                     volunteer_id=self.v1.id,
                                     shift_id=self.s2.id
