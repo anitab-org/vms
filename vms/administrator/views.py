@@ -13,6 +13,7 @@ from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic import View
 from administrator.models import Administrator
+from administrator.utils import admin_required
 from django.utils.decorators import method_decorator
 
 
@@ -20,14 +21,9 @@ class AdministratorLoginRequiredMixin(object):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        user = request.user
-        admin = None
-        try:
-            admin = user.administrator
-        except ObjectDoesNotExist:
-            pass
+        admin = hasattr(request.user, 'administrator')
         if not admin:
-            return render(request, 'vms/no_admin_rights.html')
+            return render(request, 'vms/no_admin_rights.html', status=403)
         else:
             return super(AdministratorLoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
@@ -81,14 +77,6 @@ class GenerateReportView(LoginRequiredMixin, View):
 
 
 @login_required
+@admin_required
 def settings(request):
-    user = request.user
-    admin = None
-    try:
-        admin = user.administrator
-    except ObjectDoesNotExist:
-        pass
-    if not admin:
-        return HttpResponse(status=403)
-
     return HttpResponseRedirect(reverse('event:list'))

@@ -16,7 +16,6 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render_to_response
 from django.http import Http404
 
-
 class AdministratorLoginRequiredMixin(object):
 
     @method_decorator(login_required)
@@ -112,7 +111,7 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin, Updat
                 return render(request, 'event/edit.html', {'form': form,})
 
 
-class EventListView(LoginRequiredMixin, ListView):
+class EventListView(LoginRequiredMixin, AdministratorLoginRequiredMixin, ListView):
     model_form = Event
     template_name = "event/list.html"
 
