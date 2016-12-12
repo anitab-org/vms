@@ -345,9 +345,11 @@ class ShiftUpdateView(AdministratorLoginRequiredMixin, UpdateView):
         shift_date = form.cleaned_data['date']
         shift_start_time = form.cleaned_data['start_time']
         shift_end_time = form.cleaned_data['end_time']
+        max_vols = form.cleaned_data['max_volunteers']
 
         # save when all conditions satisfied
-        if (shift_date >= start_date_job and shift_date <= end_date_job and shift_end_time > shift_start_time):
+        if (shift_date >= start_date_job and shift_date <= end_date_job and shift_end_time > shift_start_time \
+            and max_vols >= len(shift.volunteers.all())):
             shift_to_edit = form.save(commit=False)
             shift_to_edit.job = job
             shift_to_edit.save()
@@ -357,6 +359,9 @@ class ShiftUpdateView(AdministratorLoginRequiredMixin, UpdateView):
                 messages.add_message(self.request, messages.INFO, 'Shift date should lie within Job dates')
             if shift_end_time <= shift_start_time:
                 messages.add_message(self.request, messages.INFO, 'Shift end time should be greater than start time')
+            if max_vols < len(shift.volunteers.all()):
+                messages.add_message(self.request, messages.INFO, 'Max volunteers should be greater than or equal to'
+                    ' the already assigned volunteers.')
             return render(
                 self.request,
                 'shift/edit.html',
