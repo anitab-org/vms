@@ -28,7 +28,7 @@ Installation
 The VMS project uses the [Django](https://www.djangoproject.com/) web
 framework and [Python](https://www.python.org/).
 
-To get started, read the [Installation Guide](http://vms.readthedocs.org/en/latest/Installation%20Guide/).
+To get started, read the [Installation Guide](https://github.com/systers/vms/blob/develop/docs/Installation%20Guide.md).
 
 
 Contribute
