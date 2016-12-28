@@ -88,6 +88,18 @@
                         </div>
                     </div>
                 {% endif %}
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Jobs" %}</label>
+                        <div class="col-md-8">
+                                {% for job_dates in job_list %}
+                                  <p class="form-control-static" id="Job_date_here">
+                                  {{job_dates.0}} - {{job_dates.1}}
+                                  </p>
+                                {% endfor %}
+                        </div>
+                    </div>
+
 				{% if form.country.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Country" %}</label>
