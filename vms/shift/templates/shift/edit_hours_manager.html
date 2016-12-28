@@ -27,6 +27,29 @@
             {% csrf_token %}
             <fieldset>
                 <legend>{% trans "Edit Shift Hours" %}</legend>
+
+                <div class="form-group">
+                         <label class="col-md-2 control-label">
+                             {% trans "Entire Shift Duration" %}
+                         </label>
+                         <div class="col-md-8">
+                                   <p class="form-control-static" id="Shift_detail_here">
+                                     {{shift.start_time}} - {{shift.end_time}}
+                                   </p>
+                         </div>
+                </div>
+                <div class="form-group">
+                         <label class="col-md-2 control-label">
+                             {% trans "Logged Shift Duration" %}
+                         </label>
+                         <div class="col-md-8">
+                                   <p class="form-control-static" id="Logged_shift_detail_here">
+                                     {{volunteer_shift.start_time}} - {{volunteer_shift.end_time}}
+                                   </p>
+                         </div>
+                </div>
+
+
                 {% if form.start_time.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Start Time" %}</label>
