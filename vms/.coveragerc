@@ -1,14 +1,27 @@
-# Configuration file for coverage.py
+# Configuration file for coverage.
+
 [run]
 branch = True
 source = vms
-omit = 
+omit =
   */tests/*
   vms/*
   manage.py
+  */docs/*
+  */aut_docs/*
+  */templates/*
+
 
 [report]
 ignore_errors = True
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self\.debug
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+
 
 [html]
 directory = coverage_html_report
