@@ -379,15 +379,6 @@
             {{ volunteer_form.resume_file }}
         </div>
         {% if volunteer_form.resume.errors %}
-            <div id="div_id_resume" class="form-group has-error">
-                <label class="control-label" for="id_resume">
-                    {% trans "Resume" %}
-                </label>
-                <div class="controls">
-                    <textarea id="id_resume" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Alternatively, include your resume here{% endblocktrans %}" name="vol-resume" rows="5">{{ volunteer_form.resume.value }}</textarea>
-                </div>
-            </div>
-        {% else %}
             <div id="div_id_resume" class="form-group">
                 <label class="control-label" for="id_resume">
                     {% trans "Resume" %}
@@ -403,7 +394,16 @@
                     </p>
                 </div>
             </div>
-        {% endif %}
+        {% else %}
+            <div id="div_id_resume" class="form-group has-error">
+                <label class="control-label" for="id_resume">
+                    {% trans "Resume" %}
+                </label>
+                <div class="controls">
+                    <textarea id="id_resume" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Alternatively, include your resume here{% endblocktrans %}" name="vol-resume" rows="5">{{ volunteer_form.resume.value }}</textarea>
+                </div>
+            </div>
+	{% endif %}
         <button type="submit" class="btn btn-lg btn-primary btn-block">{% trans "Create Account" %}</button>
         <p>
             {% trans "Already have an account? Then please "%}<a href="{% url 'authentication:login_process' %}">{% trans "sign in" %}</a>.
