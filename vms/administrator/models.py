@@ -7,7 +7,7 @@ from organization.models import Organization
 
 class Administrator(models.Model):
     first_name = models.CharField(
-        max_length=20,
+        max_length=30,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
@@ -15,7 +15,7 @@ class Administrator(models.Model):
         ],
     )
     last_name = models.CharField(
-        max_length=20,
+        max_length=30,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
@@ -23,7 +23,7 @@ class Administrator(models.Model):
         ],
     )
     address = models.CharField(
-        max_length=30,
+        max_length=75,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$',
@@ -31,7 +31,7 @@ class Administrator(models.Model):
         ],
     )
     city = models.CharField(
-        max_length=30,
+        max_length=75,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
@@ -39,7 +39,7 @@ class Administrator(models.Model):
         ],
     )
     state = models.CharField(
-        max_length=30,
+        max_length=50,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
@@ -47,7 +47,7 @@ class Administrator(models.Model):
         ],
     )
     country = models.CharField(
-        max_length=30,
+        max_length=75,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',

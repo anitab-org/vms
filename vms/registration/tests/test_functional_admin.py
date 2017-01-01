@@ -173,15 +173,15 @@ class SignUpAdmin(LiveServerTestCase):
         # test length of first-name, last-name not exceed 30
         page.get_admin_registration_page()
 
-        entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name-!@#$%^&*()_','admin-last-name-!@#$%^&*()_','admin-email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
+        entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name-!@#$%^&*()_lolwatneedlength','admin-last-name-!@#$%^&*()_lolwatneedlength','admin-email1@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(),None)
         error_message = page.get_first_name_error_text()
-        self.assertTrue(bool(re.search(r'Ensure this value has at most 20 characters', str(error_message))))
+        self.assertTrue(bool(re.search(r'Ensure this value has at most 30 characters', str(error_message))))
 
         error_message = page.get_last_name_error_text()
-        self.assertTrue(bool(re.search(r'Ensure this value has at most 20 characters', str(error_message))))
+        self.assertTrue(bool(re.search(r'Ensure this value has at most 30 characters', str(error_message))))
 
         # database check to verify that new user, administrator are not created
         self.assertEqual(len(User.objects.all()),1)
