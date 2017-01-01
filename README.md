@@ -9,6 +9,8 @@ our vision and projects. The **Volunteer Management System** (VMS) will
 be useful for volunteer coordinators, volunteer sign-up, tracking hours, and 
 reporting.
 
+Systers is participating in [Google Code In 2016](https://developers.google.com/open-source/gci/). The issues labelled as [gci16](https://github.com/systers/vms/issues?q=is%3Aissue+is%3Aopen+label%3Agci16) are open for GCI'16 participants only. If you want to contribute to VMS, pick any issue other than these.
+
 **This project is under active development.** 
 
 Features
