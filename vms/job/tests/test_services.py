@@ -123,7 +123,7 @@ class DeleteJobTest(unittest.TestCase):
 
     @classmethod
     def setup_test_data(cls):
-        event_1 = ["Software Conference","2012-10-3","2012-10-24"]
+        event_1 = ["Software Conference 101","2012-10-3","2012-10-24"]
         cls.e1 = create_event_with_details(event_1)
 
         job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]

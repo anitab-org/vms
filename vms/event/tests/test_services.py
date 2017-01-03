@@ -217,7 +217,7 @@ class DeleteEventTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
+        event_1 = ["Open Source Event 101","2012-10-22","2012-10-23"]
         cls.e1 = create_event_with_details(event_1)
 
         # event with associated job/shift
