@@ -6,6 +6,7 @@ from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse_lazy
+from django.utils.decorators import method_decorator
 from administrator.forms import AdministratorForm
 from organization.services import (get_organizations_ordered_by_name,
                                    get_organization_by_id)
@@ -14,6 +15,7 @@ from volunteer.validation import validate_file
 from registration.forms import UserForm
 from registration.phone_validate import validate_phone
 from administrator.models import *
+from registration.utils import volunteer_denied
 
 
 class AdministratorSignupView(TemplateView):
@@ -29,6 +31,10 @@ class AdministratorSignupView(TemplateView):
     registered = False
     organization_list = get_organizations_ordered_by_name()
     phone_error = False
+
+    @method_decorator(volunteer_denied)
+    def dispatch(self, *args, **kwargs):
+      return super(AdministratorSignupView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         user_form = UserForm(prefix="usr")

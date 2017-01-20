@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.views.generic import ListView
 from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+from administrator.utils import admin_required
 from organization.services import *
 from shift.services import *
 from event.services import get_signed_up_events_for_volunteer
@@ -162,6 +163,7 @@ class ShowReportListView(LoginRequiredMixin, ListView):
                        'job_list': job_list, 'event_list': event_list, 'selected_event': event_name,
                        'selected_job': job_name})
 @login_required
+@admin_required
 def search(request):
     if request.method == 'POST':
         form = SearchVolunteerForm(request.POST)
