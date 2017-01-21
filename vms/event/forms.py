@@ -32,5 +32,5 @@ class EventForm(ModelForm):
 
 
 class EventDateForm(forms.Form):
-    start_date = forms.DateField(required=True)
-    end_date = forms.DateField(required=True)
+    start_date = forms.DateField(required=False)
+    end_date = forms.DateField(required=False)
