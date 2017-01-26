@@ -18,7 +18,7 @@ from django.contrib import messages
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-
+from volunteer.utils import vol_id_check
 
 class AdministratorLoginRequiredMixin(object):
 
@@ -573,6 +573,10 @@ def sign_up(request, shift_id, volunteer_id):
 class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
     template_name = 'shift/hours_list.html'
 
+    @method_decorator(vol_id_check)
+    def dispatch(self, *args, **kwargs):
+        return super(ViewHoursView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(ViewHoursView, self).get_context_data(**kwargs)
         volunteer_id = self.kwargs['volunteer_id']
@@ -582,36 +586,15 @@ class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
 
 
 @login_required
+@vol_id_check
 def view_volunteer_shifts(request, volunteer_id):
-    user = request.user
-    vol = None
+    shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
+    return render(
+        request,
+        'shift/volunteer_shifts.html',
+        {'shift_list': shift_list, 'volunteer_id': volunteer_id, }
+        )
 
-    try:
-        vol = user.volunteer
-    except ObjectDoesNotExist:
-        pass
-
-    # check that a volunteer is logged in
-    if vol:
-        if volunteer_id:
-            volunteer = get_volunteer_by_id(volunteer_id)
-            if volunteer:
-                user = request.user
-                if int(user.volunteer.id) == int(volunteer_id):
-                    shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
-                    return render(
-                        request,
-                        'shift/volunteer_shifts.html',
-                        {'shift_list': shift_list, 'volunteer_id': volunteer_id, }
-                        )
-                else:
-                    return HttpResponse(status=403)
-            else:
-                raise Http404
-        else:
-            raise Http404
-    else:
-        return HttpResponse(status=403)
 
 
 class VolunteerSearchView(AdministratorLoginRequiredMixin, FormView):

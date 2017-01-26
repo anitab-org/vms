@@ -22,7 +22,8 @@ from volunteer.services import *
 from volunteer.validation import validate_file
 from django.views.generic import View
 from django.core.urlresolvers import reverse_lazy
-
+from django.utils.decorators import method_decorator
+from volunteer.utils import vol_id_check
 
 @login_required
 def download_resume(request, volunteer_id):
@@ -109,13 +110,15 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
 class ProfileView(LoginRequiredMixin, DetailView):
     template_name = 'volunteer/profile.html'
 
+    @method_decorator(vol_id_check)
+    def dispatch(self, *args, **kwargs):
+        return super(ProfileView, self).dispatch(*args, **kwargs)
+
     def get_object(self, queryset=None):
         volunteer_id = self.kwargs['volunteer_id']
         obj = Volunteer.objects.get(id=self.kwargs['volunteer_id'])
-        if obj:
-            return obj
-        else:
-            return HttpResponse(status=403)
+        return obj
+
 
 '''
   The view generate Report.
@@ -123,6 +126,10 @@ class ProfileView(LoginRequiredMixin, DetailView):
 '''
 
 class GenerateReportView(LoginRequiredMixin, View):
+
+    @method_decorator(vol_id_check)
+    def dispatch(self, *args, **kwargs):
+        return super(GenerateReportView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         view = ShowFormView.as_view()

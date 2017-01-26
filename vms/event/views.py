@@ -15,6 +15,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.shortcuts import render_to_response
 from django.http import Http404
+from volunteer.utils import vol_id_check
 
 class AdministratorLoginRequiredMixin(object):
 
@@ -121,6 +122,7 @@ class EventListView(LoginRequiredMixin, AdministratorLoginRequiredMixin, ListVie
 
 
 @login_required
+@vol_id_check
 def list_sign_up(request, volunteer_id):
     if request.method == 'POST':
         form = EventDateForm(request.POST)

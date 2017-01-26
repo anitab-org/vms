@@ -1,0 +1,22 @@
+{% extends "vms/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    <div class="spacer"></div>
+   
+        {% csrf_token %}
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">{% trans "No Access" %}</h3>
+            </div>
+            <div class="panel-body">
+                <br>
+                {% trans "You don't have the necessary rights to access this page." %}
+                <br>
+                <br>
+                <input type="button" class="btn btn-default" value="{% blocktrans %}Return to Previous Page{% endblocktrans %}" onClick="javascript:history.go(-1);">
+            </div>
+        </div>
+   
+{% endblock %}
