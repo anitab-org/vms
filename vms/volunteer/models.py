@@ -44,7 +44,7 @@ class Volunteer(models.Model):
         ],
     )
     state = models.CharField(
-        max_length=75,
+        max_length=50,
         validators=[
             RegexValidator(
                 r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
