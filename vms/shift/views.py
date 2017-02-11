@@ -19,6 +19,7 @@ from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from volunteer.utils import vol_id_check
+from vms.utils import check_correct_volunteer, check_correct_volunteer_shift
 
 class AdministratorLoginRequiredMixin(object):
 
@@ -39,6 +40,10 @@ class AdministratorLoginRequiredMixin(object):
 class AddHoursView(LoginRequiredMixin, FormView):
     template_name = 'shift/add_hours.html'
     form_class = HoursForm
+
+    @method_decorator(check_correct_volunteer_shift)
+    def dispatch(self, *args, **kwargs):
+        return super(AddHoursView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(AddHoursView, self).get_context_data(**kwargs)
@@ -161,12 +166,20 @@ def cancel(request, shift_id, volunteer_id):
 
         # check that either an admin or volunteer is logged in
         if not admin and not volunteer:
-            return HttpResponse(status=403)
+            return render(
+                request,
+                'vms/no_volunteer_rights.html',
+                status=403
+            )
 
         # if a volunteer is logged in, verify that they are canceling their own shift
         if volunteer:
             if (int(volunteer.id) != int(volunteer_id)):
-                return HttpResponse(status=403)
+                return render(
+                    request,
+                    'vms/no_volunteer_rights.html',
+                    status=403
+                )
 
         if request.method == 'POST':
             try:
@@ -373,6 +386,10 @@ class EditHoursView(LoginRequiredMixin, FormView):
     template_name = 'shift/edit_hours.html'
     form_class = HoursForm
 
+    @method_decorator(check_correct_volunteer_shift)
+    def dispatch(self, *args, **kwargs):
+        return super(EditHoursView, self).dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(EditHoursView, self).get_context_data(**kwargs)
         volunteer_id = self.kwargs['volunteer_id']
@@ -573,6 +590,7 @@ def sign_up(request, shift_id, volunteer_id):
 class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
     template_name = 'shift/hours_list.html'
 
+    @method_decorator(check_correct_volunteer)
     @method_decorator(vol_id_check)
     def dispatch(self, *args, **kwargs):
         return super(ViewHoursView, self).dispatch(*args, **kwargs)
@@ -586,6 +604,7 @@ class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
 
 
 @login_required
+@check_correct_volunteer
 @vol_id_check
 def view_volunteer_shifts(request, volunteer_id):
     shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
