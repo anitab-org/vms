@@ -67,7 +67,7 @@ class ViewVolunteerShift(LiveServerTestCase):
     def test_access_another_nonexisting_volunteer_view(self):
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.get_page(self.live_server_url, upcoming_shift_page.view_shift_page + '65459')
-        found = re.search('You don\'t have the necessary rights to access this page', self.driver.page_source)
+        found = re.search('You don\'t have the required rights', self.driver.page_source)
         self.assertNotEqual(found, None)
 
     def test_view_without_any_assigned_shift(self):

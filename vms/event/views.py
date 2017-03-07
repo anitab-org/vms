@@ -16,6 +16,8 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import render_to_response
 from django.http import Http404
 from volunteer.utils import vol_id_check
+from vms.utils import check_correct_volunteer_shift_sign_up
+
 
 class AdministratorLoginRequiredMixin(object):
 
@@ -122,6 +124,7 @@ class EventListView(LoginRequiredMixin, AdministratorLoginRequiredMixin, ListVie
 
 
 @login_required
+@check_correct_volunteer_shift_sign_up
 @vol_id_check
 def list_sign_up(request, volunteer_id):
     if request.method == 'POST':
