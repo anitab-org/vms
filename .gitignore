@@ -13,3 +13,6 @@ __pycache__
 *.swn
 *.swo
 *.swo
+
+# IDE
+.idea/
