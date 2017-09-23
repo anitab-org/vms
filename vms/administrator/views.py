@@ -35,6 +35,12 @@ class ShowFormView(AdministratorLoginRequiredMixin, FormView):
     model = Administrator
     form_class = ReportForm
     template_name = "administrator/report.html"
+    event_list = get_events_ordered_by_name()
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'administrator/report.html',
+                  { 'event_list': self.event_list})
+
 
 
 
