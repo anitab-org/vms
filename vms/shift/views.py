@@ -80,14 +80,14 @@ class AddHoursView(LoginRequiredMixin, FormView):
                     return render(
                         self.request,
                         'shift/add_hours.html',
-                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id,}
+                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift,}
                     )
             else:
                 messages.add_message(self.request, messages.INFO, 'End time should be greater than start time')
                 return render(
                     self.request,
                     'shift/add_hours.html',
-                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id,}
+                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift,}
                 )
         except:
             raise Http404
@@ -132,7 +132,7 @@ class AddHoursManagerView(AdministratorLoginRequiredMixin, FormView):
                     return render(
                         self.request,
                         'shift/add_hours_manager.html',
-                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id,}
+                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift,}
                     )
 
             else:
@@ -140,7 +140,7 @@ class AddHoursManagerView(AdministratorLoginRequiredMixin, FormView):
                 return render(
                     self.request,
                     'shift/add_hours_manager.html',
-                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id,}
+                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift,}
                 )
         except:
             raise Http404
@@ -402,6 +402,7 @@ class EditHoursView(LoginRequiredMixin, FormView):
         volunteer_id = self.kwargs['volunteer_id']
         shift_id = self.kwargs['shift_id']
         shift = get_shift_by_id(shift_id)
+        volunteer_shift = get_volunteer_shift_by_id(volunteer_id, shift_id)
         start_time = form.cleaned_data['start_time']
         end_time = form.cleaned_data['end_time']
         shift_start_time = shift.start_time
@@ -421,7 +422,7 @@ class EditHoursView(LoginRequiredMixin, FormView):
                     return render(
                         self.request,
                         'shift/edit_hours.html',
-                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift, 'volunteer_shift':volunteer_shift,}
                     )
 
             else:
@@ -429,7 +430,7 @@ class EditHoursView(LoginRequiredMixin, FormView):
                 return render(
                     self.request,
                     'shift/edit_hours.html',
-                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift, 'volunteer_shift':volunteer_shift,}
                 )
         except:
             raise Http404
@@ -451,6 +452,7 @@ class EditHoursManagerView(AdministratorLoginRequiredMixin, FormView):
         volunteer_id = self.kwargs['volunteer_id']
         shift_id = self.kwargs['shift_id']
         shift = get_shift_by_id(shift_id)
+        volunteer_shift = get_volunteer_shift_by_id(volunteer_id, shift_id)
         start_time = form.cleaned_data['start_time']
         end_time = form.cleaned_data['end_time']
         shift_start_time = shift.start_time
@@ -465,7 +467,7 @@ class EditHoursManagerView(AdministratorLoginRequiredMixin, FormView):
                     return render(
                         self.request,
                         'shift/edit_hours_manager.html',
-                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                        {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift, 'volunteer_shift':volunteer_shift,}
                     )
 
             else:
@@ -473,7 +475,7 @@ class EditHoursManagerView(AdministratorLoginRequiredMixin, FormView):
                 return render(
                     self.request,
                     'shift/edit_hours_manager.html',
-                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id}
+                    {'form': form, 'shift_id': shift_id, 'volunteer_id': volunteer_id, 'shift':shift, 'volunteer_shift':volunteer_shift,}
                 )
 
         except:
