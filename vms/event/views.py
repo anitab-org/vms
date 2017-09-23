@@ -11,6 +11,7 @@ from django.views.generic.edit import DeleteView
 from django.views.generic import ListView
 from event.services import *
 from event.models import *
+from job.services import get_jobs_by_event_id
 from django.core.urlresolvers import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.shortcuts import render_to_response
@@ -79,6 +80,12 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin, Updat
         event_id = self.kwargs['event_id']
         obj = Event.objects.get(pk=event_id)
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super(EventUpdateView, self).get_context_data(**kwargs)
+        job_obj = get_jobs_by_event_id(self.kwargs['event_id'])
+        context['job_list'] = job_obj.values_list('start_date', 'end_date').distinct()
+        return context
 
     def post(self, request, *args, **kwargs):
         event_id = self.kwargs['event_id']
