@@ -1,0 +1,14 @@
+db:
+  image: postgres:9.6.3
+web:
+  build: .
+  command: python vms/manage.py runserver 0.0.0.0:8000
+  volumes:
+    - .:/usr/src/vms
+  ports:
+    - "8000:8000"
+  links:
+    - db
+  environment:
+    - DJANGO_SETTINGS_MODULE=vms.settings
+
