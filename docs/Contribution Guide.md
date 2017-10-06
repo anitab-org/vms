@@ -52,7 +52,7 @@ In order to suggest a feature, you should create a [new issue](https://github.co
 
 ##Creating pull requests
 
-If you there is a bug/issue/feature in the [issue list](https://github.com/systers/vms/issues) that you want to tackle, just clone the VMS repository and make the necessary changes. If you have a working solution, push your changes to your forked VMS repository, and then make a [pull request](https://github.com/systers/vms/compare). Please try to push ONLY the relevant changes, which also means you will only need to add one new commit. You should also reference the issue you are addressing in the body of the pull request by adding something like "closes #X" where X is the number of the issue. This will auto close the issue if your code gets merged.
+If you find there is a bug/issue/feature in the [issue list](https://github.com/systers/vms/issues) that you want to tackle, just clone the VMS repository and make the necessary changes. If you have a working solution, push your changes to your forked VMS repository, and then make a [pull request](https://github.com/systers/vms/compare). Please try to push ONLY the relevant changes, which also means you will only need to add one new commit. You should also reference the issue you are addressing in the body of the pull request by adding something like "closes #X" where X is the number of the issue. This will auto close the issue if your code gets merged.
 
 For more information on push and pull requests [click here](http://blog.scottlowe.org/2015/01/27/using-fork-branch-git-workflow/)
 
