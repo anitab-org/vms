@@ -1,5 +1,9 @@
+# standard library
 from functools import wraps
+
+# Django
 from django.shortcuts import render
+
 
 def admin_required(func):
     @wraps(func)
