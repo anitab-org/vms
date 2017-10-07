@@ -1,4 +1,7 @@
+#Django
 from django.conf.urls import patterns, url
+
+# local Django
 from administrator import views
 from administrator.views import *
 
