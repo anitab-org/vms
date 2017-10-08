@@ -1,7 +1,11 @@
+# Django
 from django import forms
 from django.db import models
 from django.forms import ModelForm
+
+#local Django
 from administrator.models import Administrator
+
 
 class AdministratorForm(ModelForm):
     class Meta:

@@ -1,11 +1,15 @@
-from django.contrib.staticfiles.testing import LiveServerTestCase
+# third party
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
+# Django
+from django.contrib.staticfiles.testing import LiveServerTestCase
 from django.db import IntegrityError
 
+# local Django
 from pom.locators.administratorReportPageLocators import *
 from pom.pages.administratorReportPage import AdministratorReportPage
 from pom.pages.authenticationPage import AuthenticationPage
-
 from shift.utils import (
     create_admin,
     create_volunteer,
@@ -16,9 +20,6 @@ from shift.utils import (
     log_hours_with_details,
     register_volunteer_for_shift_utility
     )
-
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 
 
 class Report(LiveServerTestCase):

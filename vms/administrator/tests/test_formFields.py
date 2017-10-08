@@ -1,13 +1,18 @@
+# third party
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import Select
+
+# Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-from pom.pages.eventsPage import EventsPage
-from pom.pages.authenticationPage import AuthenticationPage
-from pom.locators.eventsPageLocators import *
-
+# local Django
 from event.models import Event
 from job.models import Job
+from pom.locators.eventsPageLocators import *
+from pom.pages.authenticationPage import AuthenticationPage
+from pom.pages.eventsPage import EventsPage
 from shift.models import Shift
-
 from shift.utils import (
     create_admin,
     create_event_with_details,
@@ -15,9 +20,6 @@ from shift.utils import (
     create_shift_with_details
     )
 
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support.ui import Select
 
 class FormFields(LiveServerTestCase):
     '''
