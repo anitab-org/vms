@@ -1,5 +1,9 @@
+# Django
 from django.conf.urls import patterns, url
+
+# local Django
 from organization.views import *
+
 
 urlpatterns = patterns('',
     url(r'^create/$', OrganizationCreateView.as_view(), name='create'),
