@@ -1,6 +1,19 @@
-import unittest
+# standard library
 import datetime
+import unittest
 from datetime import date
+
+# local Django
+from job.services import (
+                            delete_job,
+                            check_edit_job,
+                            get_job_by_id,
+                            get_jobs_by_event_id,
+                            get_jobs_ordered_by_title,
+                            get_signed_up_jobs_for_volunteer,
+                            remove_empty_jobs_for_volunteer,
+                            job_not_empty
+                            )
 
 from shift.models import VolunteerShift
 from shift.services import register
@@ -12,16 +25,6 @@ from shift.utils import (
         clear_objects
         )
 
-from job.services import (
-                            delete_job,
-                            check_edit_job,
-                            get_job_by_id,
-                            get_jobs_by_event_id,
-                            get_jobs_ordered_by_title,
-                            get_signed_up_jobs_for_volunteer,
-                            remove_empty_jobs_for_volunteer,
-                            job_not_empty
-                            )
 
 def setUpModule():
     """

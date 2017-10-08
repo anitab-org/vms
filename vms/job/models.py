@@ -1,6 +1,10 @@
+# Django
 from django.core.validators import RegexValidator
 from django.db import models
+
+# local Django
 from event.models import Event
+
 
 class Job(models.Model):
     id = models.AutoField(primary_key=True)

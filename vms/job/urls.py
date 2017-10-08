@@ -1,6 +1,10 @@
+# Django
 from django.conf.urls import patterns, url
+
+# local Django
 from job import views
 from job.views import *
+
 
 urlpatterns = patterns('',
     url(r'^create/$', CreateJobView.as_view(), name='create'),
