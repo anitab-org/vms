@@ -1,17 +1,9 @@
-import unittest
+# standard library
 import datetime
+import unittest
 from datetime import date
 
-from shift.models import VolunteerShift
-
-from shift.services import register
-from shift.utils import (
-        create_event_with_details,
-        create_job_with_details,
-        create_volunteer_with_details,
-        create_shift_with_details,
-        clear_objects
-        )
+# local Django
 from event.services import (
         event_not_empty,
         delete_event,
@@ -23,6 +15,16 @@ from event.services import (
         get_signed_up_events_for_volunteer,
         remove_empty_events_for_volunteer    
         )
+from shift.models import VolunteerShift
+from shift.services import register
+from shift.utils import (
+        create_event_with_details,
+        create_job_with_details,
+        create_volunteer_with_details,
+        create_shift_with_details,
+        clear_objects
+        )
+
 
 def setUpModule():
     """

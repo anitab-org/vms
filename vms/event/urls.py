@@ -1,6 +1,10 @@
+# Django
 from django.conf.urls import patterns, url
+
+# local Django
 from event import views
 from event.views import *
+
 
 urlpatterns = patterns('',
     url(r'^create/$', EventCreateView.as_view(), name='create'),
