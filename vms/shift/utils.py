@@ -1,11 +1,17 @@
+# third party
+from cities_light.models import Country
+
+# Django
+from django.contrib.auth.models import User
+
+# local Django
+from administrator.models import Administrator
 from event.models import Event
 from job.models import Job
-from administrator.models import Administrator
-from django.contrib.auth.models import User
 from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
 from organization.models import Organization
-from cities_light.models import Country
+
 
 # Contains common functions which need to be frequently called by tests
 

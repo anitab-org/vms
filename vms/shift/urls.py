@@ -1,6 +1,10 @@
+# Django
 from django.conf.urls import patterns, url
+
+# local Django
 from shift import views
 from shift.views import *
+
 
 urlpatterns = patterns('',
     url(r'^add_hours/(?P<shift_id>\d+)/(?P<volunteer_id>\d+)$', AddHoursView.as_view(), name='add_hours'),

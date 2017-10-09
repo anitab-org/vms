@@ -1,11 +1,13 @@
+# standard library
 import datetime
-from datetime import date, timedelta
-from django.core.exceptions import ObjectDoesNotExist
 import unittest
+from datetime import date, timedelta
 
+# Django
+from django.core.exceptions import ObjectDoesNotExist
+
+# local Django
 from shift.models import VolunteerShift
-from shift.utils import *
-
 from shift.services import (
             add_shift_hours,
             calculate_duration,
@@ -30,6 +32,8 @@ from shift.services import (
             get_volunteer_report,
             get_administrator_report
             )
+from shift.utils import *
+
 
 def setUpModule():
     """

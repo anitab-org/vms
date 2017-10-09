@@ -1,3 +1,4 @@
+# Django
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
@@ -5,8 +6,9 @@ from django.core.validators import (
 )
 from django.db import models
 
-from job.models import Job
+# local Django
 from event.models import Event
+from job.models import Job
 from volunteer.models import Volunteer
 
 

@@ -1,9 +1,12 @@
+# standard library
 import datetime
 from datetime import date
 
+# Django
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 
+# local Django
 from organization.services import (
                             get_organization_by_name,
                             get_organizations_ordered_by_name
