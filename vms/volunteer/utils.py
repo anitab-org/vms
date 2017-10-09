@@ -1,7 +1,13 @@
+# standard library
 from functools import wraps
-from django.shortcuts import render
+
+# Django
 from django.http import Http404
+from django.shortcuts import render
+
+# local Django
 from volunteer.services import get_volunteer_by_id
+
 
 def vol_id_check(func):
     @wraps(func)
