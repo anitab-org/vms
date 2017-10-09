@@ -1,4 +1,7 @@
+# standard library
 from functools import wraps
+
+# Django
 from django.shortcuts import render
 
 def volunteer_denied(func):

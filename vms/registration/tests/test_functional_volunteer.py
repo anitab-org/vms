@@ -1,16 +1,20 @@
-from django.contrib.staticfiles.testing import LiveServerTestCase
+# standard party
+import re
 
+# third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-from pom.pages.volunteerRegistrationPage import VolunteerRegistrationPage
-from pom.pageUrls import PageUrls
-import re
-
-from organization.models import Organization
+# Django
 from django.contrib.auth.models import User
-from volunteer.models import Volunteer
+from django.contrib.staticfiles.testing import LiveServerTestCase
+
+# local Django
+from pom.pageUrls import PageUrls
+from pom.pages.volunteerRegistrationPage import VolunteerRegistrationPage
+from organization.models import Organization
 from shift.utils import create_organization, create_country
+from volunteer.models import Volunteer
 
 class SignUpVolunteer(LiveServerTestCase):
     '''
