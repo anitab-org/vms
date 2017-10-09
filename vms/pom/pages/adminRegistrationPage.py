@@ -1,6 +1,8 @@
+# local Django
 from basePage import *
 from pom.locators.adminRegistrationPageLocators import *
 from pom.pageUrls import PageUrls
+
 
 class AdminRegistrationPage(BasePage):
     """Admin Registration page action methods here"""

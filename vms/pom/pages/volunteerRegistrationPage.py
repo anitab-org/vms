@@ -1,6 +1,8 @@
+# local Django
 from basePage import *
 from pom.locators.volunteerRegistrationPageLocators import *
 from pom.pageUrls import PageUrls
+
 
 class VolunteerRegistrationPage(BasePage):
     """Volunteer Registration page action methods here"""

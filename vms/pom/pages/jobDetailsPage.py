@@ -1,6 +1,8 @@
+# local Django
 from basePage import *
 from pom.locators.jobDetailsPageLocators import *
 from pom.pages.eventsPage import EventsPage
+
 
 class JobDetailsPage(BasePage):
 

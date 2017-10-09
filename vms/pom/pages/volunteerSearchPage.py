@@ -1,7 +1,11 @@
+# Django
 from basePage import *
+
+# local Django
 from pom.locators.volunteerSearchPageLocators import *
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pageUrls import PageUrls
+
 
 class VolunteerSearchPage(BasePage):
 

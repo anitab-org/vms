@@ -1,6 +1,8 @@
+# local Django
 from basePage import *
 from pom.locators.eventSignUpPageLocators import EventSignUpPageLocators
 from pom.pages.homePage import HomePage
+
 
 class EventSignUpPage(BasePage):
 

@@ -1,8 +1,10 @@
+# local Django
 from basePage import *
 from pom.locators.upcomingShiftsPageLocators import UpcomingShiftsPageLocators
-from pom.pages.homePage import HomePage
 from pom.pages.completedShiftsPage import CompletedShiftsPage
+from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
+
 
 class UpcomingShiftsPage(BasePage):
 

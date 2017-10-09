@@ -1,8 +1,12 @@
+# third party
+from selenium.webdriver.support.ui import Select
+
+# local Django
 from basePage import *
 from pom.locators.eventsPageLocators import *
-from selenium.webdriver.support.ui import Select
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
+
 
 class EventsPage(BasePage):
 
