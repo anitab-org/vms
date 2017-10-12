@@ -34,6 +34,8 @@ framework and [Python](https://www.python.org/).
 
 To get started, read the [Installation Guide](https://github.com/systers/vms/blob/develop/docs/Installation%20Guide.md).
 
+If you face some issues while installing and making VMS up in your local, have a look at issues labelled as [While Setting up VMS](https://github.com/systers/vms/labels/While%20Setting%20up%20VMS).
+
 
 Run VMS in a Docker Container
 -----------------------------
