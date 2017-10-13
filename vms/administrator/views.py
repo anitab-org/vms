@@ -23,7 +23,6 @@ from shift.services import *
 
 
 class AdministratorLoginRequiredMixin(object):
-
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         admin = hasattr(request.user, 'administrator')
@@ -44,9 +43,7 @@ class ShowFormView(AdministratorLoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         return render(request, 'administrator/report.html',
-                  { 'event_list': self.event_list})
-
-
+                      {'event_list': self.event_list})
 
 
 class ShowReportListView(LoginRequiredMixin, AdministratorLoginRequiredMixin, ListView):
@@ -72,15 +69,15 @@ class ShowReportListView(LoginRequiredMixin, AdministratorLoginRequiredMixin, Li
         event_name = self.request.POST['event_name']
         total_hours = calculate_total_report_hours(report_list)
         return render(request, 'administrator/report.html',
-                      { 'report_list': report_list, 'total_hours': total_hours, 'notification': True,
+                      {'report_list': report_list, 'total_hours': total_hours, 'notification': True,
                        'organization_list': self.organization_list, 'selected_organization': organization,
                        'event_list': self.event_list, 'selected_event': event_name, 'job_list': self.job_list})
 
-class GenerateReportView(LoginRequiredMixin, View):
 
+class GenerateReportView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         view = ShowFormView.as_view()
-        return view(request, *args,**kwargs)
+        return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         view = ShowReportListView.as_view()
