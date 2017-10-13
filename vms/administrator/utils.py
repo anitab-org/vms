@@ -12,4 +12,5 @@ def admin_required(func):
         if not admin:
             return render(request, 'vms/no_admin_rights.html', status=403)
         return func(request, *args, **kwargs)
+
     return wrapped_view
