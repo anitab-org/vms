@@ -1,9 +1,7 @@
-# Django
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
 
-#local Django
 from organization.models import Organization
 
 
