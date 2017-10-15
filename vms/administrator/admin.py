@@ -7,4 +7,6 @@ from django.contrib import admin
 
 class AdministratorAdmin(admin.ModelAdmin):
     pass
+
+
 admin.site.register(Administrator, AdministratorAdmin)
