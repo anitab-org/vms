@@ -1,12 +1,14 @@
+# Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-from pom.pages.eventSignUpPage import EventSignUpPage
-from pom.pages.authenticationPage import AuthenticationPage
-from pom.pages.manageShiftPage import ManageShiftPage
-
+# third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
+# local Django
+from pom.pages.authenticationPage import AuthenticationPage
+from pom.pages.eventSignUpPage import EventSignUpPage
+from pom.pages.manageShiftPage import ManageShiftPage
 from shift.models import VolunteerShift, Shift
 from shift.utils import (
     create_admin,
@@ -15,6 +17,7 @@ from shift.utils import (
     create_job_with_details,
     create_shift_with_details
     )
+
 
 class ManageVolunteerShift(LiveServerTestCase):
     '''

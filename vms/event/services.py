@@ -1,10 +1,13 @@
+# Django
 from django.core.exceptions import ObjectDoesNotExist
 
+#local Django
 from event.models import Event
 from job.models import Job
-from shift.models import Shift
 from job.services import get_jobs_by_event_id, remove_empty_jobs_for_volunteer
+from shift.models import Shift
 from shift.services import get_volunteer_shifts_with_hours, get_unlogged_shifts_by_volunteer_id
+
 
 def event_not_empty(event_id):
     """ Checks if the event exists and is not empty """

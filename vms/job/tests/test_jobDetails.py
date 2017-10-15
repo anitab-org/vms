@@ -1,16 +1,19 @@
+# third party
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+
+# Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-from pom.pages.jobDetailsPage import JobDetailsPage
+# local Django
 from pom.pages.authenticationPage import AuthenticationPage
-
+from pom.pages.jobDetailsPage import JobDetailsPage
 from shift.utils import (
     create_admin,
     create_event_with_details,
     create_job_with_details
     )
 
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 
 class JobDetails(LiveServerTestCase):
     '''

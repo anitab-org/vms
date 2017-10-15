@@ -1,30 +1,35 @@
+# standard library
 import os
 
+# third party
+from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+
+# Django
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from django.views.generic import ListView
-from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+from django.views.generic import ListView, View
+from django.views.generic.edit import FormView, UpdateView
+from django.utils.decorators import method_decorator
+
+# local Django
 from administrator.utils import admin_required
-from organization.services import *
-from shift.services import *
 from event.services import get_signed_up_events_for_volunteer
 from job.services import get_signed_up_jobs_for_volunteer
+from organization.services import *
+from shift.services import *
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
-from django.views.generic.edit import FormView, UpdateView
 from volunteer.models import Volunteer
 from volunteer.services import *
 from volunteer.validation import validate_file
-from django.views.generic import View
-from django.core.urlresolvers import reverse_lazy
-from django.utils.decorators import method_decorator
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer
+
 
 @login_required
 def download_resume(request, volunteer_id):

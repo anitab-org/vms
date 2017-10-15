@@ -1,7 +1,11 @@
+# third party
+from selenium.webdriver.support.ui import Select
+
+# local Django
 from basePage import *
 from pom.locators.administratorReportPageLocators import *
-from selenium.webdriver.support.ui import Select
 from pom.pages.homePage import HomePage
+
 
 class AdministratorReportPage(BasePage):
 

@@ -1,7 +1,11 @@
+# Django
 from django import forms
 from django.db import models
 from django.forms import ModelForm
+
+# local Django
 from job.models import Job
+
 
 class JobForm(ModelForm):
     class Meta:

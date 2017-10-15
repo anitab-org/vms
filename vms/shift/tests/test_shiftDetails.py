@@ -1,9 +1,14 @@
+# third party
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+
+# Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
-from shift.models import VolunteerShift
 
-from pom.pages.shiftDetailsPage import ShiftDetailsPage
+# local Django
 from pom.pages.authenticationPage import AuthenticationPage
-
+from pom.pages.shiftDetailsPage import ShiftDetailsPage
+from shift.models import VolunteerShift
 from shift.utils import (
     create_volunteer_with_details,
     create_admin,
@@ -13,9 +18,6 @@ from shift.utils import (
     log_hours_with_details,
     register_volunteer_for_shift_utility
     )
-
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 
 
 class ShiftDetails(LiveServerTestCase):

@@ -1,9 +1,17 @@
+# standard library
+import re
+
+# third party
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+
+# Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
+# local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.manageShiftPage import ManageShiftPage
-
+from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
 from shift.models import VolunteerShift
 
 from shift.utils import (
@@ -15,10 +23,6 @@ from shift.utils import (
     register_volunteer_for_shift_utility
     )
 
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-
-import re
 
 class ViewVolunteerShift(LiveServerTestCase):
     '''

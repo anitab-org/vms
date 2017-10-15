@@ -1,7 +1,11 @@
+# Django
 from django.conf.urls import patterns, url
-from authentication.views import anonymous_required
 from django.contrib.auth import views as auth_views
+
+# local Django
 from authentication import views
+from authentication.views import anonymous_required
+
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),

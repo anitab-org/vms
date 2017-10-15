@@ -1,21 +1,27 @@
+# standard library
 import datetime
+
+# third party
+from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+
+# Django
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
-from django.contrib import messages
-from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
-from event.forms import EventForm, EventDateForm
+from django.shortcuts import render_to_response
+from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.edit import DeleteView
 from django.views.generic import ListView
-from event.services import *
+
+# local Django
+from event.forms import EventForm, EventDateForm
 from event.models import *
+from event.services import *
 from job.services import get_jobs_by_event_id
-from django.core.urlresolvers import reverse_lazy
-from django.utils.decorators import method_decorator
-from django.shortcuts import render_to_response
-from django.http import Http404
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer_shift_sign_up
 

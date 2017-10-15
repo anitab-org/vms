@@ -1,17 +1,19 @@
+# third party
+from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+
+# Django
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
-from django.views.generic.edit import FormView, UpdateView
-from django.views.generic.edit import DeleteView
 from django.views.generic import ListView
-from organization.forms import OrganizationForm
-from organization.services import *
-from organization.models import *
+from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
-from django.core.urlresolvers import reverse_lazy
 
+# local Django
+from organization.forms import OrganizationForm
+from organization.models import *
+from organization.services import *
 
 
 class AdministratorLoginRequiredMixin(object):

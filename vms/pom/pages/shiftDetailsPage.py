@@ -1,7 +1,9 @@
+# local Django
 from basePage import *
 from pom.locators.shiftDetailsPageLocators import *
 from pom.pages.eventsPage import EventsPage
 from pom.pageUrls import PageUrls
+
 
 class ShiftDetailsPage(BasePage):
 

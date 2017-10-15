@@ -1,5 +1,7 @@
+# local Django
 from basePage import *
 from pom.locators.homePageLocators import *
+
 
 class HomePage(BasePage):
 

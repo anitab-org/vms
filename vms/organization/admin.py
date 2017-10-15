@@ -1,4 +1,7 @@
+# Django
 from django.contrib import admin
+
+# local Django
 from organization.models import Organization
 
 

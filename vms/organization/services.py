@@ -1,5 +1,9 @@
+# Django
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+
+# local Django
 from organization.models import Organization
+
 
 #need to check that this organization is not currently associated with a user (otherwise the user gets cascade deleted)
 def delete_organization(organization_id):

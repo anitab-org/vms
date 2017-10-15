@@ -1,7 +1,9 @@
+# local Django
 from basePage import *
 from pom.locators.authenticationPageLocators import *
 from pom.locators.homePageLocators import *
 from pom.pageUrls import PageUrls
+
 
 class AuthenticationPage(BasePage):
 

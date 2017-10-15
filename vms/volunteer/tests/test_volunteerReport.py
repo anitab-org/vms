@@ -1,10 +1,12 @@
-from django.contrib.staticfiles.testing import LiveServerTestCase
-
+# third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-from pom.pages.volunteerReportPage import VolunteerReportPage
+# Django
+from django.contrib.staticfiles.testing import LiveServerTestCase
 
+# local Django
+from pom.pages.volunteerReportPage import VolunteerReportPage
 from shift.utils import (
     create_volunteer,
     register_event_utility,
@@ -12,6 +14,7 @@ from shift.utils import (
     register_shift_utility,
     log_hours_utility
     )
+
 
 class VolunteerReport(LiveServerTestCase):
     '''

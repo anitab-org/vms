@@ -1,6 +1,11 @@
+# standard library
 from functools import wraps
+
+# Django
 from django.http import Http404
 from django.shortcuts import render
+
+# local Django
 from volunteer.models import Volunteer
 
 

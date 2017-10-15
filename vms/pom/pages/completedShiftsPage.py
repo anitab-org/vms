@@ -1,3 +1,4 @@
+# local Django
 from basePage import *
 from pom.locators.completedShiftsPageLocators import CompletedShiftsPageLocators
 from pom.pages.homePage import HomePage

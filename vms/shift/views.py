@@ -1,25 +1,30 @@
+# standard library
+from datetime import date
+
+# third party
+from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+
+# Django
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from datetime import date
-from job.services import *
-from django.views.generic import TemplateView
-from braces.views import LoginRequiredMixin, AnonymousRequiredMixin
+from django.views.generic import TemplateView, DeleteView, ListView
 from django.views.generic.edit import FormView, UpdateView
-from django.views.generic import DeleteView
+from django.utils.decorators import method_decorator
+
+# local Django
+from job.services import *
 from shift.forms import HoursForm, ShiftForm
 from shift.models import Shift
 from shift.services import *
 from volunteer.forms import SearchVolunteerForm
 from volunteer.services import get_all_volunteers, search_volunteers
-from django.contrib import messages
-from django.views.generic import ListView
-from django.utils.decorators import method_decorator
-from django.core.urlresolvers import reverse_lazy
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer, check_correct_volunteer_shift
+
 
 class AdministratorLoginRequiredMixin(object):
 

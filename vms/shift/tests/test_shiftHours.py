@@ -1,13 +1,14 @@
-from django.contrib.staticfiles.testing import LiveServerTestCase
-
+# third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-from pom.pages.completedShiftsPage import CompletedShiftsPage
+# Django
+from django.contrib.staticfiles.testing import LiveServerTestCase
+
+# local Django
 from pom.pages.authenticationPage import AuthenticationPage
-
+from pom.pages.completedShiftsPage import CompletedShiftsPage
 from shift.models import VolunteerShift
-
 from shift.utils import (
     create_volunteer,
     create_event_with_details,
@@ -15,6 +16,7 @@ from shift.utils import (
     create_shift_with_details,
     log_hours_with_details
     )
+
 
 class ShiftHours(LiveServerTestCase):
     '''

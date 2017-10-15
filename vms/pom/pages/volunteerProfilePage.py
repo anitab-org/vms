@@ -1,6 +1,8 @@
+# local Django
 from basePage import *
 from pom.locators.volunteerProfilePageLocators import *
 from pom.pages.homePage import HomePage
+
 
 class VolunteerProfilePage(BasePage):
 

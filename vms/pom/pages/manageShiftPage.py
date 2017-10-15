@@ -1,8 +1,10 @@
+# local Django
 from basePage import *
 from pom.locators.eventSignUpPageLocators import EventSignUpPageLocators
 from pom.locators.manageShiftPageLocators import ManageShiftPageLocators
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
+
 
 class ManageShiftPage(BasePage):
 

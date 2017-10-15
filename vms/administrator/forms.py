@@ -19,3 +19,4 @@ class ReportForm(forms.Form):
     job_name = forms.RegexField(regex=r'^[(A-Z)|(a-z)|(\s)]+$', max_length=75, required=False)
     start_date = forms.DateField(required=False)
     end_date = forms.DateField(required=False)
+

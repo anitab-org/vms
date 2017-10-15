@@ -1,6 +1,10 @@
+# Django
 from django.conf.urls import patterns, url
+
+# local Django
 from volunteer import views
 from volunteer.views import *
+
 
 urlpatterns = patterns('',
     url(r'^delete_resume/(?P<volunteer_id>\d+)$', views.delete_resume, name='delete_resume'),
