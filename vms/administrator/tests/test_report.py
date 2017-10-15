@@ -7,7 +7,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from django.db import IntegrityError
 
 # local Django
-from pom.locators.administratorReportPageLocators import *
+from pom.locators.administratorReportPageLocators import AdministratorReportPageLocators
 from pom.pages.administratorReportPage import AdministratorReportPage
 from pom.pages.authenticationPage import AuthenticationPage
 from shift.utils import (

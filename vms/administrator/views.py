@@ -17,9 +17,10 @@ from django.views.generic.edit import FormView, UpdateView
 from administrator.forms import ReportForm
 from administrator.models import Administrator
 from administrator.utils import admin_required
-from event.services import *
-from job.services import *
-from shift.services import *
+from event.services import get_events_ordered_by_name
+from job.services import get_jobs_ordered_by_title
+from shift.services import calculate_total_report_hours, get_administrator_report
+from organization.services import get_organizations_ordered_by_name
 
 
 class AdministratorLoginRequiredMixin(object):
