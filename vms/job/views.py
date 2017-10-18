@@ -60,7 +60,7 @@ class CreateJobView(LoginRequiredMixin, AdministratorLoginRequiredMixin, FormVie
             return render(
                 self.request,
                 'job/create.html',
-                {'form': form, 'event_list': event_list}
+                {'form': form, 'event_list': event_list, 'last_event': event}
             )
 
 class JobDeleteView(LoginRequiredMixin, AdministratorLoginRequiredMixin, DeleteView):
