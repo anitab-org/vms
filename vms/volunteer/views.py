@@ -49,6 +49,7 @@ def download_resume(request, volunteer_id):
     else:
         return HttpResponse(status=403)
 
+
 @login_required
 def delete_resume(request, volunteer_id):
     user = request.user
@@ -61,6 +62,7 @@ def delete_resume(request, volunteer_id):
                 raise Http404
     else:
         return HttpResponse(status=403)
+
 
 '''
  The View to edit Volunteer Profile
@@ -98,7 +100,7 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
             else:
                 return render(self.request, 'volunteer/edit.html',
                               {'form': form, 'organization_list': organization_list, 'volunteer': volunteer,
-                               'resume_invalid': True,})
+                               'resume_invalid': True})
 
         volunteer_to_edit = form.save(commit=False)
 
@@ -112,6 +114,7 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
         # update the volunteer
         volunteer_to_edit.save()
         return HttpResponseRedirect(reverse('volunteer:profile', args=(volunteer_id,)))
+
 
 '''
   The view to diaplay Volunteer profile.
@@ -152,6 +155,7 @@ class GenerateReportView(LoginRequiredMixin, View):
         view = ShowReportListView.as_view()
         return view(request, *args, **kwargs)
 
+
 class ShowFormView(LoginRequiredMixin, FormView):
     """
     Displays the form
@@ -159,7 +163,12 @@ class ShowFormView(LoginRequiredMixin, FormView):
     model = Volunteer
     form_class = ReportForm
     template_name = "volunteer/report.html"
-
+    
+    def get(self, request, *args, **kwargs):
+        volunteer_id = self.kwargs['volunteer_id']
+        event_list = get_signed_up_events_for_volunteer(volunteer_id)
+        return render(request, 'volunteer/report.html',
+                      {'event_list': event_list})
 
 
 class ShowReportListView(LoginRequiredMixin, ListView):
@@ -182,6 +191,8 @@ class ShowReportListView(LoginRequiredMixin, ListView):
                       {'report_list': report_list, 'total_hours': total_hours, 'notification': True,
                        'job_list': job_list, 'event_list': event_list, 'selected_event': event_name,
                        'selected_job': job_name})
+
+
 @login_required
 @admin_required
 def search(request):
