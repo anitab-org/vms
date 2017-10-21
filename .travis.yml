@@ -12,6 +12,7 @@ before_script:
   - sleep 3
 script:
   - cd vms
+  - flake8 . 
   - python manage.py syncdb --noinput
   - python manage.py migrate --noinput --traceback --settings=vms.settings
   - coverage run --source='.' manage.py test
