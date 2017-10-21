@@ -6,10 +6,10 @@ Systers Portal - VMS project
 
 Systers has many volunteers that offer their skills, time, and commitment to
 our vision and projects. The **Volunteer Management System** (VMS) will
-be useful for volunteer coordinators, volunteer sign-up, tracking hours, and 
+be useful for volunteer coordinators, volunteer sign-up, tracking hours, and
 reporting.
 
-**This project is under active development.** 
+**This project is under active development.**
 
 VMS is live [here](http://52.8.110.63/).
 
@@ -18,7 +18,7 @@ If you are an Outreachy Applicant, start with reading [this](https://github.com/
 Features
 --------
 
-The VMS will be developed in phases. The initial implementation will track 
+The VMS will be developed in phases. The initial implementation will track
 volunteers' contact information, enable administrators to track volunteer
 hours, and allow reporting of useful information.
 
@@ -59,6 +59,7 @@ production at the moment. It may be configured to do so in the future.
 1. Run `docker-compose build`. This pulls the Docker images required to run the
    project and installs the necessary dependencies.
 1. Run `docker-compose run web python vms/manage.py migrate`.
+1. Run `docker-compose run web python vms/manage.py cities_light` for downloading and importing data for django-cities-light.
 1. *Optional:*
    Run `docker-compose run web python vms/manage.py createsuperuser`
    if you wish to create a superuser to access the admin panel.
@@ -79,17 +80,17 @@ Contribute
 - Issue Tracker: [vms/issues](http://github.com/systers/vms/issues)
 - Source Code: [vms](http://github.com/systers/vms/)
 - Linking pull request to an issue
-   
-  When you create a pull request, use closes #id_of_issue or fixes #id_of_issue. It will link the issue with your pull request. It also 
-  automatically closes the issue if your pull request gets merged. 
+
+  When you create a pull request, use closes #id_of_issue or fixes #id_of_issue. It will link the issue with your pull request. It also
+  automatically closes the issue if your pull request gets merged.
 
 
 Documentation
 -------------
 
-User and developer documentation for Systers Portal VMS project is generated 
+User and developer documentation for Systers Portal VMS project is generated
 using [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
-and available online for convenient reading at 
+and available online for convenient reading at
 [VMS Website](http://vms.readthedocs.org/).
 
 
