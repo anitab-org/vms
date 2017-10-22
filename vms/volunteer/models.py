@@ -87,7 +87,7 @@ class Volunteer(models.Model):
         blank=True,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(\-)|(?)|(=)|(#)|(:)|(/)|(_)|(&)]+$',
+               r'^[0-9a-zA-Z\s\.\-?=#:/_&]+$',
             ),
         ],
     )
