@@ -68,6 +68,7 @@ def delete_resume(request, volunteer_id):
  The View to edit Volunteer Profile
 '''
 
+
 class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
 
     @method_decorator(check_correct_volunteer)
@@ -100,7 +101,7 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
             else:
                 return render(self.request, 'volunteer/edit.html',
                               {'form': form, 'organization_list': organization_list, 'volunteer': volunteer,
-                               'resume_invalid': True})
+                               'resume_invalid': True, })
 
         volunteer_to_edit = form.save(commit=False)
 
@@ -121,6 +122,7 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
   It uses DetailView which is a generic class-based views are designed to display data.
 '''
 
+
 class ProfileView(LoginRequiredMixin, DetailView):
     template_name = 'volunteer/profile.html'
 
@@ -140,6 +142,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
   GenerateReportView calls two other views(ShowFormView, ShowReportListView) within it.
 '''
 
+
 class GenerateReportView(LoginRequiredMixin, View):
 
     @method_decorator(check_correct_volunteer)
@@ -149,7 +152,7 @@ class GenerateReportView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         view = ShowFormView.as_view()
-        return view(request, *args,**kwargs)
+        return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         view = ShowReportListView.as_view()
@@ -163,7 +166,7 @@ class ShowFormView(LoginRequiredMixin, FormView):
     model = Volunteer
     form_class = ReportForm
     template_name = "volunteer/report.html"
-    
+
     def get(self, request, *args, **kwargs):
         volunteer_id = self.kwargs['volunteer_id']
         event_list = get_signed_up_events_for_volunteer(volunteer_id)
@@ -208,8 +211,8 @@ def search(request):
             organization = form.cleaned_data['organization']
 
             search_result_list = search_volunteers(first_name, last_name, city, state, country, organization)
-            return render(request, 'volunteer/search.html', {'form' : form, 'has_searched' : True, 'search_result_list' : search_result_list})
+            return render(request, 'volunteer/search.html', {'form': form, 'has_searched': True, 'search_result_list': search_result_list})
     else:
         form = SearchVolunteerForm()
 
-    return render(request, 'volunteer/search.html', {'form' : form, 'has_searched' : False})
+    return render(request, 'volunteer/search.html', {'form': form, 'has_searched': False})
