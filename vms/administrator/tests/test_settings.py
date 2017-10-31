@@ -11,7 +11,7 @@ from job.models import Job
 from organization.models import Organization
 from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
-from pom.locators.eventsPageLocators import *
+from pom.locators.eventsPageLocators import EventsPageLocators
 from shift.models import Shift
 from shift.utils import (
     create_admin,
