@@ -11,4 +11,5 @@ web:
     - db
   environment:
     - DJANGO_SETTINGS_MODULE=vms.settings
+    
 

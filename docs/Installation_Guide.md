@@ -232,6 +232,11 @@ We do not want to create a superuser at this time, so when it asks you to create
     You just installed Djano's auth system, which means you don't have any superusers defined.
     Would you like to create one now? (yes/no): no
 
+Use the secret_key by running this command:
+    
+    export DJANGO_SECRET_KEY='foobarbaz'
+    
+    
 In addition to this, you would also have to populate the database for django-cities-light. Run the following to do so:
 
     python manage.py migrate
