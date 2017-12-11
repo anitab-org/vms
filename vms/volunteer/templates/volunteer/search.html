@@ -137,7 +137,12 @@
                     <div class="form-group">
                         <label class="col-md-2 control-label">{% trans "Organization" %}</label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Search by Organization{% endblocktrans %}" type="text" name="organization" value="{% if form.organization.value %}{{ form.organization.value }}{% endif %}">
+                            <select id="select" class="form-control" name="organization">
+								<option value="">-- {% trans "Select Organization" %} --</option>
+								{% for organization in organizations_list %}
+								<option value="{{ organization.name }}" {% if selected_organization == organization.name %}selected{% endif %}>{{ organization.name }}</option>
+								{% endfor %}
+							</select>
                         </div>
                     </div>
                 {% endif %}

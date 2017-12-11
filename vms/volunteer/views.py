@@ -213,6 +213,7 @@ def search(request):
             search_result_list = search_volunteers(first_name, last_name, city, state, country, organization)
             return render(request, 'volunteer/search.html', {'form': form, 'has_searched': True, 'search_result_list': search_result_list})
     else:
+        organizations_list = get_organizations_ordered_by_name();
         form = SearchVolunteerForm()
 
-    return render(request, 'volunteer/search.html', {'form': form, 'has_searched': False})
+    return render(request, 'volunteer/search.html', {'organizations_list' : organizations_list, 'form' : form, 'has_searched' : False})
