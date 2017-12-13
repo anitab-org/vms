@@ -39,9 +39,7 @@
             </div>
 
 		<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
-			<ul class="nav navbar-nav text-uppercase">
-				<li><a href="{% url 'home:index' %}">{% trans "About" %}</a></li>
-            </ul>
+		
             <ul class="nav navbar-nav navbar-right text-uppercase">
                     {% if user.is_authenticated %}
                         {% if user.administrator %}
