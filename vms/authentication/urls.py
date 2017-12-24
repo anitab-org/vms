@@ -29,5 +29,11 @@ urlpatterns = [
     url(r'^reset/complete/$',
         PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
         name='password_reset_complete'),
+    url(r'^change-password/$',
+        PasswordChangeView.as_view(success_url='done/'),
+        name='password_change'),
+    url(r'^change-password/done/$',
+        PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'),
+        name='password_change_done'),
 ]
 
