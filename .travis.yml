@@ -13,7 +13,6 @@ before_script:
   - export SECRET_KEY=foobarbaz
 script:
   - cd vms
-  - flake8 . 
   - python manage.py syncdb --noinput
   - python manage.py migrate --noinput --traceback --settings=vms.settings
   - coverage run --source='.' manage.py test
