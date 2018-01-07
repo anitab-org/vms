@@ -25,6 +25,13 @@
     <script src="{% static "vms/jquery-ui-1.11.4.custom/jquery-ui.min.js" %}"></script>
     <script src="{% static "vms/jquery-custom/activate-datepicker.js" %}"></script>
     <script src="{% static "vms/datetimepicker/bootstrap-datetimepicker.min.js" %}"></script>
+   <script>
+    var CityUrl = "{% url 'registration:load_cities' %}"
+    var StateUrl = "{% url 'registration:load_states' %}"
+    var CheckState = "{% url 'registration:check_states' %}"
+   </script> 
+   <script src="{% static "vms/js/load_city.js" %}"></script>
+   <script src="{% static "vms/js/load_state.js" %}"></script>
   </head>
   <body>
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">

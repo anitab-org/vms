@@ -202,6 +202,32 @@ def create_country():
         phone='91')
 
 
+def create_state():
+    country = Country.objects.get(name='India')
+    Region.objects.create(
+        name_ascii = "Uttarakhand",
+        slug='uttarakhand',
+        geoname_id='1444366',
+        alternate_names='',
+        name='Uttarakhand',
+        geoname_code='39',
+        country=country)
+
+
+def create_city(): 
+    country = Country.objects.get(name='India')
+    state = Region.objects.get(name='Uttarakhand')
+    City.objects.create(
+        name_ascii = 'Roorkee',
+        slug='roorkee',
+        geoname_id=1258044,
+        alternate_names='',
+        name='Roorkee',
+        region=state,
+        country=country,
+        )
+
+
 def create_admin_with_unlisted_org():
     user_1 = User.objects.create_user(username='admin', password='admin')
     org_1 = Organization.objects.create(name='organization', approved_status=0)
@@ -217,6 +243,7 @@ def create_admin_with_unlisted_org():
         organization=org_1)
 
     return admin
+
 
 def create_admin():
     user_1 = User.objects.create_user(username='admin', password='admin')

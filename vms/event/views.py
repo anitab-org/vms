@@ -22,6 +22,7 @@ from django.views.generic import DetailView
 
 # local Django
 from administrator.utils import admin_required
+from cities_light.models import Country, Region, City
 from event.forms import EventForm, SearchEventForm
 from event.models import Event
 from event.services import (check_edit_event, get_event_by_id, get_events_ordered_by_name,
@@ -30,6 +31,7 @@ from job.services import get_jobs_by_event_id
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer_shift_sign_up
 from shift.utils import create_event_with_details
+
 
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -52,7 +54,13 @@ class EventCreateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
     template_name = 'event/create.html'
     form_class = EventForm
 
+    def get_context_data(self, **kwargs):
+        context = super(EventCreateView, self).get_context_data(**kwargs)
+        context['country_list'] = Country.objects.all()
+        return context
+
     def form_valid(self, form):
+        country_list = Country.objects.all()
         start_date = form.cleaned_data['start_date']
         if start_date < (datetime.date.today() - datetime.timedelta(days=1)):
             messages.add_message(
@@ -60,9 +68,29 @@ class EventCreateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
                 'Start date should be today\'s date or later.')
             return render(self.request, 'event/create.html', {
                 'form': form,
+                'country_list': country_list,
             })
         else:
-            form.save()
+            event = form.save(commit=False)
+            try:
+                country_id = self.request.POST.get('country')
+                country = Country.objects.get(pk=country_id)
+                event.country = country
+            except:
+                country_id =None
+            try:
+                state_id = self.request.POST.get('state')
+                state = Region.objects.get(pk=state_id)
+                event.state = state
+            except:
+                state_id = None
+            try:
+                city_id = self.request.POST.get('city')
+                city = City.objects.get(pk=city_id)
+                event.city = city
+            except:
+                state_id = None
+            event.save()
             return HttpResponseRedirect(reverse('event:list'))
 
 
@@ -124,6 +152,15 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
         job_obj = get_jobs_by_event_id(self.kwargs['event_id'])
         context['job_list'] = job_obj.values_list('start_date',
                                                   'end_date').distinct()
+        context['country_list'] = Country.objects.all()
+        event_id = self.kwargs['event_id']
+        event =  get_event_by_id(event_id)
+        context['country'] = event.country
+        context['country_id'] = event.country.pk
+        context['state'] = event.state
+        context['state_id'] = event.state.pk
+        context['city'] = event.city
+        context['city_id'] = event.city.pk
         return context
 
     def post(self, request, *args, **kwargs):

@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
 from django.conf import settings
+from cities_light.models import City, Country, Region
 from organization.models import Organization
 
 
@@ -24,24 +25,9 @@ class Administrator(models.Model):
             RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\.)|(,)|(\:)]+$', ),
         ],
     )
-    city = models.CharField(
-        max_length=75,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
-        ],
-    )
-    state = models.CharField(
-        max_length=50,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
-        ],
-    )
-    country = models.CharField(
-        max_length=75,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
-        ],
-    )
+    city = models.ForeignKey(City, null=True, blank=True)
+    state = models.ForeignKey(Region, null=True, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True)
     phone_number = models.CharField(
         max_length=20,
         validators=[

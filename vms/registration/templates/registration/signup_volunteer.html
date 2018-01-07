@@ -232,84 +232,36 @@
                 </div>
             </div>
         {% endif %}
-        {% if volunteer_form.city.errors %}
-            <div id="div_id_city" class="form-group has-error">
-                <label class="control-label requiredField" for="id_city">
-                    {% trans "City" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="vol-city" value="{{ volunteer_form.city.value }}">
-                    <p class="help-block">
-                        <strong>
-                            {% for error in volunteer_form.city.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong>
-                    </p>
-                </div>
-            </div>
-        {% else %}
-            <div id="div_id_city" class="form-group">
-                <label class="control-label requiredField" for="id_city">
-                    {% trans "City" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="vol-city" value="{% if volunteer_form.city.value %}{{ volunteer_form.city.value }}{% endif %}">
-                </div>
-            </div>
-        {% endif %}
-        {% if volunteer_form.state.errors %}
-            <div id="div_id_state" class="form-group has-error">
-                <label class="control-label requiredField" for="id_state">
-                    {% trans "State/Province" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{{ volunteer_form.state.value }}">
-                    <p class="help-block">
-                        <strong>
-                            {% for error in volunteer_form.state.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong>
-                    </p>
-                </div>
-            </div>
-        {% else %}
-            <div id="div_id_state" class="form-group">
-                <label class="control-label requiredField" for="id_state">
-                    {% trans "State/Province" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{% if volunteer_form.state.value %}{{ volunteer_form.state.value }}{% endif %}">
-                </div>
-            </div>
-        {% endif %}
-        {% if volunteer_form.country.errors %}
-            <div id="div_id_country" class="form-group has-error">
-                <label class="control-label requiredField" for="id_country">
-                    {% trans "Country" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="vol-country" value="{{ volunteer_form.country.value }}">
-                    <p class="help-block">
-                        <strong>
-                            {% for error in volunteer_form.country.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong>
-                    </p>
-                </div>
-            </div>
-        {% else %}
+
             <div id="div_id_country" class="form-group">
-                <label class="control-label requiredField" for="id_country">
-                    {% trans "Country" %}<span class="asteriskField">*</span>
+                <label class="control-label">
+                    {% trans "Country" %}
                 </label>
-                <div class="controls">
-                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="vol-country" value="{% if volunteer_form.country.value %}{{ volunteer_form.country.value }}{% endif %}">
-                </div>
+                 <select id="select_country" class="form-control" name="country">
+                <option value="0">-- {% trans "Select country" %} --</option>
+                {% for country in country_list %}
+                    <option value="{{ country.id }}">{{ country.name }}</option>
+                {% endfor %}
+            </select>
             </div>
-        {% endif %}
+
+
+            <div id="div_id_state" class="form-group">
+                <label class="control-label">
+                    {% trans "State/Province" %}
+                </label>
+                <select id="select_state" class="form-control" name="state">
+            </select>
+            </div>
+
+<div id="div_id_city" class="form-group">
+        <label class="control-label">
+        {% trans "City" %}
+        </label>
+        <select id="select_city" class="form-control" name="city">
+         </select>
+            </div>
+
         {% if volunteer_form.phone_number.errors %}
             <div id="div_id_phone_number" class="form-group has-error">
                 <label class="control-label requiredField" for="id_phone_number">

@@ -79,6 +79,8 @@ class SignUpVolunteer(LiveServerTestCase):
         create_organization()
         # country created so that phone number can be checked
         create_country()
+        create_state()
+        create_city()
 
     def tearDown(self):
         """
