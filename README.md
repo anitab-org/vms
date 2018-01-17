@@ -1,3 +1,5 @@
+[![Travis](https://img.shields.io/travis/rust-lang/rust.svg?style=plastic)](https://github.com/systers/vms)
+
 Systers Portal - VMS project
 ============================
 
