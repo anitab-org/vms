@@ -9,49 +9,37 @@ class Administrator(models.Model):
     first_name = models.CharField(
         max_length=30,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     last_name = models.CharField(
         max_length=30,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     address = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$', ),
         ],
     )
     city = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     state = models.CharField(
         max_length=50,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     country = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     phone_number = models.CharField(
@@ -67,9 +55,7 @@ class Administrator(models.Model):
         blank=True,
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', ),
         ],
     )
     # Organization to Volunteer is a one-to-many relationship

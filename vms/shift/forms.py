@@ -1,6 +1,6 @@
 # Django
+# from django.db import Model
 from django import forms
-from django.db import models
 from django.forms import ModelForm
 
 # local Django
@@ -16,16 +16,10 @@ class ShiftForm(ModelForm):
     class Meta:
         model = Shift
         fields = [
-            'date',
-            'start_time',
-            'end_time',
-            'max_volunteers',
-            'country',
-            'state',
-            'city',
-            'address',
-            'venue'
-            ]
+            'date', 'start_time', 'end_time', 'max_volunteers', 'country',
+            'state', 'city', 'address', 'venue'
+        ]
+
 
 # we don't check that start_time > end_time because we could
 # start at 11pm and end at 1am and this test would fail

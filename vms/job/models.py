@@ -12,9 +12,7 @@ class Job(models.Model):
     name = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\')]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\')]+$', ),
         ],
     )
     start_date = models.DateField()
@@ -23,7 +21,6 @@ class Job(models.Model):
         blank=True,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$',
-            ),
+                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$', ),
         ],
     )

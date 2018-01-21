@@ -5,7 +5,7 @@ def validate_file(my_file):
     VALID_CONTENT_TYPES = [
         "text/plain",
         "application/msword",
-        "application/pdf", 
+        "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/vnd.oasis.opendocument.text",
     ]

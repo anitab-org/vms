@@ -7,13 +7,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 
 # local Django
-from organization.services import (
-                            get_organization_by_name,
-                            get_organizations_ordered_by_name
-                            )
+from organization.services import (get_organization_by_name,
+                                   get_organizations_ordered_by_name)
 from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
 from volunteer.services import get_volunteer_by_id, get_all_volunteers
+
 
 def add_shift_hours(v_id, s_id, start_time, end_time):
 
@@ -30,13 +29,9 @@ def add_shift_hours(v_id, s_id, start_time, end_time):
 def calculate_duration(start_time, end_time):
 
     start_delta = datetime.timedelta(
-                                    hours=start_time.hour,
-                                    minutes=start_time.minute
-                                    )
+        hours=start_time.hour, minutes=start_time.minute)
     end_delta = datetime.timedelta(
-                                    hours=end_time.hour,
-                                    minutes=end_time.minute
-                                    )
+        hours=end_time.hour, minutes=end_time.minute)
     working_hours = (float((end_delta - start_delta).seconds) / 60) / 60
     return working_hours
 
@@ -74,7 +69,7 @@ def send_reminder():
     A volunteer can specify days in the profile
     !This function should be run on the server once a day!
     """
-    notifications_number = 0    
+    notifications_number = 0
     for volunteer in get_all_volunteers():
         days = volunteer.reminder_days
         if days == 1:
@@ -105,12 +100,10 @@ def send_reminder():
                 send_mail(
                     subject,
                     message,
-                    'noreply@systers.org',
-                    [volunteer.email],
-                    fail_silently=False
-                    )
+                    'noreply@systers.org', [volunteer.email],
+                    fail_silently=False)
                 notifications_number += 1
-                #print(message)
+                # print(message)
     return notifications_number
 
 
@@ -185,36 +178,25 @@ def generate_report(volunteer_shift_list):
         report["date"] = shift.date
         report["logged_start_time"] = volunteer_shift.start_time
         report["logged_end_time"] = volunteer_shift.end_time
-        report["duration"] = calculate_duration(
-                        volunteer_shift.start_time,
-                        volunteer_shift.end_time
-                        )
+        report["duration"] = calculate_duration(volunteer_shift.start_time,
+                                                volunteer_shift.end_time)
 
         report_list.append(report)
 
     return report_list
 
 
-def get_administrator_report(
-                            first_name,
-                            last_name,
-                            organization,
-                            event_name,
-                            job_name,
-                            start_date,
-                            end_date
-                            ):
+def get_administrator_report(first_name, last_name, organization, event_name,
+                             job_name, start_date, end_date):
 
     volunteer_shift_list = get_all_volunteer_shifts_with_hours()
 
     if first_name:
         volunteer_shift_list = volunteer_shift_list.filter(
-            volunteer__first_name__icontains=first_name
-            )
+            volunteer__first_name__icontains=first_name)
     if last_name:
         volunteer_shift_list = volunteer_shift_list.filter(
-            volunteer__last_name__icontains=last_name
-            )
+            volunteer__last_name__icontains=last_name)
     if organization:
         organization_obj = get_organization_by_name(organization)
         organization_list = get_organizations_ordered_by_name()
@@ -225,8 +207,7 @@ def get_administrator_report(
             # then filter by organization_name
             volunteer_shift_list = volunteer_shift_list.exclude(
                 volunteer__organization__isnull=True).filter(
-                volunteer__organization__name__icontains=organization
-                )
+                    volunteer__organization__name__icontains=organization)
         else:
             # unlisted_organization associated
             # with a volunteer can be left blank
@@ -235,21 +216,16 @@ def get_administrator_report(
             # then filter by the unlisted organization name
             volunteer_shift_list = volunteer_shift_list.exclude(
                 volunteer__unlisted_organization__exact='').filter(
-                volunteer__unlisted_organization__icontains=organization
-                )
+                    volunteer__unlisted_organization__icontains=organization)
     if event_name:
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__job__event__name__icontains=event_name
-            )
+            shift__job__event__name__icontains=event_name)
     if job_name:
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__job__name__icontains=job_name
-            )
+            shift__job__name__icontains=job_name)
     if (start_date and end_date):
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__date__gte=start_date,
-            shift__date__lte=end_date
-            )
+            shift__date__gte=start_date, shift__date__lte=end_date)
 
     report_list = generate_report(volunteer_shift_list)
     return report_list
@@ -261,13 +237,11 @@ def get_all_volunteer_shifts_with_hours():
 
     # get shifts that have logged hours only
     volunteer_shift_list = volunteer_shift_list.filter(
-        start_time__isnull=False, end_time__isnull=False
-        )
+        start_time__isnull=False, end_time__isnull=False)
 
     # order by date, start_time and end_time in descending order
     volunteer_shift_list = volunteer_shift_list.order_by(
-        '-shift__date', '-start_time', '-end_time'
-        )
+        '-shift__date', '-start_time', '-end_time')
 
     return volunteer_shift_list
 
@@ -356,8 +330,7 @@ def get_unlogged_shifts_by_volunteer_id(v_id):
     shift_signed_up_list = Shift.objects.filter(
         volunteershift__volunteer_id=v_id,
         volunteershift__start_time__isnull=True,
-        volunteershift__end_time__isnull=True
-        )
+        volunteershift__end_time__isnull=True)
 
     # this filtering is buggy when done this way, why?
     # it shows the same shift multiple times if
@@ -379,17 +352,13 @@ def get_volunteer_report(v_id, event_name, job_name, start_date, end_date):
     # filter based on criteria provided
     if event_name:
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__job__event__name__icontains=event_name
-            )
+            shift__job__event__name__icontains=event_name)
     if job_name:
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__job__name__icontains=job_name
-            )
+            shift__job__name__icontains=job_name)
     if (start_date and end_date):
         volunteer_shift_list = volunteer_shift_list.filter(
-            shift__date__gte=start_date,
-            shift__date__lte=end_date
-            )
+            shift__date__gte=start_date, shift__date__lte=end_date)
 
     report_list = generate_report(volunteer_shift_list)
     return report_list
@@ -402,8 +371,7 @@ def get_volunteer_shift_by_id(v_id, s_id):
 
     try:
         volunteer_shift = VolunteerShift.objects.get(
-            volunteer_id=v_id, shift_id=s_id
-            )
+            volunteer_id=v_id, shift_id=s_id)
     except ObjectDoesNotExist:
         is_valid = False
 
@@ -420,15 +388,14 @@ def get_volunteer_shifts_with_hours(v_id):
 
     # get shifts that have logged hours only
     volunteer_shift_list = volunteer_shift_list.filter(
-        start_time__isnull=False, end_time__isnull=False
-        )
+        start_time__isnull=False, end_time__isnull=False)
 
     # order by date, start_time and end_time in descending order
     volunteer_shift_list = volunteer_shift_list.order_by(
-        '-shift__date', '-start_time', '-end_time'
-        )
+        '-shift__date', '-start_time', '-end_time')
 
     return volunteer_shift_list
+
 
 def get_volunteers_by_shift_id(s_id):
 
@@ -438,25 +405,25 @@ def get_volunteers_by_shift_id(s_id):
     volunteer_list = Volunteer.objects.filter(volunteershift__shift_id=s_id)
 
     # order by name
-    volunteer_list = volunteer_list.order_by(
-        'first_name', 'last_name'
-        )
+    volunteer_list = volunteer_list.order_by('first_name', 'last_name')
 
     return volunteer_list
+
 
 def get_logged_volunteers_by_shift_id(s_id):
 
     logged_volunteer_list = None
 
     # get volunteers who have signed up for the shift
-    logged_volunteer_list = VolunteerShift.objects.filter(shift_id=s_id, start_time__isnull=False, end_time__isnull=False)
+    logged_volunteer_list = VolunteerShift.objects.filter(
+        shift_id=s_id, start_time__isnull=False, end_time__isnull=False)
 
     # order by name
     logged_volunteer_list = logged_volunteer_list.order_by(
-        'volunteer__first_name','volunteer__last_name'
-        )
+        'volunteer__first_name', 'volunteer__last_name')
 
     return logged_volunteer_list
+
 
 def is_signed_up(v_id, s_id):
 
@@ -486,8 +453,7 @@ def register(v_id, s_id):
             num_slots_remaining = get_shift_slots_remaining(s_id)
             if num_slots_remaining > 0:
                 registration_obj = VolunteerShift(
-                    volunteer=volunteer_obj, shift=shift_obj
-                    )
+                    volunteer=volunteer_obj, shift=shift_obj)
                 registration_obj.save()
             else:
                 result = ERROR_CODE_NO_SLOTS_REMAINING

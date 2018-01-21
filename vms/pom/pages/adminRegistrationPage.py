@@ -1,6 +1,6 @@
 # local Django
-from basePage import *
-from pom.locators.adminRegistrationPageLocators import *
+from basePage import BasePage
+from pom.locators.adminRegistrationPageLocators import AdminRegistrationPageLocators
 from pom.pageUrls import PageUrls
 
 
@@ -46,7 +46,7 @@ class AdminRegistrationPage(BasePage):
         return values
 
     def submit_form(self):
-        self.element_by_xpath(self.elements.SUBMIT_PATH).submit()   
+        self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
 
     def get_admin_registration_page(self):
         self.get_page(self.live_server_url, self.admin_registration_page)
@@ -89,9 +89,14 @@ class AdminRegistrationPage(BasePage):
         return self.element_by_xpath(self.elements.PHONE_ERROR).text
 
     def get_organization_error_text(self):
-        return self.element_by_xpath(self.elements.ORGANIZATION_ERROR ).text
+        return self.element_by_xpath(self.elements.ORGANIZATION_ERROR).text
 
     def register_valid_details(self):
         self.get_admin_registration_page()
-        entry = ['admin-username','admin-password!@#$%^&*()_','admin-first-name','admin-last-name','admin-email@systers.org','admin-address','admin-city','admin-state','admin-country','9999999999','admin-org']
+        entry = [
+            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email@systers.org', 'admin-address',
+            'admin-city', 'admin-state', 'admin-country', '9999999999',
+            'admin-org'
+        ]
         self.fill_registration_form(entry)

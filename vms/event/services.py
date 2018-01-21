@@ -1,9 +1,8 @@
 # Django
 from django.core.exceptions import ObjectDoesNotExist
 
-#local Django
+# local Django
 from event.models import Event
-from job.models import Job
 from job.services import get_jobs_by_event_id, remove_empty_jobs_for_volunteer
 from shift.models import Shift
 from shift.services import get_volunteer_shifts_with_hours, get_unlogged_shifts_by_volunteer_id
@@ -36,6 +35,7 @@ def get_event_by_shift_id(shift_id):
 
     return result
 
+
 def delete_event(event_id):
     """ 
     Deletes an event if no jobs are associated with it
@@ -58,6 +58,7 @@ def delete_event(event_id):
 
     return result
 
+
 def check_edit_event(event_id, new_start_date, new_end_date):
     """
     Checks if an event can be edited without resulting in invalid job or shift dates
@@ -73,7 +74,8 @@ def check_edit_event(event_id, new_start_date, new_end_date):
         # check if there are currently any jobs associated with this event
         if jobs_in_event:
             for job in jobs_in_event:
-                if( job.start_date < new_start_date or job.end_date > new_end_date):
+                if (job.start_date < new_start_date
+                        or job.end_date > new_end_date):
                     result = False
                     invalid_count += 1
                     invalid_jobs.append(job.name)
@@ -81,7 +83,11 @@ def check_edit_event(event_id, new_start_date, new_end_date):
     else:
         result = False
 
-    return {'result' : result, 'invalid_count': invalid_count, 'invalid_jobs': invalid_jobs}
+    return {
+        'result': result,
+        'invalid_count': invalid_count,
+        'invalid_jobs': invalid_jobs
+    }
 
 
 def get_event_by_id(event_id):
@@ -109,9 +115,7 @@ def get_events_by_date(start_date, end_date):
     if end_date:
         kwargs['start_date__lte'] = end_date
     try:
-        event_list = Event.objects.filter(
-                **kwargs
-                ).order_by('start_date')
+        event_list = Event.objects.filter(**kwargs).order_by('start_date')
     except ObjectDoesNotExist:
         is_valid = False
 
@@ -120,16 +124,19 @@ def get_events_by_date(start_date, end_date):
 
     return result
 
+
 def get_events_ordered_by_name():
     event_list = Event.objects.all().order_by('name')
     return event_list
+
 
 def get_signed_up_events_for_volunteer(volunteer_id):
     """ Gets sorted list of signed up events for a volunteer """
 
     event_list = []
     unsorted_events = []
-    shift_list_without_hours = get_unlogged_shifts_by_volunteer_id(volunteer_id)
+    shift_list_without_hours = get_unlogged_shifts_by_volunteer_id(
+        volunteer_id)
     shift_list_with_hours = get_volunteer_shifts_with_hours(volunteer_id)
 
     for shift_with_hours in shift_list_with_hours:
@@ -141,10 +148,11 @@ def get_signed_up_events_for_volunteer(volunteer_id):
         if event_name not in unsorted_events:
             unsorted_events.append(event_name)
 
-    #for sorting events alphabetically
+    # for sorting events alphabetically
     for event in sorted(unsorted_events, key=str.lower):
         event_list.append(event)
     return event_list
+
 
 def remove_empty_events_for_volunteer(event_list, volunteer_id):
     """ Removes all events from an event list without jobs or shifts """

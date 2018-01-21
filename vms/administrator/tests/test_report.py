@@ -10,16 +10,11 @@ from django.db import IntegrityError
 from pom.locators.administratorReportPageLocators import AdministratorReportPageLocators
 from pom.pages.administratorReportPage import AdministratorReportPage
 from pom.pages.authenticationPage import AuthenticationPage
-from shift.utils import (
-    create_admin,
-    create_volunteer,
-    create_organization_with_details,
-    create_event_with_details,
-    create_job_with_details,
-    create_shift_with_details,
-    log_hours_with_details,
-    register_volunteer_for_shift_utility
-    )
+from shift.utils import (create_admin, create_volunteer,
+                         create_organization_with_details,
+                         create_event_with_details, create_job_with_details,
+                         create_shift_with_details, log_hours_with_details,
+                         register_volunteer_for_shift_utility)
 
 # Class contains failing test cases which have been documented
 # Test class commented out to prevent travis build failure
@@ -53,16 +48,21 @@ class Report(LiveServerTestCase):
 
     def login_admin(self):
         self.authentication_page.server_url = self.live_server_url
-        self.authentication_page.login({ 'username' : 'admin', 'password' : 'admin'})
+        self.authentication_page.login({
+            'username': 'admin',
+            'password': 'admin'
+        })
 
     def verify_shift_details(self, total_shifts, hours):
-        total_no_of_shifts = self.report_page.get_shift_summary().split(' ')[10].strip('\nTotal')
-        total_no_of_hours = self.report_page.get_shift_summary().split(' ')[-1].strip('\n')
+        total_no_of_shifts = self.report_page.get_shift_summary().split(' ')[
+            10].strip('\nTotal')
+        total_no_of_hours = self.report_page.get_shift_summary().split(' ')[
+            -1].strip('\n')
         self.assertEqual(total_no_of_shifts, total_shifts)
         self.assertEqual(total_no_of_hours, hours)
 
-#Failing test case which has been documented
-#Test commented out to prevent travis build failure - bug #327
+# Failing test case which has been documented
+# Test commented out to prevent travis build failure - bug #327
 
     def test_null_values_with_dataset(self):
         # register dataset
@@ -106,8 +106,9 @@ class Report(LiveServerTestCase):
     def test_null_values_with_empty_dataset(self):
         # should return no entries
         report_page = self.report_page
-        report_page.fill_report_form(['','','','',''])
-        self.assertEqual(report_page.get_alert_box_text(),report_page.no_results_message)
+        report_page.fill_report_form(['', '', '', '', ''])
+        self.assertEqual(report_page.get_alert_box_text(),
+                         report_page.no_results_message)
 
     def test_only_logged_shifts_are_reported(self):
         # register dataset
@@ -121,7 +122,7 @@ class Report(LiveServerTestCase):
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['Developer', '2017-08-21', '2017-08-30', '',created_event]
+        job = ['Developer', '2017-08-21', '2017-08-30', '', created_event]
         created_job = create_job_with_details(job)
 
         # create shift
@@ -129,15 +130,18 @@ class Report(LiveServerTestCase):
         created_shift = create_shift_with_details(shift)
 
         # shift is assigned to volunteer-one, but hours have not been logged
-        volunteer_shift = register_volunteer_for_shift_utility(created_shift, volunteer)
+        volunteer_shift = register_volunteer_for_shift_utility(
+            created_shift, volunteer)
 
         report_page = self.report_page
         # check admin report with null fields, should not return the above shift
-        report_page.fill_report_form(['','','','',''])
-        self.assertEqual(report_page.get_alert_box_text(),report_page.no_results_message)
+        report_page.fill_report_form(['', '', '', '', ''])
+        self.assertEqual(report_page.get_alert_box_text(),
+                         report_page.no_results_message)
 
-#Failing test case which has been documented - bug #327
-#Test commented out to prevent travis build failure
+
+# Failing test case which has been documented - bug #327
+# Test commented out to prevent travis build failure
 
     def test_check_intersection_of_fields(self):
 

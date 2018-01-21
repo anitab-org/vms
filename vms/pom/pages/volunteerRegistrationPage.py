@@ -1,6 +1,6 @@
 # local Django
-from basePage import *
-from pom.locators.volunteerRegistrationPageLocators import *
+from basePage import BasePage
+from pom.locators.volunteerRegistrationPageLocators import VolunteerRegistrationPageLocators 
 from pom.pageUrls import PageUrls
 
 
@@ -46,7 +46,7 @@ class VolunteerRegistrationPage(BasePage):
         return values
 
     def submit_form(self):
-        self.element_by_xpath(self.elements.SUBMIT_PATH).submit()   
+        self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
 
     def get_volunteer_registration_page(self):
         self.get_page(self.live_server_url, self.volunteer_registration_page)
@@ -89,9 +89,15 @@ class VolunteerRegistrationPage(BasePage):
         return self.element_by_xpath(self.elements.PHONE_ERROR).text
 
     def get_organization_error_text(self):
-        return self.element_by_xpath(self.elements.ORGANIZATION_ERROR ).text
+        return self.element_by_xpath(self.elements.ORGANIZATION_ERROR).text
 
     def register_valid_details(self):
         self.get_volunteer_registration_page()
-        entry = ['volunteer-username','volunteer-password!@#$%^&*()_','volunteer-first-name','volunteer-last-name','volunteer-email@systers.org','volunteer-address','volunteer-city','volunteer-state','volunteer-country','9999999999','volunteer-org']
+        entry = [
+            'volunteer-username', 'volunteer-password!@#$%^&*()_',
+            'volunteer-first-name', 'volunteer-last-name',
+            'volunteer-email@systers.org', 'volunteer-address',
+            'volunteer-city', 'volunteer-state', 'volunteer-country',
+            '9999999999', 'volunteer-org'
+        ]
         self.fill_registration_form(entry)

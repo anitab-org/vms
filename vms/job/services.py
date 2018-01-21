@@ -3,11 +3,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # local Django
 from job.models import Job
-from shift.services import (
-    get_shifts_with_open_slots_for_volunteer, 
-    get_volunteer_shifts_with_hours, 
-    get_unlogged_shifts_by_volunteer_id
-    )
+from shift.services import (get_shifts_with_open_slots_for_volunteer,
+                            get_volunteer_shifts_with_hours,
+                            get_unlogged_shifts_by_volunteer_id)
 
 
 def job_not_empty(job_id):
@@ -52,14 +50,14 @@ def check_edit_job(job_id, new_start_date, new_end_date):
         # check if there are currently any shifts associated with this job
         if shifts_in_job:
             for shift in shifts_in_job:
-                if( shift.date < new_start_date or shift.date > new_end_date):
+                if (shift.date < new_start_date or shift.date > new_end_date):
                     result = False
                     invalid_count += 1
 
     else:
         result = False
 
-    return {'result' : result, 'invalid_count': invalid_count}
+    return {'result': result, 'invalid_count': invalid_count}
 
 
 def get_job_by_id(job_id):
@@ -87,12 +85,14 @@ def get_jobs_ordered_by_title():
     job_list = Job.objects.all().order_by('name')
     return job_list
 
+
 def get_signed_up_jobs_for_volunteer(volunteer_id):
     """ Gets sorted list of signed up jobs for a volunteer """
 
     unsorted_jobs = []
     job_list = []
-    shift_list_without_hours = get_unlogged_shifts_by_volunteer_id(volunteer_id)
+    shift_list_without_hours = get_unlogged_shifts_by_volunteer_id(
+        volunteer_id)
     shift_list_with_hours = get_volunteer_shifts_with_hours(volunteer_id)
 
     for shift_with_hours in shift_list_with_hours:
@@ -104,16 +104,18 @@ def get_signed_up_jobs_for_volunteer(volunteer_id):
         if job_name not in unsorted_jobs:
             unsorted_jobs.append(job_name)
 
-    #to sort jobs as per name
+    # to sort jobs as per name
     for job in sorted(unsorted_jobs, key=str.lower):
         job_list.append(job)
     return job_list
+
 
 def remove_empty_jobs_for_volunteer(job_list, volunteer_id):
     """ Removes all jobs from a job list without shifts """
     new_job_list = []
     for job in job_list:
-        shift_list = get_shifts_with_open_slots_for_volunteer(job.id, volunteer_id)
+        shift_list = get_shifts_with_open_slots_for_volunteer(
+            job.id, volunteer_id)
         if shift_list:
             new_job_list.append(job)
     return new_job_list

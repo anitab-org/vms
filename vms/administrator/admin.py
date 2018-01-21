@@ -1,4 +1,4 @@
-#Django
+# Django
 from administrator.models import Administrator
 
 # local Django

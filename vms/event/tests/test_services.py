@@ -1,29 +1,17 @@
 # standard library
 import datetime
 import unittest
-from datetime import date
 
 # local Django
 from event.services import (
-        event_not_empty,
-        delete_event,
-        check_edit_event,
-        get_event_by_id,
-        get_events_ordered_by_name,
-        get_events_by_date,
-        get_event_by_shift_id,
-        get_signed_up_events_for_volunteer,
-        remove_empty_events_for_volunteer    
-        )
+    event_not_empty, delete_event, check_edit_event, get_event_by_id,
+    get_events_ordered_by_name, get_events_by_date, get_event_by_shift_id,
+    get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer)
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (
-        create_event_with_details,
-        create_job_with_details,
-        create_volunteer_with_details,
-        create_shift_with_details,
-        clear_objects
-        )
+from shift.utils import (create_event_with_details, create_job_with_details,
+                         create_volunteer_with_details,
+                         create_shift_with_details, clear_objects)
 
 
 def setUpModule():
@@ -31,15 +19,15 @@ def setUpModule():
     Creates events, jobs and shifts which can be reused by multiple test classes
     """
 
-    global e1,e2,e3,e4,e5
-    global j1,j2,j3,j4,j5
-    global s1,s2,s3,s4
+    global e1, e2, e3, e4, e5
+    global j1, j2, j3, j4, j5
+    global s1, s2, s3, s4
 
-    event_1 = ["Open Source Event","2012-10-22","2012-10-23"]
-    event_2 = ["Python Event","2013-11-12","2013-11-13"]
-    event_3 = ["Django Event","2015-07-02","2015-07-03"]
-    event_4 = ["Systers Event","2015-07-25","2015-08-08"]
-    event_5 = ["Anita Borg Event","2015-07-07","2015-07-08"]
+    event_1 = ["Open Source Event", "2012-10-22", "2012-10-23"]
+    event_2 = ["Python Event", "2013-11-12", "2013-11-13"]
+    event_3 = ["Django Event", "2015-07-02", "2015-07-03"]
+    event_4 = ["Systers Event", "2015-07-25", "2015-08-08"]
+    event_5 = ["Anita Borg Event", "2015-07-07", "2015-07-08"]
 
     e1 = create_event_with_details(event_1)
     e2 = create_event_with_details(event_2)
@@ -47,11 +35,18 @@ def setUpModule():
     e4 = create_event_with_details(event_4)
     e5 = create_event_with_details(event_5)
 
-    job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
-    job_2 = ["Systems Administrator","2013-11-12","2013-11-13","A systems administrator job",e2]
-    job_3 = ["Backend Dev","2012-10-8","2012-10-16","A java developer job",e4]
-    job_4 = ["Instructor","2012-10-22","2012-10-23","",e4]
-    job_5 = ["Instructor","2012-10-22","2012-10-23","",e3]
+    job_1 = [
+        "Software Developer", "2012-10-22", "2012-10-23", "A software job", e1
+    ]
+    job_2 = [
+        "Systems Administrator", "2013-11-12", "2013-11-13",
+        "A systems administrator job", e2
+    ]
+    job_3 = [
+        "Backend Dev", "2012-10-8", "2012-10-16", "A java developer job", e4
+    ]
+    job_4 = ["Instructor", "2012-10-22", "2012-10-23", "", e4]
+    job_5 = ["Instructor", "2012-10-22", "2012-10-23", "", e3]
 
     j1 = create_job_with_details(job_1)
     j2 = create_job_with_details(job_2)
@@ -60,19 +55,21 @@ def setUpModule():
     j5 = create_job_with_details(job_5)
 
     # shifts with limited, plenty and no slots
-    shift_1 = ["2012-10-23","9:00","15:00",1,j1]
-    shift_2 = ["2012-10-23","10:00","16:00",2,j1]
-    shift_3 = ["2013-11-12","12:00","18:00",4,j2]
-    shift_4 = ["2013-10-23","10:00","18:00",1,j4]
+    shift_1 = ["2012-10-23", "9:00", "15:00", 1, j1]
+    shift_2 = ["2012-10-23", "10:00", "16:00", 2, j1]
+    shift_3 = ["2013-11-12", "12:00", "18:00", 4, j2]
+    shift_4 = ["2013-10-23", "10:00", "18:00", 1, j4]
 
     s1 = create_shift_with_details(shift_1)
     s2 = create_shift_with_details(shift_2)
     s3 = create_shift_with_details(shift_3)
     s4 = create_shift_with_details(shift_4)
 
+
 def tearDownModule():
     # Destroys all objects created
     clear_objects()
+
 
 class EventTests(unittest.TestCase):
     '''
@@ -114,14 +111,14 @@ class EventTests(unittest.TestCase):
         """ Test get_events_by_date(start_date, end_date) """
 
         # test typical cases
-        event_list = get_events_by_date('2015-07-01','2015-08-01')
+        event_list = get_events_by_date('2015-07-01', '2015-08-01')
         self.assertIsNotNone(event_list)
-        
+
         self.assertIn(self.e3, event_list)
         self.assertIn(self.e4, event_list)
         self.assertIn(self.e5, event_list)
         self.assertEqual(len(event_list), 3)
-        
+
         # test order
         self.assertEqual(event_list[0], self.e3)
         self.assertEqual(event_list[1], self.e5)
@@ -146,6 +143,7 @@ class EventTests(unittest.TestCase):
         self.assertEqual(event_list[2], self.e1)
         self.assertEqual(event_list[3], self.e2)
         self.assertEqual(event_list[4], self.e4)
+
 
 class EventWithJobTests(unittest.TestCase):
     '''
@@ -211,15 +209,15 @@ class EventWithJobTests(unittest.TestCase):
         self.assertEqual(out2['invalid_count'], 1)
         self.assertEqual(out4['invalid_count'], 2)
 
-        self.assertIn(j4.name,out2['invalid_jobs'])
-        self.assertIn(j4.name,out4['invalid_jobs'])
-        self.assertIn(j3.name,out4['invalid_jobs'])
+        self.assertIn(j4.name, out2['invalid_jobs'])
+        self.assertIn(j4.name, out4['invalid_jobs'])
+        self.assertIn(j3.name, out4['invalid_jobs'])
+
 
 class DeleteEventTest(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
-        event_1 = ["Open Source Event 101","2012-10-22","2012-10-23"]
+        event_1 = ["Open Source Event 101", "2012-10-22", "2012-10-23"]
         cls.e1 = create_event_with_details(event_1)
 
         # event with associated job/shift
@@ -230,11 +228,12 @@ class DeleteEventTest(unittest.TestCase):
         pass
 
     def test_delete_event(self):
-        #Test delete_event(event_id)
+        # Test delete_event(event_id)
 
         self.assertTrue(delete_event(self.e1.id))
         self.assertFalse(delete_event(self.e2.id))
         self.assertFalse(delete_event(100))
+
 
 class EventWithVolunteerTest(unittest.TestCase):
     '''
@@ -255,9 +254,19 @@ class EventWithVolunteerTest(unittest.TestCase):
         cls.s3 = s3
         cls.s4 = s4
 
-        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
-        volunteer_2 = ['John',"John","Doe","7 Alpine Street","Maplegrove","Wyoming","USA","23454545","john@test.com"]
-        volunteer_3 = ['Ash',"Ash","Ketchum","Pallet Town","Kanto","Gameboy","Japan","23454545","ash@pikachu.com"]
+        volunteer_1 = [
+            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
+            "Nintendo State", "Nintendo Nation", "2374983247",
+            "yoshi@nintendo.com"
+        ]
+        volunteer_2 = [
+            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
+            "USA", "23454545", "john@test.com"
+        ]
+        volunteer_3 = [
+            'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
+            "Japan", "23454545", "ash@pikachu.com"
+        ]
 
         cls.v1 = create_volunteer_with_details(volunteer_1)
         cls.v2 = create_volunteer_with_details(volunteer_2)
@@ -268,7 +277,6 @@ class EventWithVolunteerTest(unittest.TestCase):
         cls.setup_test_data()
 
     def test_remove_empty_events_for_volunteer(self):
-        
         """
         Uses Events e1,e2,e3,e4,e5, shift s2 and volunteer v1 where
         with job that has shift with open slots - e2
@@ -277,14 +285,14 @@ class EventWithVolunteerTest(unittest.TestCase):
         Event with job that has no shifts - e3
         Event with no jobs - e5
         """
-        
+
         register(self.v1.id, self.s2.id)
         register(self.v2.id, self.s4.id)
-        
+
         event_list = [self.e1, self.e2, self.e3, self.e4, self.e5]
         event_list = remove_empty_events_for_volunteer(event_list, self.v1.id)
 
-        #Only events with jobs that have open slots should remain
+        # Only events with jobs that have open slots should remain
         self.assertIn(self.e1, event_list)
         self.assertIn(self.e2, event_list)
         self.assertNotIn(self.e3, event_list)
@@ -323,4 +331,3 @@ class EventWithVolunteerTest(unittest.TestCase):
         # test for returned events for unregistered volunteer 3
         self.assertEqual(len(event_list_for_vol_3), 0)
         VolunteerShift.objects.all().delete()
-        

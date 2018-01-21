@@ -1,6 +1,6 @@
 # local Django
-from basePage import *
-from pom.locators.shiftDetailsPageLocators import *
+from basePage import BasePage
+from pom.locators.shiftDetailsPageLocators import ShiftDetailsPageLocators 
 from pom.pages.eventsPage import EventsPage
 from pom.pageUrls import PageUrls
 
@@ -40,7 +40,8 @@ class ShiftDetailsPage(BasePage):
         return self.elements_by_xpath(self.elements.REGISTERED_VOLUNTEER_LIST)
 
     def get_registered_volunteer_name(self):
-        return self.element_by_xpath(self.elements.REGISTERED_VOLUNTEER_NAME).text
+        return self.element_by_xpath(
+            self.elements.REGISTERED_VOLUNTEER_NAME).text
 
     def get_registered_volunteer_email(self):
         return self.element_by_xpath(self.elements.VOL_EMAIL).text

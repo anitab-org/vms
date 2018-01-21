@@ -1,12 +1,10 @@
 # Django
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 # local Django
-from organization.services import (
-                                    get_organization_by_name,
-                                    get_organizations_ordered_by_name
-                                    )
+from organization.services import (get_organization_by_name,
+                                   get_organizations_ordered_by_name)
 from volunteer.models import Volunteer
 
 
@@ -91,14 +89,8 @@ def has_resume_file(volunteer_id):
     return result
 
 
-def search_volunteers(
-                        first_name,
-                        last_name,
-                        city,
-                        state,
-                        country,
-                        organization
-                        ):
+def search_volunteers(first_name, last_name, city, state, country,
+                      organization):
     """Volunteers search
     None, one, or more parameters may be sent:
     first_name, last_name, city, state, country, organization
@@ -137,10 +129,8 @@ def search_volunteers(
             # query volunteers with no associated organization
             # then filter by organization_name
             search_query = search_query.exclude(
-                    organization__isnull=True
-                    ).filter(
-                    organization__name__icontains=organization
-                    )
+                organization__isnull=True).filter(
+                    organization__name__icontains=organization)
         else:
             # unlisted_organization associated
             # with a volunteer can be left blank
@@ -148,9 +138,7 @@ def search_volunteers(
             # with a blank unlisted_organization
             # then filter by the unlisted organization name
             search_query = search_query.exclude(
-                unlisted_organization__exact=''
-                ).filter(
-                unlisted_organization__icontains=organization
-                )
+                unlisted_organization__exact='').filter(
+                    unlisted_organization__icontains=organization)
 
     return search_query

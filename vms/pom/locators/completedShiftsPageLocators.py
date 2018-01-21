@@ -1,4 +1,3 @@
-
 class CompletedShiftsPageLocators(object):
 
     SHIFT_JOB_PATH = '//table//tbody//tr[1]//td[1]'

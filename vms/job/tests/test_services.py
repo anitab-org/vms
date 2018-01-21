@@ -1,29 +1,19 @@
 # standard library
 import datetime
 import unittest
-from datetime import date
+# from datetime import date
 
 # local Django
-from job.services import (
-                            delete_job,
-                            check_edit_job,
-                            get_job_by_id,
-                            get_jobs_by_event_id,
-                            get_jobs_ordered_by_title,
-                            get_signed_up_jobs_for_volunteer,
-                            remove_empty_jobs_for_volunteer,
-                            job_not_empty
-                            )
+from job.services import (delete_job, check_edit_job, get_job_by_id,
+                          get_jobs_by_event_id, get_jobs_ordered_by_title,
+                          get_signed_up_jobs_for_volunteer,
+                          remove_empty_jobs_for_volunteer, job_not_empty)
 
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (
-        create_event_with_details,
-        create_job_with_details,
-        create_volunteer_with_details,
-        create_shift_with_details,
-        clear_objects
-        )
+from shift.utils import (create_event_with_details, create_job_with_details,
+                         create_volunteer_with_details,
+                         create_shift_with_details, clear_objects)
 
 
 def setUpModule():
@@ -33,22 +23,31 @@ def setUpModule():
     """
 
     global e1, e2, j1, j2, j3
-    event_1 = ["Software Conference","2012-10-3","2012-11-25"]
-    event_2 = ["Django Conference","2012-10-13","2012-11-25"]
+    event_1 = ["Software Conference", "2012-10-3", "2012-11-25"]
+    event_2 = ["Django Conference", "2012-10-13", "2012-11-25"]
     e1 = create_event_with_details(event_1)
     e2 = create_event_with_details(event_2)
 
-    job_1 = ["Software Developer","2012-10-22","2012-10-25","A software job",e1]
-    job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
-    job_3 = ["Project Manager","2012-11-2","2012-11-12","A management job",e1]
+    job_1 = [
+        "Software Developer", "2012-10-22", "2012-10-25", "A software job", e1
+    ]
+    job_2 = [
+        "Systems Administrator", "2012-10-8", "2012-10-16",
+        "A systems administrator job", e1
+    ]
+    job_3 = [
+        "Project Manager", "2012-11-2", "2012-11-12", "A management job", e1
+    ]
 
     j1 = create_job_with_details(job_1)
     j2 = create_job_with_details(job_2)
     j3 = create_job_with_details(job_3)
 
+
 def tearDownModule():
     # Destroys all objects created
     clear_objects()
+
 
 class JobTests(unittest.TestCase):
     '''
@@ -66,7 +65,7 @@ class JobTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.setup_test_data()
-        
+
     def test_get_job_by_id(self):
         """ Uses jobs j1,j2,j3 """
 
@@ -122,20 +121,26 @@ class JobTests(unittest.TestCase):
         self.assertEqual(job_list[1].name, self.j1.name)
         self.assertEqual(job_list[2].name, self.j2.name)
 
-class DeleteJobTest(unittest.TestCase):
 
+class DeleteJobTest(unittest.TestCase):
     @classmethod
     def setup_test_data(cls):
-        event_1 = ["Software Conference 101","2012-10-3","2012-10-24"]
+        event_1 = ["Software Conference 101", "2012-10-3", "2012-10-24"]
         cls.e1 = create_event_with_details(event_1)
 
-        job_1 = ["Software Developer","2012-10-22","2012-10-23","A software job",e1]
-        job_2 = ["Systems Administrator","2012-10-8","2012-10-16","A systems administrator job",e1]
+        job_1 = [
+            "Software Developer", "2012-10-22", "2012-10-23", "A software job",
+            e1
+        ]
+        job_2 = [
+            "Systems Administrator", "2012-10-8", "2012-10-16",
+            "A systems administrator job", e1
+        ]
 
         cls.j1 = create_job_with_details(job_1)
         cls.j2 = create_job_with_details(job_2)
 
-        shift_1 = ["2012-10-23","1:00","3:00",1,cls.j1]
+        shift_1 = ["2012-10-23", "1:00", "3:00", 1, cls.j1]
         cls.s1 = create_shift_with_details(shift_1)
 
     @classmethod
@@ -156,6 +161,7 @@ class DeleteJobTest(unittest.TestCase):
         self.assertFalse(delete_job(100))
         self.assertFalse(delete_job(200))
 
+
 class JobWithShiftTests(unittest.TestCase):
     '''
     Contains tests which require shift objects
@@ -171,15 +177,18 @@ class JobWithShiftTests(unittest.TestCase):
         cls.j2 = j2
 
         # job with shift which has no slot
-        job_4 = ["Information Technologist","2012-11-2","2012-12-2","An IT job",e1]
+        job_4 = [
+            "Information Technologist", "2012-11-2", "2012-12-2", "An IT job",
+            e1
+        ]
         cls.j4 = create_job_with_details(job_4)
-        
-        shift_1 = ["2012-10-23","1:00","3:00",1,cls.j1]
-        shift_2 = ["2012-10-25","2:00","4:00",2,cls.j1]
-        shift_3 = ["2012-10-24","12:00","18:00",4,cls.j3]
+
+        shift_1 = ["2012-10-23", "1:00", "3:00", 1, cls.j1]
+        shift_2 = ["2012-10-25", "2:00", "4:00", 2, cls.j1]
+        shift_3 = ["2012-10-24", "12:00", "18:00", 4, cls.j3]
 
         # shift with no slots
-        shift_4 = ["2012-11-7","12:00","18:00",1,cls.j4]
+        shift_4 = ["2012-11-7", "12:00", "18:00", 1, cls.j4]
 
         cls.s1 = create_shift_with_details(shift_1)
         cls.s2 = create_shift_with_details(shift_2)
@@ -187,9 +196,19 @@ class JobWithShiftTests(unittest.TestCase):
         cls.s4 = create_shift_with_details(shift_4)
 
         # creating volunteers who would register for the shifts
-        volunteer_1 = ['Yoshi',"Yoshi","Turtle","Mario Land","Nintendo Land","Nintendo State","Nintendo Nation","2374983247","yoshi@nintendo.com"]
-        volunteer_2 = ['John',"John","Doe","7 Alpine Street","Maplegrove","Wyoming","USA","23454545","john@test.com"]
-        volunteer_3 = ['Ash',"Ash","Ketchum","Pallet Town","Kanto","Gameboy","Japan","23454545","ash@pikachu.com"]
+        volunteer_1 = [
+            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
+            "Nintendo State", "Nintendo Nation", "2374983247",
+            "yoshi@nintendo.com"
+        ]
+        volunteer_2 = [
+            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
+            "USA", "23454545", "john@test.com"
+        ]
+        volunteer_3 = [
+            'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
+            "Japan", "23454545", "ash@pikachu.com"
+        ]
 
         cls.v1 = create_volunteer_with_details(volunteer_1)
         cls.v2 = create_volunteer_with_details(volunteer_2)
@@ -242,7 +261,7 @@ class JobWithShiftTests(unittest.TestCase):
         register(self.v1.id, self.s1.id)
         register(self.v1.id, self.s3.id)
         register(self.v1.id, self.s2.id)
-        
+
         # volunteer 2 registers for 2 shifts, where s1 has no available slots
         register(self.v2.id, self.s1.id)
         register(self.v2.id, self.s3.id)
@@ -268,17 +287,16 @@ class JobWithShiftTests(unittest.TestCase):
 
     def test_remove_empty_jobs_for_volunteer(self):
         """ Uses jobs j1,j2,j3,j4, shift s3 and volunteer v1 """
-        
+
         # volunteer registers for a shift with multiple slots
         register(self.v1.id, self.s3.id)
         register(self.v2.id, self.s4.id)
-        
+
         job_list = [self.j1, self.j2, self.j3, self.j4]
         job_list = remove_empty_jobs_for_volunteer(job_list, self.v1.id)
 
-        #Only open and non empty jobs should be left
+        # Only open and non empty jobs should be left
         self.assertIn(self.j1, job_list)
         self.assertNotIn(self.j2, job_list)
         self.assertNotIn(self.j3, job_list)
         self.assertNotIn(self.j4, job_list)
-        

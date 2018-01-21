@@ -1,6 +1,6 @@
 # local Django
-from basePage import *
-from pom.locators.jobDetailsPageLocators import *
+from basePage import BasePage
+from pom.locators.jobDetailsPageLocators import JobDetailsPageLocators
 from pom.pages.eventsPage import EventsPage
 
 

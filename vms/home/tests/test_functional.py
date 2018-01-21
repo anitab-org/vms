@@ -1,6 +1,3 @@
-# standard library
-import re
-
 # third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -8,16 +5,12 @@ from selenium.common.exceptions import NoSuchElementException
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
-#local Django
+# local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
 
-from shift.utils import (
-    create_admin,
-    create_volunteer
-    )
-
+from shift.utils import (create_admin, create_volunteer)
 
 # Class contains failing test cases which have been documented
 # Test class commented out to prevent travis build failure
@@ -107,9 +100,11 @@ class CheckURLAccess(LiveServerTestCase):
         self.verify_admin_page_error(PageUrls.administrator_report_page)
 """
 
+
 # Class contains failing test cases which have been documented
 # Test class commented out to prevent travis build failure
 """
+
 class CheckContentAndRedirection(LiveServerTestCase):
     '''
     This Class contains methods to check if 
@@ -152,7 +147,7 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.admin = create_admin()
         self.volunteer = create_volunteer()
         self.volunteer_id = str(self.volunteer.id)
-        
+
     def tearDown(self):
         pass
 
@@ -199,7 +194,10 @@ class CheckContentAndRedirection(LiveServerTestCase):
         home_page = self.home_page
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
-        authentication_page.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
+        authentication_page.login({
+            'username': 'volunteer',
+            'password': 'volunteer'
+        })
 
         with self.assertRaises(NoSuchElementException):
             home_page.get_login_link()
@@ -215,71 +213,85 @@ class CheckContentAndRedirection(LiveServerTestCase):
         home_page = self.home_page
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
-        authentication_page.login({ 'username' : 'admin', 'password' : 'admin'})
+        authentication_page.login({'username': 'admin', 'password': 'admin'})
 
-        self.assertEqual(self.driver.current_url, self.live_server_url +
-                PageUrls.homepage)
+        self.assertEqual(self.driver.current_url,
+                         self.live_server_url + PageUrls.homepage)
 
         with self.assertRaises(NoSuchElementException):
             home_page.get_login_link()
 
-        volunteer_search_link = home_page.get_volunteer_search_link().get_attribute('href')
-        self.assertEqual(volunteer_search_link, self.live_server_url + 
-                PageUrls.volunteer_search_page)
+        volunteer_search_link = home_page.get_volunteer_search_link(
+        ).get_attribute('href')
+        self.assertEqual(volunteer_search_link,
+                         self.live_server_url + PageUrls.volunteer_search_page)
 
-        manage_volunteer_shift_link = home_page.get_manage_shifts_link().get_attribute('href')
-        self.assertEqual(manage_volunteer_shift_link, self.live_server_url + 
-                PageUrls.manage_volunteer_shift_page)
+        manage_volunteer_shift_link = home_page.get_manage_shifts_link(
+        ).get_attribute('href')
+        self.assertEqual(
+            manage_volunteer_shift_link,
+            self.live_server_url + PageUrls.manage_volunteer_shift_page)
 
         report_link = home_page.get_admin_report_link().get_attribute('href')
-        self.assertEqual(report_link, self.live_server_url + 
-                PageUrls.administrator_report_page)
+        self.assertEqual(
+            report_link,
+            self.live_server_url + PageUrls.administrator_report_page)
 
         settings_link = home_page.get_events_link().get_attribute('href')
-        self.assertEqual(settings_link, self.live_server_url + 
-                PageUrls.admin_settings_page)
+        self.assertEqual(settings_link,
+                         self.live_server_url + PageUrls.admin_settings_page)
 
-        creat_account_link = home_page.get_create_admin_link().get_attribute('href')
-        self.assertEqual(creat_account_link, self.live_server_url + 
-                PageUrls.admin_registration_page)
+        creat_account_link = home_page.get_create_admin_link().get_attribute(
+            'href')
+        self.assertEqual(
+            creat_account_link,
+            self.live_server_url + PageUrls.admin_registration_page)
 
         logout_link = home_page.get_logout_link().get_attribute('href')
-        self.assertEqual(logout_link, self.live_server_url + 
-                PageUrls.logout_page)
+        self.assertEqual(logout_link,
+                         self.live_server_url + PageUrls.logout_page)
 
     def test_volunteer_page_redirection(self):
         home_page = self.home_page
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
-        authentication_page.login({ 'username' : 'volunteer', 'password' : 'volunteer'})
+        authentication_page.login({
+            'username': 'volunteer',
+            'password': 'volunteer'
+        })
 
-        self.assertEqual(self.driver.current_url, self.live_server_url +
-                PageUrls.homepage)
+        self.assertEqual(self.driver.current_url,
+                         self.live_server_url + PageUrls.homepage)
 
         with self.assertRaises(NoSuchElementException):
             home_page.get_login_link()
 
-        upcoming_shift_link = home_page.get_upcoming_shifts_link().get_attribute('href')
-        self.assertEqual(upcoming_shift_link, self.live_server_url + 
-                PageUrls.upcoming_shifts_page + self.volunteer_id)
+        upcoming_shift_link = home_page.get_upcoming_shifts_link(
+        ).get_attribute('href')
+        self.assertEqual(upcoming_shift_link, self.live_server_url +
+                         PageUrls.upcoming_shifts_page + self.volunteer_id)
 
-        shift_hours_link = home_page.get_completed_shifts_link().get_attribute('href')
-        self.assertEqual(shift_hours_link, self.live_server_url + 
-                PageUrls.completed_shifts_page + self.volunteer_id)
+        shift_hours_link = home_page.get_completed_shifts_link().get_attribute(
+            'href')
+        self.assertEqual(shift_hours_link, self.live_server_url +
+                         PageUrls.completed_shifts_page + self.volunteer_id)
 
-        shift_signup_link = home_page.get_shift_signup_link().get_attribute('href')
-        self.assertEqual(shift_signup_link, self.live_server_url + 
-                PageUrls.shift_sign_up_page + self.volunteer_id)
+        shift_signup_link = home_page.get_shift_signup_link().get_attribute(
+            'href')
+        self.assertEqual(shift_signup_link, self.live_server_url +
+                         PageUrls.shift_sign_up_page + self.volunteer_id)
 
-        report_link = home_page.get_volunteer_report_link().get_attribute('href')
-        self.assertEqual(report_link, self.live_server_url + 
-                PageUrls.volunteer_report_page + self.volunteer_id)
+        report_link = home_page.get_volunteer_report_link().get_attribute(
+            'href')
+        self.assertEqual(report_link, self.live_server_url +
+                         PageUrls.volunteer_report_page + self.volunteer_id)
 
-        profile_link = home_page.get_volunteer_profile_link().get_attribute('href')
-        self.assertEqual(profile_link, self.live_server_url + 
-                PageUrls.volunteer_profile_page + self.volunteer_id)
+        profile_link = home_page.get_volunteer_profile_link().get_attribute(
+            'href')
+        self.assertEqual(profile_link, self.live_server_url +
+                         PageUrls.volunteer_profile_page + self.volunteer_id)
 
         logout_link = home_page.get_logout_link().get_attribute('href')
+
         self.assertEqual(logout_link, self.live_server_url + 
-                PageUrls.logout_page)
-"""
+                PageUrls.logout_page)"""

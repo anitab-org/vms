@@ -9,20 +9,16 @@ class Event(models.Model):
         max_length=75,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$',
-            ),
+                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$', ),
         ],
-        unique=True
-    )
+        unique=True)
     start_date = models.DateField()
     end_date = models.DateField()
 
     address = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\')]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\')]+$', ),
         ],
         blank=True,
         null=True,
@@ -30,9 +26,7 @@ class Event(models.Model):
     city = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$', ),
         ],
         blank=True,
         null=True,
@@ -40,9 +34,7 @@ class Event(models.Model):
     state = models.CharField(
         max_length=50,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
         blank=True,
         null=True,
@@ -50,9 +42,7 @@ class Event(models.Model):
     country = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$', ),
         ],
         blank=True,
         null=True,
@@ -61,9 +51,7 @@ class Event(models.Model):
     venue = models.CharField(
         max_length=30,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)|(\')]+$', ),
         ],
         blank=True,
         null=True,

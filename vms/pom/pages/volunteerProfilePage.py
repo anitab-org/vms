@@ -1,11 +1,10 @@
 # local Django
-from basePage import *
-from pom.locators.volunteerProfilePageLocators import *
+from basePage import BasePage
+from pom.locators.volunteerProfilePageLocators import VolunteerProfilePageLocators 
 from pom.pages.homePage import HomePage
 
 
 class VolunteerProfilePage(BasePage):
-
     def __init__(self, driver):
         self.driver = driver
         self.home_page = HomePage(self.driver)
@@ -47,4 +46,4 @@ class VolunteerProfilePage(BasePage):
         return self.element_by_xpath(self.elements.INVALID_FORMAT_MESSAGE).text
 
     def submit_form(self):
-        self.element_by_xpath(self.elements.SUBMIT_PATH).submit()   
+        self.element_by_xpath(self.elements.SUBMIT_PATH).submit()

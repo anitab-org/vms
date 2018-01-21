@@ -1,4 +1,3 @@
-
 class ManageShiftPageLocators(object):
 
     CANCEL_SHIFT_PATH = '//table//tbody//tr[1]//td[5]'

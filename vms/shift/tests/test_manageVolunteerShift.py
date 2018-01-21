@@ -9,14 +9,10 @@ from selenium.common.exceptions import NoSuchElementException
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSignUpPage import EventSignUpPage
 from pom.pages.manageShiftPage import ManageShiftPage
-from shift.models import VolunteerShift, Shift
-from shift.utils import (
-    create_admin,
-    create_volunteer_with_details,
-    create_event_with_details,
-    create_job_with_details,
-    create_shift_with_details
-    )
+from shift.models import VolunteerShift
+from shift.utils import (create_admin, create_volunteer_with_details,
+                         create_event_with_details, create_job_with_details,
+                         create_shift_with_details)
 
 # Class contains failing test cases which have been documented
 # Test class commented out to prevent travis build failure
@@ -49,15 +45,20 @@ class ManageVolunteerShift(LiveServerTestCase):
     - Test if a shift can be assigned to a volunteer who has already been
       assigned the same shift
     '''
+
     @classmethod
     def setUpClass(cls):
 
-        cls.volunteer_1 = ['volunteer-one', 'volunteer-one', 'volunteer-one',
-                'volunteer-one', 'volunteer-one', 'volunteer-one', 'volunteer-one',
-                '9999999999', 'volunteer-email@systers.org', 'volunteer-one']
-        cls.volunteer_2 = ['volunteer-two', 'volunteer-two', 'volunteer-two',
-                'volunteer-two', 'volunteer-two', 'volunteer-two', 'volunteer-two',
-                '9999999999', 'volunteer-email2@systers.org', 'volunteer-two']
+        cls.volunteer_1 = [
+            'volunteer-one', 'volunteer-one', 'volunteer-one', 'volunteer-one',
+            'volunteer-one', 'volunteer-one', 'volunteer-one', '9999999999',
+            'volunteer-email@systers.org', 'volunteer-one'
+        ]
+        cls.volunteer_2 = [
+            'volunteer-two', 'volunteer-two', 'volunteer-two', 'volunteer-two',
+            'volunteer-two', 'volunteer-two', 'volunteer-two', '9999999999',
+            'volunteer-email2@systers.org', 'volunteer-two'
+        ]
 
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
@@ -81,7 +82,10 @@ class ManageVolunteerShift(LiveServerTestCase):
 
     def login_admin(self):
         self.authentication_page.server_url = self.live_server_url
-        self.authentication_page.login({ 'username' : 'admin', 'password' : 'admin'})
+        self.authentication_page.login({
+            'username': 'admin',
+            'password': 'admin'
+        })
 
     def create_shift(self, shift):
         # register event to create job
@@ -142,7 +146,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         # open manage volunteer shift
         self.manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.navigate_to_manage_shift_page()
-        
+
         with self.assertRaises(NoSuchElementException):
             manage_shift_page.find_table_row()
 
@@ -157,7 +161,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         self.assertNotEqual(manage_shift_page.find_table_row(), None)
         manage_shift_page.select_volunteer(1)
-        self.assertEqual(manage_shift_page.get_info_box(),manage_shift_page.no_volunteer_shift_message)
+        self.assertEqual(manage_shift_page.get_info_box(),
+                         manage_shift_page.no_volunteer_shift_message)
 
     def test_events_page_with_no_events(self):
         sign_up_page = self.sign_up_page
@@ -173,7 +178,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.select_volunteer(1)
         manage_shift_page.assign_shift()
 
-        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
+        self.assertEqual(sign_up_page.get_info_box().text,
+                         sign_up_page.no_event_message)
 
     def test_jobs_page_with_no_jobs(self):
         sign_up_page = self.sign_up_page
@@ -192,7 +198,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.select_volunteer(1)
         manage_shift_page.assign_shift()
 
-        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
+        self.assertEqual(sign_up_page.get_info_box().text,
+                         sign_up_page.no_event_message)
 
     def test_assign_shifts_with_no_shifts(self):
         sign_up_page = self.sign_up_page
@@ -216,7 +223,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.assign_shift()
 
         # no events shown in table
-        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
+        self.assertEqual(sign_up_page.get_info_box().text,
+                         sign_up_page.no_event_message)
 
     def test_assign_shifts_with_registered_shifts(self):
         sign_up_page = self.sign_up_page
@@ -232,8 +240,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         # volunteer-one does not have any registered shifts
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.assertEqual(manage_shift_page.get_info_box(), 
-            manage_shift_page.no_volunteer_shift_message)
+        self.assertEqual(manage_shift_page.get_info_box(),
+                         manage_shift_page.no_volunteer_shift_message)
 
         manage_shift_page.assign_shift()
 
@@ -250,12 +258,15 @@ class ManageVolunteerShift(LiveServerTestCase):
         # check shift assignment to volunteer-one
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
+        self.check_job_details(
+            ['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
         # database check to ensure volunteer has been assigned the shift
         self.assertEqual(len(VolunteerShift.objects.all()), 1)
-        self.assertNotEqual(len(VolunteerShift.objects.filter(
-            volunteer_id=v1.id, shift_id = s1.id)), 0)
+        self.assertNotEqual(
+            len(
+                VolunteerShift.objects.filter(
+                    volunteer_id=v1.id, shift_id=s1.id)), 0)
 
     def test_slots_remaining_in_shift(self):
         sign_up_page = self.sign_up_page
@@ -274,8 +285,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         # volunteer-one does not have any registered shifts
         manage_shift_page.select_volunteer(1)
-        self.assertEqual(manage_shift_page.get_info_box(), 
-            manage_shift_page.no_volunteer_shift_message)
+        self.assertEqual(manage_shift_page.get_info_box(),
+                         manage_shift_page.no_volunteer_shift_message)
 
         manage_shift_page.assign_shift()
 
@@ -292,21 +303,23 @@ class ManageVolunteerShift(LiveServerTestCase):
         # check shift assignment to volunteer-one
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
+        self.check_job_details(
+            ['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
         # open manage volunteer shift again to assign shift to volunteer two
         manage_shift_page.navigate_to_manage_shift_page()
 
         # volunteer-two does not have any registered shifts
         manage_shift_page.select_volunteer(2)
-        self.assertEqual(manage_shift_page.get_info_box(), 
-            manage_shift_page.no_volunteer_shift_message)
+        self.assertEqual(manage_shift_page.get_info_box(),
+                         manage_shift_page.no_volunteer_shift_message)
 
         manage_shift_page.assign_shift()
 
-        #no events shown in table
-        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
-            
+        # no events shown in table
+        self.assertEqual(sign_up_page.get_info_box().text,
+                         sign_up_page.no_event_message)
+
     def test_cancel_assigned_shift(self):
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
@@ -323,8 +336,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         # volunteer-one does not have any registered shifts
         manage_shift_page.select_volunteer(1)
-        self.assertEqual(manage_shift_page.get_info_box(), 
-            manage_shift_page.no_volunteer_shift_message)
+        self.assertEqual(manage_shift_page.get_info_box(),
+                         manage_shift_page.no_volunteer_shift_message)
 
         manage_shift_page.assign_shift()
 
@@ -346,21 +359,24 @@ class ManageVolunteerShift(LiveServerTestCase):
         # check shift assignment to volunteer-one
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.check_job_details(['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
+        self.check_job_details(
+            ['job name', 'May 20, 2017', '9 a.m.', '3 p.m.'])
 
         # database check to ensure volunteer is registered
         self.assertEqual(len(VolunteerShift.objects.all()), 1)
 
         # cancel assigned shift
-        self.assertEqual(manage_shift_page.get_cancel_shift().text, 'Cancel Shift Registration')
+        self.assertEqual(manage_shift_page.get_cancel_shift().text,
+                         'Cancel Shift Registration')
         manage_shift_page.cancel_shift()
         self.assertNotEqual(manage_shift_page.get_cancellation_box(), None)
-        self.assertEqual(manage_shift_page.get_cancellation_message(), 'Yes, Cancel this Shift')
+        self.assertEqual(manage_shift_page.get_cancellation_message(),
+                         'Yes, Cancel this Shift')
         manage_shift_page.submit_form()
 
         # check cancelled shift reflects in volunteer shift details
         self.assertEqual(manage_shift_page.get_info_box(),
-            manage_shift_page.no_volunteer_shift_message)
+                         manage_shift_page.no_volunteer_shift_message)
 
         # check slots remaining increases by one, after cancellation of
         # assigned shift
@@ -369,7 +385,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         sign_up_page.click_to_view_shifts()
         slots_after_cancellation = sign_up_page.get_remaining_slots()
         self.assertEqual(slots_remaining_before_assignment,
-                slots_after_cancellation)
+                         slots_after_cancellation)
 
         # database check to ensure registration is cancelled
         self.assertEqual(len(VolunteerShift.objects.all()), 0)
@@ -391,7 +407,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         # volunteer-one does not have any registered shifts
         manage_shift_page.select_volunteer(1)
         self.assertEqual(manage_shift_page.get_info_box(),
-            manage_shift_page.no_volunteer_shift_message)
+                         manage_shift_page.no_volunteer_shift_message)
 
         manage_shift_page.assign_shift()
 
@@ -411,5 +427,7 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.assign_shift()
 
         # events page
+<<<<<<< f64a1858806b1098016efb6eece6ad168ada09fd
         self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
 """
+

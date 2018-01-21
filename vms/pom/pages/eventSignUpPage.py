@@ -1,5 +1,5 @@
 # local Django
-from basePage import *
+from basePage import BasePage
 from pom.locators.eventSignUpPageLocators import EventSignUpPageLocators
 from pom.pages.homePage import HomePage
 
@@ -18,7 +18,7 @@ class EventSignUpPage(BasePage):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
 
     def click_to_view_jobs(self):
-        self.element_by_xpath(self.elements.VIEW_JOBS_PATH+ "//a").click()
+        self.element_by_xpath(self.elements.VIEW_JOBS_PATH + "//a").click()
 
     def click_to_view_shifts(self):
         self.element_by_xpath(self.elements.VIEW_SHIFTS_PATH + "//a").click()
@@ -41,8 +41,8 @@ class EventSignUpPage(BasePage):
     def fill_search_form(self, date):
         self.element_by_id(self.elements.START_DATE_FROM).clear()
         self.element_by_id(self.elements.START_DATE_TO).clear()
-        self.send_value_to_element_id(self.elements.START_DATE_FROM,date[0])
-        self.send_value_to_element_id(self.elements.START_DATE_TO,date[1])
+        self.send_value_to_element_id(self.elements.START_DATE_FROM, date[0])
+        self.send_value_to_element_id(self.elements.START_DATE_TO, date[1])
         self.submit_form()
 
     def get_info_box(self):

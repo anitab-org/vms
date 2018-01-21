@@ -1,10 +1,7 @@
 # Django
 from django.contrib.auth.models import User
-from django.core.validators import (
-            RegexValidator,
-            MaxValueValidator,
-            MinValueValidator
-            )
+from django.core.validators import (RegexValidator, MaxValueValidator,
+                                    MinValueValidator)
 from django.db import models
 
 # local Django
@@ -16,49 +13,37 @@ class Volunteer(models.Model):
     first_name = models.CharField(
         max_length=30,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     last_name = models.CharField(
         max_length=30,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     address = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$', ),
         ],
     )
     city = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     state = models.CharField(
         max_length=50,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     country = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(\s)|(\-)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
         ],
     )
     phone_number = models.CharField(
@@ -74,9 +59,7 @@ class Volunteer(models.Model):
         blank=True,
         max_length=100,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', ),
         ],
     )
     # Organization to Volunteer is a one-to-many relationship
@@ -87,36 +70,29 @@ class Volunteer(models.Model):
         blank=True,
         validators=[
             RegexValidator(
-               r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})+$',
+                r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})+$',
             ),
         ],
     )
     description = models.TextField(
         blank=True,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)]+$', ),
         ],
     )
     resume = models.TextField(
         blank=True,
         validators=[
-            RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)]+$',
-            ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)]+$', ),
         ],
     )
     # all resumes are stored in /srv/vms/resume/
     resume_file = models.FileField(
-        upload_to='vms/resume/',
-        max_length=75,
-        blank=True
-        )
+        upload_to='vms/resume/', max_length=75, blank=True)
     reminder_days = models.IntegerField(
         default=1,
-        validators=[MaxValueValidator(50), MinValueValidator(1)],
-        blank=True
-        )
+        validators=[MaxValueValidator(50),
+                    MinValueValidator(1)],
+        blank=True)
 
     user = models.OneToOneField(User)
