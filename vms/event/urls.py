@@ -1,12 +1,11 @@
 # Django
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 # local Django
 from event import views
 from event.views import EventCreateView, EventDeleteView, EventUpdateView, EventListView
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^create/$', EventCreateView.as_view(), name='create'),
     url(r'^delete/(?P<event_id>\d+)$',
         EventDeleteView.as_view(),
@@ -16,4 +15,5 @@ urlpatterns = patterns(
     url(r'^list_sign_up/(?P<volunteer_id>\d+)$',
         views.list_sign_up,
         name='list_sign_up'),
-)
+]
+

@@ -1,5 +1,5 @@
 # Django
-from basePage import BasePage
+from .basePage import BasePage
 
 # local Django
 from pom.locators.volunteerSearchPageLocators import VolunteerSearchPageLocators 

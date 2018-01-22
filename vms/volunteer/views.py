@@ -8,7 +8,7 @@ from braces.views import LoginRequiredMixin
 from django.conf import settings
 # from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
