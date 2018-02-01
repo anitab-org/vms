@@ -27,6 +27,7 @@ body {
 -------------------------------------------------- */
 body > .container {
   padding: 60px 15px 0;
+  overflow-x: hidden;
 }
 
 .container .text-muted {
