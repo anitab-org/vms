@@ -174,8 +174,11 @@ class ShowFormView(LoginRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
         volunteer_id = self.kwargs['volunteer_id']
         event_list = get_signed_up_events_for_volunteer(volunteer_id)
+        job_list = get_signed_up_jobs_for_volunteer(volunteer_id)
+
         return render(request, 'volunteer/report.html', {
-            'event_list': event_list
+            'event_list': event_list,
+            'job_list':job_list,
         })
 
 
