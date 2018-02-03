@@ -39,7 +39,7 @@
             </div>
 
 		<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
-		
+
             <ul class="nav navbar-nav navbar-right text-uppercase">
                     {% if user.is_authenticated %}
                         {% if user.administrator %}
@@ -60,8 +60,7 @@
                         </li>
                       </ul>
 
-                        {% endif %}
-                        {% if user.volunteer %}
+                        {% elif user.volunteer %}
                             <li><a href="{% url 'shift:view_volunteer_shifts' user.volunteer.id %}">{% trans "Upcoming Shifts" %}</a></li>
                             <li><a href="{% url 'shift:view_hours' user.volunteer.id %}">{% trans "Completed Shifts" %}</a></li>
                             <li><a href="{% url 'event:list_sign_up' user.volunteer.id %}">{% trans "Shift Sign Up" %}</a></li>
@@ -79,8 +78,11 @@
                             </ul>
                         </li>
              </ul>
-
+             
+                        {% else %}
+                            <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
                         {% endif %}
+
                     {% else %}
                         <li><a href="{% url 'registration:signup_volunteer' %}">{% trans "Sign Up" %}</a></li>
                         <li><a href="{% url 'authentication:login_process' %}">{% trans "Log In" %}</a></li>
