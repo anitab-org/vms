@@ -100,7 +100,8 @@ STATIC_URL = '/static/'
 
 # All uploaded files (such as resumes) are stored in the /srv directory
 # /srv directory contains site-specific data which is served by the system
-MEDIA_ROOT = '/srv/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'srv')
+MEDIA_URL = '/srv/'
 
 # Uploaded files have read and write permissions to the owner only
 FILE_UPLOAD_PERMISSIONS = 0o600
