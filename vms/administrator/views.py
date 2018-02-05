@@ -3,22 +3,23 @@ from braces.views import LoginRequiredMixin
 
 # Django
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic import View
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 
 # local Django
-from administrator.forms import ReportForm
+from administrator.forms import ReportForm, AdministratorForm
 from administrator.models import Administrator
-from administrator.utils import admin_required
+from administrator.utils import admin_required, admin_id_check
 from event.services import get_events_ordered_by_name
 from job.services import get_jobs_ordered_by_title
 from shift.services import calculate_total_report_hours, get_administrator_report
-from organization.services import get_organizations_ordered_by_name
+from organization.services import get_organizations_ordered_by_name, get_organization_by_id
 
 
 class AdministratorLoginRequiredMixin(object):
@@ -102,3 +103,66 @@ class GenerateReportView(LoginRequiredMixin, View):
 @admin_required
 def settings(request):
     return HttpResponseRedirect(reverse('event:list'))
+
+
+'''
+    The View to edit Admin Profile
+'''
+
+
+class AdminUpdateView(AdministratorLoginRequiredMixin, UpdateView, FormView):
+
+    @method_decorator(admin_required)
+    def dispatch(self, *args, **kwargs):
+        return super(AdminUpdateView, self).dispatch(*args, **kwargs)
+
+    form_class = AdministratorForm
+    template_name = 'administrator/edit.html'
+    organization_list = get_organizations_ordered_by_name()
+    success_url = reverse_lazy('administrator:profile')
+
+    def get_context_data(self, **kwargs):
+        context = super(AdminUpdateView, self).get_context_data(**kwargs)
+        context['organization_list'] = self.organization_list
+        return context
+
+    def get_object(self, queryset=None):
+        admin_id = self.kwargs['admin_id']
+        obj = Administrator.objects.get(pk=admin_id)
+        return obj
+
+    def form_valid(self, form):
+        admin_id = self.kwargs['admin_id']
+        administrator = Administrator.objects.get(pk=admin_id)
+        admin_to_edit = form.save(commit=False)
+
+        organization_id = self.request.POST.get('organization_name')
+        organization = get_organization_by_id(organization_id)
+        if organization:
+            admin_to_edit.organization = organization
+        else:
+            admin_to_edit.organization = None
+
+        # update the volunteer
+        admin_to_edit.save()
+        return HttpResponseRedirect(
+            reverse('administrator:profile', args=[admin_id,]))
+
+
+'''
+  The view to display Admin profile.
+  It uses DetailView which is a generic class-based views are designed to display data.
+'''
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    template_name = 'administrator/profile.html'
+
+    @method_decorator(admin_required)
+    @method_decorator(admin_id_check)
+    def dispatch(self, *args, **kwargs):
+        return super(ProfileView, self).dispatch(*args, **kwargs)
+
+    def get_object(self, queryset=None):
+        obj = Administrator.objects.get(id=self.kwargs['admin_id'])
+        return obj
