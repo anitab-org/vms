@@ -54,6 +54,7 @@
                                 <span class="caret"></span></a>
 
                             <ul class="dropdown-menu">
+                                    <li><a href="{% url 'administrator:profile' user.administrator.id %}">{% trans "Profile" %}</a></li>
                                     <li><a href="{% url 'registration:signup_administrator' %}">{% trans "Create Admin Account" %}</a></li>
                                     <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
                             </ul>
