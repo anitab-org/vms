@@ -96,3 +96,6 @@ class Volunteer(models.Model):
         blank=True)
 
     user = models.OneToOneField(User)
+    
+    def __str__(self):
+        return self.first_name
