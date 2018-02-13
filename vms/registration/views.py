@@ -18,6 +18,7 @@ from registration.phone_validate import validate_phone
 from registration.utils import volunteer_denied
 from volunteer.forms import VolunteerForm
 from volunteer.validation import validate_file
+from registration.passwordmatch import match_password
 
 
 class AdministratorSignupView(TemplateView):
@@ -33,6 +34,7 @@ class AdministratorSignupView(TemplateView):
     registered = False
     organization_list = get_organizations_ordered_by_name()
     phone_error = False
+    match_error = False
 
     @method_decorator(volunteer_denied)
     def dispatch(self, *args, **kwargs):
@@ -47,7 +49,8 @@ class AdministratorSignupView(TemplateView):
                 'administrator_form': administrator_form,
                 'registered': self.registered,
                 'phone_error': self.phone_error,
-                'organization_list': self.organization_list
+                'match_error': self.match_error,
+                'organization_list': self.organization_list,
             })
 
     def post(self, request):
@@ -59,7 +62,20 @@ class AdministratorSignupView(TemplateView):
                     request.POST, prefix="admin")
 
                 if user_form.is_valid() and administrator_form.is_valid():
-
+                    password1 = request.POST.get('usr-password')
+                    password2 = request.POST.get('usr-confirm_password')
+                    if not match_password(password1, password2):
+                        self.match_error = True
+                        return render(
+                            request, 'registration/signup_administrator.html',
+                            {
+                                'user_form': user_form,
+                                'administrator_form': administrator_form,
+                                'registered': self.registered,
+                                'phone_error': self.phone_error,
+                                'match_error': self.match_error,
+                                'organization_list': self.organization_list,
+                            })
                     ad_country = request.POST.get('admin-country')
                     ad_phone = request.POST.get('admin-phone_number')
 
@@ -73,6 +89,7 @@ class AdministratorSignupView(TemplateView):
                                     'administrator_form': administrator_form,
                                     'registered': self.registered,
                                     'phone_error': self.phone_error,
+                                    'match_error': self.match_error,
                                     'organization_list':
                                     self.organization_list,
                                 })
@@ -105,6 +122,7 @@ class AdministratorSignupView(TemplateView):
                             'administrator_form': administrator_form,
                             'registered': self.registered,
                             'phone_error': self.phone_error,
+                            'match_error': self.match_error,
                             'organization_list': self.organization_list,
                         })
         else:
@@ -115,6 +133,7 @@ class VolunteerSignupView(TemplateView):
     registered = False
     organization_list = get_organizations_ordered_by_name()
     phone_error = False
+    match_error = False
 
     def get(self, request):
         user_form = UserForm(prefix="usr")
@@ -125,6 +144,7 @@ class VolunteerSignupView(TemplateView):
                 'volunteer_form': volunteer_form,
                 'registered': self.registered,
                 'phone_error': self.phone_error,
+                'match_error': self.match_error,
                 'organization_list': self.organization_list,
             })
 
@@ -137,6 +157,19 @@ class VolunteerSignupView(TemplateView):
                     request.POST, request.FILES, prefix="vol")
 
                 if user_form.is_valid() and volunteer_form.is_valid():
+                    password1 = request.POST.get('usr-password')
+                    password2 = request.POST.get('usr-confirm_password')
+                    if not match_password(password1, password2):
+                        self.match_error = True
+                        return render(
+                            request, 'registration/signup_volunteer.html', {
+                                'user_form': user_form,
+                                'volunteer_form': volunteer_form,
+                                'registered': self.registered,
+                                'phone_error': self.phone_error,
+                                'match_error': self.match_error,
+                                'organization_list': self.organization_list,
+                            })
 
                     vol_country = request.POST.get('vol-country')
                     vol_phone = request.POST.get('vol-phone_number')
