@@ -35,13 +35,13 @@
                 <div class="panel-body">
                 <table>
                     <!-- Better to have css padding instead of nbsp to insert spaces -->
-                   <tr> <td><label><h4><span class="label label-info">Email</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.email }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">City</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.city }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">State/Province</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.state }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">Country</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.country }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">Shift Reminder Days</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.reminder_days }}</td></tr>
+                   <tr> <td><label><h4><span class="label label-info">Email</span></h4></label></td><td align="left">{{ volunteer.email }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">City</span></h4></label></td><td align="left">{{ volunteer.city }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">State/Province</span></h4></label></td><td align="left">{{ volunteer.state }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">Country</span></h4></label></td><td align="left">{{ volunteer.country }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">Shift Reminder Days</span></h4></label></td><td align="left">{{ volunteer.reminder_days }}</td></tr>
                     <tr><td>{% if volunteer.organization %}
-                        <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.organization.name }}
+                        <label><h4><span class="label label-info">Organization</span></h4></label></td><td align="left">{{ volunteer.organization.name }}
                     {% elif volunteer.unlisted_organization  %}
                         <label><h4><span class="label label-info">Organization</span></h4></label>{{ volunteer.unlisted_organization }}
                     {% else %}
