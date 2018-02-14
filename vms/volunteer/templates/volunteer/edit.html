@@ -214,7 +214,7 @@
                         {% trans "Select your organization:" %}
                     </label>
                     <div class="col-md-8">
-                        <select id="select" class="form-control" name="organization_name">
+                        <select id="select" class="form-control" name="organization_name" onchange="hide_organisation()">
                             <option value="0">-- {% trans "None" %} --</option>
                             {% for organization in organization_list %}
                                 {% if volunteer.organization_id %}
