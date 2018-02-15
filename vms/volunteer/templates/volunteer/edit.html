@@ -234,7 +234,7 @@
                     <div id="div_id_unlisted_organization" class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "If your organization is not listed, please provide it here:" %}</label>
                         <div id="div_id_unlisted_organization" class="col-md-8">
-                            <input id="id_unlisted_organization" class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
+                            <input class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
                             <p class="help-block">
                                 <strong>
                                     {% for error in form.unlisted_organization.errors %}
@@ -248,7 +248,7 @@
                     <div id="div_id_unlisted_organization" class="form-group">
                         <label class="col-md-2 control-label">{% trans "If your organization is not listed, please provide it here:" %}</label>
                         <div class="col-md-8">
-                            <input id="id_unlisted_organization" class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
+                            <input class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
                         </div>
                     </div>
                 <script type="text/javascript" src="{% static 'vms/js/hide_organization.js' %}"></script>                 
