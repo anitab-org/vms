@@ -362,7 +362,7 @@
                 </div>
             </div>
         {% endif %}
-        <div id="div_id_resume_file" class="form-group">
+        <div id="div_id_resume_file" class="form-group" onchange="hide_resume_textbox()">
             <label class="control-label">{% trans "Upload a Resume" %}</label>
             {{ volunteer_form.resume_file }}
         </div>
