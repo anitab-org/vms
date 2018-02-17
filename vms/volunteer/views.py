@@ -79,6 +79,12 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
     template_name = 'volunteer/edit.html'
     success_url = reverse_lazy('volunteer:profile')
 
+    def get_context_data(self, **kwargs):
+        context = super(VolunteerUpdateView,self).get_context_data(**kwargs)
+        organization_list = get_organizations_ordered_by_name()
+        context['organization_list'] = organization_list
+        return context
+
     def get_object(self, queryset=None):
         volunteer_id = self.kwargs['volunteer_id']
         obj = Volunteer.objects.get(pk=volunteer_id)
