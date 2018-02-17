@@ -123,7 +123,7 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
 
 
 '''
-  The view to diaplay Volunteer profile.
+  The view to display Volunteer profile.
   It uses DetailView which is a generic class-based views are designed to display data.
 '''
 
@@ -143,7 +143,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
 
 '''
-  The view generate Report.
+  The view generates Report.
   GenerateReportView calls two other views(ShowFormView, ShowReportListView) within it.
 '''
 
