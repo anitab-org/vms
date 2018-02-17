@@ -43,7 +43,7 @@
                     <tr><td>{% if volunteer.organization %}
                         <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.organization.name }}
                     {% elif volunteer.unlisted_organization  %}
-                        <label><h4><span class="label label-info">Organization</span></h4></label>{{ volunteer.unlisted_organization }}
+                        <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.unlisted_organization }}
                     {% else %}
                     {% endif %}</td></tr>
                 </table>    
