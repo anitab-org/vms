@@ -40,7 +40,7 @@ If you face some issues while installing and making VMS up in your local, have a
 Run VMS in a Docker Container
 -----------------------------
 
-If you wish to view a speak peek of the Systers VMS, you may use Docker to
+If you wish to view a sneak peek of the Systers VMS, you may use Docker to
 preview the VMS.
 Note: The following Docker configuration is not intended to be run in
 production at the moment. It may be configured to do so in the future.
