@@ -1,0 +1,52 @@
+{% extends "vms/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    <div class="spacer"></div>
+    <div class="row">
+        <h1>
+            {{ administrator.first_name }} {{ administrator.last_name }}
+        </h1>
+        <hr>
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        {% trans "Details" %}
+                    </h4>
+                </div>
+                <h1>
+                    {{ administrator.first_name }} {{ administrator.last_name }}
+                </h1>
+
+                <div class="panel-body">
+                <table>
+                    <!-- Better to have css padding instead of nbsp to insert spaces -->
+                   <tr> <td><label><h4><span class="label label-info">Email</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.email }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">City</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.city }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">State/Province</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.state }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">Country</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.country }}</td></tr>
+                    <tr><td><label><h4><span class="label label-info">Phone No-</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.phone_number }}</td></tr>
+                    <tr><td>{% if administrator.organization %}
+                        <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.organization.name }}
+                    {% elif administrator.unlisted_organization  %}
+                        <label><h4><span class="label label-info">Organization</span></h4></label>{{ administrator.unlisted_organization }}
+                    {% else %}
+                    {% endif %}</td></tr>
+                </table>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        {% trans "Options" %}
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <a href="{% url 'administrator:edit' administrator.id %}" class="btn btn-default">{% trans "Edit Profile" %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

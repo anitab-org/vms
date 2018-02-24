@@ -1,0 +1,287 @@
+{% extends "vms/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    <div class="spacer"></div>
+    <div class="well">
+        <form class="form-horizontal" method="post" action="{% url 'administrator:edit' administrator.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset>
+                    <legend>{% trans "Edit Profile" %}</legend>
+                        {% if form.first_name.errors %}
+                            <div id="div_id_first_name" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_first_name">
+                                    {% trans "First Name" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_first_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}First Name{% endblocktrans %}" name="first_name" value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.first_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_first_name" class="form-group">
+                                <label class="control-label requiredField" for="id_first_name">
+                                    {% trans "First Name" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_first_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}First Name{% endblocktrans %}" name="first_name" value="{% if form.first_name.value %}{{ form.first_name.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.last_name.errors %}
+                            <div id="div_id_last_name" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_last_name">
+                                    {% trans "Last Name" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_last_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Last Name{% endblocktrans %}" name="last_name" value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.last_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_last_name" class="form-group">
+                                <label class="control-label requiredField" for="id_last_name">
+                                    {% trans "Last Name" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_last_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Last Name{% endblocktrans %}" name="last_name" value="{% if form.last_name.value %}{{ form.last_name.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.email.errors %}
+                            <div id="div_id_email" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_email">
+                                    {% trans "Email" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_email" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Email{% endblocktrans %}" name="email" value="{% if form.email.value %}{{ form.email.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.email.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_email" class="form-group">
+                                <label class="control-label requiredField" for="id_email">
+                                    {% trans "Email" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_email" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Email{% endblocktrans %}" name="email" value="{% if form.email.value %}{{ form.email.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.address.errors %}
+                            <div id="div_id_address" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_address">
+                                    {% trans "Address" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_address" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Address{% endblocktrans %}" name="address" value="{% if form.address.value %}{{ form.address.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.address.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_address" class="form-group">
+                                <label class="control-label requiredField" for="id_address">
+                                    {% trans "Address" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_address" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Address{% endblocktrans %}" name="address" value="{% if form.address.value %}{{ form.address.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.city.errors %}
+                            <div id="div_id_city" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_city">
+                                    {% trans "City" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.city.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_city" class="form-group">
+                                <label class="control-label requiredField" for="id_city">
+                                    {% trans "City" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.state.errors %}
+                            <div id="div_id_state" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_state">
+                                    {% trans "State/Province" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.state.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_state" class="form-group">
+                                <label class="control-label requiredField" for="id_state">
+                                    {% trans "State/Province" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.country.errors %}
+                            <div id="div_id_country" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_country">
+                                    {% trans "Country" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.country.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_country" class="form-group">
+                                <label class="control-label requiredField" for="id_country">
+                                    {% trans "Country" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if form.phone_number.errors %}
+                            <div id="div_id_phone_number" class="form-group has-error">
+                                <label class="control-label requiredField" for="id_phone_number">
+                                    {% trans "Phone Number" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="+999999999" name="phone_number" value="{% if form.phone_number.value %}{{ form.phone_number.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.phone_number.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+{#                        {% elif phone_error %}#}
+{#                            <div id="div_id_phone_number" class="form-group has-error">#}
+{#                                <label class="control-label requiredField" for="id_phone_number">#}
+{#                                    Phone Number<span class="asteriskField">*</span>#}
+{#                                </label>#}
+{#                                <div class="controls">#}
+{#                                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="admin-phone_number" value="{{ form.phone_number.value }}">#}
+{#                                    <p class="help-block">#}
+{#                                        <strong>#}
+{#                                            This phone number isn't valid for the selected country#}
+{#                                        </strong>#}
+{#                                    </p>#}
+{#                                </div>#}
+{#                            </div>#}
+                        {% else %}
+                            <div id="div_id_phone_number" class="form-group">
+                                <label class="control-label requiredField" for="id_phone_number">
+                                    {% trans "Phone Number" %}<span class="asteriskField">*</span>
+                                </label>
+                                <div class="controls">
+                                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="+999999999" name="phone_number" value="{% if form.phone_number.value %}{{ form.phone_number.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div id="div_id_organization" class="form-group">
+                            <label class="control-label">
+                                {% trans "Organization" %}
+                            </label>
+                            <select id="select" class="form-control" name="organization_name" onchange="hide_organization()">
+                                <option value="0">-- {% trans "None" %} --</option>
+                                {% for organization in organization_list %}
+                                    {% if administrator.organization %}
+                                        {% if organization.name == administrator.organization.name %}
+                                            <option selected value="{{ organization.id }}">{{ organization.name }}</option>
+                                        {% else %}
+                                            <option value="{{ organization.id }}">{{ organization.name }}</option>
+                                        {% endif %}
+                                    {% else %}
+                                        <option value="{{ organization.id }}">{{ organization.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% if form.unlisted_organization.errors %}
+                            <div id="div_id_unlisted_organization" class="form-group has-error">
+                                <label class="control-label" for="id_unlisted_organization">
+                                    {% trans "If your organization is not listed above, please provide it here:" %}
+                                </label>
+                                <div class="controls">
+                                    <input id="id_unlisted_organization" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
+                                    <p class="help-block">
+                                        <strong>
+                                            {% for error in form.unlisted_organization.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </strong>
+                                    </p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div id="div_id_unlisted_organization" class="form-group">
+                                <label class="control-label" for="id_unlisted_organization">
+                                    {% trans "If your organization is not listed above, please provide it here:" %}
+                                </label>
+                                <div class="controls">
+                                    <input id="id_unlisted_organization" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <div class="col-md-12 col-md-offset-2">
+                                <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+                            </div>
+                        </div>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}
