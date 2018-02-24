@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% load static %}
+
 {% block content %}
     <div class="spacer"></div>
     <div class="well">
@@ -212,7 +214,7 @@
                         {% trans "Select your organization:" %}
                     </label>
                     <div class="col-md-8">
-                        <select class="form-control" name="organization_name">
+                        <select id="select" class="form-control" name="organization_name" onchange="hide_organisation()">
                             <option value="0">-- {% trans "None" %} --</option>
                             {% for organization in organization_list %}
                                 {% if volunteer.organization_id %}
@@ -229,9 +231,9 @@
                     </div>
                 </div>
                 {% if form.unlisted_organization.errors %}
-                    <div class="form-group has-error">
+                    <div id="div_id_unlisted_organization" class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "If your organization is not listed, please provide it here:" %}</label>
-                        <div class="col-md-8">
+                        <div id="div_id_unlisted_organization" class="col-md-8">
                             <input class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
                             <p class="help-block">
                                 <strong>
@@ -243,12 +245,13 @@
                         </div>
                     </div>
                 {% else %}
-                    <div class="form-group">
+                    <div id="div_id_unlisted_organization" class="form-group">
                         <label class="col-md-2 control-label">{% trans "If your organization is not listed, please provide it here:" %}</label>
                         <div class="col-md-8">
                             <input class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
                         </div>
                     </div>
+                <script type="text/javascript" src="{% static 'vms/js/hide_organization.js' %}"></script>                 
                 {% endif %}
                 {% if form.websites.errors %}
                     <div class="form-group has-error">
