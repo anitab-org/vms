@@ -53,9 +53,11 @@ class CreateJobView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
         end_date_event = event.end_date
         start_date_job = form.cleaned_data.get('start_date')
         end_date_job = form.cleaned_data.get('end_date')
+        job_name = form.cleaned_data.get('name')
+        flag = Job.objects.filter(name = job_name).exists()
         event_list = get_events_ordered_by_name()
         if (start_date_job >= start_date_event
-                and end_date_job <= end_date_event):
+                and end_date_job <= end_date_event and not flag):
             job = form.save(commit=False)
             if event:
                 job.event = event
@@ -64,7 +66,10 @@ class CreateJobView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
             job.save()
             return HttpResponseRedirect(reverse('job:list'))
         else:
-            messages.add_message(self.request, messages.INFO, 'Job dates should lie within Event dates')
+            raise_err = 'Job dates should lie within Event dates'
+            if flag:
+                raise_err = 'Job with the same name already exists'
+            messages.add_message(self.request, messages.INFO, raise_err)
             return render(
                 self.request,
                 'job/create.html',
