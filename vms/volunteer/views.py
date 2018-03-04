@@ -222,6 +222,7 @@ class ShowReportListView(LoginRequiredMixin, ListView):
 @login_required
 @admin_required
 def search(request):
+    organizations_list = []
     if request.method == 'POST':
         form = SearchVolunteerForm(request.POST)
         if form.is_valid():
