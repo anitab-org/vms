@@ -9,6 +9,7 @@ $(function() {
         changeMonth: true,
         numberOfMonths: 1,
         dateFormat: 'yy-mm-dd',
+        minDate: 0,
         onClose: function( selectedDate ) {
             $( "#to" ).datepicker( "option", "minDate", selectedDate );
         }
