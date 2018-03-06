@@ -54,7 +54,7 @@ class CreateJobView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
         start_date_job = form.cleaned_data.get('start_date')
         end_date_job = form.cleaned_data.get('end_date')
         job_name = form.cleaned_data.get('name')
-        flag = Job.objects.filter(name = job_name).exists()
+        flag = Job.objects.filter(event=event, name=job_name).exists()
         event_list = get_events_ordered_by_name()
         if (start_date_job >= start_date_event
                 and end_date_job <= end_date_event and not flag):
