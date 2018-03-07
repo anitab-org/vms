@@ -21,7 +21,7 @@ class Administrator(models.Model):
     address = models.CharField(
         max_length=75,
         validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)]+$', ),
+            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\.)|(,)|(\:)]+$', ),
         ],
     )
     city = models.CharField(
