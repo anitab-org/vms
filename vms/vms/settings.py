@@ -4,6 +4,7 @@ Django settings for vms project.
 Note: Currently development settings. Not suitable as is for production.
 """
 from django.core.urlresolvers import reverse_lazy
+from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -90,8 +91,8 @@ USE_TZ = True
 LOCALE_PATHS = (os.path.join(BASE_DIR, 'locale/'), )
 
 LANGUAGES = (
-    ('en-us', 'English'),
-    ('fr-fr', 'French'),
+    ('en-us', _('English')),
+    ('fr-fr', _('French')),
 )
 
 # Static files (CSS, JavaScript, Images)

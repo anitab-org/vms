@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-10 22:43+0000\n"
+"POT-Creation-Date: 2018-02-24 13:54+0000\n"
 "PO-Revision-Date: 2016-03-10 17:55-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -23,8 +23,8 @@ msgid "Please enter any of the fields below to generate a report."
 msgstr "Veuillez inscrire les champs ci-dessous pour générer un rapport."
 
 #: administrator/templates/administrator/report.html:12
-#: vms/templates/vms/base.html:50 vms/templates/vms/base.html.py:58
-#: volunteer/templates/volunteer/report.html:14
+#: vms/templates/vms/base.html:48 vms/templates/vms/base.html.py:67
+#: volunteer/templates/volunteer/report.html:21
 msgid "Report"
 msgstr "Rapport"
 
@@ -40,173 +40,193 @@ msgstr "Nom de famille de bénévole"
 
 #: administrator/templates/administrator/report.html:59
 #: administrator/templates/administrator/report.html:80
-#: administrator/templates/administrator/report.html:168
+#: administrator/templates/administrator/report.html:188
 msgid "Volunteer Organization"
 msgstr "Organisation de bénévole"
 
 #: administrator/templates/administrator/report.html:63
 #: administrator/templates/administrator/report.html:83
-#: registration/templates/registration/signup_administrator.html:276
-#: registration/templates/registration/signup_volunteer.html:302
+#: registration/templates/registration/signup_administrator.html:292
+#: registration/templates/registration/signup_volunteer.html:318
+#: volunteer/templates/volunteer/search.html:141
 msgid "Select Organization"
 msgstr "Sélectionner une Organisation"
 
 #: administrator/templates/administrator/report.html:93
-#: administrator/templates/administrator/report.html:107
-#: administrator/templates/administrator/report.html:169
+#: administrator/templates/administrator/report.html:112
+#: administrator/templates/administrator/report.html:189
 #: event/templates/event/create.html:27 event/templates/event/create.html:29
 #: event/templates/event/create.html:41 event/templates/event/create.html:43
-#: event/templates/event/edit.html:14 event/templates/event/edit.html.py:16
-#: event/templates/event/edit.html:28 event/templates/event/edit.html.py:30
+#: event/templates/event/edit.html:27 event/templates/event/edit.html.py:29
+#: event/templates/event/edit.html:41 event/templates/event/edit.html.py:43
 #: event/templates/event/list.html:14
 #: event/templates/event/list_sign_up.html:40
-#: volunteer/templates/volunteer/report.html:17
-#: volunteer/templates/volunteer/report.html:31
-#: volunteer/templates/volunteer/report.html:90
+#: volunteer/templates/volunteer/report.html:24
+#: volunteer/templates/volunteer/report.html:43
+#: volunteer/templates/volunteer/report.html:117
 msgid "Event Name"
 msgstr "Titre de l'évènement"
 
+#: administrator/templates/administrator/report.html:96
 #: administrator/templates/administrator/report.html:115
-#: administrator/templates/administrator/report.html:129
-#: administrator/templates/administrator/report.html:170
-#: job/templates/job/create.html:55 job/templates/job/create.html.py:57
-#: job/templates/job/create.html:69 job/templates/job/create.html.py:71
+#: volunteer/templates/volunteer/report.html:27
+#: volunteer/templates/volunteer/report.html:46
+#, fuzzy
+#| msgid "Delete Event"
+msgid "Select Event"
+msgstr "Supprimer l'Évènement"
+
+#: administrator/templates/administrator/report.html:125
+#: administrator/templates/administrator/report.html:144
+#: administrator/templates/administrator/report.html:190
+#: job/templates/job/create.html:59 job/templates/job/create.html.py:61
+#: job/templates/job/create.html:73 job/templates/job/create.html.py:75
 #: job/templates/job/details.html:17 job/templates/job/edit.html:59
 #: job/templates/job/edit.html.py:61 job/templates/job/edit.html:73
 #: job/templates/job/edit.html.py:75 job/templates/job/list.html:13
 #: job/templates/job/list_sign_up.html:15 shift/templates/shift/create.html:30
 #: shift/templates/shift/edit.html:30 shift/templates/shift/list_jobs.html:14
-#: volunteer/templates/volunteer/report.html:39
-#: volunteer/templates/volunteer/report.html:53
-#: volunteer/templates/volunteer/report.html:91
+#: volunteer/templates/volunteer/report.html:56
+#: volunteer/templates/volunteer/report.html:75
+#: volunteer/templates/volunteer/report.html:118
 msgid "Job Name"
 msgstr "Nom du travail"
 
-#: administrator/templates/administrator/report.html:136
+#: administrator/templates/administrator/report.html:128
+#: administrator/templates/administrator/report.html:147
+#: volunteer/templates/volunteer/report.html:59
+#: volunteer/templates/volunteer/report.html:78
+#, fuzzy
+#| msgid "Delete Job"
+msgid "Select Job"
+msgstr "Supprimer le travail"
+
+#: administrator/templates/administrator/report.html:156
 #: event/templates/event/create.html:50 event/templates/event/create.html:64
-#: event/templates/event/edit.html:36 event/templates/event/edit.html.py:50
+#: event/templates/event/edit.html:49 event/templates/event/edit.html.py:63
 #: event/templates/event/list.html:15
-#: event/templates/event/list_sign_up.html:41 job/templates/job/create.html:99
-#: job/templates/job/create.html.py:113 job/templates/job/details.html:19
+#: event/templates/event/list_sign_up.html:41 job/templates/job/create.html:103
+#: job/templates/job/create.html.py:117 job/templates/job/details.html:19
 #: job/templates/job/edit.html:103 job/templates/job/edit.html.py:117
 #: job/templates/job/list.html:15 job/templates/job/list_sign_up.html:16
 #: shift/templates/shift/list_jobs.html:16
-#: volunteer/templates/volunteer/report.html:60
+#: volunteer/templates/volunteer/report.html:87
 msgid "Start Date"
 msgstr "Date de début"
 
-#: administrator/templates/administrator/report.html:142
+#: administrator/templates/administrator/report.html:162
 #: event/templates/event/create.html:72 event/templates/event/create.html:86
-#: event/templates/event/edit.html:58 event/templates/event/edit.html.py:72
+#: event/templates/event/edit.html:71 event/templates/event/edit.html.py:85
 #: event/templates/event/list.html:16
-#: event/templates/event/list_sign_up.html:42 job/templates/job/create.html:121
-#: job/templates/job/create.html.py:135 job/templates/job/details.html:20
+#: event/templates/event/list_sign_up.html:42 job/templates/job/create.html:125
+#: job/templates/job/create.html.py:139 job/templates/job/details.html:20
 #: job/templates/job/edit.html:125 job/templates/job/edit.html.py:139
 #: job/templates/job/list.html:16 job/templates/job/list_sign_up.html:17
 #: shift/templates/shift/list_jobs.html:17
-#: volunteer/templates/volunteer/report.html:66
+#: volunteer/templates/volunteer/report.html:93
 msgid "End Date"
 msgstr "Date de Fin"
 
-#: administrator/templates/administrator/report.html:150
-#: volunteer/templates/volunteer/report.html:74
+#: administrator/templates/administrator/report.html:170
+#: volunteer/templates/volunteer/report.html:101
 msgid "Generate Report"
 msgstr "Générer un Rapport"
 
-#: administrator/templates/administrator/report.html:157
-#: volunteer/templates/volunteer/report.html:81
+#: administrator/templates/administrator/report.html:177
+#: volunteer/templates/volunteer/report.html:108
 msgid "Report Statistics"
 msgstr "Statistiques de Rapport"
 
-#: administrator/templates/administrator/report.html:158
-#: volunteer/templates/volunteer/report.html:82
+#: administrator/templates/administrator/report.html:178
+#: volunteer/templates/volunteer/report.html:109
 msgid "Total Number of Shifts"
 msgstr "Total d'équipe"
 
-#: administrator/templates/administrator/report.html:160
-#: volunteer/templates/volunteer/report.html:84
+#: administrator/templates/administrator/report.html:180
+#: volunteer/templates/volunteer/report.html:111
 msgid "Total Hours"
 msgstr "Total d'heures"
 
-#: administrator/templates/administrator/report.html:166
-#: registration/templates/registration/signup_administrator.html:66
-#: registration/templates/registration/signup_administrator.html:69
-#: registration/templates/registration/signup_administrator.html:82
-#: registration/templates/registration/signup_administrator.html:85
-#: registration/templates/registration/signup_volunteer.html:92
-#: registration/templates/registration/signup_volunteer.html:95
-#: registration/templates/registration/signup_volunteer.html:108
-#: registration/templates/registration/signup_volunteer.html:111
-#: shift/templates/shift/volunteer_search.html:14
-#: shift/templates/shift/volunteer_search.html:28
-#: shift/templates/shift/volunteer_search.html:158
+#: administrator/templates/administrator/report.html:186
+#: registration/templates/registration/signup_administrator.html:68
+#: registration/templates/registration/signup_administrator.html:71
+#: registration/templates/registration/signup_administrator.html:84
+#: registration/templates/registration/signup_administrator.html:87
+#: registration/templates/registration/signup_volunteer.html:94
+#: registration/templates/registration/signup_volunteer.html:97
+#: registration/templates/registration/signup_volunteer.html:110
+#: registration/templates/registration/signup_volunteer.html:113
+#: shift/templates/shift/list_volunteers.html:41
+#: shift/templates/shift/list_volunteers.html:80
+#: shift/templates/shift/volunteer_search.html:13
 #: volunteer/templates/volunteer/edit.html:36
 #: volunteer/templates/volunteer/edit.html:38
 #: volunteer/templates/volunteer/edit.html:50
 #: volunteer/templates/volunteer/edit.html:52
 #: volunteer/templates/volunteer/search.html:14
 #: volunteer/templates/volunteer/search.html:28
-#: volunteer/templates/volunteer/search.html:157
+#: volunteer/templates/volunteer/search.html:162
 msgid "First Name"
 msgstr "Prénom"
 
-#: administrator/templates/administrator/report.html:167
-#: registration/templates/registration/signup_administrator.html:92
-#: registration/templates/registration/signup_administrator.html:95
-#: registration/templates/registration/signup_administrator.html:108
-#: registration/templates/registration/signup_administrator.html:111
-#: registration/templates/registration/signup_volunteer.html:118
-#: registration/templates/registration/signup_volunteer.html:121
-#: registration/templates/registration/signup_volunteer.html:134
-#: registration/templates/registration/signup_volunteer.html:137
-#: shift/templates/shift/volunteer_search.html:36
-#: shift/templates/shift/volunteer_search.html:50
-#: shift/templates/shift/volunteer_search.html:159
+#: administrator/templates/administrator/report.html:187
+#: registration/templates/registration/signup_administrator.html:94
+#: registration/templates/registration/signup_administrator.html:97
+#: registration/templates/registration/signup_administrator.html:110
+#: registration/templates/registration/signup_administrator.html:113
+#: registration/templates/registration/signup_volunteer.html:120
+#: registration/templates/registration/signup_volunteer.html:123
+#: registration/templates/registration/signup_volunteer.html:136
+#: registration/templates/registration/signup_volunteer.html:139
+#: shift/templates/shift/list_volunteers.html:42
+#: shift/templates/shift/list_volunteers.html:81
+#: shift/templates/shift/volunteer_search.html:14
 #: volunteer/templates/volunteer/edit.html:58
 #: volunteer/templates/volunteer/edit.html:60
 #: volunteer/templates/volunteer/edit.html:72
 #: volunteer/templates/volunteer/edit.html:74
 #: volunteer/templates/volunteer/search.html:36
 #: volunteer/templates/volunteer/search.html:50
-#: volunteer/templates/volunteer/search.html:158
+#: volunteer/templates/volunteer/search.html:163
 msgid "Last Name"
 msgstr "Nom de famille"
 
-#: administrator/templates/administrator/report.html:171
+#: administrator/templates/administrator/report.html:191
 #: shift/templates/shift/create.html:44 shift/templates/shift/create.html:58
 #: shift/templates/shift/edit.html:44 shift/templates/shift/edit.html.py:58
 #: shift/templates/shift/hours_list.html:14
 #: shift/templates/shift/list_shifts.html:13
 #: shift/templates/shift/list_shifts_sign_up.html:16
+#: shift/templates/shift/list_volunteers.html:13
 #: shift/templates/shift/manage_volunteer_shifts.html:20
 #: shift/templates/shift/manage_volunteer_shifts.html:55
 #: shift/templates/shift/sign_up.html:26
 #: shift/templates/shift/volunteer_shifts.html:14
-#: volunteer/templates/volunteer/report.html:92
+#: volunteer/templates/volunteer/report.html:119
 msgid "Date"
 msgstr "Date"
 
-#: administrator/templates/administrator/report.html:172
+#: administrator/templates/administrator/report.html:192
 #: shift/templates/shift/hours_list.html:15
 #: shift/templates/shift/manage_volunteer_shifts.html:56
-#: volunteer/templates/volunteer/report.html:93
+#: volunteer/templates/volunteer/report.html:120
 msgid "Logged Start Time"
 msgstr "Temps de début enregistré"
 
-#: administrator/templates/administrator/report.html:173
+#: administrator/templates/administrator/report.html:193
 #: shift/templates/shift/hours_list.html:16
 #: shift/templates/shift/manage_volunteer_shifts.html:57
-#: volunteer/templates/volunteer/report.html:94
+#: volunteer/templates/volunteer/report.html:121
 msgid "Logged End Time"
 msgstr "Temps de Fin enregistré"
 
-#: administrator/templates/administrator/report.html:174
-#: volunteer/templates/volunteer/report.html:95
+#: administrator/templates/administrator/report.html:194
+#: volunteer/templates/volunteer/report.html:122
 msgid "Duration"
 msgstr "Durée"
 
-#: administrator/templates/administrator/report.html:197
-#: volunteer/templates/volunteer/report.html:115
+#: administrator/templates/administrator/report.html:217
+#: volunteer/templates/volunteer/report.html:13
 msgid "Your criteria did not return any results."
 msgstr "Votre critère n'est retourneé pas les résultats"
 
@@ -214,11 +234,12 @@ msgstr "Votre critère n'est retourneé pas les résultats"
 #: event/templates/event/list_sign_up.html:35
 #: job/templates/job/list_sign_up.html:8
 #: shift/templates/shift/list_shifts_sign_up.html:8
-#: vms/templates/vms/base.html:51
+#: vms/templates/vms/base.html:49
 msgid "Events"
 msgstr "Évènements"
 
 #: administrator/templates/administrator/settings.html:9
+#: event/templates/event/edit.html:93
 #: shift/templates/shift/list_shifts_sign_up.html:9
 msgid "Jobs"
 msgstr "Travails"
@@ -245,14 +266,14 @@ msgstr "Le nom d'utilisateur et/ou le mot de passe ne sont pas corrects "
 #: authentication/templates/authentication/login.html:19
 #: authentication/templates/authentication/login.html:32
 #: authentication/templates/authentication/login.html:35
-#: registration/templates/registration/signup_administrator.html:14
-#: registration/templates/registration/signup_administrator.html:17
-#: registration/templates/registration/signup_administrator.html:30
-#: registration/templates/registration/signup_administrator.html:33
-#: registration/templates/registration/signup_volunteer.html:14
-#: registration/templates/registration/signup_volunteer.html:17
-#: registration/templates/registration/signup_volunteer.html:30
-#: registration/templates/registration/signup_volunteer.html:33
+#: registration/templates/registration/signup_administrator.html:16
+#: registration/templates/registration/signup_administrator.html:19
+#: registration/templates/registration/signup_administrator.html:32
+#: registration/templates/registration/signup_administrator.html:35
+#: registration/templates/registration/signup_volunteer.html:16
+#: registration/templates/registration/signup_volunteer.html:19
+#: registration/templates/registration/signup_volunteer.html:32
+#: registration/templates/registration/signup_volunteer.html:35
 msgid "Username"
 msgstr "Le nom d'utilisateur"
 
@@ -260,18 +281,18 @@ msgstr "Le nom d'utilisateur"
 #: authentication/templates/authentication/login.html:45
 #: authentication/templates/authentication/login.html:58
 #: authentication/templates/authentication/login.html:61
-#: registration/templates/registration/signup_administrator.html:40
-#: registration/templates/registration/signup_administrator.html:43
-#: registration/templates/registration/signup_administrator.html:56
-#: registration/templates/registration/signup_administrator.html:59
-#: registration/templates/registration/signup_volunteer.html:40
-#: registration/templates/registration/signup_volunteer.html:43
-#: registration/templates/registration/signup_volunteer.html:56
-#: registration/templates/registration/signup_volunteer.html:59
+#: registration/templates/registration/signup_administrator.html:42
+#: registration/templates/registration/signup_administrator.html:45
+#: registration/templates/registration/signup_administrator.html:58
+#: registration/templates/registration/signup_administrator.html:61
+#: registration/templates/registration/signup_volunteer.html:42
+#: registration/templates/registration/signup_volunteer.html:45
+#: registration/templates/registration/signup_volunteer.html:58
+#: registration/templates/registration/signup_volunteer.html:61
 msgid "Password"
 msgstr "Le mot de passe"
 
-#: authentication/templates/authentication/login.html:66
+#: authentication/templates/authentication/login.html:71
 msgid "Sign In"
 msgstr "Connexion"
 
@@ -280,119 +301,118 @@ msgid "Create Event"
 msgstr "Créer un Évènement"
 
 #: event/templates/event/create.html:95 event/templates/event/create.html:109
-#: event/templates/event/edit.html:80 event/templates/event/edit.html.py:94
-#: registration/templates/registration/signup_administrator.html:222
-#: registration/templates/registration/signup_administrator.html:225
-#: registration/templates/registration/signup_administrator.html:238
-#: registration/templates/registration/signup_administrator.html:241
-#: registration/templates/registration/signup_volunteer.html:248
-#: registration/templates/registration/signup_volunteer.html:251
-#: registration/templates/registration/signup_volunteer.html:264
-#: registration/templates/registration/signup_volunteer.html:267
+#: event/templates/event/edit.html:105 event/templates/event/edit.html:119
+#: registration/templates/registration/signup_administrator.html:224
+#: registration/templates/registration/signup_administrator.html:227
+#: registration/templates/registration/signup_administrator.html:240
+#: registration/templates/registration/signup_administrator.html:243
+#: registration/templates/registration/signup_volunteer.html:250
+#: registration/templates/registration/signup_volunteer.html:253
+#: registration/templates/registration/signup_volunteer.html:266
+#: registration/templates/registration/signup_volunteer.html:269
 #: shift/templates/shift/create.html:152 shift/templates/shift/create.html:166
 #: shift/templates/shift/edit.html:152 shift/templates/shift/edit.html:166
-#: shift/templates/shift/volunteer_search.html:102
-#: shift/templates/shift/volunteer_search.html:116
-#: shift/templates/shift/volunteer_search.html:163
+#: shift/templates/shift/list_volunteers.html:46
+#: shift/templates/shift/volunteer_search.html:18
 #: volunteer/templates/volunteer/edit.html:168
 #: volunteer/templates/volunteer/edit.html:170
 #: volunteer/templates/volunteer/edit.html:182
 #: volunteer/templates/volunteer/edit.html:184
-#: volunteer/templates/volunteer/profile.html:43
 #: volunteer/templates/volunteer/search.html:102
 #: volunteer/templates/volunteer/search.html:116
-#: volunteer/templates/volunteer/search.html:162
+#: volunteer/templates/volunteer/search.html:167
 msgid "Country"
 msgstr "Pays"
 
 #: event/templates/event/create.html:97 event/templates/event/create.html:111
-#: event/templates/event/edit.html:82 event/templates/event/edit.html.py:96
+#: event/templates/event/edit.html:107 event/templates/event/edit.html:121
 msgid "Event Country"
 msgstr "Pays d'Évènement"
 
 #: event/templates/event/create.html:118 event/templates/event/create.html:132
-#: event/templates/event/edit.html:103 event/templates/event/edit.html:117
+#: event/templates/event/edit.html:128 event/templates/event/edit.html:142
 #: shift/templates/shift/create.html:174 shift/templates/shift/create.html:188
 #: shift/templates/shift/edit.html:174 shift/templates/shift/edit.html:188
 msgid "State"
 msgstr "État"
 
 #: event/templates/event/create.html:120 event/templates/event/create.html:134
-#: event/templates/event/edit.html:105 event/templates/event/edit.html:119
+#: event/templates/event/edit.html:130 event/templates/event/edit.html:144
 msgid "Event State"
 msgstr "État d'Évènement"
 
 #: event/templates/event/create.html:141 event/templates/event/create.html:155
-#: event/templates/event/edit.html:126 event/templates/event/edit.html:140
+#: event/templates/event/edit.html:151 event/templates/event/edit.html:165
 #: event/templates/event/list.html:17
-#: registration/templates/registration/signup_administrator.html:170
-#: registration/templates/registration/signup_administrator.html:173
-#: registration/templates/registration/signup_administrator.html:186
-#: registration/templates/registration/signup_administrator.html:189
-#: registration/templates/registration/signup_volunteer.html:196
-#: registration/templates/registration/signup_volunteer.html:199
-#: registration/templates/registration/signup_volunteer.html:212
-#: registration/templates/registration/signup_volunteer.html:215
+#: registration/templates/registration/signup_administrator.html:172
+#: registration/templates/registration/signup_administrator.html:175
+#: registration/templates/registration/signup_administrator.html:188
+#: registration/templates/registration/signup_administrator.html:191
+#: registration/templates/registration/signup_volunteer.html:198
+#: registration/templates/registration/signup_volunteer.html:201
+#: registration/templates/registration/signup_volunteer.html:214
+#: registration/templates/registration/signup_volunteer.html:217
 #: shift/templates/shift/create.html:197 shift/templates/shift/create.html:211
 #: shift/templates/shift/edit.html:197 shift/templates/shift/edit.html:211
-#: shift/templates/shift/volunteer_search.html:58
-#: shift/templates/shift/volunteer_search.html:72
-#: shift/templates/shift/volunteer_search.html:161
+#: shift/templates/shift/list_volunteers.html:17
+#: shift/templates/shift/list_volunteers.html:44
+#: shift/templates/shift/volunteer_search.html:16
 #: volunteer/templates/volunteer/edit.html:124
 #: volunteer/templates/volunteer/edit.html:126
 #: volunteer/templates/volunteer/edit.html:138
 #: volunteer/templates/volunteer/edit.html:140
-#: volunteer/templates/volunteer/profile.html:39
 #: volunteer/templates/volunteer/search.html:58
 #: volunteer/templates/volunteer/search.html:72
-#: volunteer/templates/volunteer/search.html:160
+#: volunteer/templates/volunteer/search.html:165
 msgid "City"
 msgstr "Ville"
 
 #: event/templates/event/create.html:143 event/templates/event/create.html:157
-#: event/templates/event/edit.html:128 event/templates/event/edit.html:142
+#: event/templates/event/edit.html:153 event/templates/event/edit.html:167
 msgid "Event City"
 msgstr "Ville d'Évènement"
 
 #: event/templates/event/create.html:164 event/templates/event/create.html:178
-#: event/templates/event/edit.html:149 event/templates/event/edit.html:163
-#: registration/templates/registration/signup_administrator.html:144
-#: registration/templates/registration/signup_administrator.html:147
-#: registration/templates/registration/signup_administrator.html:160
-#: registration/templates/registration/signup_administrator.html:163
-#: registration/templates/registration/signup_volunteer.html:170
-#: registration/templates/registration/signup_volunteer.html:173
-#: registration/templates/registration/signup_volunteer.html:186
-#: registration/templates/registration/signup_volunteer.html:189
+#: event/templates/event/edit.html:174 event/templates/event/edit.html:188
+#: registration/templates/registration/signup_administrator.html:146
+#: registration/templates/registration/signup_administrator.html:149
+#: registration/templates/registration/signup_administrator.html:162
+#: registration/templates/registration/signup_administrator.html:165
+#: registration/templates/registration/signup_volunteer.html:172
+#: registration/templates/registration/signup_volunteer.html:175
+#: registration/templates/registration/signup_volunteer.html:188
+#: registration/templates/registration/signup_volunteer.html:191
 #: shift/templates/shift/create.html:220 shift/templates/shift/create.html:234
 #: shift/templates/shift/edit.html:220 shift/templates/shift/edit.html:234
-#: shift/templates/shift/volunteer_search.html:160
+#: shift/templates/shift/list_volunteers.html:16
+#: shift/templates/shift/list_volunteers.html:43
+#: shift/templates/shift/volunteer_search.html:15
 #: volunteer/templates/volunteer/edit.html:102
 #: volunteer/templates/volunteer/edit.html:104
 #: volunteer/templates/volunteer/edit.html:116
 #: volunteer/templates/volunteer/edit.html:118
-#: volunteer/templates/volunteer/search.html:159
+#: volunteer/templates/volunteer/search.html:164
 msgid "Address"
 msgstr "Adresse"
 
 #: event/templates/event/create.html:166 event/templates/event/create.html:180
-#: event/templates/event/edit.html:151 event/templates/event/edit.html:165
+#: event/templates/event/edit.html:176 event/templates/event/edit.html:190
 msgid "Event Address"
 msgstr "Adresse d'Évènement"
 
 #: event/templates/event/create.html:187 event/templates/event/create.html:201
-#: event/templates/event/edit.html:172 event/templates/event/edit.html:186
+#: event/templates/event/edit.html:197 event/templates/event/edit.html:211
 #: shift/templates/shift/create.html:243 shift/templates/shift/create.html:257
 #: shift/templates/shift/edit.html:243 shift/templates/shift/edit.html:257
 msgid "Venue"
 msgstr "Lieu"
 
 #: event/templates/event/create.html:189 event/templates/event/create.html:203
-#: event/templates/event/edit.html:174 event/templates/event/edit.html:188
+#: event/templates/event/edit.html:199 event/templates/event/edit.html:213
 msgid "Event Venue"
 msgstr "Lieu d'Évènement"
 
-#: event/templates/event/create.html:211 job/templates/job/create.html:143
+#: event/templates/event/create.html:211 job/templates/job/create.html:147
 #: organization/templates/organization/create.html:36
 #: shift/templates/shift/create.html:265
 msgid "Create"
@@ -438,17 +458,20 @@ msgstr ""
 #: shift/templates/shift/delete_error.html:11
 #: shift/templates/shift/sign_up_error.html:26
 #: vms/templates/vms/no_admin_rights.html:18
+#: vms/templates/vms/no_volunteer_access.html:18
+#: vms/templates/vms/no_volunteer_rights.html:18
 msgid "Return to Previous Page"
 msgstr "Retourner à la page précédente"
 
-#: event/templates/event/edit.html:11
+#: event/templates/event/edit.html:24
 msgid "Edit Event"
 msgstr "Modifier l'Évènement"
 
-#: event/templates/event/edit.html:194 job/templates/job/edit.html:147
+#: event/templates/event/edit.html:219 job/templates/job/edit.html:147
 #: organization/templates/organization/edit.html:36
-#: shift/templates/shift/edit.html:265 shift/templates/shift/edit_hours.html:99
-#: shift/templates/shift/edit_hours_manager.html:96
+#: shift/templates/shift/edit.html:265
+#: shift/templates/shift/edit_hours.html:122
+#: shift/templates/shift/edit_hours_manager.html:119
 #: volunteer/templates/volunteer/edit.html:341
 msgid "Save"
 msgstr "Enregistrer"
@@ -458,7 +481,7 @@ msgstr "Enregistrer"
 #: organization/templates/organization/list.html:14
 #: organization/templates/organization/list.html:23
 #: shift/templates/shift/list_shifts.html:17
-#: shift/templates/shift/list_shifts.html:28
+#: shift/templates/shift/list_shifts.html:29
 msgid "Edit"
 msgstr "Modifier"
 
@@ -467,7 +490,7 @@ msgstr "Modifier"
 #: organization/templates/organization/list.html:15
 #: organization/templates/organization/list.html:26
 #: shift/templates/shift/list_shifts.html:18
-#: shift/templates/shift/list_shifts.html:31
+#: shift/templates/shift/list_shifts.html:32
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -489,8 +512,7 @@ msgid "To:"
 msgstr "À:"
 
 #: event/templates/event/list_sign_up.html:26
-#: shift/templates/shift/volunteer_search.html:147
-#: volunteer/templates/volunteer/search.html:147
+#: volunteer/templates/volunteer/search.html:152
 msgid "Search"
 msgstr "Chercher"
 
@@ -520,11 +542,11 @@ msgstr ""
 "directeurs de bénévole de gérer leurs bénévoles et voir les reportages."
 
 #: home/templates/home/home.html:25
-#: registration/templates/registration/signup_administrator.html:9
-#: registration/templates/registration/signup_volunteer.html:9
+#: registration/templates/registration/signup_administrator.html:11
+#: registration/templates/registration/signup_volunteer.html:11
 #: shift/templates/shift/list_shifts_sign_up.html:22
 #: shift/templates/shift/list_shifts_sign_up.html:39
-#: vms/templates/vms/base.html:63
+#: vms/templates/vms/base.html:87
 msgid "Sign Up"
 msgstr "Enregistrer"
 
@@ -532,7 +554,7 @@ msgstr "Enregistrer"
 msgid "Sign Up Admin"
 msgstr "Enregistrer pour administrateur"
 
-#: home/templates/home/home.html:27 vms/templates/vms/base.html:64
+#: home/templates/home/home.html:27 vms/templates/vms/base.html:88
 msgid "Log In"
 msgstr "Se connecter"
 
@@ -544,25 +566,25 @@ msgstr "Créer un Travail"
 msgid "Event:"
 msgstr "Évènement:"
 
-#: job/templates/job/create.html:43 job/templates/job/edit.html:47
+#: job/templates/job/create.html:47 job/templates/job/edit.html:47
 msgid "Event Start Date"
 msgstr "Date de début pour l'Évènement"
 
-#: job/templates/job/create.html:47 job/templates/job/edit.html:51
+#: job/templates/job/create.html:51 job/templates/job/edit.html:51
 msgid "Event End Date"
 msgstr "Date de fin pour l'Évènement"
 
-#: job/templates/job/create.html:77 job/templates/job/create.html.py:91
+#: job/templates/job/create.html:81 job/templates/job/create.html.py:95
 #: job/templates/job/edit.html:81 job/templates/job/edit.html.py:95
 msgid "Description"
 msgstr "Description"
 
-#: job/templates/job/create.html:79 job/templates/job/create.html.py:93
+#: job/templates/job/create.html:83 job/templates/job/create.html.py:97
 #: job/templates/job/edit.html:83 job/templates/job/edit.html.py:97
 msgid "Include a description of the job here"
 msgstr "Inclure une description de le travail ici"
 
-#: job/templates/job/create.html:151 job/templates/job/edit.html:155
+#: job/templates/job/create.html:155 job/templates/job/edit.html:155
 msgid "Please add events to associate with jobs first."
 msgstr "Ajouters les Évènement avant créer les travails s'il vous plait"
 
@@ -589,6 +611,7 @@ msgstr "Description de travail"
 
 #: job/templates/job/details.html:18 job/templates/job/list.html:14
 #: shift/templates/shift/list_jobs.html:15
+#: shift/templates/shift/list_volunteers.html:12
 msgid "Event"
 msgstr "Évènement:"
 
@@ -653,139 +676,135 @@ msgstr "Vous ne pouvez pas supprimer une organisation avec les utilisateurs."
 msgid "Edit Organization"
 msgstr "Modifier l'organisation"
 
-#: registration/templates/registration/signup_administrator.html:118
-#: registration/templates/registration/signup_administrator.html:121
-#: registration/templates/registration/signup_administrator.html:134
-#: registration/templates/registration/signup_administrator.html:137
-#: registration/templates/registration/signup_volunteer.html:144
-#: registration/templates/registration/signup_volunteer.html:147
-#: registration/templates/registration/signup_volunteer.html:160
-#: registration/templates/registration/signup_volunteer.html:163
-#: shift/templates/shift/volunteer_search.html:166
+#: registration/templates/registration/signup_administrator.html:120
+#: registration/templates/registration/signup_administrator.html:123
+#: registration/templates/registration/signup_administrator.html:136
+#: registration/templates/registration/signup_administrator.html:139
+#: registration/templates/registration/signup_volunteer.html:146
+#: registration/templates/registration/signup_volunteer.html:149
+#: registration/templates/registration/signup_volunteer.html:162
+#: registration/templates/registration/signup_volunteer.html:165
+#: shift/templates/shift/list_volunteers.html:49
+#: shift/templates/shift/volunteer_search.html:21
 #: volunteer/templates/volunteer/edit.html:80
 #: volunteer/templates/volunteer/edit.html:82
 #: volunteer/templates/volunteer/edit.html:94
 #: volunteer/templates/volunteer/edit.html:96
-#: volunteer/templates/volunteer/profile.html:37
-#: volunteer/templates/volunteer/search.html:165
+#: volunteer/templates/volunteer/search.html:170
 msgid "Email"
 msgstr "Email"
 
-#: registration/templates/registration/signup_administrator.html:196
-#: registration/templates/registration/signup_administrator.html:199
-#: registration/templates/registration/signup_administrator.html:212
-#: registration/templates/registration/signup_administrator.html:215
-#: registration/templates/registration/signup_volunteer.html:222
-#: registration/templates/registration/signup_volunteer.html:225
-#: registration/templates/registration/signup_volunteer.html:238
-#: registration/templates/registration/signup_volunteer.html:241
-#: shift/templates/shift/volunteer_search.html:80
-#: shift/templates/shift/volunteer_search.html:94
-#: shift/templates/shift/volunteer_search.html:162
+#: registration/templates/registration/signup_administrator.html:198
+#: registration/templates/registration/signup_administrator.html:201
+#: registration/templates/registration/signup_administrator.html:214
+#: registration/templates/registration/signup_administrator.html:217
+#: registration/templates/registration/signup_volunteer.html:224
+#: registration/templates/registration/signup_volunteer.html:227
+#: registration/templates/registration/signup_volunteer.html:240
+#: registration/templates/registration/signup_volunteer.html:243
+#: shift/templates/shift/list_volunteers.html:45
+#: shift/templates/shift/volunteer_search.html:17
 #: volunteer/templates/volunteer/edit.html:146
 #: volunteer/templates/volunteer/edit.html:148
 #: volunteer/templates/volunteer/edit.html:160
 #: volunteer/templates/volunteer/edit.html:162
-#: volunteer/templates/volunteer/profile.html:41
 #: volunteer/templates/volunteer/search.html:80
 #: volunteer/templates/volunteer/search.html:94
-#: volunteer/templates/volunteer/search.html:161
+#: volunteer/templates/volunteer/search.html:166
 msgid "State/Province"
 msgstr "État/Province"
 
-#: registration/templates/registration/signup_administrator.html:248
-#: registration/templates/registration/signup_administrator.html:264
-#: registration/templates/registration/signup_volunteer.html:274
-#: registration/templates/registration/signup_volunteer.html:290
-#: shift/templates/shift/volunteer_search.html:165
+#: registration/templates/registration/signup_administrator.html:250
+#: registration/templates/registration/signup_administrator.html:280
+#: registration/templates/registration/signup_volunteer.html:276
+#: registration/templates/registration/signup_volunteer.html:306
+#: shift/templates/shift/list_volunteers.html:48
+#: shift/templates/shift/volunteer_search.html:20
 #: volunteer/templates/volunteer/edit.html:190
 #: volunteer/templates/volunteer/edit.html:192
 #: volunteer/templates/volunteer/edit.html:204
 #: volunteer/templates/volunteer/edit.html:206
-#: volunteer/templates/volunteer/search.html:164
+#: volunteer/templates/volunteer/search.html:169
 msgid "Phone Number"
 msgstr "Numéro de Téléphone"
 
-#: registration/templates/registration/signup_administrator.html:273
-#: registration/templates/registration/signup_administrator.html:288
+#: registration/templates/registration/signup_administrator.html:289
 #: registration/templates/registration/signup_administrator.html:304
-#: registration/templates/registration/signup_volunteer.html:299
-#: registration/templates/registration/signup_volunteer.html:314
+#: registration/templates/registration/signup_administrator.html:320
+#: registration/templates/registration/signup_volunteer.html:315
 #: registration/templates/registration/signup_volunteer.html:330
-#: shift/templates/shift/volunteer_search.html:124
-#: shift/templates/shift/volunteer_search.html:138
-#: shift/templates/shift/volunteer_search.html:164
+#: registration/templates/registration/signup_volunteer.html:346
+#: shift/templates/shift/list_volunteers.html:47
+#: shift/templates/shift/list_volunteers.html:82
+#: shift/templates/shift/volunteer_search.html:19
 #: volunteer/templates/volunteer/edit.html:235
 #: volunteer/templates/volunteer/edit.html:249
-#: volunteer/templates/volunteer/profile.html:48
-#: volunteer/templates/volunteer/profile.html:50
 #: volunteer/templates/volunteer/search.html:124
 #: volunteer/templates/volunteer/search.html:138
-#: volunteer/templates/volunteer/search.html:163
+#: volunteer/templates/volunteer/search.html:168
 msgid "Organization"
 msgstr "Organisation"
 
-#: registration/templates/registration/signup_administrator.html:285
 #: registration/templates/registration/signup_administrator.html:301
-#: registration/templates/registration/signup_volunteer.html:311
+#: registration/templates/registration/signup_administrator.html:317
 #: registration/templates/registration/signup_volunteer.html:327
+#: registration/templates/registration/signup_volunteer.html:343
 msgid "If your organization is not listed above, please provide it here:"
 msgstr "Si vous ne pouvez pas voir votre organisation, la-taper ici:"
 
-#: registration/templates/registration/signup_administrator.html:308
-#: registration/templates/registration/signup_volunteer.html:390
+#: registration/templates/registration/signup_administrator.html:325
+#: registration/templates/registration/signup_volunteer.html:407
 msgid "Create Account"
 msgstr "Créer un compte"
 
-#: registration/templates/registration/signup_volunteer.html:66
-#: registration/templates/registration/signup_volunteer.html:82
-#: vms/templates/vms/base.html:43
+#: registration/templates/registration/signup_volunteer.html:68
+#: registration/templates/registration/signup_volunteer.html:84
 msgid "About"
 msgstr "Á propos de nous"
 
-#: registration/templates/registration/signup_volunteer.html:69
-#: registration/templates/registration/signup_volunteer.html:85
+#: registration/templates/registration/signup_volunteer.html:71
+#: registration/templates/registration/signup_volunteer.html:87
 #: volunteer/templates/volunteer/edit.html:16
 #: volunteer/templates/volunteer/edit.html:30
 msgid "Include a short biography of yourself"
 msgstr "Inclure une biographie brève"
 
-#: registration/templates/registration/signup_volunteer.html:337
-#: registration/templates/registration/signup_volunteer.html:353
+#: registration/templates/registration/signup_volunteer.html:354
+#: registration/templates/registration/signup_volunteer.html:370
 #: volunteer/templates/volunteer/edit.html:255
 #: volunteer/templates/volunteer/edit.html:269
 msgid "Profiles"
 msgstr "Profils"
 
-#: registration/templates/registration/signup_volunteer.html:340
-#: registration/templates/registration/signup_volunteer.html:356
+#: registration/templates/registration/signup_volunteer.html:357
+#: registration/templates/registration/signup_volunteer.html:373
 #: volunteer/templates/volunteer/edit.html:257
 #: volunteer/templates/volunteer/edit.html:271
 msgid "Include links to any online profiles here"
 msgstr "Inclure les connexions de vos profils"
 
-#: registration/templates/registration/signup_volunteer.html:361
+#: registration/templates/registration/signup_volunteer.html:378
 msgid "Upload a Resume"
 msgstr "Uploader un CV"
 
-#: registration/templates/registration/signup_volunteer.html:367
-#: registration/templates/registration/signup_volunteer.html:376
+#: registration/templates/registration/signup_volunteer.html:384
+#: registration/templates/registration/signup_volunteer.html:400
 #: volunteer/templates/volunteer/edit.html:319
 #: volunteer/templates/volunteer/edit.html:333
-#: volunteer/templates/volunteer/profile.html:80
+#: volunteer/templates/volunteer/profile.html:76
 msgid "Resume"
 msgstr "CV"
 
-#: registration/templates/registration/signup_volunteer.html:370
-#: registration/templates/registration/signup_volunteer.html:379
+#: registration/templates/registration/signup_volunteer.html:387
+#: registration/templates/registration/signup_volunteer.html:403
 msgid "Alternatively, include your resume here"
 msgstr "Sinon, inclure votre CV ici"
 
-#: registration/templates/registration/signup_volunteer.html:392
+#: registration/templates/registration/signup_volunteer.html:409
 msgid "Already have an account? Then please "
 msgstr "Vous déjà créer un compte? S'il vous plait "
 
-#: registration/templates/registration/signup_volunteer.html:392
+#: registration/templates/registration/signup_volunteer.html:409
 msgid "sign in"
 msgstr "Connexion"
 
@@ -795,39 +814,51 @@ msgid "Log Shift Hours"
 msgstr "Enregistrer  les heures d'équipes"
 
 #: shift/templates/shift/add_hours.html:32
-#: shift/templates/shift/add_hours.html:51
 #: shift/templates/shift/add_hours_manager.html:32
-#: shift/templates/shift/add_hours_manager.html:51
+#: shift/templates/shift/edit_hours.html:33
+#: shift/templates/shift/edit_hours_manager.html:33
+#, fuzzy
+#| msgid "Cancel Shift Registration"
+msgid "Entire Shift Duration"
+msgstr "Annuler L'inscription d'Équipes"
+
+#: shift/templates/shift/add_hours.html:42
+#: shift/templates/shift/add_hours.html:61
+#: shift/templates/shift/add_hours_manager.html:43
+#: shift/templates/shift/add_hours_manager.html:62
 #: shift/templates/shift/create.html:66 shift/templates/shift/create.html:85
 #: shift/templates/shift/edit.html:66 shift/templates/shift/edit.html.py:85
-#: shift/templates/shift/edit_hours.html:32
-#: shift/templates/shift/edit_hours.html:51
-#: shift/templates/shift/edit_hours_manager.html:32
-#: shift/templates/shift/edit_hours_manager.html:51
+#: shift/templates/shift/edit_hours.html:55
+#: shift/templates/shift/edit_hours.html:74
+#: shift/templates/shift/edit_hours_manager.html:55
+#: shift/templates/shift/edit_hours_manager.html:74
 #: shift/templates/shift/list_shifts.html:14
 #: shift/templates/shift/list_shifts_sign_up.html:17
+#: shift/templates/shift/list_volunteers.html:14
+#: shift/templates/shift/list_volunteers.html:83
 #: shift/templates/shift/sign_up.html:28
 msgid "Start Time"
 msgstr "Temps de début"
 
-#: shift/templates/shift/add_hours.html:64
-#: shift/templates/shift/add_hours.html:83
-#: shift/templates/shift/add_hours_manager.html:64
-#: shift/templates/shift/add_hours_manager.html:83
+#: shift/templates/shift/add_hours.html:74
+#: shift/templates/shift/add_hours.html:93
+#: shift/templates/shift/add_hours_manager.html:75
+#: shift/templates/shift/add_hours_manager.html:94
 #: shift/templates/shift/create.html:98 shift/templates/shift/create.html:117
-#: shift/templates/shift/edit.html:98 shift/templates/shift/edit.html:117
-#: shift/templates/shift/edit_hours.html:67
-#: shift/templates/shift/edit_hours.html:86
-#: shift/templates/shift/edit_hours_manager.html:64
-#: shift/templates/shift/edit_hours_manager.html:83
+#: shift/templates/shift/edit.html:98 shift/templates/shift/edit.html.py:117
+#: shift/templates/shift/edit_hours.html:90
+#: shift/templates/shift/edit_hours.html:109
+#: shift/templates/shift/edit_hours_manager.html:87
+#: shift/templates/shift/edit_hours_manager.html:106
 #: shift/templates/shift/list_shifts.html:15
 #: shift/templates/shift/list_shifts_sign_up.html:18
+#: shift/templates/shift/list_volunteers.html:15
 #: shift/templates/shift/sign_up.html:30
 msgid "End Time"
 msgstr "Temps de Fin"
 
-#: shift/templates/shift/add_hours.html:96
-#: shift/templates/shift/add_hours_manager.html:96
+#: shift/templates/shift/add_hours.html:106
+#: shift/templates/shift/add_hours_manager.html:107
 msgid "Submit"
 msgstr "Soumettre"
 
@@ -937,11 +968,19 @@ msgstr "Modifier l'Équipe"
 msgid "Edit Shift Hours"
 msgstr "Modifier les heures d'équipe"
 
+#: shift/templates/shift/edit_hours.html:43
+#: shift/templates/shift/edit_hours_manager.html:43
+#, fuzzy
+#| msgid "Log Shift Hours"
+msgid "Logged Shift Duration"
+msgstr "Enregistrer  les heures d'équipes"
+
 #: shift/templates/shift/hours_list.html:7
 msgid "Shift Hours"
 msgstr "Heures d'Équipe"
 
 #: shift/templates/shift/hours_list.html:13
+#: shift/templates/shift/list_volunteers.html:11
 #: shift/templates/shift/manage_volunteer_shifts.html:19
 #: shift/templates/shift/manage_volunteer_shifts.html:54
 #: shift/templates/shift/volunteer_shifts.html:13
@@ -978,7 +1017,14 @@ msgstr ""
 msgid "Maximum # of Volunteers"
 msgstr "# Maximal de Bénévoles"
 
-#: shift/templates/shift/list_shifts.html:39
+#: shift/templates/shift/list_shifts.html:19
+#: shift/templates/shift/list_shifts.html:35
+#, fuzzy
+#| msgid "View Jobs"
+msgid "View"
+msgstr "Voir les travails"
+
+#: shift/templates/shift/list_shifts.html:43
 msgid "There are currently no shifts. Please create shifts first."
 msgstr "Il n'y a pas les Équipe. Créer les Équipe en premier s'il vous plait."
 
@@ -989,6 +1035,7 @@ msgid "Assign Shift"
 msgstr "Confier l'Équipe"
 
 #: shift/templates/shift/list_shifts_sign_up.html:24
+#: shift/templates/shift/list_volunteers.html:19
 msgid "Slots Remaining"
 msgstr "Places Restant"
 
@@ -1000,18 +1047,71 @@ msgstr "Il n'y a pas les équipe pour le"
 msgid "job."
 msgstr "travail."
 
+#: shift/templates/shift/list_volunteers.html:7
+#, fuzzy
+#| msgid "Details"
+msgid "Shift Details"
+msgstr "Détails"
+
+#: shift/templates/shift/list_volunteers.html:18
+#, fuzzy
+#| msgid "Total Hours"
+msgid "Total Slots"
+msgstr "Total d'heures"
+
+#: shift/templates/shift/list_volunteers.html:37
+#: shift/templates/shift/list_volunteers.html:113
+#, fuzzy
+#| msgid "Search Volunteers"
+msgid "Assigned Volunteers"
+msgstr "Chercher pour Bénévoles"
+
+#: shift/templates/shift/list_volunteers.html:77
+#, fuzzy
+#| msgid "Log Hours"
+msgid "Logged hours"
+msgstr "Enregistrer les heures"
+
+#: shift/templates/shift/list_volunteers.html:84
+#, fuzzy
+#| msgid "End Time"
+msgid "End time"
+msgstr "Temps de Fin"
+
+#: shift/templates/shift/list_volunteers.html:106
+#, fuzzy
+#| msgid "Log Hours"
+msgid "Logged Hours"
+msgstr "Enregistrer les heures"
+
+#: shift/templates/shift/list_volunteers.html:109
+msgid "There are no logged hours at the moment"
+msgstr ""
+
+#: shift/templates/shift/list_volunteers.html:116
+#, fuzzy
+#| msgid ""
+#| "There are no slots remaining for this shift. Please assign a different "
+#| "shift."
+msgid ""
+"There are currently no volunteers assigned to this shift. Please assign "
+"volunteers to view more details"
+msgstr ""
+"Il n'y a pas les places restant pour cette équipe. Confier une autre équipe "
+"s'il vous plait."
+
 #: shift/templates/shift/manage_volunteer_shifts.html:7
 msgid "Return to Volunteer Search"
 msgstr "Retourner aux cherche de bénévoles"
 
 #: shift/templates/shift/manage_volunteer_shifts.html:9
-#: shift/templates/shift/volunteer_search.html:167
-#: shift/templates/shift/volunteer_search.html:189
+#: shift/templates/shift/volunteer_search.html:22
+#: shift/templates/shift/volunteer_search.html:44
 msgid "Manage Shifts"
 msgstr "Gérer les Équipes"
 
 #: shift/templates/shift/manage_volunteer_shifts.html:15
-#: shift/templates/shift/volunteer_shifts.html:7 vms/templates/vms/base.html:55
+#: shift/templates/shift/volunteer_shifts.html:7 vms/templates/vms/base.html:64
 msgid "Upcoming Shifts"
 msgstr "Les Équipes prochaines"
 
@@ -1110,59 +1210,11 @@ msgstr ""
 "l n'y a pas les places restant pour cette équipe. S'inscrire pour une autre "
 "équipe s'il vous plait."
 
-#: shift/templates/shift/volunteer_search.html:11
-#: volunteer/templates/volunteer/search.html:11
-msgid "Search Volunteers"
-msgstr "Chercher pour Bénévoles"
-
-#: shift/templates/shift/volunteer_search.html:16
-#: shift/templates/shift/volunteer_search.html:30
-#: volunteer/templates/volunteer/search.html:16
-#: volunteer/templates/volunteer/search.html:30
-msgid "Search by First Name"
-msgstr "Chercher pour un Prénom"
-
-#: shift/templates/shift/volunteer_search.html:38
-#: shift/templates/shift/volunteer_search.html:52
-#: volunteer/templates/volunteer/search.html:38
-#: volunteer/templates/volunteer/search.html:52
-msgid "Search by Last Name"
-msgstr "Chercher pour un Nom de famille"
-
-#: shift/templates/shift/volunteer_search.html:60
-#: shift/templates/shift/volunteer_search.html:74
-#: volunteer/templates/volunteer/search.html:60
-#: volunteer/templates/volunteer/search.html:74
-msgid "Search by City"
-msgstr "Chercher pour une ville"
-
-#: shift/templates/shift/volunteer_search.html:82
-#: shift/templates/shift/volunteer_search.html:96
-#: volunteer/templates/volunteer/search.html:82
-#: volunteer/templates/volunteer/search.html:96
-msgid "Search by State/Province"
-msgstr "Chercher pour un État/Province"
-
-#: shift/templates/shift/volunteer_search.html:104
-#: shift/templates/shift/volunteer_search.html:118
-#: volunteer/templates/volunteer/search.html:104
-#: volunteer/templates/volunteer/search.html:118
-msgid "Search by Country"
-msgstr "Chercher pour un Pays"
-
-#: shift/templates/shift/volunteer_search.html:126
-#: shift/templates/shift/volunteer_search.html:140
-#: volunteer/templates/volunteer/search.html:126
-#: volunteer/templates/volunteer/search.html:140
-msgid "Search by Organization"
-msgstr "Chercher pour un Organisation"
-
-#: shift/templates/shift/volunteer_search.html:154
-#: vms/templates/vms/base.html:49
+#: shift/templates/shift/volunteer_search.html:9 vms/templates/vms/base.html:47
 msgid "Manage Volunteer Shifts"
 msgstr "Gérer les Équipes de Bénévoles"
 
-#: shift/templates/shift/volunteer_search.html:198
+#: shift/templates/shift/volunteer_search.html:53
 msgid "Your search returned no results!"
 msgstr "Votre recherce n'est retourneé pas les résultats!"
 
@@ -1170,31 +1222,42 @@ msgstr "Votre recherce n'est retourneé pas les résultats!"
 msgid "You do not have any upcoming shifts."
 msgstr "Vous n'avez pas les équipes prochaines."
 
-#: vms/templates/vms/base.html:48
+#: vms/settings.py:94
+msgid "English"
+msgstr ""
+
+#: vms/settings.py:95
+msgid "French"
+msgstr ""
+
+#: vms/templates/vms/base.html:46
 msgid "Volunteer Search"
 msgstr "Cherche pour les bénévoles"
 
-#: vms/templates/vms/base.html:52
+#: vms/templates/vms/base.html:57
 msgid "Create Admin Account"
 msgstr "Créer un compte d'administrateur"
 
-#: vms/templates/vms/base.html:56
-msgid "Completed Shifts"
-msgstr "Les Équipes Complètes"
-
-#: vms/templates/vms/base.html:57
-msgid "Shift Sign Up"
-msgstr "S'inscrire d'Équipe"
-
-#: vms/templates/vms/base.html:59
-msgid "Profile"
-msgstr "Profil"
-
-#: vms/templates/vms/base.html:61
+#: vms/templates/vms/base.html:58 vms/templates/vms/base.html.py:77
+#: vms/templates/vms/base.html:83
 msgid "Log Out"
 msgstr "Se Déconnecter"
 
+#: vms/templates/vms/base.html:65
+msgid "Completed Shifts"
+msgstr "Les Équipes Complètes"
+
+#: vms/templates/vms/base.html:66
+msgid "Shift Sign Up"
+msgstr "S'inscrire d'Équipe"
+
+#: vms/templates/vms/base.html:76
+msgid "Profile"
+msgstr "Profil"
+
 #: vms/templates/vms/no_admin_rights.html:11
+#: vms/templates/vms/no_volunteer_access.html:11
+#: vms/templates/vms/no_volunteer_rights.html:11
 msgid "No Access"
 msgstr "Inaccessible"
 
@@ -1202,8 +1265,18 @@ msgstr "Inaccessible"
 msgid "You don't have administrator rights"
 msgstr "Vous n'avez pas les permissions d'administrateur"
 
+#: vms/templates/vms/no_volunteer_access.html:15
+msgid "You don't have the necessary rights to access this page."
+msgstr ""
+
+#: vms/templates/vms/no_volunteer_rights.html:15
+#, fuzzy
+#| msgid "You don't have administrator rights"
+msgid "You don't have the required rights"
+msgstr "Vous n'avez pas les permissions d'administrateur"
+
 #: volunteer/templates/volunteer/edit.html:11
-#: volunteer/templates/volunteer/profile.html:120
+#: volunteer/templates/volunteer/profile.html:116
 msgid "Edit Profile"
 msgstr "Modifier Le Profil"
 
@@ -1230,7 +1303,6 @@ msgstr "Si vous ne pouvez pas voir votre organisation, la-taper ici:"
 #: volunteer/templates/volunteer/edit.html:279
 #: volunteer/templates/volunteer/edit.html:291
 #: volunteer/templates/volunteer/edit.html:293
-#: volunteer/templates/volunteer/profile.html:45
 msgid "Shift Reminder Days"
 msgstr "Jours Rappel d'Équipe"
 
@@ -1254,7 +1326,7 @@ msgid "Include your resume here"
 msgstr "Inclure votre CV ici"
 
 #: volunteer/templates/volunteer/edit.html:351
-#: volunteer/templates/volunteer/profile.html:98
+#: volunteer/templates/volunteer/profile.html:94
 msgid "Uploads"
 msgstr "Fichiers"
 
@@ -1262,19 +1334,52 @@ msgstr "Fichiers"
 msgid "Delete Uploaded Resume"
 msgstr "Supprimer le CV en ligne"
 
-#: volunteer/templates/volunteer/profile.html:62
+#: volunteer/templates/volunteer/profile.html:58
 msgid "Additional Profiles"
 msgstr "Profils Supplémentaires"
 
-#: volunteer/templates/volunteer/profile.html:106
+#: volunteer/templates/volunteer/profile.html:102
 msgid "Download Resume"
 msgstr "Downloader le CV"
 
-#: volunteer/templates/volunteer/profile.html:116
+#: volunteer/templates/volunteer/profile.html:112
 msgid "Options"
 msgstr "Options"
 
-#: volunteer/templates/volunteer/search.html:195
+#: volunteer/templates/volunteer/search.html:11
+msgid "Search Volunteers"
+msgstr "Chercher pour Bénévoles"
+
+#: volunteer/templates/volunteer/search.html:16
+#: volunteer/templates/volunteer/search.html:30
+msgid "Search by First Name"
+msgstr "Chercher pour un Prénom"
+
+#: volunteer/templates/volunteer/search.html:38
+#: volunteer/templates/volunteer/search.html:52
+msgid "Search by Last Name"
+msgstr "Chercher pour un Nom de famille"
+
+#: volunteer/templates/volunteer/search.html:60
+#: volunteer/templates/volunteer/search.html:74
+msgid "Search by City"
+msgstr "Chercher pour une ville"
+
+#: volunteer/templates/volunteer/search.html:82
+#: volunteer/templates/volunteer/search.html:96
+msgid "Search by State/Province"
+msgstr "Chercher pour un État/Province"
+
+#: volunteer/templates/volunteer/search.html:104
+#: volunteer/templates/volunteer/search.html:118
+msgid "Search by Country"
+msgstr "Chercher pour un Pays"
+
+#: volunteer/templates/volunteer/search.html:126
+msgid "Search by Organization"
+msgstr "Chercher pour un Organisation"
+
+#: volunteer/templates/volunteer/search.html:200
 msgid "Your search return no results!"
 msgstr "Votre recherce n'est retourneé pas les résultats!"
 
