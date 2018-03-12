@@ -24,7 +24,7 @@ from shift.services import get_shift_by_id, add_shift_hours, cancel_shift_regist
 from volunteer.forms import SearchVolunteerForm
 from volunteer.services import get_all_volunteers, search_volunteers
 from volunteer.utils import vol_id_check
-from vms.utils import check_correct_volunteer, check_correct_volunteer_shift
+from vms.utils import check_correct_volunteer
 
 
 class AdministratorLoginRequiredMixin(object):
@@ -47,7 +47,7 @@ class AddHoursView(LoginRequiredMixin, FormView):
     template_name = 'shift/add_hours.html'
     form_class = HoursForm
 
-    @method_decorator(check_correct_volunteer_shift)
+    @method_decorator(check_correct_volunteer)
     def dispatch(self, *args, **kwargs):
         return super(AddHoursView, self).dispatch(*args, **kwargs)
 
@@ -399,7 +399,7 @@ class EditHoursView(LoginRequiredMixin, FormView):
     template_name = 'shift/edit_hours.html'
     form_class = HoursForm
 
-    @method_decorator(check_correct_volunteer_shift)
+    @method_decorator(check_correct_volunteer)
     def dispatch(self, *args, **kwargs):
         return super(EditHoursView, self).dispatch(*args, **kwargs)
 
