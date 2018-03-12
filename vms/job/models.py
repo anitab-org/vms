@@ -24,3 +24,6 @@ class Job(models.Model):
                 r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$', ),
         ],
     )
+
+    def __str__(self):
+        return self.name

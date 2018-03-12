@@ -63,6 +63,9 @@ class Shift(models.Model):
     # for the many-to-many relationship between Volunteer and Shift
     volunteers = models.ManyToManyField(Volunteer, through='VolunteerShift')
 
+    def __str__(self):
+        return '{0} - {1}'.format(self.job.name, self.date)
+
 
 class VolunteerShift(models.Model):
     # Volunteer  to VolunteerShift is a one-to-many relationship
@@ -72,3 +75,6 @@ class VolunteerShift(models.Model):
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     # assigned_by_manager = models.BooleanField()
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.shift, self.volunteer.first_name)

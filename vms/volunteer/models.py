@@ -97,4 +97,4 @@ class Volunteer(models.Model):
 
     user = models.OneToOneField(User)
     def __str__(self):
-        return self.first_name
+        return '{0} {1}'.format(self.first_name, self.last_name)

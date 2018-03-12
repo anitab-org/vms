@@ -64,5 +64,5 @@ class Administrator(models.Model):
     email = models.EmailField(max_length=45, unique=True)
     user = models.OneToOneField(User)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username

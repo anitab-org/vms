@@ -12,3 +12,6 @@ class Organization(models.Model):
             RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)|(\')]+$', ),
         ],
     )
+
+    def __str__(self):
+        return self.name
