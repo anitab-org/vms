@@ -58,7 +58,7 @@ production at the moment. It may be configured to do so in the future.
    `vms` directory.
 1. Run `docker-compose build`. This pulls the Docker images required to run the
    project and installs the necessary dependencies.
-1. Run `docker run -e SECRET_KEY=foobarbaz vms`
+1. Run `docker run -e SECRET_KEY=foobarbaz vms_web`
 1. Run `docker-compose run web python vms/manage.py migrate`.
 1. Run `docker-compose run web python vms/manage.py cities_light` for downloading and importing data for django-cities-light.
 1. *Optional:*
