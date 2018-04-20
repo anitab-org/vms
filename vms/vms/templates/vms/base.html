@@ -18,6 +18,7 @@
     <link href="{% static "vms/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css" %}" rel="stylesheet">
     <link href="{% static "vms/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css" %}" rel="stylesheet">
     <link href="{% static "vms/datetimepicker/bootstrap-datetimepicker.min.css" %}" rel="stylesheet">
+    <link rel="icon" href="{% static 'vms/images/favicon.ico' %}">
 
     <script src="{% static "vms/jquery/jquery-1.11.1.min.js" %}"></script>
     <script src="{% static "vms/bootstrap-3.2.0-dist/js/bootstrap.min.js" %}"></script>
@@ -79,7 +80,7 @@
                             </ul>
                         </li>
              </ul>
-             
+
                         {% else %}
                             <li><a href="{% url 'authentication:logout_process' %}">{% trans "Log Out" %}</a></li>
                         {% endif %}
