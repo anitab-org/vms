@@ -259,13 +259,17 @@ There needs to be at least one organization in the `organization_organization` t
 
 Make sure to exit the postgres client before proceeding to the next steps:
 
+```
     \q
+```
 
 ## Change Directory Permissions
 
 You will have to change the permissions on the **/srv** directory to read, write and execute (**/srv** is the directory where Volunteer resumes are uploaded and stored). To do this, run the following command:
 
+```
     sudo chmod 777 /srv
+```
 
 NOTE: In case you can the error "/srv: No such file or directory" while running the above comment do the following
     sudo mkdir /srv
@@ -278,26 +282,57 @@ Change directory to where you can find the **manage.py** file (this is located i
 
 Start the development server by running the command (this runs the development server on the VM):
 
+```
     python manage.py runserver [::]:8000
+```
 
 You can now try out the project by going to [http://localhost:8001/home](http://localhost:8001/home) on a browser on your local machine.
 
-## Run Unit and Functional Tests
+## Download and Set Geckodriver
+To run tests it is essential that you have geckodriver downloaded and set in your path.
+
+Download Geckodriver:
+
+```bash
+wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
+```
+
+Unpack it:
+
+```bash
+tar -xzvf geckodriver-v0.20.1-linux64.tar.gz
+```
+
+Set it in your path
+
+```bash
+sudo mv geckodriver /usr/local/bin
+```
+
+
+## Run Unit, Functional and Selenium Tests
 
 You can also run unit and functional tests by running the command:
 
+```
     python manage.py test name_of_app_here
+```
+
 
 For example, in the project, there are Django apps called volunteer, job, shift and organization. You can run tests for these apps individually by running these commands separately:
+
 ```
 python manage.py test volunteer
 ```
+
 ```
 python manage.py test job
 ```
+
 ```
 python manage.py test shift
 ```
+
 ```
 python manage.py test organization
 ```
@@ -309,25 +344,32 @@ For example, if you want to run unit tests for the event app:
 python manage.py test event.tests.test_services
 ```
 
-Smilarly, for job app it would be:
+Similarly, for job app it would be:
 ```
 python manage.py test job.tests.test_services
 ```
 
 If you want to run all unit tests, run this command:
 
+```
     python manage.py test
+```
 
 Once you are done with testing out and running the project, you may want to exit the VM and suspend or shut it down by running these commands:
 
 Exit out of the ssh session with the VM by running:
 
-    exit
-
+```
+exit
+```
 To put the VM in suspend mode, run the command:
 
-    vagrant suspend
+```
+vagrant suspend
+```
 
 Alternatively, to shut down the VM, run the command:
 
-    vagrant halt
+```
+vagrant halt
+```

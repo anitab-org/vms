@@ -10,7 +10,9 @@ from selenium.webdriver.common.keys import Keys
 
 class DummyTesting(LiveServerTestCase):
     """
-    Dummy Test Class to check the tests are working correctly.
+    Dummy Test Class to check the selenium is working correctly.
+    Delete this file after uncommenting the selenium tests
+    currently present.
     """
 
     @classmethod
@@ -37,5 +39,5 @@ class DummyTesting(LiveServerTestCase):
         element.clear()
         element.send_keys('pycon')
         element.send_keys(Keys.RETURN)
-        self.assertNotIn('No results found.', self.driver.page_source
+        self.assertNotIn('No results found.', self.driver.page_source)
 

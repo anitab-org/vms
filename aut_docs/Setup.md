@@ -9,7 +9,8 @@
 - `cd vms`
 - To run, `python manage.py runserver`. Browse 
   `http://127.0.0.1:8000`
-- To execute tests `python manage.py test`. This will run all unit-tests and
+- Before running tests, make sure to download the latest geckodriver. Unpack and move the binary to `/usr/local/bin`
+- To execute tests `python manage.py test`. This will run all selenium tests, unit-tests and
   all functional-tests across all apps. To execute tests of only a particular
   app, run `python manage.py test <app_name>`
 - If all tests pass, `OK` will be received at the end.
