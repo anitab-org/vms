@@ -214,7 +214,7 @@
                         {% trans "Select your organization:" %}
                     </label>
                     <div class="col-md-8">
-                        <select id="select" class="form-control" name="organization_name" onchange="hide_organisation()">
+                        <select id="select" class="form-control" name="organization_name" onchange="hideOrganization()">
                             <option value="0">-- {% trans "None" %} --</option>
                             {% for organization in organization_list %}
                                 {% if volunteer.organization_id %}
@@ -251,7 +251,7 @@
                             <input class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
                         </div>
                     </div>
-                <script type="text/javascript" src="{% static 'vms/js/hide_organization.js' %}"></script>                 
+                <script type="text/javascript" src="{% static 'vms/js/hide-organization.js' %}"></script>                 
                 {% endif %}
                 {% if form.websites.errors %}
                     <div class="form-group has-error">

@@ -32,7 +32,7 @@
                             {% trans "Event:" %}
                         </label>
                         <div class="col-md-8">
-                            <select class="form-control" name="event_id" id="events" onchange="update_event_dates()">
+                            <select class="form-control" name="event_id" id="events" onchange="updateEventDates()">
                                 {% for event in event_list %}
                                     {% if event == last_event %}
                                         <option value="{{ event.id }}" start_date="{{ event.start_date }}" end_date="{{ event.end_date }}" selected="selected">{{ event.name }}</option>
