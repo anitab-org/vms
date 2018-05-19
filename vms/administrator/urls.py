@@ -11,3 +11,4 @@ urlpatterns = [
     url(r'^edit/(?P<admin_id>\d+)$', AdminUpdateView.as_view(), name='edit'),
     url(r'^profile/(?P<admin_id>\d+)$', ProfileView.as_view(), name='profile'),
 ]
+
