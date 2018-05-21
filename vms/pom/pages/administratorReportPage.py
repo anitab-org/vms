@@ -2,7 +2,7 @@
 from selenium.webdriver.support.ui import Select
 
 # local Django
-from .basePage import BasePage
+from pom.pages.basePage import BasePage
 from pom.locators.administratorReportPageLocators import AdministratorReportPageLocators
 from pom.pages.homePage import HomePage
 
