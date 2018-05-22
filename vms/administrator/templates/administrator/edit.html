@@ -235,7 +235,7 @@
                             <label class="control-label">
                                 {% trans "Organization" %}
                             </label>
-                            <select id="select" class="form-control" name="organization_name" onchange="hide_organization()">
+                            <select id="select" class="form-control" name="organization_name" onchange="hideOrganization()">
                                 <option value="0">-- {% trans "None" %} --</option>
                                 {% for organization in organization_list %}
                                     {% if administrator.organization %}
