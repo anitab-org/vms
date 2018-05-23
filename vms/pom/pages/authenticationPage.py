@@ -1,5 +1,5 @@
 # local Django
-from basePage import BasePage
+from pom.pages.basePage import BasePage
 from pom.locators.authenticationPageLocators import AuthenticationPageLocators
 from pom.locators.homePageLocators import HomePageLocators
 from pom.pageUrls import PageUrls

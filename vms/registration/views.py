@@ -203,3 +203,4 @@ class VolunteerSignupView(TemplateView):
                         })
         else:
             return render(request, 'home/home.html', {'error': True})
+

@@ -1,5 +1,5 @@
 # local Django
-from basePage import BasePage
+from pom.pages.basePage import BasePage
 from pom.locators.upcomingShiftsPageLocators import UpcomingShiftsPageLocators
 from pom.pages.completedShiftsPage import CompletedShiftsPage
 from pom.pages.homePage import HomePage

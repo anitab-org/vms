@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  - "3.6.5"
 services: postgresql
 install:
   - pip install -r requirements.txt
@@ -13,7 +13,7 @@ before_script:
   - export DJANGO_SECRET_KEY=foobarbaz
 script:
   - cd vms
-  - python manage.py syncdb --noinput
+  - python manage.py makemigrations auth volunteer administrator organization event job shift registration
   - python manage.py migrate --noinput --traceback --settings=vms.settings
   - coverage run --source='.' manage.py test
 after_success:

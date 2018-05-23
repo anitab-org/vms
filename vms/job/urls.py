@@ -1,12 +1,11 @@
 # Django
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 # local Django
 from job import views
 from job.views import CreateJobView, JobDeleteView, JobDetailView, JobUpdateView, JobListView
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^create/$', CreateJobView.as_view(), name='create'),
     url(r'^delete/(?P<job_id>\d+)$', JobDeleteView.as_view(), name='delete'),
     url(r'^details/(?P<job_id>\d+)$', JobDetailView.as_view(), name='details'),
@@ -15,4 +14,5 @@ urlpatterns = patterns(
     url(r'^list_sign_up/(?P<event_id>\d+)/(?P<volunteer_id>\d+)$',
         views.list_sign_up,
         name='list_sign_up'),
-)
+]
+
