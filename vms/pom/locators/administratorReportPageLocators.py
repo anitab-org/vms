@@ -9,7 +9,7 @@ class AdministratorReportPageLocators(object):
     FIRST_NAME_SELECTOR = '//input[@name = "first_name"]'
     LAST_NAME_SELECTOR = '//input[@name = "last_name"]'
 
-    NAME = '//table//tbody//tr[1]//td[1]'
+    NAME = '//table//tbody//tr[1]//td[4]'
     DATE = '//table//tbody//tr[1]//td[6]'
     START_TIME = '//table//tbody//tr[1]//td[7]'
     END_TIME = '//table//tbody//tr[1]//td[8]'

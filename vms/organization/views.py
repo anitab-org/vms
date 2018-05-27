@@ -71,6 +71,7 @@ class OrganizationUpdateView(LoginRequiredMixin,
     model_form = Organization
     template_name = 'organization/edit.html'
     success_url = reverse_lazy('organization:list')
+    fields = '__all__'
 
     def get_object(self, queryset=None):
         org_id = self.kwargs['organization_id']
