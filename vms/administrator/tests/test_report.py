@@ -1,27 +1,27 @@
 # third party
+import json
+
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
-from django.db import IntegrityError
 
 # local Django
+from selenium.common.exceptions import NoSuchElementException
+
+from organization.models import Organization
 from pom.locators.administratorReportPageLocators import AdministratorReportPageLocators
 from pom.pages.administratorReportPage import AdministratorReportPage
 from pom.pages.authenticationPage import AuthenticationPage
+from pom.pageUrls import PageUrls
 from shift.utils import (create_admin, create_volunteer,
                          create_organization_with_details,
                          create_event_with_details, create_job_with_details,
                          create_shift_with_details, log_hours_with_details,
-                         register_volunteer_for_shift_utility)
+                         register_volunteer_for_shift_utility, create_volunteer_with_details_dynamic_password)
 
-# Class contains failing test cases which have been documented
-# Test class commented out to prevent travis build failure
-"""
+
 class Report(LiveServerTestCase):
-    '''
-    '''
 
     @classmethod
     def setUpClass(cls):
@@ -36,7 +36,6 @@ class Report(LiveServerTestCase):
     def setUp(self):
         create_admin()
         self.login_admin()
-        self.report_page.go_to_admin_report()
 
     def tearDown(self):
         pass
@@ -54,367 +53,175 @@ class Report(LiveServerTestCase):
         })
 
     def verify_shift_details(self, total_shifts, hours):
-        total_no_of_shifts = self.report_page.get_shift_summary().split(' ')[
-            10].strip('\nTotal')
-        total_no_of_hours = self.report_page.get_shift_summary().split(' ')[
-            -1].strip('\n')
+        total_no_of_shifts = self.report_page.get_shift_summary().split(' ')[10].strip('\nTotal')
+        total_no_of_hours = self.report_page.get_shift_summary().split(' ')[-1].strip('\n')
         self.assertEqual(total_no_of_shifts, total_shifts)
         self.assertEqual(total_no_of_hours, hours)
 
-# Failing test case which has been documented
-# Test commented out to prevent travis build failure - bug #327
-
     def test_null_values_with_dataset(self):
-        # register dataset
+        self.report_page.go_to_admin_report()
+        # Register dataset
         org = create_organization_with_details('organization-one')
         volunteer = create_volunteer()
         volunteer.organization = org
         volunteer.save()
 
-        # create shift and log hours
-        # register event first to create job
-        event = ['Hackathon', '2017-08-21', '2017-09-28']
+        # Create Shift and Log hours
+        # Create Event
+        event = ['Hackathon', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
 
-        # create job
-        job = ['Developer', '2017-08-21', '2017-08-30', '',created_event]
+        # Create Job
+        job = ['Developer', '2050-05-24', '2050-05-28', '', created_event]
         created_job = create_job_with_details(job)
 
-        # create shift
-        shift = ['2017-08-21', '09:00', '15:00', '10', created_job]
+        # Create Shift
+        shift = ['2050-05-24', '09:00', '15:00', '10', created_job]
         created_shift = create_shift_with_details(shift)
 
-        logged_shift = log_hours_with_details(volunteer, created_shift, "09:00", "12:00")
+        log_hours_with_details(volunteer, created_shift, "09:00", "12:00")
 
         report_page = self.report_page
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
 
-        # check admin report with null fields, should return the above shift
-        report_page.fill_report_form(['','','','',''])
-        self.verify_shift_details('1','3.0')
+        # Check admin report with null fields, should return the above shift
+        report_page.fill_report_form(['', '', '', '', ''])
+        self.verify_shift_details('1', '3.0')
 
-        self.assertEqual(report_page.element_by_xpath(
-            self.elements.NAME).text, created_event.name)
-        self.assertEqual(report_page.element_by_xpath(
-            self.elements.DATE).text, 'Aug. 21, 2016')
-        self.assertEqual(report_page.element_by_xpath(
-            self.elements.START_TIME).text, '9 a.m.')
-        self.assertEqual(report_page.element_by_xpath(
-            self.elements.END_TIME).text, '12 p.m.')
-        self.assertEqual(report_page.element_by_xpath(
-            self.elements.HOURS).text, '3.0')
+        self.assertEqual(report_page.element_by_xpath(self.elements.NAME).text, created_event.name)
+        self.assertEqual(report_page.element_by_xpath(self.elements.DATE).text, 'May 24, 2050')
+        self.assertEqual(report_page.element_by_xpath(self.elements.START_TIME).text, '9 a.m.')
+        self.assertEqual(report_page.element_by_xpath(self.elements.END_TIME).text, 'noon')
+        self.assertEqual(report_page.element_by_xpath(self.elements.HOURS).text, '3.0')
 
     def test_null_values_with_empty_dataset(self):
-        # should return no entries
+        # Should return no entries
+        self.report_page.go_to_admin_report()
         report_page = self.report_page
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+
         report_page.fill_report_form(['', '', '', '', ''])
-        self.assertEqual(report_page.get_alert_box_text(),
-                         report_page.no_results_message)
+        self.assertEqual(report_page.get_alert_box_text(), report_page.no_results_message)
 
     def test_only_logged_shifts_are_reported(self):
-        # register dataset
+        report_page = self.report_page
+        # Register dataset
         org = create_organization_with_details('organization-one')
         volunteer = create_volunteer()
         volunteer.organization = org
         volunteer.save()
 
-        # register event first to create job
-        event = ['Hackathon', '2017-08-21', '2017-09-28']
+        # Create Event
+        event = ['Hackathon', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
 
-        # create job
-        job = ['Developer', '2017-08-21', '2017-08-30', '', created_event]
+        # Create Job
+        job = ['Developer', '2050-05-24', '2050-05-28', '', created_event]
         created_job = create_job_with_details(job)
 
-        # create shift
-        shift = ['2017-08-21', '09:00', '15:00', '10', created_job]
+        # Create Shift
+        shift = ['2050-05-24', '09:00', '15:00', '10', created_job]
         created_shift = create_shift_with_details(shift)
 
-        # shift is assigned to volunteer-one, but hours have not been logged
-        volunteer_shift = register_volunteer_for_shift_utility(
-            created_shift, volunteer)
+        # Shift is assigned to volunteer-one, but hours have not been logged
+        report_page.go_to_admin_report()
+        register_volunteer_for_shift_utility(created_shift, volunteer)
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        # Check admin report with null fields, should not return the above shift
+        # Using multiple tries so to cater to late loading of page.
+        for _ in range(3):
+            try:
+                report_page.fill_report_form(['', '', '', '', ''])
+                break
+            except NoSuchElementException:
+                pass
+        self.assertEqual(report_page.get_alert_box_text(), report_page.no_results_message)
 
-        report_page = self.report_page
-        # check admin report with null fields, should not return the above shift
-        report_page.fill_report_form(['', '', '', '', ''])
-        self.assertEqual(report_page.get_alert_box_text(),
-                         report_page.no_results_message)
+    @staticmethod
+    def register_dataset(parameters):
+        # Register dataset
+        # Register dataset
+        volunteer = create_volunteer_with_details_dynamic_password(parameters['volunteer'])
+        volunteer.organization = parameters['org']
+        volunteer.save()
 
+        # Create Event
+        event = parameters['event']
+        created_event = create_event_with_details(event)
 
-# Failing test case which has been documented - bug #327
-# Test commented out to prevent travis build failure
+        # Create Job
+        job = parameters['job'] + [created_event]
+        created_job = create_job_with_details(job)
+
+        # Create Shift
+        shift = parameters['shift'] + [created_job]
+        created_shift = create_shift_with_details(shift)
+
+        # Create VolunteerShift
+        log_hours_with_details(volunteer, created_shift, parameters['vshift'][0], parameters['vshift'][0])
+
+    def create_dataset(self):
+        orgs = Organization.create_multiple_organizations(4)
+
+        test_data = open('test_data.json').read()
+        parameters = json.loads(test_data)
+
+        parameters[0]["org"] = orgs[0]
+        self.register_dataset(parameters[0])
+
+        parameters[1]["org"] = orgs[0]
+        self.register_dataset(parameters[1])
+
+        parameters[2]["org"] = orgs[0]
+        self.register_dataset(parameters[2])
+
+        parameters[3]["org"] = orgs[1]
+        self.register_dataset(parameters[3])
+
+        parameters[4]["org"] = orgs[1]
+        self.register_dataset(parameters[4])
+
+        parameters[5]["org"] = orgs[2]
+        self.register_dataset(parameters[5])
+
+        parameters[6]["org"] = orgs[3]
+        self.register_dataset(parameters[6])
+
+        parameters[7]["org"] = orgs[3]
+        self.register_dataset(parameters[7])
+
+    """
+    Test giving inconsistent results for log hours and total shifts
+    For log hours: Possibly https://github.com/systers/vms/issues/327 wasn't fixed correctly.
 
     def test_check_intersection_of_fields(self):
-
         self.create_dataset()
 
         report_page = self.report_page
+        time.sleep(0.5)
 
-        search_parameters_1 = ['tom','','','','']
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        search_parameters_1 = ['tom-fname', '', '', '', '']
         report_page.fill_report_form(search_parameters_1)
-
         self.verify_shift_details('2','2.0')
 
-        search_parameters_2 = ['','','','','org-one']
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        search_parameters_2 = ['', '', '', '', 'org-one']
         report_page.fill_report_form(search_parameters_2)
-
         self.verify_shift_details('3','3.0')
 
-        search_parameters_3 = ['','','event-four','Two','']
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        search_parameters_3 = ['', '', 'event-four', 'Two', '']
         report_page.fill_report_form(search_parameters_3)
-
-        # 1 shift of 1:30 hrs
         self.verify_shift_details('1','1.5')
 
-        search_parameters_4 = ['','','one','','']
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        search_parameters_4 = ['', '', 'one', '', '']
         report_page.fill_report_form(search_parameters_4)
-
-        # 3 shifts of 0:30 hrs, 1:00 hrs, 1:00 hrs
         self.verify_shift_details('3','2.5')
 
-        # check case-insensitive
-        search_parameters_5 = ['','sherlock','two','','']
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        search_parameters_5 = ['', 'sherlock', 'two', '', '']
         report_page.fill_report_form(search_parameters_5)
-
         self.verify_shift_details('1','2.0')
-
-    def create_dataset(self):
-        parameters = {'org' : 'org-one',
-                'volunteer' : {
-                    'username' : 'uname1', 
-                    'password' : 'uname1', 
-                    'email' : 'email1@email.com',
-                    'first_name' : 'tom-fname',
-                    'last_name' : 'tom-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-four',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobOneInEventFour',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '11:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '09:30',
-                    'end_time' : '10:00',}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-one',
-                'volunteer' : {
-                    'username' : 'uname2', 
-                    'password' : 'uname2', 
-                    'email' : 'email2@email.com',
-                    'first_name' : 'peter-fname',
-                    'last_name' : 'peter-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-one',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobOneInEventOne',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '18:00',
-                    'end_time' : '23:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '19:00',
-                    'end_time' : '20:00'}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-one',
-                'volunteer' : {
-                    'username' : 'uname3', 
-                    'password' : 'uname3', 
-                    'email' : 'email3@email.com',
-                    'first_name' : 'tom-fname',
-                    'last_name' : 'tom-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-four',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobTwoInEventFour',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '15:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '10:00',
-                    'end_time' : '11:30'}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-two',
-                'volunteer' : {
-                    'username' : 'uname4', 
-                    'password' : 'uname4', 
-                    'email' : 'email4@email.com',
-                    'first_name' : 'harry-fname',
-                    'last_name' : 'harry-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-one',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobTwoInEventOne',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '11:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '09:00',
-                    'end_time' : '10:00'}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-two',
-                'volunteer' : {
-                    'username' : 'uname5', 
-                    'password' : 'uname5', 
-                    'email' : 'email5@email.com',
-                    'first_name' : 'harry-fname',
-                    'last_name' : 'harry-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-two',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobOneInEventTwo',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '18:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '12:00',
-                    'end_time' : '15:00'}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-three',
-                'volunteer' : {
-                    'username' : 'uname6', 
-                    'password' : 'uname6', 
-                    'email' : 'email6@email.com',
-                    'first_name' : 'sherlock-fname',
-                    'last_name' : 'sherlock-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-two',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobOneInEventTwo',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '16:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '12:00',
-                    'end_time' : '14:00'}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-four',
-                'volunteer' : {
-                    'username' : 'uname7', 
-                    'password' : 'uname7', 
-                    'email' : 'email7@email.com',
-                    'first_name' : 'harvey-fname',
-                    'last_name' : 'harvey-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-one',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobThreeInEventOne',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '09:00',
-                    'end_time' : '13:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '12:00',
-                    'end_time' : '12:30'}}
-        self.register_dataset(parameters)
-
-        parameters = {'org' : 'org-four',
-                'volunteer' : {
-                    'username' : 'uname8', 
-                    'password' : 'uname8', 
-                    'email' : 'email8@email.com',
-                    'first_name' : 'mike-fname',
-                    'last_name' : 'mike-lname',
-                    'address' : 'address',
-                    'city' : 'city',
-                    'state' : 'state',
-                    'country' : 'country',
-                    'phone-no' : '9999999999'},
-                'event' : {
-                    'name' : 'event-three',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-10'},
-                'job' : {
-                    'name' : 'jobOneInEventThree',
-                    'start_date' : '2016-06-01',
-                    'end_date' : '2016-06-01'},
-                'shift' : {
-                    'date' : '2016-06-01',
-                    'start_time' : '01:00',
-                    'end_time' : '10:00',
-                    'max_volunteers' : '10'},
-                'vshift' : {
-                    'start_time' : '01:00',
-                    'end_time' : '04:00'}}
-        self.register_dataset(parameters)
-"""
+    """

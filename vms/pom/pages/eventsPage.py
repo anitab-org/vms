@@ -3,7 +3,7 @@ from selenium.webdriver.support.ui import Select
 
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.eventsPageLocators import EventsPageLocators 
+from pom.locators.eventsPageLocators import EventsPageLocators
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
 
@@ -74,7 +74,7 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.GENERAL_SUBMIT_PATH).submit()
 
     def go_to_events_page(self):
-        self.home_page.get_events_link().send_keys('\n')
+        self.home_page.get_events_link().click()
 
     def navigate_to_event_list_view(self):
         self.get_page(self.live_server_url, self.event_list_page)
@@ -96,7 +96,7 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.EDIT_EVENT).click()
 
     def go_to_create_job_page(self):
-        self.get_page(self.live_server_url, self.create_job_page)
+        self.click_link('Create Job')
 
     def go_to_edit_job_page(self):
         self.element_by_xpath(self.elements.EDIT_JOB).click()
@@ -230,5 +230,4 @@ class EventsPage(BasePage):
         return self.get_value_for_xpath(self.elements.CREATE_SHIFT_END_TIME)
 
     def get_shift_max_volunteers(self):
-        return self.get_value_for_xpath(
-            self.elements.CREATE_SHIFT_MAX_VOLUNTEER)
+        return self.get_value_for_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER)

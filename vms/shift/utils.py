@@ -75,6 +75,27 @@ def create_volunteer_with_details(volunteer):
     return v1
 
 
+def create_volunteer_with_details_dynamic_password(volunteer):
+    """
+    Creates and returns volunteer with passed name and dates
+    """
+    u1 = User.objects.create_user(username=volunteer[0], password=volunteer[1])
+    v1 = Volunteer(
+        email=volunteer[2],
+        first_name=volunteer[3],
+        last_name=volunteer[4],
+        address=volunteer[5],
+        city=volunteer[6],
+        state=volunteer[7],
+        country=volunteer[8],
+        phone_number=volunteer[9],
+        user=u1
+    )
+
+    v1.save()
+    return v1
+
+
 def create_shift_with_details(shift):
     """
     Creates and returns shift with passed name and dates
