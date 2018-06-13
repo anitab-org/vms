@@ -12,6 +12,7 @@ from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
 from organization.models import Organization
 
+
 # Contains common functions which need to be frequently called by tests
 
 
@@ -173,7 +174,6 @@ def create_country():
 
 
 def create_admin():
-
     user_1 = User.objects.create_user(username='admin', password='admin')
 
     admin = Administrator.objects.create(
@@ -190,7 +190,6 @@ def create_admin():
 
 
 def create_volunteer():
-
     user_1 = User.objects.create_user(
         username='volunteer', password='volunteer')
 
@@ -209,7 +208,7 @@ def create_volunteer():
 
 def register_event_utility():
     event = Event.objects.create(
-        name='event', start_date='2016-05-10', end_date='2018-06-16')
+        name='event', start_date='2050-05-10', end_date='2050-06-16')
 
     return event
 
@@ -217,8 +216,8 @@ def register_event_utility():
 def register_job_utility():
     job = Job.objects.create(
         name='job',
-        start_date='2016-05-10',
-        end_date='2017-06-15',
+        start_date='2050-05-10',
+        end_date='2050-06-15',
         event=Event.objects.get(name='event'))
 
     return job
@@ -226,7 +225,7 @@ def register_job_utility():
 
 def register_shift_utility():
     shift = Shift.objects.create(
-        date='2017-06-15',
+        date='2050-06-15',
         start_time='09:00',
         end_time='15:00',
         max_volunteers='6',

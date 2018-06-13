@@ -9,7 +9,6 @@ from pom.pageUrls import PageUrls
 
 
 class EventsPage(BasePage):
-
     event_list_page = PageUrls.event_list_page
     job_list_page = PageUrls.job_list_page
     shift_list_page = PageUrls.shift_list_page
@@ -21,6 +20,9 @@ class EventsPage(BasePage):
     shift_tab = 'Shifts'
     organization_tab = 'Organizations'
     live_server_url = ''
+    FIELD_REQUIRED = 'This field is required.'
+    NO_EVENT_PRESENT = 'There are currently no events. Please create events first.'
+    START_BEFORE_END = 'Start date must be before the end date'
 
     def __init__(self, driver):
         self.driver = driver
@@ -113,6 +115,9 @@ class EventsPage(BasePage):
     def get_deletion_box(self):
         return self.element_by_class_name(self.elements.DELETION_BOX)
 
+    def get_delete_event_element(self, relative):
+        return self.element_by_xpath(self.elements.DELETE_EVENT + relative)
+
     def get_deletion_context(self):
         return self.element_by_class_name(self.elements.DELETION_TOPIC).text
 
@@ -121,6 +126,12 @@ class EventsPage(BasePage):
 
     def get_event_name(self):
         return self.element_by_xpath(self.elements.EVENT_NAME).text
+
+    def get_event_start_date(self):
+        return self.element_by_xpath(self.elements.EVENT_START_DATE).text
+
+    def get_event_end_date(self):
+        return self.element_by_xpath(self.elements.EVENT_END_DATE).text
 
     def get_warning_context(self):
         return self.element_by_class_name(self.elements.WARNING_CONTEXT).text
@@ -177,12 +188,10 @@ class EventsPage(BasePage):
         return self.element_by_xpath(self.elements.SHIFT_START_TIME_ERROR).text
 
     def get_shift_end_time_error(self):
-        return self.driver.find_element_by_xpath(
-            self.elements.SHIFT_END_TIME_ERROR).text
+        return self.driver.find_element_by_xpath(self.elements.SHIFT_END_TIME_ERROR).text
 
     def get_shift_max_volunteer_error(self):
-        return self.element_by_xpath(
-            self.elements.SHIFT_MAX_VOLUNTEER_ERROR).text
+        return self.element_by_xpath(self.elements.SHIFT_MAX_VOLUNTEER_ERROR).text
 
     def get_shift_job(self):
         return self.element_by_xpath(self.elements.SHIFT_JOB).text
@@ -231,3 +240,4 @@ class EventsPage(BasePage):
 
     def get_shift_max_volunteers(self):
         return self.get_value_for_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER)
+

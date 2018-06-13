@@ -7,11 +7,14 @@ from pom.pages.homePage import HomePage
 class EventSignUpPage(BasePage):
 
     no_event_message = 'There are no events.'
+    live_server_url = ''
+    SHIFT_UNAVAILABLE_FOR_JOB = 'There are currently no shifts for the job {0}.'
 
     def __init__(self, driver):
         self.driver = driver
         self.home_page = HomePage(self.driver)
         self.elements = EventSignUpPageLocators()
+
         super(EventSignUpPage, self).__init__(driver)
 
     def submit_form(self):
@@ -36,7 +39,10 @@ class EventSignUpPage(BasePage):
         return self.element_by_xpath(self.elements.SHIFT_SIGNUP_PATH).text
 
     def navigate_to_sign_up(self):
-        self.home_page.get_shift_signup_link().click()
+        self.get_page(self.get_sign_up_link(), '')
+
+    def get_sign_up_link(self):
+        return self.home_page.get_shift_signup_link().get_attribute('href')
 
     def fill_search_form(self, date):
         self.element_by_id(self.elements.START_DATE_FROM).clear()
@@ -74,3 +80,6 @@ class EventSignUpPage(BasePage):
 
     def get_remaining_slots(self):
         return self.element_by_xpath(self.elements.SLOTS_REMAINING_PATH).text
+
+    def get_message_shift_not_available_for_job(self, job):
+        return self.SHIFT_UNAVAILABLE_FOR_JOB.format(job)

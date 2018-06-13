@@ -1,7 +1,8 @@
 class EventsPageLocators(object):
-
     # locators for events, jobs, shifts  listed
     EVENT_NAME = '//table//tbody//tr[1]//td[1]'
+    EVENT_START_DATE = '//table//tbody//tr[1]//td[2]'
+    EVENT_END_DATE = '//table//tbody//tr[1]//td[3]'
     JOB_NAME = '//table//tbody//tr[1]//td[1]'
     JOB_EVENT = '//table//tbody//tr[1]//td[2]'
     SHIFT_DATE = '//table//tbody//tr[1]//td[1]'

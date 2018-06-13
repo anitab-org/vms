@@ -242,7 +242,6 @@ class EventWithVolunteerTest(unittest.TestCase):
 
     @classmethod
     def setup_test_data(cls):
-
         cls.e1 = e1
         cls.e2 = e2
         cls.e3 = e3
