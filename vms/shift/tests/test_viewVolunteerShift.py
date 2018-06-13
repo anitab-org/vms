@@ -4,6 +4,10 @@ import re
 # third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -12,19 +16,23 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
-from shift.models import VolunteerShift
-
 from shift.utils import (create_volunteer, create_event_with_details,
                          create_job_with_details, create_shift_with_details,
-                         register_volunteer_for_shift_utility)
+                         register_volunteer_for_shift_utility, create_volunteer_with_details)
 
-# Class contains failing test cases which have been documented
-# Test class commented out to prevent travis build failure
-"""
 
 class ViewVolunteerShift(LiveServerTestCase):
-    '''
-    '''
+    """
+    Contains Tests for View Volunteer Shift Details Page
+
+    Status of shift page is checked for following cases -
+    - Access another registered volunteer
+    - Access another unregistered volunteer
+    - Access no assigned shifts view
+    - Log hours and Shift not displayed in Upcoming Shifts
+    - View Assigned and Unlogged shifts
+    - Cancel shift registration
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -34,6 +42,7 @@ class ViewVolunteerShift(LiveServerTestCase):
         cls.manage_shift_page = ManageShiftPage(cls.driver)
         cls.upcoming_shift_page = UpcomingShiftsPage(cls.driver)
         cls.authentication_page = AuthenticationPage(cls.driver)
+        cls.wait = WebDriverWait(cls.driver, 10)
         super(ViewVolunteerShift, cls).setUpClass()
 
     def setUp(self):
@@ -41,7 +50,7 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.login_volunteer()
 
     def tearDown(self):
-        pass
+        self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
@@ -49,29 +58,62 @@ class ViewVolunteerShift(LiveServerTestCase):
         super(ViewVolunteerShift, cls).tearDownClass()
 
     def login_volunteer(self):
-        credentials = {'username': 'volunteer', 'password': 'volunteer'}
+        credentials = {
+            'username': 'volunteer',
+            'password': 'volunteer'
+        }
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login(credentials)
 
+    def register_dataset(self):
+
+        created_event = create_event_with_details(
+            ['event-four', '2050-06-01', '2050-06-10'])
+        created_job = create_job_with_details([
+            'jobOneInEventFour', '2050-06-01', '2050-06-10', 'job description',
+            created_event
+        ])
+        created_shift = create_shift_with_details(
+            ['2050-06-01', '09:00', '15:00', '10', created_job])
+        registered_shift = register_volunteer_for_shift_utility(created_shift, self.v1)
+
     def test_access_another_existing_volunteer_view(self):
-        '''
-        details = ['test_volunteer', 'volunteer-first-nameq', 'volunteer-last-nameq',
-                'volunteer-addressq', 'volunteer-city', 'volunteer-stateq', 'volunteer-countryq',
-                '9999999999', 'volunteer-email2@systers.orgq','volunteer-organizationq']
-
-        test_volunteer = create_volunteer_with_details(details)
-
-        self.login_volunteer()
         upcoming_shift_page = self.upcoming_shift_page
-        upcoming_shift_page.get_page(self.live_server_url, upcoming_shift_page.view_shift_page + str(test_volunteer_id))
-        '''
-        pass
+        upcoming_shift_page.live_server_url = self.live_server_url
+        self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH,
+                 "//h1[contains(text(), 'Volunteer Management System')]"
+                 )
+            )
+        )
+        upcoming_shift_page.view_upcoming_shifts()
+        self.assertEqual(upcoming_shift_page.get_info_box(),
+                         upcoming_shift_page.no_shift_message)
+        details = ['test_volunteer', 'volunteer-first-name', 'volunteer-last-name',
+                   'volunteer-address', 'volunteer-city', 'volunteer-state', 'volunteer-country',
+                   '9999999999', 'volunteer-email2@systers.org', 'volunteer-organization']
+        test_volunteer = create_volunteer_with_details(details)
+        upcoming_shift_page.get_page(upcoming_shift_page.live_server_url,
+                                     upcoming_shift_page.view_shift_page + str(test_volunteer.id))
+        found = re.search('You don\'t have the required rights',
+                          self.driver.page_source)
+        self.assertNotEqual(found, None)
 
     def test_access_another_nonexisting_volunteer_view(self):
         upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
+        self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH,
+                 "//h1[contains(text(), 'Volunteer Management System')]"
+                 )
+            )
+        )
         upcoming_shift_page.get_page(
-            self.live_server_url,
-            upcoming_shift_page.view_shift_page + '65459')
+            upcoming_shift_page.live_server_url,
+            upcoming_shift_page.view_shift_page + '65459'
+        )
         found = re.search('You don\'t have the required rights',
                           self.driver.page_source)
         self.assertNotEqual(found, None)
@@ -82,36 +124,21 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertEqual(upcoming_shift_page.get_info_box(),
                          upcoming_shift_page.no_shift_message)
 
-    def register_dataset(self):
-
-        created_event = create_event_with_details(
-            ['event-four', '2017-06-01', '2017-06-10'])
-        created_job = create_job_with_details([
-            'jobOneInEventFour', '2017-06-01', '2017-06-10', 'job description',
-            created_event
-        ])
-        created_shift = create_shift_with_details(
-            ['2017-06-01', '09:00', '15:00', '10', created_job])
-        registered_shift = register_volunteer_for_shift_utility(
-            created_shift, self.v1)
-
     def test_view_with_assigned_and_unlogged_shift(self):
-
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
         upcoming_shift_page.view_upcoming_shifts()
 
-        self.assertEqual(upcoming_shift_page.get_shift_job(),
-                         'jobOneInEventFour')
-        self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2017')
+        self.assertEqual(upcoming_shift_page.get_shift_job(), 'jobOneInEventFour')
+        self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
         self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
 
-    def test_log_hours_and_logged_shift_does_not_appear_in_upcoming_shifts(
-            self):
-
+    def test_log_hours_and_logged_shift_does_not_appear_in_upcoming_shifts(self):
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
         upcoming_shift_page.view_upcoming_shifts()
 
         self.assertEqual(upcoming_shift_page.get_log_hours(), 'Log Hours')
@@ -119,28 +146,19 @@ class ViewVolunteerShift(LiveServerTestCase):
         upcoming_shift_page.click_to_log_hours()
         upcoming_shift_page.log_shift_timings('09:00', '12:00')
 
-        # check logged shift does not appear in Upcoming Shifts
+        # Check logged shift does not appear in Upcoming Shifts
         upcoming_shift_page.view_upcoming_shifts()
         self.assertEqual(upcoming_shift_page.get_info_box(),
                          upcoming_shift_page.no_shift_message)
-        with self.assertRaises(NoSuchElementException):
-            upcoming_shift_page.get_result_container()
-
-        # database check to ensure volunteer has logged the hours
-        self.assertEqual(len(VolunteerShift.objects.all()), 1)
-        self.assertNotEqual(
-            len(
-                VolunteerShift.objects.filter(
-                    start_time__isnull=False, end_time__isnull=False)), 0)
-        self.assertNotEqual(
-            len(
-                VolunteerShift.objects.filter(
-                    start_time='09:00', end_time='12:00')), 0)
+        self.assertRaisesRegexp(NoSuchElementException,
+                                'Unable to locate element: //table',
+                                upcoming_shift_page.get_result_container)
 
     def test_cancel_shift_registration(self):
 
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
         manage_shift_page = self.manage_shift_page
         upcoming_shift_page.view_upcoming_shifts()
 
@@ -159,9 +177,6 @@ class ViewVolunteerShift(LiveServerTestCase):
         upcoming_shift_page.view_upcoming_shifts()
         self.assertEqual(upcoming_shift_page.get_info_box(),
                          upcoming_shift_page.no_shift_message)
-        with self.assertRaises(NoSuchElementException):
-            upcoming_shift_page.get_result_container()
-
-        # database check to ensure shift registration is cancelled
-        self.assertEqual(len(VolunteerShift.objects.all()), 0)
-"""
+        self.assertRaisesRegexp(NoSuchElementException,
+                                'Unable to locate element: //table',
+                                upcoming_shift_page.get_result_container)

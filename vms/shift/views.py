@@ -17,7 +17,7 @@ from django.utils.decorators import method_decorator
 
 # local Django
 from job.models import Job
-from job.services import get_job_by_id 
+from job.services import get_job_by_id
 from shift.forms import HoursForm, ShiftForm
 from shift.models import Shift
 from shift.services import get_shift_by_id, add_shift_hours, cancel_shift_registration, clear_shift_hours, edit_shift_hours, get_unlogged_shifts_by_volunteer_id, get_logged_volunteers_by_shift_id, get_shift_slots_remaining, get_volunteers_by_shift_id, get_volunteer_by_id, get_volunteer_shifts_with_hours, get_shifts_ordered_by_date, get_shifts_with_open_slots_for_volunteer, register, get_volunteer_shift_by_id, get_shifts_by_job_id, delete_shift

@@ -8,6 +8,7 @@ from pom.pageUrls import PageUrls
 class CompletedShiftsPage(BasePage):
 
     view_hours_page = PageUrls.completed_shifts_page
+    live_server_url = ''
 
     def __init__(self, driver):
         self.driver = driver
@@ -16,7 +17,8 @@ class CompletedShiftsPage(BasePage):
         super(CompletedShiftsPage, self).__init__(driver)
 
     def go_to_completed_shifts(self):
-        self.home_page.get_completed_shifts_link().click()
+        link = self.home_page.get_completed_shifts_link().get_attribute('href')
+        self.get_page('', link)
 
     def edit_hours(self, stime, etime):
         self.element_by_xpath(self.elements.SHIFT_EDIT_PATH + '//a').click()
