@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 
 # local Django
 from administrator.forms import AdministratorForm
-from administrator.models import Administrator 
+from administrator.models import Administrator
 from organization.services import (get_organizations_ordered_by_name,
                                    get_organization_by_id)
 from registration.forms import UserForm
@@ -63,7 +63,7 @@ class AdministratorSignupView(TemplateView):
                     ad_country = request.POST.get('admin-country')
                     ad_phone = request.POST.get('admin-phone_number')
 
-                    if (ad_country and ad_phone):
+                    if ad_country and ad_phone:
                         if not validate_phone(ad_country, ad_phone):
                             self.phone_error = True
                             return render(

@@ -1,6 +1,6 @@
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.volunteerRegistrationPageLocators import VolunteerRegistrationPageLocators 
+from pom.locators.volunteerRegistrationPageLocators import VolunteerRegistrationPageLocators
 from pom.pageUrls import PageUrls
 
 
@@ -10,6 +10,9 @@ class VolunteerRegistrationPage(BasePage):
     live_server_url = ''
     volunteer_registration_page = PageUrls.volunteer_registration_page
     success_message = "You have successfully registered!"
+    USER_EXISTS = 'A user with that username already exists.'
+    INVALID_PHONE = 'Please enter a valid phone number'
+    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
 
     def __init__(self, driver):
         self.elements = VolunteerRegistrationPageLocators()
@@ -31,7 +34,7 @@ class VolunteerRegistrationPage(BasePage):
         self.submit_form()
 
     def get_field_values(self):
-        values = {}
+        values = dict()
         elements = self.elements
         values['username'] = self.get_value_for(elements.USERNAME)
         values['first_name'] = self.get_value_for(elements.FIRST_NAME)

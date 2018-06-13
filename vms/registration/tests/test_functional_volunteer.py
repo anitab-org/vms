@@ -3,24 +3,21 @@ import re
 
 # third party
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 # Django
-from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
 # local Django
 from pom.pageUrls import PageUrls
 from pom.pages.volunteerRegistrationPage import VolunteerRegistrationPage
-from organization.models import Organization
 from shift.utils import create_organization, create_country
-from volunteer.models import Volunteer
 
-# Class contains failing test cases which have been documented
-# Test class commented out to prevent travis build failure
-"""
+
 class SignUpVolunteer(LiveServerTestCase):
-    '''
+    """
     SignUpVolunteer Class contains tests to register volunteer User
     Tests included.
 
@@ -49,20 +46,19 @@ class SignUpVolunteer(LiveServerTestCase):
 
     Retention of fields:
         - Field values are checked to see that they are not lost when the page gets reloaded
-    '''
+    """
 
     @classmethod
     def setUpClass(cls):
         cls.driver = webdriver.Firefox()
+        cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.page = VolunteerRegistrationPage(cls.driver)
+        cls.wait = WebDriverWait(cls.driver, 10)
         super(SignUpVolunteer, cls).setUpClass()
 
     def setUp(self):
-        # create an org prior to registration. Bug in Code
-        # added to pass CI
         create_organization()
-
         # country created so that phone number can be checked
         create_country()
 
@@ -98,12 +94,8 @@ class SignUpVolunteer(LiveServerTestCase):
 
         blocks = page.get_help_blocks()
         self.assertNotEqual(blocks, None)
-        # verify that all of the fields are compulsory
+        # Verify that all of the fields are compulsory
         self.assertEqual(len(blocks), 10)
-
-        # database check to verify that user, volunteer are not created
-        self.assertEqual(len(User.objects.all()), 0)
-        self.assertEqual(len(Volunteer.objects.all()), 0)
 
     def test_successful_registration(self):
         page = self.page
@@ -112,29 +104,17 @@ class SignUpVolunteer(LiveServerTestCase):
         self.assertEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_message_box_text(), page.success_message)
 
-        # database check to verify that user, volunteer created and their credentials
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-        # check that empty list not returned for added filters
-        self.assertNotEqual(
-            len(User.objects.filter(username='volunteer-username')), 0)
-        self.assertNotEqual(
-            len(Volunteer.objects.filter(email='volunteer-email@systers.org')),
-            0)
-
-    def test_name_fields(self):
-        # register valid volunteer user
+    def test_user_registration_with_same_username(self):
+        # Register valid volunteer user
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
         self.assertEqual(page.get_message_box_text(), page.success_message)
 
-        # register a user again with username same as already registered user
-        self.assertEqual(self.driver.current_url,
+        # Register a user again with username same as already registered user
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + PageUrls.homepage)
-
         page.get_volunteer_registration_page()
 
         entry = [
@@ -148,13 +128,16 @@ class SignUpVolunteer(LiveServerTestCase):
 
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_username_error_text(),
-                         'User with this Username already exists.')
+                         page.USER_EXISTS)
 
-        # database check to verify that only 1 user, volunteer exists
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
+    def test_numeric_characters_in_first_and_last_name(self):
+        # register valid volunteer user
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(page.get_message_box_text(), page.success_message)
 
-        # test numeric characters in first-name, last-name
         page.get_volunteer_registration_page()
 
         entry = [
@@ -168,15 +151,18 @@ class SignUpVolunteer(LiveServerTestCase):
 
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_first_name_error_text(),
-                         'Enter a valid value.')
+                         page.ENTER_VALID_VALUE)
         self.assertEqual(page.get_last_name_error_text(),
-                         'Enter a valid value.')
+                         page.ENTER_VALID_VALUE)
 
-        # database check to verify that only 1 user, volunteer exists
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
+    def test_special_characters_in_first_and_last_name(self):
+        # register valid volunteer user
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(page.get_message_box_text(), page.success_message)
 
-        # test special characters in first-name, last-name
         page.get_volunteer_registration_page()
 
         entry = [
@@ -190,15 +176,18 @@ class SignUpVolunteer(LiveServerTestCase):
 
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_first_name_error_text(),
-                         'Enter a valid value.')
+                         page.ENTER_VALID_VALUE)
         self.assertEqual(page.get_last_name_error_text(),
-                         'Enter a valid value.')
+                         page.ENTER_VALID_VALUE)
 
-        # database check to verify that only 1 user, volunteer exists
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
+    def test_length_of_first_and_last_name(self):
+        # register valid volunteer user
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(page.get_message_box_text(), page.success_message)
 
-        # test length of first-name, last-name not exceed 30
         page.get_volunteer_registration_page()
 
         entry = [
@@ -224,12 +213,7 @@ class SignUpVolunteer(LiveServerTestCase):
                 re.search(r'Ensure this value has at most 30 characters',
                           str(error_message))))
 
-        # database check to verify that only 1 user, volunteer exists
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-    def test_location_fields(self):
-        # test numeric characters in address, city, state, country
+    def test_special_characters_in_location(self):
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_volunteer_registration_page()
@@ -244,22 +228,13 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(), None)
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
 
-        # Verify that messages are displayed for city, state and country but not address
-        # Test commented out as there is a bug in the template
-        # self.assertEqual(len(page.get_help_blocks()),3)
-        self.assertEqual(page.get_city_error_text(), 'Enter a valid value.')
-        self.assertEqual(page.get_state_error_text(), 'Enter a valid value.')
-        self.assertEqual(page.get_country_error_text(), 'Enter a valid value.')
+        self.assertEqual(page.get_city_error_text(), page.ENTER_VALID_VALUE)
+        self.assertEqual(page.get_state_error_text(), page.ENTER_VALID_VALUE)
+        self.assertEqual(page.get_country_error_text(), page.ENTER_VALID_VALUE)
 
-        # database check to verify that no user, volunteer created
-        self.assertEqual(len(User.objects.all()), 0)
-        self.assertEqual(len(Volunteer.objects.all()), 0)
-
-        # Test special characters in address, city, state, country
         page.get_volunteer_registration_page()
 
         entry = [
@@ -272,31 +247,24 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(), None)
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
 
         # verify that messages are displayed for all fields
-        self.assertEqual(page.get_address_error_text(), 'Enter a valid value.')
-        self.assertEqual(page.get_city_error_text(), 'Enter a valid value.')
-        self.assertEqual(page.get_state_error_text(), 'Enter a valid value.')
-        self.assertEqual(page.get_country_error_text(), 'Enter a valid value.')
-
-        # database check to verify that no user, volunteer created
-        self.assertEqual(len(User.objects.all()), 0)
-        self.assertEqual(len(Volunteer.objects.all()), 0)
+        self.assertEqual(page.get_address_error_text(), page.ENTER_VALID_VALUE)
+        self.assertEqual(page.get_city_error_text(), page.ENTER_VALID_VALUE)
+        self.assertEqual(page.get_state_error_text(), page.ENTER_VALID_VALUE)
+        self.assertEqual(page.get_country_error_text(), page.ENTER_VALID_VALUE)
 
     def test_email_field(self):
-
         page = self.page
         page.live_server_url = self.live_server_url
-        # register valid volunteer user
         page.register_valid_details()
 
         # verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
         self.assertEqual(page.get_message_box_text(), page.success_message)
-        self.assertEqual(self.driver.current_url,
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + PageUrls.homepage)
 
         # Try to register volunteer again with same email address
@@ -311,23 +279,16 @@ class SignUpVolunteer(LiveServerTestCase):
         ]
         page.fill_registration_form(entry)
 
-        # verify that volunteer wasn't registered
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        # Verify that volunteer wasn't registered
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_email_error_text(),
                          'Volunteer with this Email already exists.')
 
-        # database check to verify that no new user, volunteer created
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-    def test_phone_field(self):
-
+    def test_phone_in_different_country(self):
         page = self.page
         page.live_server_url = self.live_server_url
-        # register valid volunteer user with valid phone number for country
         page.get_volunteer_registration_page()
 
         entry = [
@@ -342,12 +303,8 @@ class SignUpVolunteer(LiveServerTestCase):
         # verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
         self.assertEqual(page.get_message_box_text(), page.success_message)
-        self.assertEqual(self.driver.current_url,
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + PageUrls.homepage)
-
-        # database check to verify that user, volunteer created
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
 
         # Try to register volunteer with incorrect phone number for country
         page.get_volunteer_registration_page()
@@ -362,19 +319,15 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
         self.assertNotEqual(page.get_help_blocks(), None)
-        self.assertEqual(
-            page.get_phone_error_text(),
-            "This phone number isn't valid for the selected country")
+        self.assertEqual(page.get_phone_error_text(),
+                         page.INVALID_PHONE_FOR_COUNTRY)
 
-        # database check to verify that no new user, volunteer created
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-        # Use invalid characters in phone number
+    def test_phone_with_invalid_characters(self):
+        page = self.page
+        page.live_server_url = self.live_server_url
         page.get_volunteer_registration_page()
 
         entry = [
@@ -387,22 +340,15 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_phone_error_text(),
-                         "Please enter a valid phone number")
+                         page.INVALID_PHONE)
 
-        # database check to verify that no new user, volunteer created
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-    def test_organization_field(self):
-
+    def test_organization_with_numeric_characters(self):
         page = self.page
         page.live_server_url = self.live_server_url
-        # test numeric characters in organization
         page.get_volunteer_registration_page()
 
         entry = [
@@ -414,17 +360,15 @@ class SignUpVolunteer(LiveServerTestCase):
         ]
         page.fill_registration_form(entry)
 
-        # verify successful registration
+        # Verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
         self.assertEqual(page.get_message_box_text(), page.success_message)
-        self.assertEqual(self.driver.current_url,
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + PageUrls.homepage)
 
-        # database check to verify that user, volunteer created
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-        # Use invalid characters in organization
+    def test_organization_with_invalid_characters(self):
+        page = self.page
+        page.live_server_url = self.live_server_url
         page.get_volunteer_registration_page()
 
         entry = [
@@ -437,22 +381,15 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_organization_error_text(),
-                         "Enter a valid value.")
+                         page.ENTER_VALID_VALUE)
 
-        # database check to verify that no new user, volunteer created
-        self.assertEqual(len(User.objects.all()), 1)
-        self.assertEqual(len(Volunteer.objects.all()), 1)
-
-    def test_field_value_retention(self):
-
+    def test_field_value_retention_in_first_name_state_phone_organization(self):
         page = self.page
         page.live_server_url = self.live_server_url
-        # send invalid value in fields - first name, state, phone, organization
         page.get_volunteer_registration_page()
 
         entry = [
@@ -466,7 +403,7 @@ class SignUpVolunteer(LiveServerTestCase):
 
         # verify that user wasn't registered and that field values are not erased
         self.assertEqual(
-            self.driver.current_url,
+            page.remove_i18n(self.driver.current_url),
             self.live_server_url + page.volunteer_registration_page)
         details = [
             'volunteer-username', 'volunteer-first-name-3',
@@ -474,13 +411,12 @@ class SignUpVolunteer(LiveServerTestCase):
             'volunteer-address', 'volunteer-city', 'volunteer-state!',
             'volunteer-country', '99999.!9999', '@#volunteer-org'
         ]
+        self.wait.until(EC.presence_of_element_located((By.ID, "id_username")))
         self.verify_field_values(details)
 
-        # database check to verify that no user, volunteer created
-        self.assertEqual(len(User.objects.all()), 0)
-        self.assertEqual(len(Volunteer.objects.all()), 0)
-
-        # send invalid value in fields - last name, address, city, country
+    def test_field_value_retention_in_last_name_address_city_country(self):
+        page = self.page
+        page.live_server_url = self.live_server_url
         page.get_volunteer_registration_page()
 
         entry = [
@@ -493,19 +429,15 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered and that field values are not erased
-        self.assertEqual(
-            self.driver.current_url,
-            self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + page.volunteer_registration_page)
         details = [
             'volunteer-username', 'volunteer-first-name',
             'volunteer-last-name-3', 'volunteer-email@systers.org',
             'volunteer-address$@!', 'volunteer-city#$', 'volunteer-state',
             'volunteer-country 15', '9999999999', 'volunteer-org'
         ]
+        self.wait.until(EC.presence_of_element_located((By.ID, "id_username")))
+        self.wait.until(EC.presence_of_element_located((By.ID, "id_first_name")))
         self.verify_field_values(details)
-
-        # database check to verify that no user, volunteer created
-        self.assertEqual(len(User.objects.all()),0)
-        self.assertEqual(len(Volunteer.objects.all()),0)
-"""
 
