@@ -58,5 +58,6 @@ class EventsPageLocators(object):
     SHIFT_START_TIME_ERROR = "//form//div[5]/div/p/strong"
     SHIFT_END_TIME_ERROR = "//form//div[6]/div/p/strong"
     SHIFT_MAX_VOLUNTEER_ERROR = "//form//div[7]/div/p/strong"
+    ORGANIZATION_NAME_ERROR = "//form//div[1]/div/p/strong"
 
     GENERAL_SUBMIT_PATH = '//form[1]'

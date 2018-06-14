@@ -1,0 +1,210 @@
+# third party
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+
+# Django
+from django.contrib.staticfiles.testing import LiveServerTestCase
+
+# local Django
+from pom.pages.eventsPage import EventsPage
+from pom.pages.authenticationPage import AuthenticationPage
+from pom.locators.eventsPageLocators import EventsPageLocators
+from shift.utils import (create_admin,
+                         create_volunteer,
+                         create_organization)
+
+
+class OrganizationTest(LiveServerTestCase):
+    """
+    E2E Tests for Organization views:
+        - Create Organization
+        - Edit Organization
+        - Check duplicate Organization
+        - Delete Org with registered volunteers
+        - Delete Org without registered volunteers
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = webdriver.Firefox()
+        cls.driver.implicitly_wait(5)
+        cls.driver.maximize_window()
+        cls.organization_page = EventsPage(cls.driver)
+        cls.authentication_page = AuthenticationPage(cls.driver)
+        cls.elements = EventsPageLocators()
+        super(OrganizationTest, cls).setUpClass()
+
+    def setUp(self):
+        create_admin()
+        self.login_admin()
+
+    def tearDown(self):
+        self.authentication_page.logout()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        super(OrganizationTest, cls).tearDownClass()
+
+    def login_admin(self):
+        self.authentication_page.server_url = self.live_server_url
+        self.authentication_page.login({
+            'username': 'admin',
+            'password': 'admin'
+        })
+
+    def delete_organization_from_list(self):
+        organization_page = self.organization_page
+        self.assertEqual(organization_page.element_by_xpath(self.elements.DELETE_ORG).text, 'Delete')
+        organization_page.element_by_xpath(self.elements.DELETE_ORG + '//a').click()
+
+        # Check if Organization is deleted.
+        self.assertNotEqual(organization_page.get_deletion_box(), None)
+        self.assertEqual(organization_page.get_deletion_context(),
+                         'Delete Organization')
+        organization_page.submit_form()
+
+    def test_view_organization(self):
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Create a Dummy Organization
+        organization = create_organization()
+
+        # Navigate to /organization/list
+        organization_page.navigate_to_organization_view()
+
+        # Check correctness of organization
+        self.assertEqual(organization_page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + organization_page.organization_list_page)
+        self.assertEqual(organization_page.get_org_name(), organization.name)
+
+    def test_create_valid_organization(self):
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to Organization Edit
+        organization_page.navigate_to_organization_view()
+        organization_page.go_to_create_organization_page()
+
+        # Navigate to Organization Edit
+        organization_page.fill_organization_form('Systers Open-Source Community')
+        # Correctness.
+        self.assertEqual(organization_page.get_org_name(), 'Systers Open-Source Community')
+
+    def test_create_duplicate_organization(self):
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to Organization Edit
+        organization_page.navigate_to_organization_view()
+        organization_page.go_to_create_organization_page()
+
+        # Navigate to Organization Edit
+        organization_page.fill_organization_form('DuplicateOrganization')
+        self.assertEqual(organization_page.get_org_name(), 'DuplicateOrganization')
+
+        # Create Organization with same name
+        organization_page.go_to_create_organization_page()
+        organization_page.fill_organization_form('DuplicateOrganization')
+
+        # Check error.
+        self.assertEqual(organization_page.get_help_block().text, 'Organization with this Name already exists.')
+
+    def test_create_invalid_organization(self):
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to Organization Edit
+        organization_page.navigate_to_organization_view()
+        organization_page.go_to_create_organization_page()
+
+        # Navigate to Organization Edit
+        organization_page.fill_organization_form('Systers Open~Source Community')
+
+        # Check Error
+        self.assertEqual(organization_page.get_organization_name_error(), 'Enter a valid value.')
+
+    def test_edit_organization_with_invalid_value(self):
+        # Create Organization
+        org = create_organization()
+
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to Organization list view
+        organization_page.navigate_to_organization_view()
+
+        # Edit Organization
+        self.assertEqual(organization_page.element_by_xpath(self.elements.EDIT_ORG).text, 'Edit')
+
+        organization_page.go_to_edit_organization_page()
+        organization_page.fill_organization_form('New~Organization')
+
+        # Check Error
+        self.assertEqual(organization_page.get_organization_name_error(), 'Enter a valid value.')
+
+    def test_edit_organization_with_valid_value(self):
+        # Create Organization
+        org = create_organization()
+
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to Organization list view
+        organization_page.navigate_to_organization_view()
+
+        # Edit Organization
+        self.assertEqual(organization_page.element_by_xpath(self.elements.EDIT_ORG).text, 'Edit')
+
+        organization_page.go_to_edit_organization_page()
+        organization_page.fill_organization_form('New Organization')
+
+        # Check Edited Organization
+        self.assertEqual(organization_page.get_org_name(), 'New Organization')
+
+    def test_delete_organization_without_users_linked(self):
+        # Create org
+        org = create_organization()
+
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to Organization view
+        organization_page.navigate_to_organization_view()
+
+        # Delete Organization
+        self.delete_organization_from_list()
+
+        # Check Organization is deleted.
+        with self.assertRaises(NoSuchElementException):
+            organization_page.element_by_xpath('//table//tbody//tr[1]')
+
+    def test_delete_org_with_users_linked(self):
+        # Create Organization
+        org = create_organization()
+
+        # Create volunteer
+        volunteer = create_volunteer()
+        volunteer.organization = org
+        volunteer.save()
+
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        # Navigate to organization view and Delete Organization
+        organization_page.navigate_to_organization_view()
+        self.delete_organization_from_list()
+
+        # Check error message
+        self.assertNotEqual(organization_page.get_danger_message(), None)
+        self.assertEqual(organization_page.get_template_error_message(),
+                         'You cannot delete an organization that users are currently associated with.')

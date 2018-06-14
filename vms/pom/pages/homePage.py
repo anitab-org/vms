@@ -1,6 +1,6 @@
 # local Django
-from pom.pages.basePage import BasePage 
-from pom.locators.homePageLocators import HomePageLocators 
+from pom.pages.basePage import BasePage
+from pom.locators.homePageLocators import HomePageLocators
 
 
 class HomePage(BasePage):
@@ -48,5 +48,4 @@ class HomePage(BasePage):
         return self.elements_by_class_name(self.elements.NO_ADMIN_RIGHT_HEAD)
 
     def get_no_admin_right_content(self):
-        return self.elements_by_class_name(
-            self.elements.NO_ADMIN_RIGHT_CONTENT)
+        return self.elements_by_class_name(self.elements.NO_ADMIN_RIGHT_CONTENT)

@@ -1,5 +1,4 @@
 # third party
-from selenium.webdriver.support.ui import Select
 
 # local Django
 from pom.pages.basePage import BasePage
@@ -110,7 +109,10 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.EDIT_SHIFT).click()
 
     def go_to_create_organization_page(self):
-        self.get_page(self.live_server_url, self.create_organization_page)
+        self.click_link('Create Organization')
+
+    def go_to_edit_organization_page(self):
+        self.element_by_xpath(self.elements.EDIT_ORG).click()
 
     def get_deletion_box(self):
         return self.element_by_class_name(self.elements.DELETION_BOX)
@@ -192,6 +194,9 @@ class EventsPage(BasePage):
 
     def get_shift_max_volunteer_error(self):
         return self.element_by_xpath(self.elements.SHIFT_MAX_VOLUNTEER_ERROR).text
+
+    def get_organization_name_error(self):
+        return self.element_by_xpath(self.elements.ORGANIZATION_NAME_ERROR).text
 
     def get_shift_job(self):
         return self.element_by_xpath(self.elements.SHIFT_JOB).text

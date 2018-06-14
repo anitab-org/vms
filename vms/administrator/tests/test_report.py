@@ -38,7 +38,7 @@ class Report(LiveServerTestCase):
         self.login_admin()
 
     def tearDown(self):
-        pass
+        self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
