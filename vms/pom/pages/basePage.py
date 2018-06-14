@@ -1,6 +1,8 @@
 class BasePage(object):
     """Base class to initialize the base page that will be called from all pages"""
     ENTER_VALID_VALUE = 'Enter a valid value.'
+    FIELD_REQUIRED = 'This field is required.'
+    START_BEFORE_END = 'Start date must be before the end date'
 
     def __init__(self, driver):
         self.driver = driver

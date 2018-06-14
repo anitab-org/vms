@@ -1,7 +1,6 @@
 # standard library
 import datetime
 import unittest
-# from datetime import date
 
 # local Django
 from job.services import (delete_job, check_edit_job, get_job_by_id,
@@ -50,9 +49,9 @@ def tearDownModule():
 
 
 class JobTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require only job objects, no shifts
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -83,14 +82,14 @@ class JobTests(unittest.TestCase):
         self.assertIsNone(get_job_by_id(200))
 
     def test_job_not_empty(self):
-        """ Test job_not_empty(j_id) 
+        """ Test job_not_empty(j_id)
         Uses jobs j1,j2 """
         self.assertTrue(job_not_empty(self.j1.id))
         self.assertTrue(job_not_empty(self.j2.id))
         self.assertFalse(job_not_empty(100))
 
     def test_get_jobs_by_event_id(self):
-        """ Test get_jobs_by_event_id(e_id) 
+        """ Test get_jobs_by_event_id(e_id)
         Uses jobs j1,j2,j3 and event e1, e2 """
 
         # test typical case
@@ -163,9 +162,9 @@ class DeleteJobTest(unittest.TestCase):
 
 
 class JobWithShiftTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require shift objects
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -257,7 +256,8 @@ class JobWithShiftTests(unittest.TestCase):
     def test_get_signed_up_jobs_for_volunteer(self):
         """ Uses jobs j1,j3, shifts s1,s2,s3 and volunteers v1,v2"""
 
-        # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s1 first to check if sorting is successful
+        # volunteer 1 registers for 3 shifts belonging to two jobs
+        # - registers for s1 first to check if sorting is successful
         register(self.v1.id, self.s1.id)
         register(self.v1.id, self.s3.id)
         register(self.v1.id, self.s2.id)
