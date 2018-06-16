@@ -191,23 +191,25 @@ class ShiftSignUp(LiveServerTestCase):
         register_shift_utility()
 
         sign_up_page = self.sign_up_page
+        sign_up_page.live_server_url = self.live_server_url
 
         # Enter date range in which an event starts
-        sign_up_page.navigate_to_sign_up()
+        sign_up_page.go_to_sign_up_page()
         date = ['05/08/2050', '05/31/2050']
         sign_up_page.fill_search_form(date)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 
+        # a = input()
         # Enter only correct starting date
-        sign_up_page.navigate_to_sign_up()
+        sign_up_page.go_to_sign_up_page()
         date = ['05/10/2050', '']
         sign_up_page.fill_search_form(date)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 
         # Enter correct ending date
-        sign_up_page.navigate_to_sign_up()
+        sign_up_page.go_to_sign_up_page()
         date = ['', '06/15/2050']
         sign_up_page.fill_search_form(date)
         # Verify that the event shows up

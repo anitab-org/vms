@@ -29,6 +29,10 @@ class EventSignUpPage(BasePage):
     def click_to_sign_up(self):
         self.element_by_xpath(self.elements.SHIFT_SIGNUP_PATH + "//a").click()
 
+    def go_to_sign_up_page(self):
+        element = self.element_by_xpath(self.elements.SHIFT_SIGNUP_PAGE + '//a')
+        self.execute_script('arguments[0].click();', element)
+
     def get_view_jobs(self):
         return self.element_by_xpath(self.elements.VIEW_JOBS_PATH).text
 
