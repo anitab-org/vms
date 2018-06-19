@@ -3,7 +3,8 @@ from django.conf.urls import url
 
 # local Django
 from volunteer import views
-from volunteer.views import VolunteerUpdateView, ProfileView, GenerateReportView
+from volunteer.views import (VolunteerUpdateView, ProfileView,
+                            GenerateReportView, VolunteerHistoryView)
 
 urlpatterns = [
     url(r'^delete_resume/(?P<volunteer_id>\d+)$',
@@ -22,5 +23,8 @@ urlpatterns = [
         GenerateReportView.as_view(),
         name='report'),
     url(r'^search/$', views.search, name='search'),
+    url(r'^view_history/(?P<volunteer_id>\d+)$',
+        VolunteerHistoryView.as_view(),
+        name='view_history'),
 ]
 
