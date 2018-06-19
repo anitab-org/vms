@@ -1,5 +1,8 @@
 # third party
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -27,6 +30,7 @@ class FormFields(LiveServerTestCase):
         cls.driver.maximize_window()
         cls.settings = EventsPage(cls.driver)
         cls.authentication_page = AuthenticationPage(cls.driver)
+        cls.wait = WebDriverWait(cls.driver, 5)
         super(FormFields, cls).setUpClass()
 
     def setUp(self):
@@ -239,6 +243,12 @@ class FormFields(LiveServerTestCase):
         settings.fill_shift_form(invalid_shift)
 
         # Check error message
+        self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//form//div[7]/div/p/strong[contains(text(),"
+                           "'Ensure this value is greater than or equal to 1.')]")
+            )
+        )
         self.assertEqual(settings.get_shift_max_volunteer_error(), 'Ensure this value is greater than or equal to 1.')
 
         # Create shift and edit with 0 value
@@ -250,6 +260,12 @@ class FormFields(LiveServerTestCase):
         settings.fill_shift_form(invalid_shift)
 
         # Check error message
+        self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//form//div[7]/div/p/strong[contains(text(),"
+                           "'Ensure this value is greater than or equal to 1.')]")
+            )
+        )
         self.assertEqual(settings.get_shift_max_volunteer_error(), 'Ensure this value is greater than or equal to 1.')
 
     def test_simplify_shift(self):
