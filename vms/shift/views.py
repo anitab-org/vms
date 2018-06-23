@@ -639,6 +639,7 @@ def sign_up(request, shift_id, volunteer_id):
 
 class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
     template_name = 'shift/hours_list.html'
+    form_class = HoursForm
 
     @method_decorator(check_correct_volunteer)
     @method_decorator(vol_id_check)
