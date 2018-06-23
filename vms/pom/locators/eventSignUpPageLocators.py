@@ -21,3 +21,6 @@ class EventSignUpPageLocators(object):
     INFO_BOX = 'alert-info'
     DANGER_BOX = 'alert-danger'
     SUBMIT_PATH = '//form[1]'
+
+    SHIFT_SIGNUP_PAGE = '//div[1]//div[1]//div[2]//ul[1]//li[3]'
+
