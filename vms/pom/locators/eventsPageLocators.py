@@ -53,8 +53,8 @@ class EventsPageLocators(object):
     ORG_NAME = '//input[@name = "name"]'
 
     EVENT_NAME_ERROR = "//form//div[1]/div/p/strong"
-    EVENT_START_DATE_ERROR = "//form//div[2]/div/p/strong"
-    EVENT_END_DATE_ERROR = "//form//div[3]/div/p/strong"
+    EVENT_START_DATE_ERROR = "//form//div[3]/div/p/strong"
+    EVENT_END_DATE_ERROR = "//form//div[4]/div/p/strong"
     JOB_NAME_ERROR = "//form//div[3]/div/p/strong"
     JOB_START_DATE_ERROR = "//form//div[5]/div/p/strong"
     JOB_END_DATE_ERROR = "//form//div[6]/div/p/strong"
