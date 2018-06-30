@@ -1,5 +1,6 @@
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.core import mail
 
 # third party
 from selenium import webdriver
@@ -345,6 +346,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.check_job_details(
             ['job name', 'May 20, 2050', '9 a.m.', '3 p.m.'])
 
+        # check shift assignment email
+        mail.outbox = []
+        mail.send_mail("Shift Assigned", "message", "messanger@localhost.com", [volunteer_1.email])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'Shift Assigned')
+        self.assertEqual(msg.to, ['volunteer-email@systers.org'])
+
     def test_slots_remaining_in_shift(self):
         """
         Test correct display of the remaining number of slots for shift.
@@ -466,6 +475,15 @@ class ManageVolunteerShift(LiveServerTestCase):
                 (By.CLASS_NAME, 'alert-info')
             )
         )
+
+        # Check cancellation email
+        mail.outbox = []
+        mail.send_mail("Shift Cancelled", "message",
+                              "messanger@localhost.com", [volunteer_1.email])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'Shift Cancelled')
+        self.assertEqual(msg.to, ['volunteer-email@systers.org'])
 
         # Check cancelled shift reflects in volunteer shift details
         self.assertEqual(manage_shift_page.get_info_box(),
