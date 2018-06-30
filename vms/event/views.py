@@ -15,6 +15,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.edit import DeleteView
+from django.views.generic import DetailView, ListView
 
 # local Django
 from administrator.utils import admin_required
@@ -81,6 +82,26 @@ class EventDeleteView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
             return HttpResponseRedirect(self.success_url)
         else:
             return render(request, 'event/delete_error.html')
+
+
+class EventDetailView(LoginRequiredMixin, DetailView):
+    """
+    The view to show the details of an Event
+    Extends DetailView which is a generic class based view designed to display data.
+    """
+
+    template_name = 'event/details.html'
+
+    def get_object(self, queryset=None):
+        """
+        This view shows the information about the event
+        :param self: the event itself
+        :return the object
+        """
+
+        event_id = self.kwargs['event_id']
+        obj = Event.objects.get(pk=event_id)
+        return obj
 
 
 class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,

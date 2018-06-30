@@ -175,7 +175,7 @@
                     <th>{% trans "Event Name" %}</th>
                     <th>{% trans "Start Date" %}</th>
                     <th>{% trans "End Date" %}</th>
-                    <th>{% trans "City" %}</th>
+	            <th>{% trans "Details" %}</th>
                     <th>{% trans "Edit" %}</th>
                     <th>{% trans "Delete" %}</th>
                 </tr>
@@ -186,7 +186,9 @@
                         <td>{{ event.name }}</td>
                         <td>{{ event.start_date }}</td>
                         <td>{{ event.end_date }}</td>
-                        <td>{{ event.city }}</td>
+		        <td> 
+                            <a href="{% url 'event:details' event.id %}" class="btn btn-default btn-sm">{% trans "Details" %}</a>
+                        </td>
                         <td>
                             <a href="{% url 'event:edit' event.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
                         </td>
