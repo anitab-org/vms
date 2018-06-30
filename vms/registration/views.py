@@ -224,7 +224,6 @@ class VolunteerSignupView(TemplateView):
 
                     volunteer.reminder_days = 1
                     volunteer.save()
-                    user.is_active = False
                     current_site = get_current_site(request)
                     mail_subject = 'Activate your account.'
                     message = render_to_string(
