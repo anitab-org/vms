@@ -9,6 +9,11 @@ body {
   margin-bottom: 60px;
 }
 
+.centered {
+  align-content: center;
+  padding-left: 6%;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
