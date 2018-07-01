@@ -8,20 +8,24 @@ from braces.views import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, DeleteView, ListView
 from django.views.generic.edit import FormView, UpdateView
-from django.utils.decorators import method_decorator
 
 # local Django
+from event.models import Event
 from job.models import Job
 from job.services import get_job_by_id
 from shift.forms import HoursForm, ShiftForm
 from shift.models import Shift
 from shift.services import get_shift_by_id, add_shift_hours, cancel_shift_registration, clear_shift_hours, edit_shift_hours, get_unlogged_shifts_by_volunteer_id, get_logged_volunteers_by_shift_id, get_shift_slots_remaining, get_volunteers_by_shift_id, get_volunteer_by_id, get_volunteer_shifts_with_hours, get_shifts_ordered_by_date, get_shifts_with_open_slots_for_volunteer, register, get_volunteer_shift_by_id, get_shifts_by_job_id, delete_shift
 from volunteer.forms import SearchVolunteerForm
+from volunteer.models import Volunteer
 from volunteer.services import get_all_volunteers, search_volunteers
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer
@@ -192,6 +196,27 @@ def cancel(request, shift_id, volunteer_id):
             try:
                 cancel_shift_registration(volunteer_id, shift_id)
                 if admin:
+                    vol_email = Volunteer.objects.get(pk=volunteer_id).email
+                    shift_object = get_shift_by_id(shift_id)
+                    job_object = Job.objects.get(shift=shift_object)
+                    event_object = Event.objects.get(job=job_object)
+                    message = render_to_string(
+                        'shift/cancel_email.txt',
+                        {
+                            'admin_first_name': admin.first_name,
+                            'admin_last_name': admin.last_name,
+                            'shift_start_time': shift_object.start_time,
+                            'shift_end_time': shift_object.end_time,
+                            'admin_email': admin.email,
+                            'job_name': job_object.name,
+                            'event_name': event_object.name,
+                            'shift_date': shift_object.date,
+                            })
+                    try:
+                        send_mail("Shift Cancelled", message,
+                              "messanger@localhost.com", [vol_email])
+                    except:
+                        raise Exception("There was an error in sending email.")
                     return HttpResponseRedirect(
                         reverse(
                             'shift:manage_volunteer_shifts',
@@ -611,6 +636,29 @@ def sign_up(request, shift_id, volunteer_id):
                     result = register(volunteer_id, shift_id)
                     if result == "IS_VALID":
                         if admin:
+                            vol_email = Volunteer.objects.get(
+                                pk=volunteer_id).email
+                            shift_object = get_shift_by_id(shift_id)
+                            job_object = Job.objects.get(shift=shift_object)
+                            event_object = Event.objects.get(job=job_object)
+                            message = render_to_string(
+                                'shift/sign_up_email.txt',
+                                {
+                                    'admin_first_name': admin.first_name,
+                                    'admin_last_name': admin.last_name,
+                                    'shift_start_time': shift_object.start_time,
+                                    'shift_end_time': shift_object.end_time,
+                                    'admin_email': admin.email,
+                                    'job_name': job_object.name,
+                                    'event_name': event_object.name,
+                                    'shift_date': shift_object.date,
+                                    })
+                            try:
+                                send_mail("Shift Assigned", message,
+                                       "messanger@localhost.com", [vol_email],
+                                       fail_silently=False)
+                            except:
+                                raise Exception("There was an error in sending email.")
                             return HttpResponseRedirect(
                                 reverse(
                                     'shift:manage_volunteer_shifts',
