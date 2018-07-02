@@ -3,6 +3,7 @@ from django import forms
 from django.forms import ModelForm
 
 # local Django
+from event.services import get_events_ordered_by_name
 from volunteer.models import Volunteer
 
 
@@ -30,6 +31,8 @@ class SearchVolunteerForm(forms.Form):
         regex=r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', max_length=75, required=False)
     organization = forms.RegexField(
         regex=r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', max_length=75, required=False)
+    event = forms.CharField(required=False)
+    job = forms.CharField(required=False)
 
 
 class VolunteerForm(ModelForm):

@@ -7,7 +7,6 @@ from organization.services import (get_organization_by_name,
                                    get_organizations_ordered_by_name)
 from volunteer.models import Volunteer
 
-
 def delete_volunteer(volunteer_id):
     result = False
 
@@ -90,10 +89,10 @@ def has_resume_file(volunteer_id):
 
 
 def search_volunteers(first_name, last_name, city, state, country,
-                      organization):
+                      organization, event_id, job_id):
     """Volunteers search
     None, one, or more parameters may be sent:
-    first_name, last_name, city, state, country, organization
+    first_name, last_name, city, state, country, organization, event, job
 
     If no search parameters are given, it returns all volunteers
 
@@ -108,7 +107,6 @@ def search_volunteers(first_name, last_name, city, state, country,
 
     # if no search parameters are given, it returns all volunteers
     search_query = Volunteer.objects.all()
-
     # build query based on parameters provided
     if first_name:
         search_query = search_query.filter(first_name__icontains=first_name)
@@ -140,5 +138,15 @@ def search_volunteers(first_name, last_name, city, state, country,
             search_query = search_query.exclude(
                 unlisted_organization__exact='').filter(
                     unlisted_organization__icontains=organization)
-
+    if event_id:
+        try:
+            search_query = search_query.filter(shift__job__event_id=event_id)
+        except:
+            search_query = None
+    if job_id:
+        try:
+            search_query = search_query.filter(shift__job_id=job_id)
+        except:
+            search_query = None
     return search_query
+
