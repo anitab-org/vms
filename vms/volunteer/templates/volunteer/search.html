@@ -146,28 +146,50 @@
                         </div>
                     </div>
                 {% endif %}
-                <div class="form-group">
-                    <label class="col-md-2 control-label">{% trans "Event" %}</label>
-                    <div class="col-md-8">
-                        <select id="select" class="form-control" name="event">
-                            <option value="">-- {% trans "Select Event" %} --</option>
-                            {% for event in events_list %}
-                            <option value="{{ event.id }}">{{ event.name }}</option>
-                            {% endfor %}
-                        </select>
+                {% if form.event.errors %}
+                    <div class="form-group has-error">
+                        <label class="col-md-2 control-label">{% trans "Event" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Search by Event{% endblocktrans %}" type="text" name="event" value="{% if form.event.value %}{{ form.event.value }}{% endif %}">
+                            <p class="help-block">
+                                <strong>
+                                    {% for error in form.event.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </strong>
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-2 control-label">{% trans "Job" %}</label>
-                    <div class="col-md-8">
-                        <select id="select" class="form-control" name="job">
-                            <option value="">-- {% trans "Select Job" %} --</option>
-                            {% for job in jobs_list %}
-                            <option value="{{ job.id }}">{{ job.name }}</option>
-                                {% endfor %}
-                            </select>
+                {% else %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">{% trans "Event" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Search by Event{% endblocktrans %}" type="text" name="event" value="{% if form.event.value %}{{ form.event.value }}{% endif %}">
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+                {% if form.job.errors %}
+                    <div class="form-group has-error">
+                        <label class="col-md-2 control-label">{% trans "Job" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Search by Job{% endblocktrans %}" type="text" name="job" value="{% if form.job.value %}{{ form.job.value }}{% endif %}">
+                            <p class="help-block">
+                                <strong>
+                                    {% for error in form.job.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">{% trans "Job" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Search by Job{% endblocktrans %}" type="text" name="job" value="{% if form.job.value %}{{ form.job.value }}{% endif %}">
+                        </div>
+                    </div>
+                {% endif %}
             </fieldset>
             <div class="form-group">
                 <div class="col-md-12 col-md-offset-2">

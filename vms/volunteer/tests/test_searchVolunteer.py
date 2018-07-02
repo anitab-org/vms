@@ -11,7 +11,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.volunteerSearchPage import VolunteerSearchPage
-from shift.utils import (create_admin, create_volunteer_with_details, create_organization_with_details)
+from shift.utils import (create_admin, create_volunteer_with_details, create_organization_with_details, register_volunteer_for_shift_utility, register_event_utility, register_job_utility, register_shift_utility)
 
 
 class SearchVolunteer(LiveServerTestCase):
@@ -24,7 +24,9 @@ class SearchVolunteer(LiveServerTestCase):
     - State
     - Country
     - Organization
-    Class contains 7 tests to check each parameter separately and also to check
+    - Event
+    - Job
+    Class contains 9 tests to check each parameter separately and also to check
     if a combination of parameters entered, then intersection of all results is
     obtained.
     """
@@ -478,6 +480,113 @@ class SearchVolunteer(LiveServerTestCase):
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
+    def test_volunteer_event_field(self):
+        """
+        Test volunteer search form using the event field of the volunteers.
+        """
+        search_page = self.search_page
+        search_page.live_server_url = self.live_server_url
+        search_page.navigate_to_volunteer_search_page()
+
+        credentials_1 = [
+            'volunteer-username', 'volunteer-first-name',
+            'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+            'volunteer-state', 'volunteer-country', '9999999999',
+            'volunteer-email@systers.org', 'volunteer-organization'
+        ]
+
+        volunteer_1 = create_volunteer_with_details(credentials_1)
+
+        credentials_2 = [
+            'volunteer-usernameq', 'volunteer-first-nameq',
+            'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+            'volunteer-stateq', 'volunteer-countryq', '9999999999',
+            'volunteer-email2@systers.orgq', 'volunteer-organizationq'
+        ]
+
+        volunteer_2 = create_volunteer_with_details(credentials_2)
+
+        register_event_utility()
+        register_job_utility()
+        shift = register_shift_utility()
+
+        expected_result_one = credentials_1[1:-1]
+        expected_result_two = credentials_2[1:-1]
+
+        # search events with no volunteers
+        search_page.search_event_field("event")
+        self.assertRaisesRegexp(NoSuchElementException,
+                                'Unable to locate element: //table//tbody',
+                                search_page.get_search_results)
+
+        # volunteer_1 and volunteer_2 both registered for event
+        register_volunteer_for_shift_utility(shift, volunteer_1)
+        register_volunteer_for_shift_utility(shift, volunteer_2)
+
+        # search event
+        search_page.navigate_to_volunteer_search_page()
+        search_page.search_event_field("event")
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
+        self.assertEqual(len(result), 2)
+        self.assertTrue(expected_result_one in result)
+        self.assertTrue(expected_result_two in result)
+
+    def test_volunteer_job_field(self):
+        """
+        Test volunteer search form using the job field of the volunteers.
+        """
+        search_page = self.search_page
+        search_page.live_server_url = self.live_server_url
+
+        credentials_1 = [
+            'volunteer-username', 'volunteer-first-name',
+            'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+            'volunteer-state', 'volunteer-country', '9999999999',
+            'volunteer-email@systers.org', 'volunteer-organization'
+        ]
+
+        volunteer_1 = create_volunteer_with_details(credentials_1)
+
+        credentials_2 = [
+            'volunteer-usernameq', 'volunteer-first-nameq',
+            'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+            'volunteer-stateq', 'volunteer-countryq', '9999999999',
+            'volunteer-email2@systers.orgq', 'volunteer-organizationq'
+        ]
+
+        volunteer_2 = create_volunteer_with_details(credentials_2)
+
+        register_event_utility()
+        register_job_utility()
+        shift = register_shift_utility()
+
+        expected_result_one = credentials_1[1:-1]
+        expected_result_two = credentials_2[1:-1]
+
+        # volunteer_1 and volunteer_2 registered for job
+        register_volunteer_for_shift_utility(shift, volunteer_1)
+        register_volunteer_for_shift_utility(shift, volunteer_2)
+
+        # search job
+        search_page.navigate_to_volunteer_search_page()
+        search_page.search_job_field("job")
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
+        self.assertEqual(len(result), 2)
+        self.assertTrue(expected_result_one in result)
+        self.assertTrue(expected_result_two in result)
+
+        # search incorrect job
+        search_page.navigate_to_volunteer_search_page()
+        search_page.search_job_field("wrong-job")
+        search_page.submit_form()
+        self.assertRaisesRegexp(NoSuchElementException,
+                                'Unable to locate element: //table//tbody',
+                                search_page.get_search_results)
+
     def test_intersection_of_all_fields(self):
         """
         Test volunteer search form using multiple fields of the volunteers.
@@ -507,19 +616,11 @@ class SearchVolunteer(LiveServerTestCase):
         volunteer_1.unlisted_organization = "VOLUNTEER-ORGANIZATION"
         volunteer_1.save()
         volunteer_2.save()
-
-        search_page.navigate_to_volunteer_search_page()
-
-        search_page.search_first_name_field('volunteer')
-        search_page.search_last_name_field('volunteer')
-        search_page.search_city_field('volunteer')
-        search_page.search_state_field('volunteer')
-        search_page.search_country_field('volunteer')
-        search_page.search_organization_field('volunteer')
-        search_page.submit_form()
-
-        search_results = search_page.get_search_results()
-        result = search_page.get_results_list(search_results)
+        register_event_utility()
+        register_job_utility()
+        shift = register_shift_utility()
+        register_volunteer_for_shift_utility(shift, volunteer_1)
+        register_volunteer_for_shift_utility(shift, volunteer_2)
 
         expected_result_one = [
             'volunteer-first-nameq', 'volunteer-last-nameq',
@@ -535,6 +636,20 @@ class SearchVolunteer(LiveServerTestCase):
             'volunteer-email@systers.org'
         ]
 
+        search_page.navigate_to_volunteer_search_page()
+
+        search_page.search_first_name_field('volunteer')
+        search_page.search_last_name_field('volunteer')
+        search_page.search_city_field('volunteer')
+        search_page.search_state_field('volunteer')
+        search_page.search_country_field('volunteer')
+        search_page.search_organization_field('volunteer')
+        search_page.search_event_field('event')
+        search_page.search_job_field('job')
+        search_page.submit_form()
+        search_results = search_page.get_search_results()
+        result = search_page.get_results_list(search_results)
+        self.assertEqual(len(result), 2)
         self.assertTrue(expected_result_one in result)
         self.assertTrue(expected_result_two in result)
 
@@ -542,7 +657,6 @@ class SearchVolunteer(LiveServerTestCase):
         search_page.search_country_field('wrong-country')
         search_page.search_organization_field('org')
         search_page.submit_form()
-
         self.assertRaisesRegexp(NoSuchElementException,
                                 'Unable to locate element: //table//tbody',
                                 search_page.get_search_results)
@@ -550,9 +664,7 @@ class SearchVolunteer(LiveServerTestCase):
         search_page.search_last_name_field('volunteer')
         search_page.search_city_field('wrong-city')
         search_page.submit_form()
-
         self.assertRaisesRegexp(NoSuchElementException,
                                 'Unable to locate element: //table//tbody',
                                 search_page.get_search_results)
-
 
