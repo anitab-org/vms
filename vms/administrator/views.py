@@ -102,7 +102,7 @@ class GenerateReportView(LoginRequiredMixin, View):
 @login_required
 @admin_required
 def settings(request):
-    return HttpResponseRedirect(reverse('event:list'))
+    return HttpResponseRedirect(reverse('event:search'))
 
 
 '''

@@ -3,7 +3,7 @@ from django.conf.urls import url
 
 # local Django
 from event import views
-from event.views import EventCreateView, EventDeleteView, EventUpdateView, EventListView
+from event.views import EventCreateView, EventDeleteView, EventUpdateView
 
 urlpatterns = [
     url(r'^create/$', EventCreateView.as_view(), name='create'),
@@ -11,7 +11,7 @@ urlpatterns = [
         EventDeleteView.as_view(),
         name='delete'),
     url(r'^edit/(?P<event_id>\d+)$', EventUpdateView.as_view(), name='edit'),
-    url(r'^list/$', EventListView.as_view(), name='list'),
+    url(r'^search/$', views.search, name='search'),
     url(r'^list_sign_up/(?P<volunteer_id>\d+)$',
         views.list_sign_up,
         name='list_sign_up'),

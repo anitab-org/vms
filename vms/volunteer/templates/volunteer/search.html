@@ -146,10 +146,32 @@
                         </div>
                     </div>
                 {% endif %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Event" %}</label>
+                    <div class="col-md-8">
+                        <select id="select" class="form-control" name="event">
+                            <option value="">-- {% trans "Select Event" %} --</option>
+                            {% for event in events_list %}
+                            <option value="{{ event.id }}" >{{ event.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Job" %}</label>
+                    <div class="col-md-8">
+                        <select id="select" class="form-control" name="job">
+                            <option value="">-- {% trans "Select Job" %} --</option>
+                            {% for job in jobs_list %}
+                            <option value="{{ job.id }}">{{ job.name }}</option>
+                                {% endfor %}
+                            </select>
+                    </div>
+                </div>
             </fieldset>
             <div class="form-group">
                 <div class="col-md-12 col-md-offset-2">
-                    <button class="btn btn-primary" type="submit">{% trans "Search" %}</button> 
+                    <button class="btn btn-primary" type="submit">{% trans "Search" %}</button>
                 </div>
             </div>
         </form>
@@ -182,7 +204,7 @@
                             <td>
                                 {% if volunteer.organization.name %}
                                     {{ volunteer.organization.name }}
-                                {% elif volunteer.unlisted_organization %}                                    
+                                {% elif volunteer.unlisted_organization %}
                                     {{ volunteer.unlisted_organization }}
                                 {% else %}
                                 {% endif %}
