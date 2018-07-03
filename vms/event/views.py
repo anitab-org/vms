@@ -15,7 +15,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.edit import DeleteView
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView
 
 # local Django
 from administrator.utils import admin_required

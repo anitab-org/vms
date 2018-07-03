@@ -4,7 +4,7 @@ from django.conf.urls import url
 # local Django
 from event import views
 from event.views import (EventCreateView, EventDeleteView, EventDetailView,
-                         EventUpdateView, EventListView)
+                         EventUpdateView)
 
 urlpatterns = [
     url(r'^create/$', EventCreateView.as_view(), name='create'),

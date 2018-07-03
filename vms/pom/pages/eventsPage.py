@@ -93,6 +93,9 @@ class EventsPage(BasePage):
     def go_to_create_event_page(self):
         self.click_link('Create Event')
 
+    def go_to_details_event_page(self):
+        self.element_by_xpath(self.elements.VIEW_EVENT).click()
+
     def go_to_edit_event_page(self):
         self.element_by_xpath(self.elements.EDIT_EVENT).click()
 
