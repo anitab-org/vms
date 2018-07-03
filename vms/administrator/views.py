@@ -20,7 +20,7 @@ from event.services import get_events_ordered_by_name
 from job.services import get_jobs_ordered_by_title
 from shift.models import Report
 from shift.services import generate_report, get_report_by_id
-from organization.services import get_organizations_ordered_by_name, get_organization_by_id
+from organization.services import create_organization, get_organizations_ordered_by_name, get_organization_by_id
 
 class ReportListView(ListView, LoginRequiredMixin):
    """
@@ -81,6 +81,7 @@ def show_report(request, report_id):
                   'report': report,
                  })
 
+
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -134,7 +135,9 @@ class AdminUpdateView(AdministratorLoginRequiredMixin, UpdateView, FormView):
         if organization:
             admin_to_edit.organization = organization
         else:
-            admin_to_edit.organization = None
+            unlisted_org = self.request.POST.get('unlisted_organization')
+            org = create_organization(unlisted_org)
+            admin_to_edit.organization = org
 
         # update the volunteer
         admin_to_edit.save()

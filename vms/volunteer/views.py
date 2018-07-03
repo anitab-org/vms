@@ -21,7 +21,7 @@ from django.utils.decorators import method_decorator
 from administrator.utils import admin_required
 from event.services import get_signed_up_events_for_volunteer
 from job.services import get_signed_up_jobs_for_volunteer
-from organization.services import get_organization_by_id, get_organizations_ordered_by_name
+from organization.services import create_organization, get_organization_by_id, get_organizations_ordered_by_name
 from shift.models import Report
 from shift.services import calculate_total_report_hours, get_volunteer_shifts, generate_report
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
@@ -158,7 +158,9 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
         if organization:
             volunteer_to_edit.organization = organization
         else:
-            volunteer_to_edit.organization = None
+            unlisted_org = self.request.POST.get('unlisted_organization')
+            org = create_organization(unlisted_org)
+            volunteer_to_edit.organization = org
 
         # update the volunteer
         volunteer_to_edit.save()

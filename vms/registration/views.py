@@ -18,7 +18,8 @@ from django.views.generic import TemplateView
 # local Django
 from administrator.forms import AdministratorForm
 from administrator.models import Administrator
-from organization.services import (get_organizations_ordered_by_name,
+from organization.models import Organization
+from organization.services import (create_organization, get_organizations_ordered_by_name,
                                    get_organization_by_id)
 from registration.forms import UserForm
 from registration.phone_validate import validate_phone
@@ -114,6 +115,10 @@ class AdministratorSignupView(TemplateView):
 
                     if organization:
                         administrator.organization = organization
+                    else:
+                        unlisted_org = request.POST.get('admin-unlisted_organization')
+                        org = create_organization(unlisted_org)
+                        administrator.organization = org
 
                     administrator.save()
                     registered = True
@@ -221,6 +226,11 @@ class VolunteerSignupView(TemplateView):
 
                     if organization:
                         volunteer.organization = organization
+                    else:
+                        unlisted_org = request.POST.get('vol-unlisted_organization')
+                        org = Organization.objects.create(name=unlisted_org, approved_status=False)
+                        org.save()
+                        volunteer.organization = org
 
                     volunteer.reminder_days = 1
                     volunteer.save()

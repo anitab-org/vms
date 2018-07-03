@@ -8,7 +8,7 @@ class AdministratorForm(ModelForm):
         model = Administrator
         fields = [
             'first_name', 'last_name', 'address', 'city', 'state', 'country',
-            'phone_number', 'unlisted_organization', 'email'
+            'phone_number', 'email'
         ]
 
 

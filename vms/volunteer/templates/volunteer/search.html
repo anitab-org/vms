@@ -224,14 +224,7 @@
                             <td>{{ volunteer.city }}</td>
                             <td>{{ volunteer.state }}</td>
                             <td>{{ volunteer.country }}</td>
-                            <td>
-                                {% if volunteer.organization.name %}
-                                    {{ volunteer.organization.name }}
-                                {% elif volunteer.unlisted_organization %}
-                                    {{ volunteer.unlisted_organization }}
-                                {% else %}
-                                {% endif %}
-                            </td>
+                            <td>{{ volunteer.organization.name }}</td>
                             <td>{{ volunteer.phone_number }}</td>
                             <td>{{ volunteer.email }}</td>
                             <td><a href="{% url 'volunteer:view_history' volunteer.id %}" class="btn btn-info btn-sm">{% trans "View" %}</a></td>
@@ -248,3 +241,4 @@
         {% endif %}
     {% endif %}
 {% endblock %}
+

@@ -3,6 +3,7 @@ from braces.views import LoginRequiredMixin
 
 # Django
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -13,8 +14,8 @@ from django.utils.decorators import method_decorator
 # local Django
 from organization.forms import OrganizationForm
 from organization.models import Organization
-from organization.services import ObjectDoesNotExist
-
+from organization.services import get_organization_by_id, ObjectDoesNotExist
+from volunteer.models import Volunteer
 
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -69,6 +70,7 @@ class OrganizationDeleteView(LoginRequiredMixin,
 class OrganizationUpdateView(LoginRequiredMixin,
                              AdministratorLoginRequiredMixin, UpdateView):
     model_form = Organization
+    form_class = OrganizationForm
     template_name = 'organization/edit.html'
     success_url = reverse_lazy('organization:list')
     fields = '__all__'
@@ -86,3 +88,34 @@ class OrganizationListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         organizations = Organization.objects.order_by('name')
         return organizations
+
+def approve(request, organization_id):
+    """ 
+    approves the pending organizatons
+    
+    :param organization_id: The id of the pending organization
+    :return: redirect to list of organizations 
+    """    
+    unlisted_org = get_organization_by_id(organization_id)
+    unlisted_org.approved_status = 1
+    unlisted_org.save()
+    return HttpResponseRedirect('/organization/list')
+
+def reject(request, organization_id):
+    """ 
+    rejects the pending organizatons
+    
+    :param organization_id: The id of the pending organization
+    :return: redirect to list of organizations 
+    """    
+    unlisted_org = get_organization_by_id(organization_id)
+    unlisted_org.approved_status = 2
+    unlisted_org.save()
+    vol_email = Volunteer.objects.get(organization=unlisted_org).email
+    try:
+        send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected",
+             "messanger@localhost.com", [vol_email], fail_silently=False)
+    except:
+        raise Exception("There was an error in sending emails.")
+    return HttpResponseRedirect('/organization/list')
+
