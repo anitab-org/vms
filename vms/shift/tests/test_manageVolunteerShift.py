@@ -17,8 +17,8 @@ from pom.pages.eventSignUpPage import EventSignUpPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from shift.utils import (create_admin, create_volunteer_with_details,
                          create_event_with_details, create_job_with_details,
-                         create_shift_with_details, create_edit_request_with_details,
-                         log_hours_with_details)
+                         create_organization_with_details, create_shift_with_details,
+                         create_edit_request_with_details, log_hours_with_details)
 
 
 class ManageVolunteerShift(LiveServerTestCase):
@@ -66,6 +66,7 @@ class ManageVolunteerShift(LiveServerTestCase):
             'volunteer-two', 'volunteer-two', 'volunteer-two', '9999999999',
             'volunteer-email2@systers.org', 'volunteer-two'
         ]
+        cls.org_name = 'Google'
 
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
@@ -163,7 +164,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)
@@ -218,7 +220,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteer
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         self.wait_for_home_page()
 
@@ -237,7 +240,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page = self.manage_shift_page
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         manage_shift_page.live_server_url = self.live_server_url
 
@@ -261,7 +265,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         # Create events
         event = ['event-name', '2017-05-20', '2017-05-20']
@@ -286,7 +291,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         # Create events
         event = ['event-name', '2017-05-20', '2017-05-20']
@@ -316,7 +322,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)
@@ -366,8 +373,9 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
-        volunteer_2 = create_volunteer_with_details(self.volunteer_2)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
+        volunteer_2 = create_volunteer_with_details(self.volunteer_2, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)
@@ -425,7 +433,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.wait_for_home_page()
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)
@@ -505,7 +514,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         """
         checks the edit request link received by admin
         """
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)
@@ -523,7 +533,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         checks if the volunteer gets an email when his hours are edited
         by admin upon his request
         """
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)
@@ -550,7 +561,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.manage_shift_page.live_server_url = self.live_server_url
 
         # Register volunteers
-        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+        org_obj = create_organization_with_details(self.org_name)
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1, org_obj)
 
         shift = ['09:00', '15:00', '1']
         shift_1 = self.create_shift(shift)

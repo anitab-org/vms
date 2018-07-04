@@ -70,7 +70,7 @@ def create_job_with_details(job):
     return j1
 
 
-def create_volunteer_with_details(volunteer):
+def create_volunteer_with_details(volunteer, org_obj):
     """
     Creates and returns volunteer with passed name and dates
     """
@@ -84,7 +84,8 @@ def create_volunteer_with_details(volunteer):
         country=volunteer[6],
         phone_number=volunteer[7],
         email=volunteer[8],
-        user=u1)
+        user=u1,
+        organization=org_obj)
 
     v1.save()
     return v1
@@ -198,9 +199,10 @@ def create_country():
         phone='91')
 
 
-def create_admin():
+def create_admin_with_unlisted_org():
     user_1 = User.objects.create_user(username='admin', password='admin')
-
+    org_1 = Organization.objects.create(name='organization', approved_status=0)
+    org_1.save()
     admin = Administrator.objects.create(
         user=user_1,
         address='address',
@@ -209,10 +211,25 @@ def create_admin():
         country='country',
         phone_number='9999999999',
         email='admin@admin.com',
-        unlisted_organization='organization',
+        organization=org_1)
+
+    return admin
+
+def create_admin():
+    user_1 = User.objects.create_user(username='admin', password='admin')
+    org_name = 'organization'
+    org_1 = create_organization_with_details(org_name)
+    admin = Administrator.objects.create(
+        user=user_1,
+        address='address',
+        city='city',
+        state='state',
+        country='country',
+        phone_number='9999999999',
+        email='admin@admin.com',
         first_name='Son',
-        last_name='Goku'
-    )
+        last_name='Goku',
+        organization=org_1)
 
     return admin
 
@@ -220,7 +237,8 @@ def create_admin():
 def create_volunteer():
     user_1 = User.objects.create_user(
         username='volunteer', password='volunteer')
-
+    org_name = 'volunteerorganization'
+    org_1 = create_organization_with_details(org_name)
     volunteer = Volunteer.objects.create(
         user=user_1,
         address='address',
@@ -229,10 +247,9 @@ def create_volunteer():
         country='country',
         phone_number='9999999999',
         email='volunteer@volunteer.com',
-        unlisted_organization='organization',
         first_name='Prince',
-        last_name='Vegeta'
-    )
+        last_name='Vegeta',
+        organization=org_1)
 
     return volunteer
 

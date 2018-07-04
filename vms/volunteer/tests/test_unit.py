@@ -7,9 +7,8 @@ from django.test.testcases import TestCase
 
 # local Django
 from pom.pages.basePage import BasePage
-from shift.utils import create_volunteer_with_details
+from shift.utils import create_organization_with_details, create_volunteer_with_details
 from volunteer.models import Volunteer
-
 
 class VolunteerModelTests(TestCase):
     """
@@ -41,10 +40,12 @@ class VolunteerModelTests(TestCase):
         :return: Volunteer type object
         """
         vol = [
-            'Goku', "Son", "Goku", "Kame House", "East District",
+            'Goku', "Son", "Goku", "Kame House", "",
             "East District", "East District", "9999999999", "idonthave@gmail.com"
         ]
-        return create_volunteer_with_details(vol)
+        org_name = 'organization'
+        org_obj = create_organization_with_details(org_name)
+        return create_volunteer_with_details(vol, org_obj)
 
     @staticmethod
     def create_invalid_vol():
@@ -54,9 +55,11 @@ class VolunteerModelTests(TestCase):
         """
         vol = [
             'Goku~', "Son", "Goku", "Kame House", "East District",
-            "East District", "East District", "9999999999", "idonthave@gmail.com"
+            "East District", "East District", "9999999999", ""
         ]
-        return create_volunteer_with_details(vol)
+        org_name = 'org'
+        org_obj = create_organization_with_details(org_name)
+        return create_volunteer_with_details(vol, org_obj)
 
     def test_valid_model_create(self):
         """

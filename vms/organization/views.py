@@ -12,6 +12,7 @@ from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 
 # local Django
+from administrator.models import Administrator
 from organization.forms import OrganizationForm
 from organization.models import Organization
 from organization.services import get_organization_by_id, ObjectDoesNotExist
@@ -69,11 +70,9 @@ class OrganizationDeleteView(LoginRequiredMixin,
 
 class OrganizationUpdateView(LoginRequiredMixin,
                              AdministratorLoginRequiredMixin, UpdateView):
-    model_form = Organization
-    form_class = OrganizationForm
     template_name = 'organization/edit.html'
     success_url = reverse_lazy('organization:list')
-    fields = '__all__'
+    form_class = OrganizationForm
 
     def get_object(self, queryset=None):
         org_id = self.kwargs['organization_id']
@@ -90,32 +89,39 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         return organizations
 
 def approve(request, organization_id):
-    """ 
+    """
     approves the pending organizatons
-    
+
     :param organization_id: The id of the pending organization
-    :return: redirect to list of organizations 
-    """    
+    :return: redirect to list of organizations
+    """
     unlisted_org = get_organization_by_id(organization_id)
     unlisted_org.approved_status = 1
     unlisted_org.save()
     return HttpResponseRedirect('/organization/list')
 
 def reject(request, organization_id):
-    """ 
+    """
     rejects the pending organizatons
-    
+
     :param organization_id: The id of the pending organization
-    :return: redirect to list of organizations 
-    """    
+    :return: redirect to list of organizations
+    """
     unlisted_org = get_organization_by_id(organization_id)
     unlisted_org.approved_status = 2
     unlisted_org.save()
-    vol_email = Volunteer.objects.get(organization=unlisted_org).email
     try:
-        send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected",
-             "messanger@localhost.com", [vol_email], fail_silently=False)
+        vol_email = Volunteer.objects.get(organization=unlisted_org).email
+        try:
+            send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected",
+                      "messanger@localhost.com", [vol_email], fail_silently=False)
+        except:
+            raise Exception("There was an error in sending emails.")
     except:
-        raise Exception("There was an error in sending emails.")
+        admin_email = Administrator.objects.get(organization=unlisted_org).email
+        try:
+            send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected",
+                      "messanger@localhost.com", [admin_email], fail_silently=False)
+        except:
+            raise Exception("There was an error in sending emails.")
     return HttpResponseRedirect('/organization/list')
-

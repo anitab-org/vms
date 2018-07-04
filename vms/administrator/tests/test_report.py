@@ -85,9 +85,11 @@ class Report(LiveServerTestCase):
             'volunteer-username', 'VOLUNTEER-FIRST-NAME',
             'volunteer-last-name', 'volunteer-address', 'volunteer-city',
             'volunteer-state', 'volunteer-country', '9999999999',
-            'volunteer-email@systers.org', 'volunteer-organization'
+            'volunteer-email@systers.org'
         ]
-        vol = create_volunteer_with_details(credentials)
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
+        vol = create_volunteer_with_details(credentials, org_obj)
         register_past_event_utility()
         register_past_job_utility()
         shift = register_past_shift_utility()

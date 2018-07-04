@@ -10,6 +10,7 @@ class VolunteerProfilePageLocators(object):
     PROFILE_PHONE = '//input[@name = "phone_number"]'
     SELECT_ORGANIZATION = '//select[@name = "organization_name"]'
     UNLISTED_ORGANIZATION = '//input[@name = "unlisted_organization"]'
+    SELECT_NONE_ORGANIZATION = '//*[@id="select"]/option[1]'
     RESUME_FILE = '//input[@name = "resume_file"]'
     DOWNLOAD_RESUME = './/*[@id="collapseResumeFile"]/div/form/button'
     EDIT_PROFILE_TEXT = 'Edit Profile'

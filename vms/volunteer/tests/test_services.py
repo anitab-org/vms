@@ -3,7 +3,7 @@ import unittest
 
 # local Django
 from organization.models import Organization
-from shift.utils import (create_volunteer_with_details, clear_objects,
+from shift.utils import (create_volunteer_with_details, create_organization_with_details, clear_objects,
     register_event_utility, register_job_utility, register_shift_utility,
     register_volunteer_for_shift_utility)
 from volunteer.services import (
@@ -28,10 +28,19 @@ class VolunteerMethodTests(unittest.TestCase):
             'Ash', "Ash", "Doe", "Pallet Town", "Kanto", "Gameboy", "Japan",
             "23454545", "ash@pikachu.com"
         ]
+        o1 = 'Apple'
+        cls.org_obj = create_organization_with_details(o1)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        o2 = 'Google'
+        cls.org_obj = create_organization_with_details(o2)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
+
+        o3 = 'Government of Canada'
+        cls.org_obj = create_organization_with_details(o3)
+        cls.org_obj.approved_status = 0
+        cls.org_obj.save()
+        cls.v3 = create_volunteer_with_details(volunteer_3, cls.org_obj)
 
     @classmethod
     def tearDownClass(cls):
@@ -128,25 +137,12 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertFalse(has_resume_file(self.v3.id))
 
     def test_search_volunteers(self):
-
-        o1 = Organization(name="Apple")
-        o2 = Organization(name="Google")
-
-        o1.save()
-        o2.save()
-
-        self.v1.organization = o1
-        self.v2.organization = o2
-        self.v3.unlisted_organization = "Government of Canada"
-
-        self.v1.save()
-        self.v2.save()
-        self.v3.save()
-
+        
         register_event_utility()
         register_job_utility()
         shift = register_shift_utility()
         register_volunteer_for_shift_utility(shift, self.v1)
+        
         # if no search parameters are given,
         # it returns all volunteers
         search_list = search_volunteers("", "", "", "", "", "", "", "")
@@ -212,10 +208,12 @@ class DeleteVolunteerTest(unittest.TestCase):
             'Brock', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
             "Japan", "23454545", "ash1@pikachu.com"
         ]
+        org_name = 'volunteer-organization'
+        cls.org_obj = create_organization_with_details(org_name)
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, cls.org_obj)
 
     def test_delete_volunteer(self):
 
@@ -225,3 +223,4 @@ class DeleteVolunteerTest(unittest.TestCase):
         self.assertFalse(delete_volunteer(1000))
         self.assertFalse(delete_volunteer(2000))
         self.assertFalse(delete_volunteer(3000))
+

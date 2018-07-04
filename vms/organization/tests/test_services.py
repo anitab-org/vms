@@ -111,9 +111,7 @@ class DeleteOrganizationTests(unittest.TestCase):
             "Nintendo State", "Nintendo Nation", "2374983247",
             "yoshi@nintendo.com"
         ]
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v1.organization = cls.o2
-        cls.v1.save()
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.o2)
 
     @classmethod
     def setUpClass(cls):

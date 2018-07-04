@@ -30,6 +30,7 @@ class OrganizationModelTests(TestCase):
         org_in_db = Organization.objects.get(Q(name='DummyOrg'))
         # Verify correct name saved
         self.assertEqual(org_in_db.name, org.name)
+        self.assertEqual(org_in_db.approved_status, 1) 
 
     def test_invalid_organization_create(self):
         # Create Organization
@@ -61,12 +62,14 @@ class OrganizationModelTests(TestCase):
         org_in_db = Organization.objects.get(Q(name='DummyOrg'))
 
         org_in_db.name = 'DummyOrgNew'
+        org_in_db.approved_status = 2
         org_in_db.save()
 
         org_in_db = Organization.objects.get(Q(name='DummyOrgNew'))
 
         # Check if save was successful
         self.assertNotEqual(org_in_db.name, org.name)
+        self.assertNotEqual(org_in_db.approved_status,org.approved_status)
 
     def test_organization_edit_with_invalid_values(self):
         # Create Organization
@@ -113,3 +116,4 @@ class OrganizationModelTests(TestCase):
 
         # Check __str__
         self.assertEqual(org.name, str(org))
+

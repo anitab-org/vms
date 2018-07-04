@@ -18,8 +18,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.volunteerProfilePage import VolunteerProfilePage
-from shift.utils import create_volunteer_with_details
-
+from shift.utils import create_organization_with_details, create_volunteer_with_details
 
 class VolunteerProfile(LiveServerTestCase):
     """
@@ -56,9 +55,9 @@ class VolunteerProfile(LiveServerTestCase):
             'Goku', "Son", "Goku", "Kame House", "East District",
             "East District", "East District", "9999999999", "idonthave@gmail.com"
         ]
-        self.volunteer_1 = create_volunteer_with_details(vol)
-        self.volunteer_1.unlisted_organization = 'Detective'
-        self.volunteer_1.save()
+        org_name='Detective'
+        org_obj = create_organization_with_details(org_name)
+        self.volunteer_1 = create_volunteer_with_details(vol, org_obj)
         self.login_correctly()
 
     def tearDown(self):
@@ -140,7 +139,7 @@ class VolunteerProfile(LiveServerTestCase):
         found_country = re.search(self.volunteer_1.country, page_source)
         self.assertNotEqual(found_country, None)
 
-        found_org = re.search(self.volunteer_1.unlisted_organization, page_source)
+        found_org = re.search(self.volunteer_1.organization.name, page_source)
         self.assertNotEqual(found_org, None)
 
     def test_edit_profile(self):
@@ -173,7 +172,7 @@ class VolunteerProfile(LiveServerTestCase):
         found_country = re.search(self.volunteer_1.country, page_source)
         self.assertEqual(found_country, None)
 
-        found_org = re.search(self.volunteer_1.unlisted_organization, page_source)
+        found_org = re.search(self.volunteer_1.organization.name, page_source)
         self.assertEqual(found_org, None)
 
         found_email = re.search(new_details[2], page_source)

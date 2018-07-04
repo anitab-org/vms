@@ -47,12 +47,11 @@ body > .container {
   box-shadow: none;
 }
 
-.approve {
-  border-color: red;  
-  border-style: solid;
+#approve {
+  border: 1px solid red;
 }
 
-.approve-heading{
+.approve-heading {
   text-align: center;
   color: red;
 }
