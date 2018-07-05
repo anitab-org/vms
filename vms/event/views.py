@@ -18,10 +18,11 @@ from django.views.generic.edit import DeleteView
 
 # local Django
 from administrator.utils import admin_required
-from event.forms import EventForm, EventDateForm, SearchEventForm
+from event.forms import EventForm, SearchEventForm
 from event.models import Event
-from event.services import check_edit_event, get_event_by_id, get_events_by_date, get_events_ordered_by_name, remove_empty_events_for_volunteer, search_events
-from job.services import get_jobs_by_event_id, get_jobs_ordered_by_title
+from event.services import (check_edit_event, get_event_by_id, get_events_ordered_by_name,
+                            remove_empty_events_for_volunteer, search_events)
+from job.services import get_jobs_by_event_id
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer_shift_sign_up
 
@@ -57,13 +58,13 @@ class EventCreateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
             })
         else:
             form.save()
-            return HttpResponseRedirect(reverse('event:search'))
+            return HttpResponseRedirect(reverse('event:list'))
 
 
 class EventDeleteView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
                       DeleteView):
     template_name = 'event/delete.html'
-    success_url = reverse_lazy('event:search')
+    success_url = reverse_lazy('event:list')
     model = Event
 
     def get_object(self, queryset=None):
@@ -86,7 +87,7 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
                       UpdateView, FormView):
     form_class = EventForm
     template_name = 'event/edit.html'
-    success_url = reverse_lazy('event:search')
+    success_url = reverse_lazy('event:list')
 
     def get_object(self, queryset=None):
         event_id = self.kwargs['event_id']
@@ -128,7 +129,7 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
                     })
                 else:
                     form.save()
-                    return HttpResponseRedirect(reverse('event:search'))
+                    return HttpResponseRedirect(reverse('event:list'))
             else:
                 data = request.POST.copy()
                 try:
@@ -146,33 +147,37 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
 @vol_id_check
 def list_sign_up(request, volunteer_id):
     if request.method == 'POST':
-        form = EventDateForm(request.POST)
+        form = SearchEventForm(request.POST)
         if form.is_valid():
+            name = form.cleaned_data['name']
             start_date = form.cleaned_data['start_date']
             end_date = form.cleaned_data['end_date']
-            event_list = get_events_by_date(start_date, end_date)
-            event_list = remove_empty_events_for_volunteer(
-                event_list, volunteer_id)
-            return render(
-                request, 'event/list_sign_up.html', {
-                    'form': form,
-                    'event_list': event_list,
-                    'volunteer_id': volunteer_id
-                })
+            city = form.cleaned_data['city']
+            state = form.cleaned_data['state']
+            country = form.cleaned_data['country']
+            search_result_list = search_events(name, start_date, end_date, city, state, country, '')
     else:
-        event_list = get_events_ordered_by_name()
-        event_list = remove_empty_events_for_volunteer(event_list,
-                                                       volunteer_id)
-        return render(request, 'event/list_sign_up.html', {
+        form = SearchEventForm()
+        search_result_list = get_events_ordered_by_name()
+    event_list = remove_empty_events_for_volunteer(search_result_list,
+                                                   volunteer_id)
+    return render(
+        request, 'event/list_sign_up.html', {
+            'form': form,
             'event_list': event_list,
-            'volunteer_id': volunteer_id
+            'volunteer_id': volunteer_id,
         })
 
 
 @login_required
 @admin_required
-def search(request):
-    jobs_list = get_jobs_ordered_by_title()
+def list_events(request):
+    """
+    list of filtered events
+    :return: search_result_list: filtered events based on name, start date, end date, state, city, country, job
+    :return: SearchEventForm
+    """
+    search_result_list = get_events_ordered_by_name()
     if request.method == 'POST':
         form = SearchEventForm(request.POST)
         if form.is_valid():
@@ -182,22 +187,15 @@ def search(request):
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
-            job_id = form.cleaned_data['job']
+            job = form.cleaned_data['job']
             search_result_list = search_events(
-                name, start_date, end_date, city, state, country, job_id)
-            return render(
-                request, 'event/list.html', {
-                    'jobs_list': jobs_list,
-                    'form': form,
-                    'has_searched': True,
-                    'search_result_list': search_result_list
-                })
+                name, start_date, end_date, city, state, country, job)
     else:
         form = SearchEventForm()
 
     return render(
         request, 'event/list.html', {
-            'jobs_list': jobs_list,
             'form': form,
-            'has_searched': False,
+            'search_result_list': search_result_list
         })
+

@@ -13,6 +13,10 @@ class EventSignUpPageLocators(object):
     # search form locators
     START_DATE_FROM = 'from'
     START_DATE_TO = 'to'
+    SEARCH_EVENT_NAME = 'name'
+    EVENT_CITY = 'city'
+    EVENT_STATE = 'state'
+    EVENT_COUNTRY = 'country'
 
     # Two choices depending on whether volunteer or admin
     ASSIGN_SHIFTS_PATH = '//table//tbody//tr[1]//td[4]'
@@ -20,6 +24,8 @@ class EventSignUpPageLocators(object):
 
     INFO_BOX = 'alert-info'
     DANGER_BOX = 'alert-danger'
+    SEARCH_SUBMIT_PATH = 'submit'
+
     SUBMIT_PATH = '//form[1]'
 
     SHIFT_SIGNUP_PAGE = '//div[1]//div[1]//div[2]//ul[1]//li[3]'

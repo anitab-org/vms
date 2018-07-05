@@ -11,7 +11,7 @@ urlpatterns = [
         EventDeleteView.as_view(),
         name='delete'),
     url(r'^edit/(?P<event_id>\d+)$', EventUpdateView.as_view(), name='edit'),
-    url(r'^search/$', views.search, name='search'),
+    url(r'^list/$', views.list_events, name='list'),
     url(r'^list_sign_up/(?P<volunteer_id>\d+)$',
         views.list_sign_up,
         name='list_sign_up'),

@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # local Django
 from event.models import Event
-from job.services import get_job_by_id, get_jobs_by_event_id, remove_empty_jobs_for_volunteer
+from job.services import get_jobs_by_event_id, remove_empty_jobs_for_volunteer
 from shift.models import Shift
 from shift.services import get_volunteer_shifts_with_hours, get_unlogged_shifts_by_volunteer_id
 
@@ -165,23 +165,31 @@ def remove_empty_events_for_volunteer(event_list, volunteer_id):
     return new_event_list
 
 
-def search_events(name, start_date, end_date, city, state, country, job_id):
+def search_events(name, start_date, end_date, city, state, country, job):
+    """
+    searches event on the basis of name, start date, end date, city, state, country and job
+    :param name: The name of the event
+    :param start_date: The start date of the event
+    :param end_date: The end date of event
+    :param city: The city where event takes place
+    :param state: The state where event takes place
+    :param country: The country where event takes place
+    :return: search_query
+
+    """
     search_query = Event.objects.all()
     if name:
-        search_query = search_query.filter(name=name)
-    if start_date:
-        search_query = search_query.filter(start_date=start_date)
-    if end_date:
-       search_query = search_query.filter(end_date=end_date)
+        search_query = search_query.filter(name__icontains=name)
+    if start_date or end_date:
+        search_query = get_events_by_date(start_date, end_date)
     if city:
-       search_query = search_query.filter(city=city)
+        search_query = search_query.filter(city__icontains=city)
     if state:
-       search_query = search_query.filter(state=state)
+        search_query = search_query.filter(state__icontains=state)
     if country:
-        search_query = search_query.filter(country=country)
-    if job_id:
-        job_obj = get_job_by_id(job_id)
-        search_query = search_query.filter(job=job_obj)
+        search_query = search_query.filter(country__icontains=country)
+    if job:
+        search_query = search_query.filter(job__name__icontains=job)
     return search_query
 
 
