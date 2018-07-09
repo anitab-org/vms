@@ -50,6 +50,11 @@ class SignUpAdmin(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
@@ -58,19 +63,35 @@ class SignUpAdmin(LiveServerTestCase):
         super(SignUpAdmin, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_organization()
         # country created so that phone number can be checked
         create_country()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         pass
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(SignUpAdmin, cls).tearDownClass()
 
     def verify_field_values(self, info):
+        """
+        Utility function to perform assertions on user information.
+        :param info:  Iterable containing information of user.
+        """
         page = self.page
         values = page.get_field_values()
         self.assertEqual(values['username'], info[0])
@@ -85,6 +106,9 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(values['organization'], info[9])
 
     def test_null_values(self):
+        """
+        Test errors raised when creating user with null values.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -96,6 +120,9 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(len(page.get_help_blocks()), 10)
 
     def test_successful_registration(self):
+        """
+        Test registration of user with valid details.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
@@ -103,6 +130,9 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_message_box_text(), page.success_message)
 
     def test_user_registration_with_same_username(self):
+        """
+        Test error raised when user registers with username which already exists.
+        """
         # Register valid admin user
         page = self.page
         page.live_server_url = self.live_server_url
@@ -127,6 +157,10 @@ class SignUpAdmin(LiveServerTestCase):
                          page.USER_EXISTS)
 
     def test_numeric_characters_in_first_and_last_name(self):
+        """
+        Test error raised when using numeric characters in
+        first and last name while registering.
+        """
         # Register valid admin user
         page = self.page
         page.live_server_url = self.live_server_url
@@ -153,6 +187,10 @@ class SignUpAdmin(LiveServerTestCase):
                          page.ENTER_VALID_VALUE)
 
     def test_special_characters_in_first_and_last_name(self):
+        """
+        Test error raised when using special characters in
+        first and last name while registering.
+        """
         # Register valid admin user
         page = self.page
         page.live_server_url = self.live_server_url
@@ -179,6 +217,10 @@ class SignUpAdmin(LiveServerTestCase):
                          page.ENTER_VALID_VALUE)
 
     def test_length_of_first_and_last_name(self):
+        """
+        Test error raised when registering with length of
+        first and last name greater than thirty.
+        """
         # Register valid admin user
         page = self.page
         page.live_server_url = self.live_server_url
@@ -214,6 +256,10 @@ class SignUpAdmin(LiveServerTestCase):
                           str(error_message))))
 
     def test_numeric_characters_in_location(self):
+        """
+        Test error raised when using numeric characters in location
+        while registering.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -236,6 +282,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_country_error_text(), page.ENTER_VALID_VALUE)
 
     def test_special_characters_in_location(self):
+        """
+        Test error raised when using special characters in location
+        while registering.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -259,6 +309,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertEqual(page.get_country_error_text(), page.ENTER_VALID_VALUE)
 
     def test_email_field(self):
+        """
+        Test error raised when user tries to register with an email
+        address which is already in use.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
@@ -287,6 +341,9 @@ class SignUpAdmin(LiveServerTestCase):
                          'Administrator with this Email already exists.')
 
     def test_phone_in_different_country(self):
+        """
+        Test validation of phone number in a country.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -322,6 +379,9 @@ class SignUpAdmin(LiveServerTestCase):
                          page.INVALID_PHONE_FOR_COUNTRY)
 
     def test_phone_with_invalid_characters(self):
+        """
+        Test error raised while using invalid characters in phone number.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -356,6 +416,9 @@ class SignUpAdmin(LiveServerTestCase):
                          page.INVALID_PHONE)
 
     def test_organization_with_numeric_characters(self):
+        """
+        Test error raised while using numeric characters in organization name.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -375,6 +438,9 @@ class SignUpAdmin(LiveServerTestCase):
                          self.live_server_url + PageUrls.homepage)
 
     def test_organization_with_invalid_characters(self):
+        """
+        Test error raised while using invalid characters in organization name.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
@@ -395,6 +461,10 @@ class SignUpAdmin(LiveServerTestCase):
                          page.ENTER_VALID_VALUE)
 
     def test_field_value_retention_in_first_name_state_phone_organization(self):
+        """
+        Test field values are retained in first name, state, phone and organization when
+        entered invalid information in form.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
 
@@ -420,6 +490,10 @@ class SignUpAdmin(LiveServerTestCase):
         self.verify_field_values(details)
 
     def test_field_value_retention_in_last_name_address_city_country(self):
+        """
+        Test field values are retained in last name, address, city and country when entered
+        invalid information in form.
+        """
         page = self.page
         page.live_server_url = self.live_server_url
 
