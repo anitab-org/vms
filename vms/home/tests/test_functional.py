@@ -26,6 +26,11 @@ class CheckURLAccess(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
@@ -35,18 +40,36 @@ class CheckURLAccess(LiveServerTestCase):
         super(CheckURLAccess, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         create_volunteer()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         pass
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(CheckURLAccess, cls).tearDownClass()
 
     def verify_admin_page_error(self, admin_url):
+        """
+        Utility function to verify errors raised on the
+        pages when user tries to admin pages provided as
+        admin_url in param.
+        :param admin_url: URL of admin page to check errors on.
+        """
         home_page = self.home_page
         home_page.get_page(self.live_server_url, admin_url)
         heading = home_page.get_no_admin_right()
@@ -57,6 +80,12 @@ class CheckURLAccess(LiveServerTestCase):
         self.assertEqual(body.text, 'You don\'t have administrator rights')
 
     def verify_volunteer_page_error(self, volunteer_url):
+        """
+        Utility function to verify errors raised on the
+        pages when user tries to volunteer pages provided as
+        volunteer_url in param.
+        :param volunteer_url: URL of volunteer page to check errors on.
+        """
         home_page = self.home_page
         home_page.get_page(self.live_server_url, volunteer_url)
         head = home_page.get_no_volunteer_right()
@@ -67,12 +96,20 @@ class CheckURLAccess(LiveServerTestCase):
         self.assertEqual(body.text, 'You don\'t have the required rights')
 
     def login(self, username, password):
+        """
+        Utility function to login with credentials received as parameters.
+        :param username: Username of the user
+        :param password: Password of the user
+        """
         self.authentication_page.login({
             'username': username,
             'password': password
         })
 
     def wait_for_home_page(self):
+        """
+        Utility function to perform a explicit wait for home page.
+        """
         self.wait.until(
             EC.presence_of_element_located(
                 (By.XPATH,
@@ -82,8 +119,8 @@ class CheckURLAccess(LiveServerTestCase):
 
     def test_admin_cannot_access_volunteer_urls(self):
         """
-        Method will login as admin user and tries to surf volunteer pages through url.
-        The volunteer views should return a no rights page.
+        Test admin will be shown errors when they try to access
+        volunteers URLs.
         """
 
         authentication_page = self.authentication_page
@@ -98,8 +135,8 @@ class CheckURLAccess(LiveServerTestCase):
 
     def test_volunteer_cannot_access_admin_urls(self):
         """
-        Method will login as volunteer and tries to surf admin page views through url.
-        The admin views should return a no admin rights page.
+        Test volunteer will be shown errors when they try to access
+        admin URLs.
         """
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
@@ -144,6 +181,11 @@ class CheckContentAndRedirection(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
@@ -153,25 +195,45 @@ class CheckContentAndRedirection(LiveServerTestCase):
         super(CheckContentAndRedirection, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         self.admin = create_admin()
         self.volunteer = create_volunteer()
         self.volunteer_id = str(self.volunteer.id)
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         pass
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(CheckContentAndRedirection, cls).tearDownClass()
 
     def login(self, username, password):
+        """
+        Utility function to login with credentials received as parameters.
+        :param username: Username of the user
+        :param password: Password of the user
+        """
         self.authentication_page.login({
             'username': username,
             'password': password
         })
 
     def wait_for_home_page(self):
+        """
+        Utility function to perform a explicit wait for home page.
+        """
         self.wait.until(
             EC.presence_of_element_located(
                 (By.XPATH,
@@ -232,6 +294,11 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.assertNotEqual(home_page.get_logout_link(), None)
 
     def test_admin_page_redirection(self):
+        """
+        Test admin is redirected corrected to home page after
+        successful authorization by checking different elements
+        on home page.
+        """
         home_page = self.home_page
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
@@ -269,6 +336,11 @@ class CheckContentAndRedirection(LiveServerTestCase):
                          self.live_server_url + PageUrls.logout_page)
 
     def test_volunteer_page_redirection(self):
+        """
+        Test volunteer is redirected corrected to home page after
+        successful authorization by checking different elements
+        on home page.
+        """
         home_page = self.home_page
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
