@@ -323,6 +323,15 @@ def get_shifts_with_open_slots_for_volunteer(j_id, v_id):
 
     return shift_list
 
+def get_future_shifts_by_volunteer_id(v_id):
+    shift_signed_up_list = Shift.objects.filter(
+        volunteershift__volunteer_id=v_id,
+        date__gte=timezone.now(),
+        )
+    shift_signed_up_list = shift_signed_up_list.order_by('date')
+
+    return shift_signed_up_list
+
 
 def get_unlogged_shifts_by_volunteer_id(v_id):
 
