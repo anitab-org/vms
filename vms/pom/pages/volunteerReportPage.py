@@ -5,10 +5,11 @@ from selenium.webdriver.support.ui import Select
 from pom.pages.basePage import BasePage
 from pom.locators.volunteerReportPageLocators import VolunteerReportPageLocators
 from pom.pages.homePage import HomePage
-
+from pom.pageUrls import PageUrls
 
 class VolunteerReportPage(BasePage):
-
+    volunteer_history_page = PageUrls.volunteer_history_page
+    volunteer_report_page = PageUrls.volunteer_report_page
     no_results_message = 'Your criteria did not return any results.'
     live_server_url = ''
 

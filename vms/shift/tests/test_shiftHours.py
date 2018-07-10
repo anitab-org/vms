@@ -168,7 +168,6 @@ class ShiftHours(LiveServerTestCase):
         self.register_dataset()
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.go_to_completed_shifts()
-
         self.assertEqual(completed_shifts_page.get_shift_job(), 'job')
         self.assertEqual(completed_shifts_page.get_clear_shift_hours(), 'Clear Hours')
         completed_shifts_page.click_to_clear_hours()

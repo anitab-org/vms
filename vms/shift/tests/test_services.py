@@ -1,4 +1,5 @@
 # standard library
+import datetime
 import unittest
 from datetime import date, timedelta
 
@@ -135,7 +136,6 @@ class ShiftTests(unittest.TestCase):
             calculate_total_report_hours(report_list), total_hours)
 
     def test_calculate_duration(self):
-
         start_time = datetime.time(hour=1, minute=0)
         end_time = datetime.time(hour=2, minute=0)
         delta_time_hours = 1

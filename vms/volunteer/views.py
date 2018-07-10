@@ -240,7 +240,7 @@ class ShowReportListView(LoginRequiredMixin, ListView):
         event_name = self.request.POST['event_name']
         job_name = self.request.POST['job_name']
         start_date = self.request.POST['start_date']
-        end_date = self.request.POST['end_date'] 
+        end_date = self.request.POST['end_date']
         volunteer_shift_list = get_volunteer_shifts(volunteer_id, event_name, job_name,
                                            start_date, end_date)
         if volunteer_shift_list:
