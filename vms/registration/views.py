@@ -15,10 +15,9 @@ from organization.services import (get_organizations_ordered_by_name,
                                    get_organization_by_id)
 from registration.forms import UserForm
 from registration.phone_validate import validate_phone
-from registration.utils import volunteer_denied
+from registration.utils import volunteer_denied, match_password
 from volunteer.forms import VolunteerForm
 from volunteer.validation import validate_file
-from registration.passwordmatch import match_password
 
 
 class AdministratorSignupView(TemplateView):
