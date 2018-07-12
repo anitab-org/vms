@@ -16,7 +16,9 @@
 </div>
 
 {% endif %}
-
+    <div class="well well-sm">
+        <a href="{% url 'event:meetup' %}" class="btn btn-success btn-sm">{% trans "Create Meetup Events" %}</a>
+    </div>
     <div class="well">
         <form class="form-horizontal" action="{% url 'event:create' %}" method="post">
             {% csrf_token %}

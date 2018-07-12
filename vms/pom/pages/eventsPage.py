@@ -39,6 +39,9 @@ class EventsPage(BasePage):
         self.send_value_to_xpath(self.elements.CREATE_EVENT_END_DATE, event[2])
         self.submit_form()
 
+    def create_meetup(self):
+        self.click_link('Create Meetup Events')
+
     def fill_job_form(self, job):
         self.element_by_xpath(self.elements.CREATE_JOB_NAME).clear()
         self.element_by_xpath(self.elements.CREATE_JOB_DESCRIPTION).clear()

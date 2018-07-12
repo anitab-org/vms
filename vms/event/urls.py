@@ -18,5 +18,6 @@ urlpatterns = [
         views.list_sign_up,
         name='list_sign_up'),
     url(r'^api/v1/request_event_data/$', ApiForVolaView.as_view(), name='vola_api'),
+    url(r'^meetup/', views.get_meetup, name='meetup'),
 ]
 
