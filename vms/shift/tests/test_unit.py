@@ -12,36 +12,70 @@ from volunteer.models import Volunteer
 
 
 class ShiftModelTests(TestCase):
+    """
+    Contains database tests of Shift model for
+    - Creation of model with valid and invalid values.
+    - Edit of model with valid and invalid values.
+    - Deletion of model
+    - Model representation
+    """
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         self.event = ShiftModelTests.create_event()
         self.job = self.create_job()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         pass
 
     @staticmethod
     def create_event():
+        """
+        Utility function to create a valid event.
+        :return: Event type object
+        """
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
         return created_event
 
     def create_job(self):
+        """
+        Utility function to create a valid job.
+        :return: Job type object
+        """
         job = ['job-name', '2050-05-24', '2050-05-28', 'job-description', self.event]
         created_job = create_job_with_details(job)
         return created_job
 
     def create_valid_shift(self):
+        """
+        Utility function to create a valid shift.
+        :return: Shift type object
+        """
         shift = ['2050-05-24', '09:00:00', '12:00:00', '10', self.job]
         created_shift = create_shift_with_details(shift)
         return created_shift
 
     def create_invalid_shift(self):
+        """
+        Utility function to create an invalid shift.
+        :return: Shift type object
+        """
         shift = ['2050-05-29', '12:00:00', '09:00:00', '10', self.job]
         created_shift = create_shift_with_details(shift)
         return created_shift
 
     def test_valid_model_create(self):
+        """
+        Database test for model creation with valid values.
+        """
         shift = self.create_valid_shift()
 
         # Check database for shift creation
@@ -55,10 +89,16 @@ class ShiftModelTests(TestCase):
         self.assertEqual(str(shift_in_db.max_volunteers), shift.max_volunteers)
 
     def test_invalid_model_create(self):
+        """
+        Database test for model creation with invalid values.
+        """
         # Can't check unless a clean function is defined in forms.
         pass
 
     def test_model_edit_with_valid_values(self):
+        """
+        Database test for model edit with valid values.
+        """
         shift = self.create_valid_shift()
 
         # Check database for shift creation
@@ -84,6 +124,9 @@ class ShiftModelTests(TestCase):
         self.assertEqual(str(shift_in_db.max_volunteers), '11')
 
     def test_model_edit_with_invalid_values(self):
+        """
+        Database test for model edit with invalid values.
+        """
         shift = self.create_valid_shift()
 
         # Check database for shift creation
@@ -99,6 +142,9 @@ class ShiftModelTests(TestCase):
         # Can't check unless a clean function is defined in forms.
 
     def test_model_delete(self):
+        """
+        Database test for model deletion.
+        """
         shift = self.create_valid_shift()
 
         # Check database for shift creation
@@ -117,6 +163,9 @@ class ShiftModelTests(TestCase):
         self.assertEqual(len(Shift.objects.all()), 0)
 
     def test_model_representation(self):
+        """
+        Database test for model representation.
+        """
         shift = self.create_valid_shift()
 
         # Check database for shift creation
@@ -128,32 +177,62 @@ class ShiftModelTests(TestCase):
 
 
 class VolunteerShiftModelTests(TestCase):
-
+    """
+    Contains database tests of VolunteerShift model for
+    - Creation of model with valid and invalid values.
+    - Edit of model with valid and invalid values.
+    - Deletion of model
+    - Model representation
+    """
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         self.event = self.create_event()
         self.job = self.create_job()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         pass
 
     @staticmethod
     def create_event():
+        """
+        Utility function to create a valid event.
+        :return: Event type object
+        """
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
         return created_event
 
     def create_job(self):
+        """
+        Utility function to create a valid job.
+        :return: Job type object
+        """
         job = ['job-name', '2050-05-24', '2050-05-28', 'job-description', self.event]
         created_job = create_job_with_details(job)
         return created_job
 
     def create_shift(self):
+        """
+        Utility function to create a valid shift.
+        :return: Shift type object
+        """
         shift = ['2050-05-24', '09:00:00', '12:00:00', '10', self.job]
         created_shift = create_shift_with_details(shift)
         return created_shift
 
     @staticmethod
     def create_valid_volunteer():
+        """
+        Utility function to create a valid volunteer.
+        :return: Volunteer type object
+        """
         vol = [
             "Goku", "Son", "Goku", "Kame House", "East District",
             "East District", "East District", "9999999999", "idonthave@gmail.com"
@@ -162,6 +241,10 @@ class VolunteerShiftModelTests(TestCase):
 
     @staticmethod
     def create_invalid_volunteer():
+        """
+        Utility function to create an invalid volunteer.
+        :return: Volunteer type object
+        """
         vol = [
             "Goku~", "Son", "Goku", "Kame House", "East District",
             "East District", "East District", "9999999999", "idonthave@gmail.com"
@@ -170,10 +253,17 @@ class VolunteerShiftModelTests(TestCase):
 
     @staticmethod
     def create_volunteer_shift(shift, volunteer):
+        """
+        Utility function to link a shift to a volunteer.
+        :return: VolunteerShift type object
+        """
         vol_shift = register_volunteer_for_shift_utility(shift, volunteer)
         return vol_shift
 
     def test_valid_model_create(self):
+        """
+        Database test for model creation with valid values.
+        """
         shift = self.create_shift()
         volunteer = self.create_valid_volunteer()
 
@@ -192,6 +282,9 @@ class VolunteerShiftModelTests(TestCase):
         self.assertEqual(vol_shift_in_db.volunteer.last_name, vol_shift.volunteer.last_name)
 
     def test_invalid_model_create(self):
+        """
+        Database test for model creation with invalid values.
+        """
         shift = self.create_shift()
         volunteer = self.create_invalid_volunteer()
 
@@ -201,6 +294,9 @@ class VolunteerShiftModelTests(TestCase):
         # self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, vol_shift.full_clean)
 
     def test_model_edit_with_valid_values(self):
+        """
+        Database test for model edit with valid values.
+        """
         shift = self.create_shift()
         volunteer = self.create_valid_volunteer()
 
@@ -237,6 +333,9 @@ class VolunteerShiftModelTests(TestCase):
         self.assertEqual(vol_shift_in_db.volunteer.last_name, 'Vegeta')
 
     def test_model_edit_with_invalid_values(self):
+        """
+        Database test for model edit with invalid values.
+        """
         shift = self.create_shift()
         volunteer = self.create_valid_volunteer()
 
@@ -260,6 +359,9 @@ class VolunteerShiftModelTests(TestCase):
         # self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, vol_shift_in_db.full_clean)
 
     def test_model_delete(self):
+        """
+        Database test for model deletion.
+        """
         shift = self.create_shift()
         volunteer = self.create_valid_volunteer()
 
@@ -285,6 +387,9 @@ class VolunteerShiftModelTests(TestCase):
         self.assertEqual(len(VolunteerShift.objects.all()), 0)
 
     def test_model_representation(self):
+        """
+        Database test for model representation.
+        """
         shift = self.create_shift()
         volunteer = self.create_valid_volunteer()
 

@@ -47,7 +47,11 @@ class ManageVolunteerShift(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
 
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         cls.volunteer_1 = [
             'volunteer-one', 'volunteer-one', 'volunteer-one', 'volunteer-one',
             'volunteer-one', 'volunteer-one', 'volunteer-one', '9999999999',
@@ -69,18 +73,33 @@ class ManageVolunteerShift(LiveServerTestCase):
         super(ManageVolunteerShift, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(ManageVolunteerShift, cls).tearDownClass()
 
     def login_admin(self):
+        """
+        Utility function to login as administrator.
+        """
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login({
             'username': 'admin',
@@ -89,6 +108,11 @@ class ManageVolunteerShift(LiveServerTestCase):
 
     @staticmethod
     def create_shift(shift):
+        """
+        Utility function to create a valid shift.
+        :param shift: Iterable containing details of shift.
+        :return: Shift type object.
+        """
         # Register event to create job
         event = ['event-name', '2050-05-20', '2050-05-20']
         e1 = create_event_with_details(event)
@@ -104,6 +128,10 @@ class ManageVolunteerShift(LiveServerTestCase):
         return s1
 
     def check_job_details(self, details):
+        """
+        Utility function to perform assertions on job details received as param.
+        :param details: Iterable consisting details of job to check.
+        """
         sign_up_page = self.sign_up_page
         self.assertEqual(sign_up_page.get_shift_job(), details[0])
         self.assertEqual(sign_up_page.get_shift_date(), details[1])
@@ -111,6 +139,9 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.assertEqual(sign_up_page.get_shift_end_time(), details[3])
 
     def wait_for_home_page(self):
+        """
+        Utility function to perform explicit wait for home page.
+        """
         self.wait.until(
             EC.presence_of_element_located(
                 (By.XPATH,
@@ -120,6 +151,9 @@ class ManageVolunteerShift(LiveServerTestCase):
         )
 
     def test_table_layout(self):
+        """
+        Test the shift table has details displayed correctly.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
@@ -157,6 +191,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          manage_shift_page.shift_assignment_text)
 
     def test_landing_page_without_any_registered_volunteers(self):
+        """
+        Test manage shifts page with no registered data.
+        """
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
 
@@ -170,6 +207,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                                 manage_shift_page.find_table_row)
 
     def test_landing_page_with_registered_volunteers(self):
+        """
+        Test details on manage shifts page with data registered.
+        """
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
 
@@ -186,6 +226,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          manage_shift_page.no_volunteer_shift_message)
 
     def test_events_page_with_no_events(self):
+        """
+        Test no event present at shifts sign up page for volunteer to sign up for.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
 
@@ -206,6 +249,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          sign_up_page.no_event_message)
 
     def test_jobs_page_with_no_jobs(self):
+        """
+        Test no job present at shifts sign up page for volunteer to sign up for.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
@@ -228,6 +274,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          sign_up_page.no_event_message)
 
     def test_assign_shifts_with_no_shifts(self):
+        """
+        Test no shift present at shifts sign up page for volunteer to sign up for.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
@@ -255,6 +304,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          sign_up_page.no_event_message)
 
     def test_assign_shifts_with_registered_shifts(self):
+        """
+        Test assignment of shift present at shifts sign up page for volunteer to sign up for.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
@@ -294,6 +346,9 @@ class ManageVolunteerShift(LiveServerTestCase):
             ['job name', 'May 20, 2050', '9 a.m.', '3 p.m.'])
 
     def test_slots_remaining_in_shift(self):
+        """
+        Test correct display of the remaining number of slots for shift.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         manage_shift_page.live_server_url = self.live_server_url
@@ -348,6 +403,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          sign_up_page.no_event_message)
 
     def test_cancel_assigned_shift(self):
+        """
+        Test successful cancellation of shift.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         self.manage_shift_page.live_server_url = self.live_server_url
@@ -423,6 +481,9 @@ class ManageVolunteerShift(LiveServerTestCase):
                          slots_after_cancellation)
 
     def test_assign_same_shift_to_volunteer_twice(self):
+        """
+        Test errors while assignment of same shift to volunteer to which they are already assigned.
+        """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
         self.manage_shift_page.live_server_url = self.live_server_url

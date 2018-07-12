@@ -28,6 +28,11 @@ class ShiftDetails(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         cls.volunteer_detail = [
             'volunteer-username', 'Michael', 'Reed', 'address', 'city',
             'state', 'country', '9999999999', 'volunteer@volunteer.com',
@@ -43,19 +48,34 @@ class ShiftDetails(LiveServerTestCase):
         super(ShiftDetails, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         self.admin = create_admin()
         self.login_admin()
         self.shift = ShiftDetails.register_dataset()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(ShiftDetails, cls).tearDownClass()
 
     def login_admin(self):
+        """
+        Utility function to login as administrator.
+        """
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
         authentication_page.login({
@@ -65,6 +85,10 @@ class ShiftDetails(LiveServerTestCase):
 
     @staticmethod
     def register_dataset():
+        """
+        Utility function to create data for testing
+        :return: Shift type of object.
+        """
         e1 = create_event_with_details(['event', '2050-06-15', '2050-06-17'])
         j1 = create_job_with_details(
             ['job', '2050-06-15', '2050-06-15', 'job description', e1])
@@ -73,6 +97,9 @@ class ShiftDetails(LiveServerTestCase):
         return s1
 
     def wait_for_home_page(self):
+        """
+        Utility function to perform explicit wait for home page.
+        """
         self.wait.until(
             EC.presence_of_element_located(
                 (By.XPATH,
@@ -82,6 +109,9 @@ class ShiftDetails(LiveServerTestCase):
         )
 
     def test_view_with_unregistered_volunteers(self):
+        """
+        Test display of shift details with no registered volunteer.
+        """
         shift_details_page = self.shift_details_page
         shift_details_page.live_server_url = self.live_server_url
 
@@ -103,6 +133,9 @@ class ShiftDetails(LiveServerTestCase):
                          )
 
     def test_view_with_only_registered_volunteers(self):
+        """
+        Test display of shift details with registered volunteer.
+        """
         shift_details_page = self.shift_details_page
         shift_details_page.live_server_url = self.live_server_url
         volunteer = create_volunteer_with_details(self.volunteer_detail)
@@ -124,6 +157,9 @@ class ShiftDetails(LiveServerTestCase):
         self.assertEqual(shift_details_page.get_message_box(), 'There are no logged hours at the moment')
 
     def test_view_with_logged_hours(self):
+        """
+        Test display of shift details with hours logged in the shift.
+        """
         shift_details_page = self.shift_details_page
         shift_details_page.live_server_url = self.live_server_url
         volunteer = create_volunteer_with_details(self.volunteer_detail)

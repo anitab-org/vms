@@ -36,6 +36,11 @@ class ViewVolunteerShift(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         cls.driver = webdriver.Firefox()
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
@@ -46,18 +51,33 @@ class ViewVolunteerShift(LiveServerTestCase):
         super(ViewVolunteerShift, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         self.v1 = create_volunteer()
         self.login_volunteer()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(ViewVolunteerShift, cls).tearDownClass()
 
     def login_volunteer(self):
+        """
+        Utility function to login as volunteer.
+        """
         credentials = {
             'username': 'volunteer',
             'password': 'volunteer'
@@ -66,7 +86,9 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.authentication_page.login(credentials)
 
     def register_dataset(self):
-
+        """
+        Utility function to register data for testing.
+        """
         created_event = create_event_with_details(
             ['event-four', '2050-06-01', '2050-06-10'])
         created_job = create_job_with_details([
@@ -78,6 +100,10 @@ class ViewVolunteerShift(LiveServerTestCase):
         registered_shift = register_volunteer_for_shift_utility(created_shift, self.v1)
 
     def test_access_another_existing_volunteer_view(self):
+        """
+        Test error raised while volunteer is trying to access profile page of
+        another existing volunteer.
+        """
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.live_server_url = self.live_server_url
         self.wait.until(
@@ -101,6 +127,10 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertNotEqual(found, None)
 
     def test_access_another_nonexisting_volunteer_view(self):
+        """
+        Test error raised while volunteer is trying to access profile page of
+        another non-existing volunteer.
+        """
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.live_server_url = self.live_server_url
         self.wait.until(
@@ -119,12 +149,18 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertNotEqual(found, None)
 
     def test_view_without_any_assigned_shift(self):
+        """
+        Test display of shifts with no assigned shifts.
+        """
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.view_upcoming_shifts()
         self.assertEqual(upcoming_shift_page.get_info_box(),
                          upcoming_shift_page.no_shift_message)
 
     def test_view_with_assigned_and_unlogged_shift(self):
+        """
+        Test display of assigned but unlogged shift.
+        """
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.live_server_url = self.live_server_url
@@ -136,6 +172,9 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
 
     def test_log_hours_and_logged_shift_does_not_appear_in_upcoming_shifts(self):
+        """
+        Test that already logged shift and hours do not appear in upcoming shifts.
+        """
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.live_server_url = self.live_server_url
@@ -155,7 +194,9 @@ class ViewVolunteerShift(LiveServerTestCase):
                                 upcoming_shift_page.get_result_container)
 
     def test_cancel_shift_registration(self):
-
+        """
+        Test cancellation of registered shift.
+        """
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.live_server_url = self.live_server_url
