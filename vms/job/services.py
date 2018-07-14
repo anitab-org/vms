@@ -7,7 +7,6 @@ from shift.services import (get_shifts_with_open_slots_for_volunteer,
                             get_volunteer_shifts_with_hours,
                             get_unlogged_shifts_by_volunteer_id)
 
-
 def job_not_empty(job_id):
     """ Check if the job exists and is not empty """
     result = True
@@ -81,6 +80,31 @@ def get_jobs_by_event_id(e_id):
     return job_list
 
 
+def get_jobs_by_date(start_date, end_date):
+    """
+    filters jobs on the basis of start date and end date
+    :param start_date: starting date of job
+    :param end_date: ending date of job
+    :return: list of filtered jobs
+
+    """
+    is_valid = True
+    result = None
+    kwargs = {}
+    if start_date:
+        kwargs['start_date__gte'] = start_date
+    if end_date:
+        kwargs['start_date__lte'] = end_date
+    try:
+        job_list = Job.objects.filter(**kwargs).order_by('start_date')
+    except ObjectDoesNotExist:
+        is_valid = False
+
+    if is_valid:
+        result = job_list
+
+    return result
+
 def get_jobs_ordered_by_title():
     job_list = Job.objects.all().order_by('name')
     return job_list
@@ -119,3 +143,32 @@ def remove_empty_jobs_for_volunteer(job_list, volunteer_id):
         if shift_list:
             new_job_list.append(job)
     return new_job_list
+
+def search_jobs(name, start_date, end_date, city, state, country, event):
+    """
+    searches event on the basis of name, start date, end date,
+    city, state, country and job
+    :param name: The name of the event
+    :param start_date: The start date of the event
+    :param end_date: The end date of event
+    :param city: The city where event takes place
+    :param state: The state where event takes place
+    :param country: The country where event takes place
+    :return: search_query
+    """
+
+    search_query = Job.objects.all()
+    if name:
+        search_query = search_query.filter(name__icontains=name)
+    if start_date or end_date:
+        search_query = get_jobs_by_date(start_date, end_date)
+    if city:
+       search_query = search_query.filter(event__city__icontains=city)
+    if state:
+       search_query = search_query.filter(event__state__icontains=state)
+    if country:
+        search_query = search_query.filter(event__country__icontains=country)
+    if event:
+        search_query = search_query.filter(event__name__icontains=event)
+    return search_query
+
