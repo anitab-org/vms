@@ -34,7 +34,7 @@
             <div class="form-group has-error">
                 <label class="col-md-2 control-label">{% trans "Start Date" %}</label>
                 <div class="col-md-8">
-                    <input class="form-control" placeholder="{% blocktrans %}Search by Start Date{% endblocktrans %}" type="text" name="start_date" id="job_from" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
+                    <input class="form-control" placeholder="{% blocktrans %}Search by Start Date{% endblocktrans %}" type="text" name="start_date" id="from" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
                     <p class="help-block">
                         <strong>
                                         {% for error in form.start_date.errors %}
@@ -48,7 +48,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">{% trans "Start Date" %}</label>
                 <div class="col-md-8">
-                    <input class="form-control" placeholder="{% blocktrans %}Search by Start Date{% endblocktrans %}" type="text" name="start_date" id="job_from" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
+                    <input class="form-control" placeholder="{% blocktrans %}Search by Start Date{% endblocktrans %}" type="text" name="start_date" id="from" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
                 </div>
             </div>
             {% endif %}
@@ -56,7 +56,7 @@
             <div class="form-group has-error">
                 <label class="col-md-2 control-label">{% trans "End Date" %}</label>
                 <div class="col-md-8">
-                    <input class="form-control" placeholder="{% blocktrans %}Search by End Date{% endblocktrans %}" type="text" name="end_date"id="job_to" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
+                    <input class="form-control" placeholder="{% blocktrans %}Search by End Date{% endblocktrans %}" type="text" name="end_date"id="to" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
                     <p class="help-block">
                         <strong>
                                         {% for error in form.end_date.errors %}
@@ -70,7 +70,7 @@
             <div class="form-group">
                 <label class="col-md-2 control-label">{% trans "End Date" %}</label>
                 <div class="col-md-8">
-                    <input class="form-control" placeholder="{% blocktrans %}Search by End Date{% endblocktrans %}" type="text" name="end_date" id="job_to" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
+                    <input class="form-control" placeholder="{% blocktrans %}Search by End Date{% endblocktrans %}" type="text" name="end_date" id="to" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
                 </div>
             </div>
             {% endif %}
@@ -143,7 +143,7 @@
         </fieldset>
         <div class="form-group">
             <div class="col-md-12 col-md-offset-2">
-                <button class="btn btn-primary" id="submit_job" type="submit">{% trans "Search" %}</button>
+                <button class="btn btn-primary" id="submit" type="submit">{% trans "Search" %}</button>
             </div>
         </div>
     </form>

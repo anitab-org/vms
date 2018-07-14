@@ -8,6 +8,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
+from pom.pages.jobDetailsPage import JobDetailsPage
 from pom.locators.eventsPageLocators import EventsPageLocators
 from shift.utils import (
     create_admin, create_event_with_details, create_job_with_details,
@@ -66,6 +67,7 @@ class Settings(LiveServerTestCase):
         cls.driver.maximize_window()
         cls.settings = EventsPage(cls.driver)
         cls.authentication_page = AuthenticationPage(cls.driver)
+        cls.job_details_page = JobDetailsPage(cls.driver)
         cls.elements = EventsPageLocators()
         super(Settings, cls).setUpClass()
 
@@ -136,8 +138,7 @@ class Settings(LiveServerTestCase):
         settings = self.settings
         settings.click_link(settings.jobs_tab)
         self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_message_context(), 'There are currently no jobs. Please create jobs first.')
-
+        self.assertEqual(settings.get_message_context(), self.job_details_page.NO_JOBS_PRESENT)
         settings.click_link('Create Job')
         self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.create_job_page)
         self.assertEqual(settings.get_message_context(), 'Please add events to associate with jobs first.')
@@ -147,7 +148,7 @@ class Settings(LiveServerTestCase):
         settings = self.settings
         settings.click_link(settings.shift_tab)
         self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.shift_list_page)
-        self.assertEqual(settings.get_message_context(), 'There are currently no jobs. Please create jobs first.')
+        self.assertEqual(settings.get_message_context(), self.job_details_page.NO_JOBS_PRESENT)
 
     def test_create_event(self):
         self.settings.go_to_events_page()

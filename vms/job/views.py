@@ -14,7 +14,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 # local Django
-from administrator.utils import admin_required
 from event.services import get_events_ordered_by_name, get_event_by_id
 from job.forms import JobForm, SearchJobForm
 from job.models import Job
@@ -191,17 +190,20 @@ def list_sign_up(request, event_id, volunteer_id):
         raise Http404
 
 
-@login_required
-@admin_required
-def list_jobs(request):
-    """
-    list of filtered jobs
-    :return: search_result_list: filtered jobs based on name, start date, end date, state, city, country, event
-    :return: SearchJobForm
-    """
-    search_result_list = get_jobs_ordered_by_title()
-    if request.method == 'POST':
-        form = SearchJobForm(request.POST)
+class JobListView(AdministratorLoginRequiredMixin, FormView):
+    template_name = "job/list.html"
+    form_class = SearchJobForm
+
+    def get(self, request, *args, **kwargs):
+        search_result_list = get_jobs_ordered_by_title()
+        return render(
+            request, 'job/list.html', {
+            'search_result_list': search_result_list,
+        })
+
+    def post(self, request, *args, **kwargs):
+        search_result_list = get_jobs_ordered_by_title()
+        form = SearchJobForm(self.request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
             start_date = form.cleaned_data['start_date']
@@ -210,12 +212,9 @@ def list_jobs(request):
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
             event = form.cleaned_data['event']
-            search_result_list = search_jobs(
-                name, start_date, end_date, city, state, country, event)
-    else:
-        form = SearchJobForm()
-    return render(
-        request, 'job/list.html', {
-            'form': form,
-            'search_result_list': search_result_list,
-        })
+            search_result_list = search_jobs(name, start_date, end_date, city, state, country, event)
+        return render(request, 'job/list.html', {
+                     'form': form,
+                     'search_result_list': search_result_list,
+                     })
+
