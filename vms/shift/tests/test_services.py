@@ -11,7 +11,7 @@ from shift.models import VolunteerShift
 from shift.services import (
     add_shift_hours, calculate_duration, calculate_total_report_hours,
     cancel_shift_registration, clear_shift_hours, delete_shift,
-    edit_shift_hours, generate_report, get_all_volunteer_shifts_with_hours,
+    edit_shift_hours, generate_report, get_all_volunteer_shifts_with_hours, get_future_shifts_by_volunteer_id,
     get_shift_by_id, get_shifts_by_job_id, get_shifts_ordered_by_date,
     get_shift_slots_remaining, get_shifts_with_open_slots,
     get_unlogged_shifts_by_volunteer_id, get_volunteer_shift_by_id,
@@ -19,7 +19,7 @@ from shift.services import (
     get_logged_volunteers_by_shift_id, is_signed_up, register, send_reminder,
     get_shifts_with_open_slots_for_volunteer, get_volunteer_report,
     get_administrator_report)
-from shift.utils import create_event_with_details, create_job_with_details, create_shift_with_details, clear_objects, get_report_list, create_volunteer_with_details, set_shift_location
+from shift.utils import create_event_with_details, create_job_with_details, create_shift_with_details, clear_objects, get_report_list, create_volunteer_with_details, register_event_utility, register_job_utility, register_shift_utility,  set_shift_location
 
 
 def setUpModule():
@@ -623,6 +623,24 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         self.assertIn(self.s2, shift_list)
         self.assertNotIn(self.s3, shift_list)
 
+    def test_get_future_shifts_by_volunteer_id(self):
+        """ Uses shifts s2, s4 and volunteer v1 """
+        register_event_utility()
+        register_job_utility()
+        s4 = register_shift_utility()
+        # sign up
+        register(self.v1.id, s4.id)
+        register(self.v1.id, self.s2.id)
+        start_time = datetime.time(hour=9, minute=0)
+        end_time = datetime.time(hour=10, minute=0)
+        # test typical case
+        shift_list = get_future_shifts_by_volunteer_id(self.v1.id)
+        self.assertIsNotNone(shift_list)
+        self.assertNotEqual(shift_list, False)
+        self.assertEqual(len(shift_list), 1)
+        self.assertNotIn(self.s2, shift_list)
+        self.assertIn(s4, shift_list)
+
     def test_get_volunteer_shift_by_id(self):
         """ Uses shifts s1,s2,s3 and volunteers v1,v2"""
 
@@ -934,3 +952,4 @@ class DeleteShiftTest(unittest.TestCase):
 
         register(self.v1.id, self.s2.id)
         self.assertFalse(delete_shift(self.s2.id))
+
