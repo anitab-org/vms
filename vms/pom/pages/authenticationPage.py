@@ -25,7 +25,7 @@ class AuthenticationPage(BasePage):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
 
     def go_to_authentication_page(self):
-        self.click_link(self.home.LOGIN_TEXT)
+        self.get_page(self.server_url, PageUrls.authentication_page)
 
     def logout(self):
         element = self.find_link(self.home.LOGOUT_TEXT)
