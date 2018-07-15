@@ -40,8 +40,8 @@ def download_resume(request, volunteer_id):
         if request.method == 'POST':
             basename = get_volunteer_resume_file_url(volunteer_id)
             if basename:
-                filename = settings.MEDIA_ROOT + basename
-                wrapper = FileWrapper(file(filename))
+                filename = settings.MEDIA_ROOT + '/..' + basename
+                wrapper = FileWrapper(open(filename, 'rb'))
                 response = HttpResponse(wrapper)
                 response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(filename)
                 response['Content-Length'] = os.path.getsize(filename)
@@ -186,7 +186,7 @@ class ShowFormView(LoginRequiredMixin, FormView):
 
         return render(request, 'volunteer/report.html', {
             'event_list': event_list,
-            'job_list':job_list,
+            'job_list': job_list,
         })
 
 

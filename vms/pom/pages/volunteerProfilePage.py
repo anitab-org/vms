@@ -1,6 +1,6 @@
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.volunteerProfilePageLocators import VolunteerProfilePageLocators 
+from pom.locators.volunteerProfilePageLocators import VolunteerProfilePageLocators
 from pom.pages.homePage import HomePage
 
 
@@ -12,10 +12,11 @@ class VolunteerProfilePage(BasePage):
         super(VolunteerProfilePage, self).__init__(driver)
 
     def navigate_to_profile(self):
-        self.home_page.get_volunteer_profile_link().send_keys("\n")
+        element = self.home_page.get_volunteer_profile_link()
+        self.execute_script('arguments[0].click();', element)
 
     def edit_profile(self):
-        self.find_link(self.elements.EDIT_PROFILE_TEXT).send_keys("\n")
+        self.find_link(self.elements.EDIT_PROFILE_TEXT).click()
 
     def fill_values(self, new_details):
         elements = self.elements
