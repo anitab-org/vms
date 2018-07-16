@@ -98,7 +98,6 @@ class AdministratorSignupView(TemplateView):
                                      'You have successfully registered!')
                     return HttpResponseRedirect(reverse('home:index'))
                 else:
-                    print(user_form.errors, administrator_form.errors)
                     return render(
                         request, 'registration/signup_administrator.html', {
                             'user_form': user_form,
@@ -192,7 +191,6 @@ class VolunteerSignupView(TemplateView):
                                      'You have successfully registered!')
                     return HttpResponseRedirect(reverse('home:index'))
                 else:
-                    print(user_form.errors, volunteer_form.errors)
                     return render(
                         request, 'registration/signup_volunteer.html', {
                             'user_form': user_form,
