@@ -7,3 +7,4 @@ class AuthenticationPageLocators(object):
     FORGOT_PASSWORD = '//*[@id="forgot"]'
     RESET_SUBMIT = 'submit'
     EMAIL = 'id_email'
+

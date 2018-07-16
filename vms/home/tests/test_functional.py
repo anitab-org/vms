@@ -167,6 +167,7 @@ class CheckContentAndRedirection(LiveServerTestCase):
     - Report
     - Settings
     - Create Admin Account
+    - Change Password
     - Logout
 
     Volunteer views nav-bar consists of:
@@ -175,6 +176,7 @@ class CheckContentAndRedirection(LiveServerTestCase):
     - Shift SignUp
     - Report
     - Profile
+    - Change Password
     - Logout
     """
 
@@ -264,6 +266,7 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.assertNotEqual(home_page.get_admin_report_link(), None)
         self.assertNotEqual(home_page.get_events_link(), None)
         self.assertNotEqual(home_page.get_create_admin_link(), None)
+        self.assertNotEqual(home_page.get_change_password_link(), None)
         self.assertNotEqual(home_page.get_logout_link(), None)
 
     def test_check_volunteer_page_content(self):
@@ -290,6 +293,7 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.assertNotEqual(home_page.get_shift_signup_link(), None)
         self.assertNotEqual(home_page.get_volunteer_report_link(), None)
         self.assertNotEqual(home_page.get_volunteer_profile_link(), None)
+        self.assertNotEqual(home_page.get_change_password_link(), None)
         self.assertNotEqual(home_page.get_logout_link(), None)
 
     def test_admin_page_redirection(self):
@@ -329,6 +333,10 @@ class CheckContentAndRedirection(LiveServerTestCase):
         create_account_link = home_page.get_create_admin_link().get_attribute('href')
         self.assertEqual(home_page.remove_i18n(create_account_link),
                          self.live_server_url + PageUrls.admin_registration_page)
+
+        change_password_link = home_page.get_change_password_link().get_attribute('href')
+        self.assertEqual(home_page.remove_i18n(change_password_link),
+                         self.live_server_url + PageUrls.password_change_page)
 
         logout_link = home_page.get_logout_link().get_attribute('href')
         self.assertEqual(home_page.remove_i18n(logout_link),
@@ -372,6 +380,11 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.assertEqual(home_page.remove_i18n(profile_link),
                          self.live_server_url + PageUrls.volunteer_profile_page + self.volunteer_id)
 
+        change_password_link = home_page.get_change_password_link().get_attribute('href')
+        self.assertEqual(home_page.remove_i18n(change_password_link),
+                         self.live_server_url + PageUrls.password_change_page)
+
         logout_link = home_page.get_logout_link().get_attribute('href')
         self.assertEqual(home_page.remove_i18n(logout_link),
                          self.live_server_url + PageUrls.logout_page)
+
