@@ -50,7 +50,8 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = ['job-name', '2050-05-24', '2050-05-28', 'job-description', self.event]
+        job = ['job-name', '2050-05-24', '2050-05-28', 'job-description', self.event,
+               'dummy description', 'dummy venue']
         created_job = create_job_with_details(job)
         return created_job
 
@@ -87,6 +88,8 @@ class ShiftModelTests(TestCase):
         self.assertEqual(str(shift_in_db.start_time), shift.start_time)
         self.assertEqual(str(shift_in_db.end_time), shift.end_time)
         self.assertEqual(str(shift_in_db.max_volunteers), shift.max_volunteers)
+        self.assertEqual(shift_in_db.address, shift.address)
+        self.assertEqual(shift_in_db.venue, shift.venue)
 
     def test_invalid_model_create(self):
         """
@@ -110,6 +113,8 @@ class ShiftModelTests(TestCase):
         self.assertEqual(str(shift_in_db.start_time), shift.start_time)
         self.assertEqual(str(shift_in_db.end_time), shift.end_time)
         self.assertEqual(str(shift_in_db.max_volunteers), shift.max_volunteers)
+        self.assertEqual(shift_in_db.address, shift.address)
+        self.assertEqual(shift_in_db.venue, shift.venue)
 
         shift_in_db.max_volunteers = 11
         shift_in_db.save()
@@ -122,6 +127,8 @@ class ShiftModelTests(TestCase):
         self.assertEqual(str(shift_in_db.start_time), shift.start_time)
         self.assertEqual(str(shift_in_db.end_time), shift.end_time)
         self.assertEqual(str(shift_in_db.max_volunteers), '11')
+        self.assertEqual(shift_in_db.address, shift.address)
+        self.assertEqual(shift_in_db.venue, shift.venue)
 
     def test_model_edit_with_invalid_values(self):
         """
