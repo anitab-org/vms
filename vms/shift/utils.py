@@ -35,7 +35,11 @@ def create_event_with_details(event):
     """
     Creates and returns event with passed name and dates
     """
-    e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
+    if len(event) == 3:
+        e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
+    elif len(event) == 5:
+        e1 = Event(name=event[0], start_date=event[1], end_date=event[2],
+                   address=event[3], venue=event[4])
     e1.save()
     return e1
 
@@ -81,17 +85,35 @@ def create_volunteer_with_details_dynamic_password(volunteer):
     Creates and returns volunteer with passed name and dates
     """
     u1 = User.objects.create_user(username=volunteer[0], password=volunteer[1])
-    v1 = Volunteer(
-        email=volunteer[2],
-        first_name=volunteer[3],
-        last_name=volunteer[4],
-        address=volunteer[5],
-        city=volunteer[6],
-        state=volunteer[7],
-        country=volunteer[8],
-        phone_number=volunteer[9],
-        user=u1
-    )
+    if len(volunteer) == 10:
+        v1 = Volunteer(
+            email=volunteer[2],
+            first_name=volunteer[3],
+            last_name=volunteer[4],
+            address=volunteer[5],
+            city=volunteer[6],
+            state=volunteer[7],
+            country=volunteer[8],
+            phone_number=volunteer[9],
+            user=u1
+        )
+    elif len(volunteer) == 15:
+        v1 = Volunteer(
+            email=volunteer[2],
+            first_name=volunteer[3],
+            last_name=volunteer[4],
+            address=volunteer[5],
+            city=volunteer[6],
+            state=volunteer[7],
+            country=volunteer[8],
+            phone_number=volunteer[9],
+            unlisted_organization=volunteer[10],
+            websites=volunteer[11],
+            description=volunteer[12],
+            resume=volunteer[13],
+            reminder_days=volunteer[14],
+            user=u1
+        )
 
     v1.save()
     return v1
@@ -157,11 +179,11 @@ def get_report_list(duration_list, report_list, total_hours):
 
     for duration in duration_list:
         total_hours += duration
-        report = {}
+        report = dict()
         report["duration"] = duration
         report_list.append(report)
 
-    return (report_list, total_hours)
+    return report_list, total_hours
 
 
 def create_organization():
@@ -225,7 +247,11 @@ def create_volunteer():
 
 def register_event_utility():
     event = Event.objects.create(
-        name='event', start_date='2050-05-10', end_date='2050-06-16')
+        name='event',
+        start_date='2050-05-10',
+        end_date='2050-06-16',
+        address='East Baker Street',
+        venue='Kame House')
 
     return event
 
@@ -235,6 +261,7 @@ def register_job_utility():
         name='job',
         start_date='2050-05-10',
         end_date='2050-06-15',
+        description='job description',
         event=Event.objects.get(name='event'))
 
     return job
@@ -246,6 +273,8 @@ def register_shift_utility():
         start_time='09:00',
         end_time='15:00',
         max_volunteers='6',
+        address='East Baker Street',
+        venue='Kame House',
         job=Job.objects.get(name='job'))
 
     return shift

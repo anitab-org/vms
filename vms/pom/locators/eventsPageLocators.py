@@ -38,6 +38,8 @@ class EventsPageLocators(object):
     CREATE_EVENT_START_DATE = '//input[@name = "start_date"]'
     CREATE_EVENT_END_DATE = '//input[@name = "end_date"]'
     CREATE_EVENT_ID = '//select[@name = "event_id"]'
+    CREATE_EVENT_ADDRESS = '//input[@name = "address"]'
+    CREATE_EVENT_VENUE = '//input[@name = "venue"]'
     CREATE_JOB_NAME = '//input[@placeholder = "Job Name"]'
     CREATE_JOB_DESCRIPTION = '//textarea[@name = "description"]'
     CREATE_JOB_START_DATE = '//input[@name = "start_date"]'
@@ -46,11 +48,15 @@ class EventsPageLocators(object):
     CREATE_SHIFT_START_TIME = '//input[@name = "start_time"]'
     CREATE_SHIFT_END_TIME = '//input[@name = "end_time"]'
     CREATE_SHIFT_MAX_VOLUNTEER = '//input[@name = "max_volunteers"]'
+    CREATE_SHIFT_ADDRESS = '//input[@name = "address"]'
+    CREATE_SHIFT_VENUE = '//input[@name = "venue"]'
     ORG_NAME = '//input[@name = "name"]'
 
     EVENT_NAME_ERROR = "//form//div[1]/div/p/strong"
     EVENT_START_DATE_ERROR = "//form//div[2]/div/p/strong"
     EVENT_END_DATE_ERROR = "//form//div[3]/div/p/strong"
+    EVENT_ADDRESS_ERROR = "//form//div[7]/div/p/strong"
+    EVENT_VENUE_ERROR = "//form//div[8]/div/p/strong"
     JOB_NAME_ERROR = "//form//div[3]/div/p/strong"
     JOB_START_DATE_ERROR = "//form//div[5]/div/p/strong"
     JOB_END_DATE_ERROR = "//form//div[6]/div/p/strong"
@@ -58,6 +64,8 @@ class EventsPageLocators(object):
     SHIFT_START_TIME_ERROR = "//form//div[5]/div/p/strong"
     SHIFT_END_TIME_ERROR = "//form//div[6]/div/p/strong"
     SHIFT_MAX_VOLUNTEER_ERROR = "//form//div[7]/div/p/strong"
+    SHIFT_ADDRESS_ERROR = "//form//div[11]/div/p/strong"
+    SHIFT_VENUE_ERROR = "//form//div[12]/div/p/strong"
     ORGANIZATION_NAME_ERROR = "//form//div[1]/div/p/strong"
 
     GENERAL_SUBMIT_PATH = '//form[1]'

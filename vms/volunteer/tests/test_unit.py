@@ -42,7 +42,9 @@ class VolunteerModelTests(TestCase):
         """
         vol = [
             'Goku', "Son", "Goku", "Kame House", "East District",
-            "East District", "East District", "9999999999", "idonthave@gmail.com"
+            "East District", "East District", "9999999999", "idonthave@gmail.com",
+            "dummy unlisted org", "https://www.dummy-website.com", "description",
+            "resume text", 10
         ]
         return create_volunteer_with_details(vol)
 
