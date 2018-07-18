@@ -43,7 +43,7 @@ class VolunteerMethodTests(unittest.TestCase):
         self.v1.save()
 
         self.assertTrue(delete_volunteer_resume(self.v1.id))
-        self.assertFalse(delete_volunteer(100))
+        self.assertFalse(delete_volunteer(1000))
 
     def test_get_all_volunteers(self):
         # Tests get_all_volunteers()
@@ -68,15 +68,15 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertEqual(get_volunteer_by_id(self.v3.id), self.v3)
 
         # test non-existant cases
-        self.assertIsNone(get_volunteer_by_id(100))
-        self.assertIsNone(get_volunteer_by_id(200))
-        self.assertIsNone(get_volunteer_by_id(300))
-        self.assertIsNone(get_volunteer_by_id(400))
+        self.assertIsNone(get_volunteer_by_id(1000))
+        self.assertIsNone(get_volunteer_by_id(2000))
+        self.assertIsNone(get_volunteer_by_id(3000))
+        self.assertIsNone(get_volunteer_by_id(4000))
 
-        self.assertNotEqual(get_volunteer_by_id(100), self.v1)
-        self.assertNotEqual(get_volunteer_by_id(200), self.v1)
-        self.assertNotEqual(get_volunteer_by_id(300), self.v2)
-        self.assertNotEqual(get_volunteer_by_id(400), self.v2)
+        self.assertNotEqual(get_volunteer_by_id(1000), self.v1)
+        self.assertNotEqual(get_volunteer_by_id(2000), self.v1)
+        self.assertNotEqual(get_volunteer_by_id(3000), self.v2)
+        self.assertNotEqual(get_volunteer_by_id(4000), self.v2)
 
     def test_get_volunteer_resume_file_url(self):
 
@@ -216,6 +216,6 @@ class DeleteVolunteerTest(unittest.TestCase):
         self.assertTrue(delete_volunteer(self.v1.id))
         self.assertTrue(delete_volunteer(self.v2.id))
         self.assertTrue(delete_volunteer(self.v3.id))
-        self.assertFalse(delete_volunteer(100))
-        self.assertFalse(delete_volunteer(200))
-        self.assertFalse(delete_volunteer(300))
+        self.assertFalse(delete_volunteer(1000))
+        self.assertFalse(delete_volunteer(2000))
+        self.assertFalse(delete_volunteer(3000))
