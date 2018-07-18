@@ -13,10 +13,14 @@ from shift.utils import (create_volunteer, create_event_with_details,
                          log_hours_with_details)
 
 
-# Waiting for the bug to be fixed.
-
 class ShiftHours(LiveServerTestCase):
     """
+    Contains tests for
+    - Display hours with logged and unlogged shifts.
+    - Edit hours with valid values.
+    - Edit hours with end time after start time.
+    - Edit hours with time outside shift time.
+    - Cancellation of hours.
     """
 
     @classmethod
@@ -138,7 +142,7 @@ class ShiftHours(LiveServerTestCase):
         try:
             completed_shifts_page.get_danger_box()
         except NoSuchElementException:
-            raise Exception("End hours greater than start hours")
+            raise Exception("End hours should be greater than start hours")
 
     def test_logged_hours_between_shift_hours(self):
         """

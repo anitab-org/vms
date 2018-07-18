@@ -61,7 +61,7 @@ def tearDownModule():
 
 class ShiftTests(unittest.TestCase):
     '''
-    Contains tests which require 
+    Contains tests which require
     - only shift objects
     - no objects to be created
     '''
@@ -185,12 +185,12 @@ class ShiftTests(unittest.TestCase):
         self.assertEqual(get_shift_by_id(self.s2.id), self.s2)
 
         # test non-existant cases
-        self.assertIsNone(get_shift_by_id(100))
-        self.assertIsNone(get_shift_by_id(200))
+        self.assertIsNone(get_shift_by_id(1000))
+        self.assertIsNone(get_shift_by_id(2000))
 
     def test_get_shifts_by_job_id(self):
-        """ 
-        Test get_shifts_by_job_id(j_id) 
+        """
+        Test get_shifts_by_job_id(j_id)
         Uses job j1
         """
         job_1_shifts = get_shifts_by_job_id(j1.id)
@@ -930,7 +930,7 @@ class DeleteShiftTest(unittest.TestCase):
         # Test delete_shift(shift_id)
 
         self.assertTrue(delete_shift(self.s1.id))
-        self.assertFalse(delete_shift(100))
+        self.assertFalse(delete_shift(1000))
 
         register(self.v1.id, self.s2.id)
         self.assertFalse(delete_shift(self.s2.id))
