@@ -128,10 +128,10 @@ class CheckURLAccess(LiveServerTestCase):
         self.login(username='admin', password='admin')
         self.wait_for_home_page()
 
-        self.verify_volunteer_page_error(PageUrls.upcoming_shifts_page + '1')
-        self.verify_volunteer_page_error(PageUrls.completed_shifts_page + '1')
-        self.verify_volunteer_page_error(PageUrls.volunteer_report_page + '1')
-        self.verify_volunteer_page_error(PageUrls.volunteer_profile_page + '1')
+        self.verify_volunteer_page_error(PageUrls.upcoming_shifts_page + '1000')
+        self.verify_volunteer_page_error(PageUrls.completed_shifts_page + '1000')
+        self.verify_volunteer_page_error(PageUrls.volunteer_report_page + '1000')
+        self.verify_volunteer_page_error(PageUrls.volunteer_profile_page + '1000')
 
     def test_volunteer_cannot_access_admin_urls(self):
         """
