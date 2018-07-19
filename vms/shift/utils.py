@@ -104,6 +104,7 @@ def create_admin_with_details(admin):
     :return: Administrator type object.
     """
     user = User.objects.create_user(username=admin[0], password=admin[1])
+    org = create_organization_with_details(admin[10])
     created_admin = Administrator(
         first_name=admin[2],
         last_name=admin[3],
@@ -113,7 +114,7 @@ def create_admin_with_details(admin):
         state=admin[7],
         country=admin[8],
         phone_number=admin[9],
-        unlisted_organization=admin[10],
+        organization=org,
         user=user
     )
     created_admin.save()

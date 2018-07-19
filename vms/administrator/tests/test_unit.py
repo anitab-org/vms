@@ -73,20 +73,111 @@ class AdministratorModelTests(TestCase):
         self.assertEqual(admin_in_db.state, admin[7])
         self.assertEqual(admin_in_db.country, admin[8])
         self.assertEqual(admin_in_db.phone_number, admin[9])
-        self.assertEqual(admin_in_db.unlisted_organization, admin[10])
+        self.assertEqual(str(admin_in_db.organization), admin[10])
 
-    def test_invalid_model_create(self):
+    def test_invalid_first_name_in_model_create(self):
         """
-        Database test for model creation with invalid values.
+        Database test for model creation with invalid first name.
         """
         admin = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin!first!name',
-            'admin-last-name', 'admin-email1@systers.org', 'admin-address',
-            'admin-city', 'admin-state', 'admin-country', '9999999999',
-            'admin-org'
+            'adminusername1', 'admin-password!@#$%^&*()_', 'admin~first~name',
+            'admin last name', 'adminemail2@systers.org', 'admin address',
+            'admin city', 'admin state', 'admin country', '9999999999',
+            'admin org2'
         ]
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_last_name_in_model_create(self):
+        """
+        Database test for model creation with invalid last name.
+        """
+        admin = [
+            'adminusername2', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin~last~name', 'adminemail3@systers.org', 'admin address',
+            'admin city', 'admin state', 'admin country', '9999999999',
+            'admin org3'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_email_in_model_create(self):
+        """
+        Database test for model creation with invalid email.
+        """
+        admin = [
+            'adminusername3', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail4~systers.org', 'admin address',
+            'admin city', 'admin state', 'admin country', '9999999999',
+            'admin org4'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, 'Enter a valid email address.', created_admin.full_clean)
+
+    def test_invalid_address_in_model_create(self):
+        """
+        Database test for model creation with invalid address.
+        """
+        admin = [
+            'adminusername4', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail5@systers.org', 'admin!address!',
+            'admin city', 'admin state', 'admin country', '9999999999',
+            'admin org5'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_city_in_model_create(self):
+        """
+        Database test for model creation with invalid city.
+        """
+        admin = [
+            'adminusername5', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail6@systers.org', 'admin address',
+            'admin~city', 'admin state', 'admin country', '9999999999',
+            'admin org6'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_state_in_model_create(self):
+        """
+        Database test for model creation with invalid state.
+        """
+        admin = [
+            'adminusername6', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail7@systers.org', 'admin address',
+            'admin city', 'admin~state', 'admin country', '9999999999',
+            'admin org7'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_country_in_model_create(self):
+        """
+        Database test for model creation with invalid country.
+        """
+        admin = [
+            'adminusername7', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail8@systers.org', 'admin address',
+            'admin city', 'admin state', 'admin~country', '9999999999',
+            'admin org8'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_phone_number_in_model_create(self):
+        """
+        Database test for model creation with invalid phone number.
+        """
+        admin = [
+            'adminusername8', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail9@systers.org', 'admin address',
+            'admin city', 'admin state', 'admin country', '9999999~99',
+            'admin org9'
+        ]
+        created_admin = create_admin_with_details(admin)
+        self.assertRaisesRegexp(ValidationError, 'Please enter a valid phone number', created_admin.full_clean)
 
     def test_model_edit_with_valid_values(self):
         """
@@ -166,4 +257,4 @@ class AdministratorModelTests(TestCase):
         self.assertEqual(admin_in_db.email, created_admin.email)
 
         # Check representation
-        self.assertEqual(admin_in_db.user.username, created_admin.user.username)
+        self.assertEqual(str(admin_in_db), created_admin.user.username)
