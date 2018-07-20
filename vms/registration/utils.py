@@ -14,3 +14,8 @@ def volunteer_denied(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+# account can only be created if both passwords match
+def match_password(password1, password2):
+    return password1 == password2
+

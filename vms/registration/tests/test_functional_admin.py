@@ -27,6 +27,9 @@ class SignUpAdmin(LiveServerTestCase):
         - Register admin with already registered username
         - Test length of name fields ( 30 char, limit)
 
+    Password Field:
+        - Check if password and confirm password are same
+
     Location Field (Address, City, State, Country):
         - Test Null Values
         - Test legit characters as per Models defined
@@ -113,11 +116,11 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
 
-        entry = ['', '', '', '', '', '', '', '', '', '', '']
+        entry = ['', '', '', '', '', '', '', '', '', '', '', '']
         page.fill_registration_form(entry)
         self.assertNotEqual(page.get_help_blocks(), None)
-        # Verify that 10 of the fields are compulsory
-        self.assertEqual(len(page.get_help_blocks()), 10)
+        # Verify that 11 of the fields are compulsory
+        self.assertEqual(len(page.get_help_blocks()), 11)
 
     def test_successful_registration(self):
         """
@@ -145,8 +148,8 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org', 'admin-address',
+            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
+            'admin-first-name', 'admin-last-name', 'admin-email1@systers.org', 'admin-address',
             'admin-city', 'admin-state', 'admin-country', '9999999999',
             'admin-org'
         ]
@@ -155,6 +158,31 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_username_error_text(),
                          page.USER_EXISTS)
+
+    def test_user_fills_different_passwords(self):
+        """
+        Test error raised when user inputs different passwords while
+        registering.
+        """
+        # register valid administrator user
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(page.get_message_box_text(), page.success_message)
+
+        page.get_admin_registration_page()
+
+        entry = [
+            'admin-username-1', 'admin-password!@#$%^&*()_','admin-password', 'admin-first-name',
+            'admin-last-name', 'admin-email1@systers.org', 'admin-address',
+            'admin-city', 'admin-state', 'admin-country', '9999999999',
+            'admin-org'
+        ]
+        page.fill_registration_form(entry)
+        self.assertNotEqual(page.get_help_blocks(), None)
+        self.assertEqual(page.get_password_error_text(),
+                         page.NO_MATCH)
 
     def test_numeric_characters_in_first_and_last_name(self):
         """
@@ -173,7 +201,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
             'admin-first-name-1', 'admin-last-name-1',
             'admin-email1@systers.org', 'admin-address', 'admin-city',
             'admin-state', 'admin-country', '9999999999', 'admin-org'
@@ -203,8 +231,8 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'name-!@#$%^&*()_',
-            'name-!@#$%^&*()_', 'admin-email1@systers.org', 'admin-address',
+            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
+            'name-!@#$%^&*()_', 'name-!@#$%^&*()_', 'admin-email1@systers.org', 'admin-address',
             'admin-city', 'admin-state', 'admin-country', '9999999999',
             'admin-org'
         ]
@@ -233,7 +261,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
             'admin-first-name-!@#$%^&*()_lolwatneedlength',
             'admin-last-name-!@#$%^&*()_lolwatneedlength',
             'admin-email1@systers.org', 'admin-address', 'admin-city',
@@ -264,7 +292,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'email1@systers.org',
             '123 New-City address', '1 admin-city', '007 admin-state',
             '54 admin-country', '9999999999', 'admin-org'
@@ -291,7 +319,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-2', 'admin-password!@#$%^&*()_',
+            'admin-username-2', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'email2@systers.org',
             'admin-address!@#$()', '!$@%^#&admin-city', '!$@%^#&admin-state',
             '&%^*admin-country!@$#', '9999999999', 'admin-org'
@@ -326,7 +354,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'admin-email@systers.org',
             'admin-address', 'admin-city', 'admin-state', 'admin-country',
             '9999999999', 'admin-org'
@@ -349,8 +377,8 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email@systers.org', 'admin-address',
+            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
+            'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
             'admin-city', 'admin-state', 'India', '022 2403 6606', 'admin-org'
         ]
         page.fill_registration_form(entry)
@@ -364,7 +392,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'admin-email1@systers.org',
             'admin-address', 'admin-city', 'admin-state', 'India', '237937913',
             'admin-org'
@@ -387,8 +415,8 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email@systers.org', 'admin-address',
+            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
+            'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
             'admin-city', 'admin-state', 'India', '022 2403 6606', 'admin-org'
         ]
         page.fill_registration_form(entry)
@@ -401,7 +429,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-username-1', 'admin-password!@#$%^&*()_',  'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'admin-email1@systers.org',
             'admin-address', 'admin-city', 'admin-state', 'India',
             '23&79^37913', 'admin-org'
@@ -424,7 +452,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-username-1', 'admin-password!@#$%^&*()_',  'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'email1@systers.org',
             'admin-address', 'admin-city', 'admin-state', 'admin-country',
             '9999999999', '13 admin-org'
@@ -446,7 +474,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-2', 'admin-password!@#$%^&*()_',
+            'admin-username-2', 'admin-password!@#$%^&*()_',  'admin-password!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'email2@systers.org',
             'admin-address', 'admin-city', 'admin-state', 'admin-country',
             '9999999999', '!$&admin-org'
