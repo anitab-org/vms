@@ -11,9 +11,10 @@ from volunteer.models import Volunteer
 
 def check_correct_volunteer(func):
     @wraps(func)
-    def wrapped_view(request, volunteer_id):
+    def wrapped_view(request, **kwargs):
         req_volunteer = getattr(request.user, "volunteer",
                                 hasattr(request.user, "administrator"))
+        volunteer_id = kwargs['volunteer_id']
         if not req_volunteer:
             raise Http404
         elif req_volunteer is not True:
@@ -35,9 +36,10 @@ def check_correct_volunteer(func):
 
 def check_correct_volunteer_shift_sign_up(func):
     @wraps(func)
-    def wrapped_view(request, volunteer_id):
+    def wrapped_view(request, **kwargs):
         req_volunteer = getattr(request.user, "volunteer",
                                 hasattr(request.user, "administrator"))
+        volunteer_id = kwargs['volunteer_id']
         if req_volunteer is True:
             return func(request, volunteer_id=volunteer_id)
         if not req_volunteer:

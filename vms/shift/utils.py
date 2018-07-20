@@ -101,12 +101,23 @@ def create_shift_with_details(shift):
     """
     Creates and returns shift with passed name and dates
     """
-    s1 = Shift(
-        date=shift[0],
-        start_time=shift[1],
-        end_time=shift[2],
-        max_volunteers=shift[3],
-        job=shift[4])
+    if len(shift) == 5:
+        s1 = Shift(
+            date=shift[0],
+            start_time=shift[1],
+            end_time=shift[2],
+            max_volunteers=shift[3],
+            job=shift[4])
+    elif len(shift) == 7:
+        s1 = Shift(
+            date=shift[0],
+            start_time=shift[1],
+            end_time=shift[2],
+            max_volunteers=shift[3],
+            job=shift[4],
+            address=shift[5],
+            venue=shift[6]
+        )
     s1.save()
     return s1
 
