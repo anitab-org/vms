@@ -4,7 +4,7 @@ env:
   - MOZ_HEADLESS=1
 
 addons:
-  firefox: "55.0"
+  firefox: "60.0"
 
 python:
   - "3.6.5"
@@ -12,9 +12,7 @@ python:
 services: postgresql
 
 before_install:
-  - wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
-  - tar -xzvf geckodriver-v0.20.1-linux64.tar.gz
-  - sudo mv geckodriver /usr/local/bin
+  - bash setup-geckodriver.sh
 
 install:
   - pip install -r requirements.txt

@@ -13,5 +13,5 @@ class VolunteerProfilePageLocators(object):
     RESUME_FILE = '//input[@name = "resume_file"]'
     DOWNLOAD_RESUME = './/*[@id="collapseResumeFile"]/div/form/button'
     EDIT_PROFILE_TEXT = 'Edit Profile'
-    INVALID_FORMAT_MESSAGE = 'html/body/div[2]/div[2]/form/fieldset/div[13]/div/p/strong'
+    INVALID_FORMAT_MESSAGE = '//fieldset[1]/div[14]//div[1]//p[1]//strong'
     SUBMIT_PATH = '//form[1]'

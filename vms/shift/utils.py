@@ -184,7 +184,10 @@ def create_admin():
         country='country',
         phone_number='9999999999',
         email='admin@admin.com',
-        unlisted_organization='organization')
+        unlisted_organization='organization',
+        first_name='Son',
+        last_name='Goku'
+    )
 
     return admin
 
@@ -201,7 +204,10 @@ def create_volunteer():
         country='country',
         phone_number='9999999999',
         email='volunteer@volunteer.com',
-        unlisted_organization='organization')
+        unlisted_organization='organization',
+        first_name='Prince',
+        last_name='Vegeta'
+    )
 
     return volunteer
 

@@ -3,7 +3,6 @@ from selenium.webdriver.support.ui import Select
 
 # local Django
 from pom.pages.basePage import BasePage
-from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.volunteerReportPageLocators import VolunteerReportPageLocators
 from pom.pages.homePage import HomePage
 
@@ -15,25 +14,19 @@ class VolunteerReportPage(BasePage):
 
     def __init__(self, driver):
         self.driver = driver
-        self.authentication_page = AuthenticationPage(self.driver)
         self.home_page = HomePage(self.driver)
         self.elements = VolunteerReportPageLocators()
         super(VolunteerReportPage, self).__init__(driver)
 
-    def login_and_navigate_to_report_page(self):
-        self.authentication_page.server_url = self.live_server_url
-        self.authentication_page.login({
-            'username': 'volunteer',
-            'password': 'volunteer'
-        })
-        self.home_page.get_volunteer_report_link().send_keys("\n")
+    def navigate_to_report_page(self):
+        self.home_page.get_volunteer_report_link().click()
 
     def get_event_job_selectors(self):
         select1 = Select(
             self.element_by_xpath(self.elements.REPORT_EVENT_SELECTOR))
         select2 = Select(
             self.element_by_xpath(self.elements.REPORT_JOB_SELECTOR))
-        return (select1, select2)
+        return select1, select2
 
     def fill_report_form(self, dates):
         self.element_by_xpath(self.elements.REPORT_START_DATE).clear()
