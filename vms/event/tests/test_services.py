@@ -96,7 +96,7 @@ class EventTests(unittest.TestCase):
         """ Test event_not_empty(event_id) """
 
         self.assertTrue(event_not_empty(self.e1.id))
-        self.assertFalse(event_not_empty(100))
+        self.assertFalse(event_not_empty(1000))
 
     def test_get_event_by_id(self):
         """ Test get_event_by_id(event_id) """
@@ -105,7 +105,7 @@ class EventTests(unittest.TestCase):
         self.assertIsNotNone(get_event_by_id(self.e2.id))
         self.assertEqual(get_event_by_id(self.e2.id), self.e2)
 
-        self.assertIsNone(get_event_by_id(100))
+        self.assertIsNone(get_event_by_id(1000))
 
     def test_get_events_by_date(self):
         """ Test get_events_by_date(start_date, end_date) """
@@ -169,7 +169,7 @@ class EventWithJobTests(unittest.TestCase):
         """ Uses shifts s1 """
         self.assertIsNotNone(get_event_by_shift_id(self.s1.id))
         self.assertEqual(get_event_by_shift_id(self.s1.id), e1)
-        self.assertIsNone(get_event_by_shift_id(200))
+        self.assertIsNone(get_event_by_shift_id(2000))
 
     def test_check_edit_event(self):
         """ Uses events e4 and e5 """
@@ -196,7 +196,7 @@ class EventWithJobTests(unittest.TestCase):
         # check for event with no jobs
         out5 = check_edit_event(self.e5.id, start_date1, stop_date1)
         # check for non existing event
-        out6 = check_edit_event(100, start_date1, stop_date1)
+        out6 = check_edit_event(1000, start_date1, stop_date1)
 
         self.assertTrue(out1['result'])
         self.assertFalse(out2['result'])
@@ -232,7 +232,7 @@ class DeleteEventTest(unittest.TestCase):
 
         self.assertTrue(delete_event(self.e1.id))
         self.assertFalse(delete_event(self.e2.id))
-        self.assertFalse(delete_event(100))
+        self.assertFalse(delete_event(1000))
 
 
 class EventWithVolunteerTest(unittest.TestCase):
