@@ -78,15 +78,15 @@ class JobTests(unittest.TestCase):
         self.assertEqual(get_job_by_id(self.j3.id), self.j3)
 
         # test non-existant cases
-        self.assertIsNone(get_job_by_id(100))
-        self.assertIsNone(get_job_by_id(200))
+        self.assertIsNone(get_job_by_id(1000))
+        self.assertIsNone(get_job_by_id(2000))
 
     def test_job_not_empty(self):
         """ Test job_not_empty(j_id)
         Uses jobs j1,j2 """
         self.assertTrue(job_not_empty(self.j1.id))
         self.assertTrue(job_not_empty(self.j2.id))
-        self.assertFalse(job_not_empty(100))
+        self.assertFalse(job_not_empty(1000))
 
     def test_get_jobs_by_event_id(self):
         """ Test get_jobs_by_event_id(e_id)
@@ -157,8 +157,8 @@ class DeleteJobTest(unittest.TestCase):
         # test typical cases
         self.assertFalse(delete_job(self.j1.id))
         self.assertTrue(delete_job(self.j2.id))
-        self.assertFalse(delete_job(100))
-        self.assertFalse(delete_job(200))
+        self.assertFalse(delete_job(1000))
+        self.assertFalse(delete_job(2000))
 
 
 class JobWithShiftTests(unittest.TestCase):
@@ -239,7 +239,7 @@ class JobWithShiftTests(unittest.TestCase):
         out3 = check_edit_job(self.j1.id, start_date3, stop_date3)
         out4 = check_edit_job(self.j1.id, start_date4, stop_date4)
         out5 = check_edit_job(self.j2.id, start_date1, stop_date1)
-        out6 = check_edit_job(100, start_date1, stop_date1)
+        out6 = check_edit_job(1000, start_date1, stop_date1)
 
         self.assertTrue(out1['result'])
         self.assertFalse(out2['result'])

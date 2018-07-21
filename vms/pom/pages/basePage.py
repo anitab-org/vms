@@ -60,3 +60,4 @@ class BasePage(object):
     def remove_i18n(string):
         slashes = [pos for pos, char in enumerate(string) if char == '/']
         return string[:slashes[2]] + string[slashes[3]:]
+

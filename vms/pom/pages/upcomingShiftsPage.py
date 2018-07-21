@@ -10,6 +10,7 @@ class UpcomingShiftsPage(BasePage):
 
     view_shift_page = PageUrls.upcoming_shifts_page
     no_shift_message = 'You do not have any upcoming shifts.'
+    live_server_url = ''
 
     def __init__(self, driver):
         self.driver = driver
@@ -19,7 +20,7 @@ class UpcomingShiftsPage(BasePage):
         super(UpcomingShiftsPage, self).__init__(driver)
 
     def view_upcoming_shifts(self):
-        self.home_page.get_upcoming_shifts_link().send_keys('\n')
+        self.home_page.get_upcoming_shifts_link().click()
 
     def submit_form(self):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
