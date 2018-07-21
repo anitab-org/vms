@@ -10,6 +10,7 @@ class VolunteerRegistrationPage(BasePage):
     live_server_url = ''
     volunteer_registration_page = PageUrls.volunteer_registration_page
     success_message = "You have successfully registered!"
+    confirm_email_message = "Please confirm your email address before login."
     USER_EXISTS = 'A user with that username already exists.'
     INVALID_PHONE = 'Please enter a valid phone number'
     INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
