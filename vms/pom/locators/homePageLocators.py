@@ -15,3 +15,5 @@ class HomePageLocators(object):
 
     NO_ADMIN_RIGHT_HEAD = 'panel-heading'
     NO_ADMIN_RIGHT_CONTENT = 'panel-body'
+    NO_VOLUNTEER_RIGHT_HEAD = 'panel-title'
+    NO_VOLUNTEER_RIGHT_CONTENT = 'panel-body'

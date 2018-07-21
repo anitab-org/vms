@@ -45,7 +45,13 @@ class HomePage(BasePage):
         return self.find_link(self.elements.VOLUNTEER_PROFILE_TEXT)
 
     def get_no_admin_right(self):
-        return self.elements_by_class_name(self.elements.NO_ADMIN_RIGHT_HEAD)
+        return self.element_by_class_name(self.elements.NO_ADMIN_RIGHT_HEAD)
 
     def get_no_admin_right_content(self):
-        return self.elements_by_class_name(self.elements.NO_ADMIN_RIGHT_CONTENT)
+        return self.element_by_class_name(self.elements.NO_ADMIN_RIGHT_CONTENT)
+
+    def get_no_volunteer_right(self):
+        return self.element_by_class_name(self.elements.NO_VOLUNTEER_RIGHT_HEAD)
+
+    def get_no_volunteer_right_content(self):
+        return self.element_by_class_name(self.elements.NO_VOLUNTEER_RIGHT_CONTENT)
