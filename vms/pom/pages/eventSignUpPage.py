@@ -17,6 +17,9 @@ class EventSignUpPage(BasePage):
 
         super(EventSignUpPage, self).__init__(driver)
 
+    def submit_search_form(self):
+        self.element_by_id(self.elements.SEARCH_SUBMIT_PATH).click()
+
     def submit_form(self):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
 
@@ -48,12 +51,21 @@ class EventSignUpPage(BasePage):
     def get_sign_up_link(self):
         return self.home_page.get_shift_signup_link().get_attribute('href')
 
-    def fill_search_form(self, date):
+    def fill_search_form(self, parameters):
+        self.element_by_id(self.elements.SEARCH_EVENT_NAME).clear()
         self.element_by_id(self.elements.START_DATE_FROM).clear()
         self.element_by_id(self.elements.START_DATE_TO).clear()
-        self.send_value_to_element_id(self.elements.START_DATE_FROM, date[0])
-        self.send_value_to_element_id(self.elements.START_DATE_TO, date[1])
-        self.submit_form()
+        self.element_by_id(self.elements.EVENT_CITY).clear()
+        self.element_by_id(self.elements.EVENT_STATE).clear()
+        self.element_by_id(self.elements.EVENT_COUNTRY).clear()
+
+        self.send_value_to_element_id(self.elements.SEARCH_EVENT_NAME, parameters[0])
+        self.send_value_to_element_id(self.elements.START_DATE_FROM, parameters[1])
+        self.send_value_to_element_id(self.elements.START_DATE_TO, parameters[2])
+        self.send_value_to_element_id(self.elements.EVENT_CITY, parameters[3])
+        self.send_value_to_element_id(self.elements.EVENT_STATE, parameters[4])
+        self.send_value_to_element_id(self.elements.EVENT_COUNTRY, parameters[5])
+        self.submit_search_form()
 
     def get_info_box(self):
         return self.element_by_class_name(self.elements.INFO_BOX)

@@ -185,7 +185,28 @@ class ShiftSignUp(LiveServerTestCase):
         # on event page
         self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
 
+    def test_search_event_name_present(self):
+        """
+        tests for search results on the basis of event name
+        """
+        register_event_utility()
+        register_job_utility()
+        register_shift_utility()
+
+        sign_up_page = self.sign_up_page
+        sign_up_page.live_server_url = self.live_server_url
+
+        # Enter name of the event
+        sign_up_page.go_to_sign_up_page()
+        parameters = ['event', '', '', '', '', '']
+        sign_up_page.fill_search_form(parameters)
+        # Verify that the event shows up
+        self.assertEqual(sign_up_page.get_event_name(), 'event')
+
     def test_search_event_both_date_present(self):
+        """
+        tests for search results on the basis of event start date and end date
+        """
         register_event_utility()
         register_job_utility()
         register_shift_utility()
@@ -195,12 +216,15 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter date range in which an event starts
         sign_up_page.go_to_sign_up_page()
-        date = ['05/08/2050', '05/31/2050']
-        sign_up_page.fill_search_form(date)
+        parameters = ['', '05/08/2050', '05/31/2050', '', '', '']
+        sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 
-    def test_search_event_start_date_presesnt(self):
+    def test_search_event_start_date_present(self):
+        """
+        tests for search results on the basis of event start date
+        """
         register_event_utility()
         register_job_utility()
         register_shift_utility()
@@ -209,12 +233,15 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.live_server_url = self.live_server_url
         # Enter only correct starting date
         sign_up_page.go_to_sign_up_page()
-        date = ['05/10/2050', '']
-        sign_up_page.fill_search_form(date)
+        parameters = ['', '05/08/2050', '', '', '', '']
+        sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 
     def test_search_event_end_date_present(self):
+        """
+        tests for search results on the basis of event end date
+        """
         register_event_utility()
         register_job_utility()
         register_shift_utility()
@@ -224,8 +251,68 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct ending date
         sign_up_page.go_to_sign_up_page()
-        date = ['', '06/15/2050']
-        sign_up_page.fill_search_form(date)
+        parameters = ['', '', '06/15/2050', '', '', '']
+        sign_up_page.fill_search_form(parameters)
+        # Verify that the event shows up
+        self.assertEqual(sign_up_page.get_event_name(), 'event')
+
+    def test_search_event_city_present(self):
+        """
+        tests for search results on the basis of event city
+        """
+        event = register_event_utility()
+        event.city = 'event-city'
+        event.save()
+        register_job_utility()
+        register_shift_utility()
+
+        sign_up_page = self.sign_up_page
+        sign_up_page.live_server_url = self.live_server_url
+
+        # Enter correct city
+        sign_up_page.go_to_sign_up_page()
+        parameters = ['', '', '', 'event-city', '', '']
+        sign_up_page.fill_search_form(parameters)
+        # Verify that the event shows up
+        self.assertEqual(sign_up_page.get_event_name(), 'event')
+
+    def test_search_event_state_present(self):
+        """
+        tests for search results on the basis of event state
+        """
+        event = register_event_utility()
+        event.state = 'event-state'
+        event.save()
+        register_job_utility()
+        register_shift_utility()
+
+        sign_up_page = self.sign_up_page
+        sign_up_page.live_server_url = self.live_server_url
+
+        # Enter correct state
+        sign_up_page.go_to_sign_up_page()
+        parameters = ['', '', '', '', 'event-state', '']
+        sign_up_page.fill_search_form(parameters)
+        # Verify that the event shows up
+        self.assertEqual(sign_up_page.get_event_name(), 'event')
+
+    def test_search_event_country_present(self):
+        """
+        tests for search results on the basis of event country
+        """
+        event = register_event_utility()
+        event.country = 'event-country'
+        event.save()
+        register_job_utility()
+        register_shift_utility()
+
+        sign_up_page = self.sign_up_page
+        sign_up_page.live_server_url = self.live_server_url
+
+        # Enter correct country
+        sign_up_page.go_to_sign_up_page()
+        parameters = ['', '', '', '', '', 'event-country']
+        sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 

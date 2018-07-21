@@ -129,7 +129,7 @@ class Settings(LiveServerTestCase):
         self.settings.go_to_events_page()
         settings = self.settings
 
-        self.assertEqual(settings.get_message_context(), 'There are currently no events. Please create events first.')
+        self.assertEqual(settings.get_message_context(), 'No event found.')
 
     def test_job_tab_and_create_job_without_event(self):
         self.settings.go_to_events_page()

@@ -6,7 +6,7 @@ import unittest
 from event.services import (
     event_not_empty, delete_event, check_edit_event, get_event_by_id,
     get_events_ordered_by_name, get_events_by_date, get_event_by_shift_id,
-    get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer)
+    get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer, search_events)
 from shift.models import VolunteerShift
 from shift.services import register
 from shift.utils import (create_event_with_details, create_job_with_details,
@@ -152,10 +152,14 @@ class EventWithJobTests(unittest.TestCase):
 
     @classmethod
     def setup_test_data(cls):
+        cls.e1 = e1
+        cls.e2 = e2
+        cls.e3 = e3
         cls.e4 = e4
         cls.e5 = e5
         cls.s1 = s1
         cls.s2 = s2
+        cls.j1 = j1
 
     @classmethod
     def setUpClass(cls):
@@ -213,6 +217,63 @@ class EventWithJobTests(unittest.TestCase):
         self.assertIn(j4.name, out4['invalid_jobs'])
         self.assertIn(j3.name, out4['invalid_jobs'])
 
+    def test_search_events(self):
+        """
+        tests search result for partial, exact and other searches on events
+        """
+        # if no search parameters are given,
+        # it returns all events
+        search_list = search_events("", "", "", "", "", "", "")
+
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 5)
+        self.assertIn(self.e1, search_list)
+        self.assertIn(self.e2, search_list)
+        self.assertIn(self.e3, search_list)
+
+        search_list = search_events(None, None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 5)
+        self.assertIn(self.e1, search_list)
+        self.assertIn(self.e2, search_list)
+        self.assertIn(self.e3, search_list)
+
+        # test exact search
+        e1.city = 'event-city'
+        e1.state = 'event-state'
+        e1.country = 'event-country'
+        e1.save()
+        search_list = search_events("Open Source Event", "2012-10-22", "2012-10-23",
+                                    "event-city", "event-state", "event-country", "Software Developer")
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.e1, search_list)
+        self.assertNotIn(self.e2, search_list)
+        self.assertNotIn(self.e3, search_list)
+
+        # test partial search
+        search_list = search_events("Systers Event", None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.e4, search_list)
+        self.assertNotIn(self.e2, search_list)
+        self.assertNotIn(self.e3, search_list)
+
+        e2.city = 'event-city'
+        e2.save()
+        search_list = search_events(None, None, None, 'event-city', None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 2)
+        self.assertIn(self.e1, search_list)
+        self.assertIn(self.e2, search_list)
+
+        # test no search matches
+        search_list = search_events("Billy", "2015-07-25", "2015-08-08", "Quebec",
+                                        "Canada", "Ubisoft", "abc")
+        self.assertEqual(len(search_list), 0)
+        self.assertNotIn(self.e1, search_list)
+        self.assertNotIn(self.e2, search_list)
+        self.assertNotIn(self.e3, search_list)
 
 class DeleteEventTest(unittest.TestCase):
     @classmethod

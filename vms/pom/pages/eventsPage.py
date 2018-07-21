@@ -20,7 +20,7 @@ class EventsPage(BasePage):
     organization_tab = 'Organizations'
     live_server_url = ''
     FIELD_REQUIRED = 'This field is required.'
-    NO_EVENT_PRESENT = 'There are currently no events. Please create events first.'
+    NO_EVENT_PRESENT = 'No event found.'
     START_BEFORE_END = 'Start date must be before the end date'
 
     def __init__(self, driver):
