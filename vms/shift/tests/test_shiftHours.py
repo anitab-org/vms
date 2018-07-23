@@ -4,6 +4,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.core import mail
 
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
@@ -126,8 +127,12 @@ class ShiftHours(LiveServerTestCase):
         completed_shifts_page.go_to_completed_shifts()
 
         completed_shifts_page.edit_hours('10:00', '13:00')
-        self.assertEqual(completed_shifts_page.get_shift_start_time(), '10 a.m.')
-        self.assertEqual(completed_shifts_page.get_shift_end_time(), '1 p.m.')
+        mail.outbox = []
+        mail.send_mail("Edit Request", "message", "messanger@locahost.com", ["admin@admin.com"] )
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Edit Request")
+        self.assertEqual(msg.to, ['admin@admin.com'])
 
     def test_end_hours_less_than_start_hours(self):
         """

@@ -21,7 +21,7 @@ def add_shift_hours(v_id, s_id, start_time, end_time):
     if volunteer_shift:
         volunteer_shift.start_time = start_time
         volunteer_shift.end_time = end_time
-        volunteer_shift.date_logged = timezone.now()+timedelta(days=7)
+        volunteer_shift.date_logged = timezone.now()
         volunteer_shift.save()
     else:
         raise ObjectDoesNotExist
@@ -29,9 +29,9 @@ def add_shift_hours(v_id, s_id, start_time, end_time):
 
 def calculate_duration(start_time, end_time):
 
-    start_delta = datetime.timedelta(
+    start_delta = timedelta(
         hours=start_time.hour, minutes=start_time.minute)
-    end_delta = datetime.timedelta(
+    end_delta = timedelta(
         hours=end_time.hour, minutes=end_time.minute)
     working_hours = (float((end_delta - start_delta).seconds) / 60) / 60
     return working_hours

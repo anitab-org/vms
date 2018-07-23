@@ -86,5 +86,6 @@ class EditRequest(models.Model):
     volunteer_shift = models.ForeignKey(VolunteerShift)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    status = models.BooleanField(default=False)
 
+    def __str__(self):
+        return '{0} - {1}'.format(self.volunteer_shift.shift, self.volunteer_shift.volunteer)

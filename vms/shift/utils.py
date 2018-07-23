@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from administrator.models import Administrator
 from event.models import Event
 from job.models import Job
-from shift.models import Shift, VolunteerShift
+from shift.models import Shift, VolunteerShift, EditRequest
 from volunteer.models import Volunteer
 from organization.models import Organization
 
@@ -29,6 +29,12 @@ def clear_objects():
     Job.objects.all().delete()
     Event.objects.all().delete()
     Organization.objects.all().delete()
+
+
+def create_edit_request_with_details(start_time, end_time, logged_shift):
+    er1 = EditRequest(volunteer_shift=logged_shift, start_time=start_time, end_time=end_time)
+    er1.save()
+    return er1
 
 
 def create_event_with_details(event):

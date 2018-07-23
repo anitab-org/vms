@@ -26,7 +26,7 @@
                         <td>{{ volunteershift.start_time }}</td>
                         <td>{{ volunteershift.end_time }}</td>
                         <td>
-                            {% if volunteershift.date_logged >= last_date and not volunteershift.edit_requested %}
+                            {% if volunteershift.date_logged >= init_date and not volunteershift.edit_requested %}
                             <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-info btn-sm">{% trans "Edit Hours" %}</a>
                              {% else %}
                             <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-info btn-sm" disabled/>{% trans "Edit Hours" %}</a>
