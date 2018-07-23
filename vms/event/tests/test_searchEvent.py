@@ -107,8 +107,8 @@ class SearchEvent(LiveServerTestCase):
 
         event_2 = create_event_with_details(credentials_2)
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'None', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'None', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
         search_page.search_name_field('event')
         search_page.submit_form()
@@ -166,8 +166,8 @@ class SearchEvent(LiveServerTestCase):
 
         event_2 = create_event_with_details(credentials_2)
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'None', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'None', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
         # search for events filling only start date
         search_page.search_start_date_field('12/01/2015')
@@ -219,8 +219,8 @@ class SearchEvent(LiveServerTestCase):
         event_2.city = 'event-cityq'
         event_2.save()
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'event-city', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'event-cityq', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
         search_page.search_city_field('event')
         search_page.submit_form()
@@ -277,8 +277,8 @@ class SearchEvent(LiveServerTestCase):
         event_2.state = 'event-stateq'
         event_2.save()
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'None', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'None', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
         search_page.search_state_field('event')
         search_page.submit_form()
@@ -333,8 +333,8 @@ class SearchEvent(LiveServerTestCase):
         event_2.country = 'event-countryq'
         event_2.save()
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'None', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'None', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
         search_page.search_country_field('event')
         search_page.submit_form()
@@ -384,8 +384,8 @@ class SearchEvent(LiveServerTestCase):
             'event-nameq', '2015-02-01', '2015-04-01']
         event_2 = create_event_with_details(credentials_2)
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'None', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'None', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
         # job_1 for event_1, job_2 for event_2
         job = ['job-name', '2015-02-01', '2015-02-15', 'job-description', event_1]
@@ -432,8 +432,8 @@ class SearchEvent(LiveServerTestCase):
         job_2 = create_job_with_details(job)
 
 
-        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'event-city', 'Edit', 'Delete']
-        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'event-cityq', 'Edit', 'Delete']
+        expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
+        expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
         search_page.navigate_to_event_search_page()
 
         search_page.search_name_field('event')
