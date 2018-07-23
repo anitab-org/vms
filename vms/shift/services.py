@@ -1,6 +1,6 @@
 # standard library
-import datetime
-from datetime import date
+from datetime import date, timedelta
+from django.utils import timezone
 
 # Django
 from django.core.exceptions import ObjectDoesNotExist
@@ -21,6 +21,7 @@ def add_shift_hours(v_id, s_id, start_time, end_time):
     if volunteer_shift:
         volunteer_shift.start_time = start_time
         volunteer_shift.end_time = end_time
+        volunteer_shift.date_logged = timezone.now()+timedelta(days=7)
         volunteer_shift.save()
     else:
         raise ObjectDoesNotExist
