@@ -29,7 +29,6 @@ class ViewVolunteerShift(LiveServerTestCase):
     - Access another registered volunteer
     - Access another unregistered volunteer
     - Access no assigned shifts view
-    - Log hours and Shift not displayed in Upcoming Shifts
     - View Assigned and Unlogged shifts
     - Cancel shift registration
     """
@@ -170,28 +169,6 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
         self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
-
-    def test_log_hours_and_logged_shift_does_not_appear_in_upcoming_shifts(self):
-        """
-        Test that already logged shift and hours do not appear in upcoming shifts.
-        """
-        self.register_dataset()
-        upcoming_shift_page = self.upcoming_shift_page
-        upcoming_shift_page.live_server_url = self.live_server_url
-        upcoming_shift_page.view_upcoming_shifts()
-
-        self.assertEqual(upcoming_shift_page.get_log_hours(), 'Log Hours')
-
-        upcoming_shift_page.click_to_log_hours()
-        upcoming_shift_page.log_shift_timings('09:00', '12:00')
-
-        # Check logged shift does not appear in Upcoming Shifts
-        upcoming_shift_page.view_upcoming_shifts()
-        self.assertEqual(upcoming_shift_page.get_info_box(),
-                         upcoming_shift_page.no_shift_message)
-        self.assertRaisesRegexp(NoSuchElementException,
-                                'Unable to locate element: //table',
-                                upcoming_shift_page.get_result_container)
 
     def test_cancel_shift_registration(self):
         """

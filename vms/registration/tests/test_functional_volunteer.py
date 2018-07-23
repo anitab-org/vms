@@ -192,7 +192,7 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.success_message)
+        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
 
         page.get_volunteer_registration_page()
 
