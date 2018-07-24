@@ -7,13 +7,18 @@ from selenium.webdriver.common.by import By
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.utils.http import urlsafe_base64_encode
+from django.core import mail
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
 
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pageUrls import PageUrls
 from pom.locators.authenticationPageLocators import AuthenticationPageLocators
 from shift.utils import (create_admin, create_volunteer)
-import ipdb
+from volunteer.models import Volunteer
 
 class TestAccessControl(LiveServerTestCase):
     """
@@ -211,6 +216,21 @@ class TestAccessControl(LiveServerTestCase):
         authentication_page.go_to_authentication_page()
         authentication_page.go_to_forgot_password_page()
         self.assertEqual(authentication_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.password_reset_page)
-        authentication_page.fill_password_reset_form('volunteer@volunteer.com') 
+        authentication_page.fill_email_form('volunteer@volunteer.com')
         self.assertEqual(authentication_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.password_reset_done_page)
-
+        v1 = Volunteer.objects.get(first_name='Prince')
+        vol_email = v1.email
+        mail.outbox = []
+        mail.send_mail('VMS Password Reset', "message", 'messanger@localhost.com', [vol_email])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'VMS Password Reset')
+        self.assertEqual(msg.to, ['volunteer@volunteer.com'])
+        u1 = v1.user
+        uid = urlsafe_base64_encode(force_bytes(u1.pk)).decode()
+        token = default_token_generator.make_token(u1)
+        response = self.client.get(reverse('authentication:password_reset_confirm',args=[uid,token]))
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(reverse('authentication:password_reset_complete'))
+        self.assertEqual(response.status_code, 200)
+ 

@@ -40,9 +40,11 @@ class AuthenticationPage(BasePage):
     def submit_form(self):
         self.element_by_id(self.elements.RESET_SUBMIT).click() 
 
-    def fill_password_reset_form(self, email):  
+    def fill_email_form(self, email):  
         self.element_by_id(self.elements.EMAIL).clear()
         self.send_value_to_element_id(self.elements.EMAIL, email)
         self.submit_form()
 
-
+    def fill_password_reset_form(self, password):
+        self.element_by_id(self.elements.PASSWORD_1).clear() 
+        self.element_by_id(self.elements.PASSWORD_1).clear()
