@@ -11,6 +11,7 @@ class EventsPageLocators(object):
     HELP_BLOCK = 'help-block'
 
     VIEW_SHIFT = '//table//tbody//tr[1]/td[5]//a'
+    VIEW_EVENT = '//table//tbody//tr[1]//td[4]//a'
     EDIT_EVENT = '//table//tbody//tr[1]//td[5]//a'
     EDIT_JOB = '//table//tbody//tr[1]//td[6]//a'
     EDIT_SHIFT = '//table//tbody//tr[1]//td[5]//a'

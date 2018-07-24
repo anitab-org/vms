@@ -77,6 +77,19 @@ class EventDetails(LiveServerTestCase):
         self.assertEqual(event_details_page.get_event_start_date(), 'June 11, 2050')
         self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
 
+    def test_event_detail_page(self):
+        # Navgate to event view
+        created_event = EventDetails.register_valid_event()
+        event_details_page = self.event_details_page
+        event_details_page.live_server_url = self.live_server_url
+        event_details_page.go_to_events_page()
+
+        event_details_page.go_to_details_event_page()
+        self.assertEqual(event_details_page.get_event_name(), created_event.name)
+        self.assertEqual(event_details_page.get_event_start_date(), 'June 11, 2050')
+        self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
+
+
     def test_valid_event_create(self):
         created_event = EventDetails.register_valid_event()
 
