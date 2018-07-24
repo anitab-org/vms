@@ -10,6 +10,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
+from pom.pageUrls import PageUrls
 from pom.locators.authenticationPageLocators import AuthenticationPageLocators
 from shift.utils import (create_admin, create_volunteer)
 
@@ -203,4 +204,12 @@ class TestAccessControl(LiveServerTestCase):
                          self.live_server_url + authentication_page.homepage)
 
         authentication_page.logout()
+
+    def test_forgot_password(self):
+        authentication_page = self.authentication_page
+        authentication_page.server_url = self.live_server_url
+        self.assertEqual(authentication_page.get_forgot_password_link().text,'Forgot password')
+        authentication_page.get_forgot_password_link('//a').click()
+        '''self.assertEqual(authentication_page.remove_i18n(self.driver.current_url), self.live_server_url + )'''
+
 

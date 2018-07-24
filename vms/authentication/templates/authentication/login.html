@@ -67,7 +67,7 @@
             "Your username and password didn't match. Please try again."
         </div> <!-- alert alert-danger -->
         {% endif %}
-         <a class="button secondaryAction" href="{% url 'authentication:password_reset' %}">Forgot password</a>
+         <a class="button secondaryAction" href="{% url 'authentication:password_reset' %}" id="forgot">Forgot password</a>
         <button class="primaryAction btn btn-lg btn-primary btn-block" type="submit">
             {% trans "Sign In" %}
         </button>

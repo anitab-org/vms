@@ -33,3 +33,7 @@ class AuthenticationPage(BasePage):
 
     def get_incorrect_login_message(self):
         return self.element_by_class_name(self.elements.INCORRECT_LOGIN_ERROR)
+
+    def get_forgot_password_link(self):
+        return self.element_by_xpath(self.elements.FORGOT_PASSWORD)
+
