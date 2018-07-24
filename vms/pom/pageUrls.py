@@ -21,4 +21,4 @@ class PageUrls(object):
     shift_sign_up_page = '/event/list_sign_up/'
     volunteer_profile_page = '/volunteer/profile/'
     password_reset_page = '/authentication/password_reset/'
-
+    password_reset_done_page = '/authentication/password_reset/done/'

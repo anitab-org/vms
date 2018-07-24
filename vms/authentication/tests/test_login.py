@@ -13,7 +13,7 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.pageUrls import PageUrls
 from pom.locators.authenticationPageLocators import AuthenticationPageLocators
 from shift.utils import (create_admin, create_volunteer)
-
+import ipdb
 
 class TestAccessControl(LiveServerTestCase):
     """
@@ -208,8 +208,9 @@ class TestAccessControl(LiveServerTestCase):
     def test_forgot_password(self):
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
-        self.assertEqual(authentication_page.get_forgot_password_link().text,'Forgot password')
-        authentication_page.get_forgot_password_link('//a').click()
-        '''self.assertEqual(authentication_page.remove_i18n(self.driver.current_url), self.live_server_url + )'''
-
+        authentication_page.go_to_authentication_page()
+        authentication_page.go_to_forgot_password_page()
+        self.assertEqual(authentication_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.password_reset_page)
+        authentication_page.fill_password_reset_form('volunteer@volunteer.com') 
+        self.assertEqual(authentication_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.password_reset_done_page)
 

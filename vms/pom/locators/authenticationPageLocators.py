@@ -5,4 +5,5 @@ class AuthenticationPageLocators(object):
     INCORRECT_LOGIN_ERROR = 'alert-danger'
     SUBMIT_PATH = '//form[1]'
     FORGOT_PASSWORD = '//*[@id="forgot"]'
-
+    RESET_SUBMIT = 'submit'
+    EMAIL = 'id_email'
