@@ -1,6 +1,7 @@
 # standard library
 from datetime import date, timedelta
 from django.utils import timezone
+from django.db.models import Q
 
 # Django
 from django.core.exceptions import ObjectDoesNotExist
@@ -322,6 +323,13 @@ def get_shifts_with_open_slots_for_volunteer(j_id, v_id):
             shift_list.append(shift_map)
 
     return shift_list
+
+def get_future_shifts_by_volunteer_id(v_id):
+    shift_signed_up_list = Shift.objects.filter(Q(volunteershift__volunteer_id=v_id)&Q(date__gte=timezone.now().date())|
+                                                Q(date=timezone.now().date(), start_time__gte=timezone.now().time()))
+    shift_signed_up_list = shift_signed_up_list.order_by('date')
+
+    return shift_signed_up_list
 
 
 def get_unlogged_shifts_by_volunteer_id(v_id):

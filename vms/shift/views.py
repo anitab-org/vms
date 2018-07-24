@@ -25,7 +25,7 @@ from job.models import Job
 from job.services import get_job_by_id
 from shift.forms import HoursForm, ShiftForm, EditForm
 from shift.models import Shift, EditRequest
-from shift.services import get_shift_by_id, add_shift_hours, cancel_shift_registration, clear_shift_hours, edit_shift_hours, get_unlogged_shifts_by_volunteer_id, get_logged_volunteers_by_shift_id, get_shift_slots_remaining, get_volunteers_by_shift_id, get_volunteer_by_id, get_volunteer_shifts_with_hours, get_shifts_ordered_by_date, get_shifts_with_open_slots_for_volunteer, register, get_volunteer_shift_by_id, get_shifts_by_job_id, delete_shift
+from shift.services import get_shift_by_id, add_shift_hours, cancel_shift_registration, clear_shift_hours, get_future_shifts_by_volunteer_id, edit_shift_hours, get_unlogged_shifts_by_volunteer_id, get_logged_volunteers_by_shift_id, get_shift_slots_remaining, get_volunteers_by_shift_id, get_volunteer_by_id, get_volunteer_shifts_with_hours, get_shifts_ordered_by_date, get_shifts_with_open_slots_for_volunteer, register, get_volunteer_shift_by_id, get_shifts_by_job_id, delete_shift
 from volunteer.forms import SearchVolunteerForm
 from volunteer.models import Volunteer
 from volunteer.services import get_all_volunteers, search_volunteers
@@ -812,7 +812,7 @@ class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
 @check_correct_volunteer
 @vol_id_check
 def view_volunteer_shifts(request, volunteer_id):
-    shift_list = get_unlogged_shifts_by_volunteer_id(volunteer_id)
+    shift_list = get_future_shifts_by_volunteer_id(volunteer_id)
     return render(request, 'shift/volunteer_shifts.html', {
         'shift_list': shift_list,
         'volunteer_id': volunteer_id,

@@ -18,7 +18,8 @@ from pom.pages.manageShiftPage import ManageShiftPage
 from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
 from shift.utils import (create_volunteer, create_event_with_details,
                          create_job_with_details, create_shift_with_details,
-                         register_volunteer_for_shift_utility, create_volunteer_with_details)
+                         register_volunteer_for_shift_utility, create_volunteer_with_details,
+                         register_past_event_utility, register_past_job_utility, register_past_shift_utility)
 
 
 class ViewVolunteerShift(LiveServerTestCase):
@@ -29,6 +30,7 @@ class ViewVolunteerShift(LiveServerTestCase):
     - Access another registered volunteer
     - Access another unregistered volunteer
     - Access no assigned shifts view
+    - Only future shifts displayed in Upcoming Shifts
     - View Assigned and Unlogged shifts
     - Cancel shift registration
     """
@@ -169,6 +171,35 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
         self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
+
+    def test_future_shifts_appear_in_upcoming_shifts(self):
+        """
+        Test display of only future shifts.
+        """
+        self.register_dataset()
+        upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
+        upcoming_shift_page.view_upcoming_shifts()
+
+        self.assertEqual(upcoming_shift_page.get_shift_job(), 'jobOneInEventFour')
+        self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
+        self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
+        self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
+
+    def test_past_shifts_donot_appear_in_upcoming_shifts(self):
+        register_past_event_utility()
+        register_past_job_utility()
+        shift = register_past_shift_utility()
+        register_volunteer_for_shift_utility(shift, self.v1)
+
+        upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
+        upcoming_shift_page.view_upcoming_shifts()
+        self.assertEqual(upcoming_shift_page.get_info_box(),
+                         upcoming_shift_page.no_shift_message)
+        self.assertRaisesRegexp(NoSuchElementException,
+                                'Unable to locate element: //table',
+                                upcoming_shift_page.get_result_container)
 
     def test_cancel_shift_registration(self):
         """
