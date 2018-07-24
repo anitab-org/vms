@@ -74,7 +74,18 @@ class VolunteerShift(models.Model):
     shift = models.ForeignKey(Shift)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
+    date_logged = models.DateTimeField(null=True, blank=True)
+    edit_requested = models.BooleanField(default=False)
     # assigned_by_manager = models.BooleanField()
 
     def __str__(self):
         return '{0} - {1}'.format(self.shift, self.volunteer.first_name)
+
+
+class EditRequest(models.Model):
+    volunteer_shift = models.ForeignKey(VolunteerShift)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.volunteer_shift.shift, self.volunteer_shift.volunteer)

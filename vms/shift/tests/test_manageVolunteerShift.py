@@ -1,5 +1,7 @@
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+import datetime
+from django.urls import reverse
 from django.core import mail
 
 # third party
@@ -15,7 +17,8 @@ from pom.pages.eventSignUpPage import EventSignUpPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from shift.utils import (create_admin, create_volunteer_with_details,
                          create_event_with_details, create_job_with_details,
-                         create_shift_with_details)
+                         create_shift_with_details, create_edit_request_with_details,
+                         log_hours_with_details)
 
 
 class ManageVolunteerShift(LiveServerTestCase):
@@ -497,6 +500,46 @@ class ManageVolunteerShift(LiveServerTestCase):
         slots_after_cancellation = sign_up_page.get_remaining_slots()
         self.assertEqual(slots_remaining_before_assignment,
                          slots_after_cancellation)
+
+    def test_shift_edit_request(self):
+        """
+        checks the edit request link received by admin
+        """
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+
+        shift = ['09:00', '15:00', '1']
+        shift_1 = self.create_shift(shift)
+        start = datetime.time(hour=10, minute=0)
+        end = datetime.time(hour=14, minute=0)
+        logged_shift = log_hours_with_details(volunteer_1, shift_1, start, end)
+        start_time = datetime.time(hour=9, minute=30)
+        end_time = datetime.time(hour=14, minute=0)
+        edit_request = create_edit_request_with_details(start_time, end_time, logged_shift)
+        response = self.client.get(reverse('shift:edit_request_manager', args=[shift_1.id, volunteer_1.id, edit_request.id]))
+        self.assertEqual(response.status_code, 302)
+
+    def test_edit_request_email_volunteer(self):
+        """
+        checks if the volunteer gets an email when his hours are edited
+        by admin upon his request
+        """
+        volunteer_1 = create_volunteer_with_details(self.volunteer_1)
+
+        shift = ['09:00', '15:00', '1']
+        shift_1 = self.create_shift(shift)
+        start = datetime.time(hour=10, minute=0)
+        end = datetime.time(hour=14, minute=0)
+        logged_shift = log_hours_with_details(volunteer_1, shift_1, start, end)
+        start_time = datetime.time(hour=9, minute=30)
+        end_time = datetime.time(hour=14, minute=0)
+        edit_request = create_edit_request_with_details(start_time, end_time, logged_shift)
+        vol_email = volunteer_1.email
+        mail.outbox = []
+        mail.send_mail("Log Hours Edited", "message", "messanger@localhost.com", [vol_email])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Log Hours Edited")
+        self.assertEqual(msg.to, ['volunteer-email@systers.org'])
 
     def test_assign_same_shift_to_volunteer_twice(self):
         """

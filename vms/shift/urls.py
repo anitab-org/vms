@@ -3,7 +3,7 @@ from django.conf.urls import url
 
 # local Django
 from shift import views
-from shift.views import AddHoursView, AddHoursManagerView, ShiftCreateView, ShiftDeleteView, ClearHoursView, EditHoursView, ShiftUpdateView, ClearHoursManager, EditHoursManagerView, JobListView, ShiftListView, ManageVolunteerShiftView, ViewHoursView, VolunteerSearchView    
+from shift.views import AddHoursView, AddHoursManagerView, ShiftCreateView, ShiftDeleteView, ClearHoursView, EditHoursView, ShiftUpdateView, ClearHoursManager, EditHoursManagerView, EditRequestManagerView, JobListView, ShiftListView, ManageVolunteerShiftView, ViewHoursView, VolunteerSearchView
 
 urlpatterns = [
     url(r'^add_hours/(?P<shift_id>\d+)/(?P<volunteer_id>\d+)$',
@@ -32,6 +32,9 @@ urlpatterns = [
     url(r'^edit_hours_manager/(?P<shift_id>\d+)/(?P<volunteer_id>\d+)$',
         EditHoursManagerView.as_view(),
         name='edit_hours_manager'),
+    url(r'^edit_request_manager/(?P<shift_id>\d+)/(?P<volunteer_id>\d+)/(?P<edit_request_id>\d+)$',
+        EditRequestManagerView.as_view(),
+        name='edit_request_manager'),
     url(r'^list_jobs/$', JobListView.as_view(), name='list_jobs'),
     url(r'^list_shifts/(?P<job_id>\d+)$',
         ShiftListView.as_view(),
