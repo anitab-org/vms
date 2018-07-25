@@ -228,7 +228,7 @@ class ApiForVolaView(APIView):
         """function to return all or filtered event data"""
         event_list = list()
         for event in events:
-            event_data = {}
+            event_data = dict()
             event_data['event_name'] = event.name
             event_data['start_date'] = event.start_date
             event_data['end_date'] = event.end_date
@@ -244,13 +244,14 @@ class ApiForVolaView(APIView):
     def get(self, request):
         # fetching all meetups
         events = Event.objects.all().order_by('start_date')
-        apiforvolaview = ApiForVolaView()
-        return(apiforvolaview.return_event_data(events))
+        api_for_vola_view = ApiForVolaView()
+        return(api_for_vola_view.return_event_data(events))
 
     @classmethod
     def post(self, request):
         date = request.data['date']
         # fetching all events whose start date is greater than or equal to the date posted
         events = Event.objects.filter(start_date__gte=date).order_by('start_date')
-        apiforvolaview = ApiForVolaView()
-        return(apiforvolaview.return_event_data(events))
+        api_for_vola_view = ApiForVolaView()
+        return(api_for_vola_view.return_event_data(events))
+
