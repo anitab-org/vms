@@ -4,7 +4,7 @@ from django.conf.urls import url
 # local Django
 from event import views
 from event.views import (EventCreateView, EventDeleteView, EventDetailView,
-                         EventUpdateView)
+                         EventUpdateView, ApiForVolaView)
 
 urlpatterns = [
     url(r'^create/$', EventCreateView.as_view(), name='create'),
@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^list_sign_up/(?P<volunteer_id>\d+)$',
         views.list_sign_up,
         name='list_sign_up'),
+    url(r'^api/v1/request_event_data/$', ApiForVolaView.as_view(), name='vola_api'),
 ]
 
