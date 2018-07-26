@@ -11,6 +11,8 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic import View
 from django.views.generic.edit import FormView, UpdateView
+from easy_pdf.rendering import render_to_pdf
+from django.core.mail.message import EmailMessage
 
 # local Django
 from administrator.forms import ReportForm, AdministratorForm
@@ -61,8 +63,18 @@ def approve(request, report_id):
    report = get_report_by_id(report_id)
    report.confirm_status = 1
    report.save()
+   admin = Administrator.objects.get(user=request.user)
+   volunteer_shift_list = report.volunteer_shifts.all()
+   report_list = generate_report(volunteer_shift_list)
+   post_pdf = render_to_pdf('administrator/pdf.html',
+        {'report': report,
+       'admin': admin,
+       'report_list': report_list,},
+   )
+   msg = EmailMessage("Report Approved", "Your report has been approved.", "messanger@localhost.com", [report.volunteer.email])
+   msg.attach('file.pdf', post_pdf, 'application/pdf')
+   msg.send()
    return HttpResponseRedirect('/administrator/report')
-
 
 def show_report(request, report_id):
    """

@@ -13,4 +13,6 @@ django-cities-light == 3.2.0
 Unidecode == 0.4.19
 django-braces == 1.9.0
 djangorestframework == 3.8.2
+django-easy-pdf == 0.2.0
+WeasyPrint == 0.34
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'cities_light',
     'pom',
     'rest_framework',
+    'easy_pdf',
 )
 
 MIDDLEWARE_CLASSES = (
