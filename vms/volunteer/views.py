@@ -222,21 +222,21 @@ class ShowReportListView(LoginRequiredMixin, ListView):
 @login_required
 @admin_required
 def search(request):
-    organizations_list = []
+    organizations_list = get_organizations_ordered_by_name()
     if request.method == 'POST':
         form = SearchVolunteerForm(request.POST)
         if form.is_valid():
-
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
             organization = form.cleaned_data['organization']
-            organizations_list = get_organizations_ordered_by_name()
-
+            event = form.cleaned_data['event']
+            job = form.cleaned_data['job']
             search_result_list = search_volunteers(
-                first_name, last_name, city, state, country, organization)
+                first_name, last_name, city, state, country, organization,
+                event, job)
             return render(
                 request, 'volunteer/search.html', {
                     'organizations_list': organizations_list,
@@ -245,7 +245,6 @@ def search(request):
                     'search_result_list': search_result_list
                 })
     else:
-        organizations_list = get_organizations_ordered_by_name()
         form = SearchVolunteerForm()
 
     return render(
@@ -254,3 +253,4 @@ def search(request):
             'form': form,
             'has_searched': False
         })
+

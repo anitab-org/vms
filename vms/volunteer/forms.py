@@ -30,6 +30,8 @@ class SearchVolunteerForm(forms.Form):
         regex=r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', max_length=75, required=False)
     organization = forms.RegexField(
         regex=r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', max_length=75, required=False)
+    event = forms.CharField(required=False)
+    job = forms.CharField(required=False)
 
 
 class VolunteerForm(ModelForm):

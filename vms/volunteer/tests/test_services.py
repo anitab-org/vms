@@ -3,7 +3,9 @@ import unittest
 
 # local Django
 from organization.models import Organization
-from shift.utils import create_volunteer_with_details, clear_objects
+from shift.utils import (create_volunteer_with_details, clear_objects,
+    register_event_utility, register_job_utility, register_shift_utility,
+    register_volunteer_for_shift_utility)
 from volunteer.services import (
     delete_volunteer, delete_volunteer_resume, get_all_volunteers,
     get_volunteer_by_id, get_volunteer_resume_file_url,
@@ -141,16 +143,20 @@ class VolunteerMethodTests(unittest.TestCase):
         self.v2.save()
         self.v3.save()
 
+        register_event_utility()
+        register_job_utility()
+        shift = register_shift_utility()
+        register_volunteer_for_shift_utility(shift, self.v1)
         # if no search parameters are given,
         # it returns all volunteers
-        search_list = search_volunteers("", "", "", "", "", "")
+        search_list = search_volunteers("", "", "", "", "", "", "", "")
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 3)
         self.assertIn(self.v1, search_list)
         self.assertIn(self.v2, search_list)
         self.assertIn(self.v3, search_list)
 
-        search_list = search_volunteers(None, None, None, None, None, None)
+        search_list = search_volunteers(None, None, None, None, None, None, None, None)
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 3)
         self.assertIn(self.v1, search_list)
@@ -160,7 +166,7 @@ class VolunteerMethodTests(unittest.TestCase):
         # test exact search
         search_list = search_volunteers("Yoshi", "Turtle", "Nintendo Land",
                                         "Nintendo State", "Nintendo Nation",
-                                        "Apple")
+                                        "Apple", "event", "job")
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.v1, search_list)
@@ -168,14 +174,14 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertNotIn(self.v3, search_list)
 
         # test partial search
-        search_list = search_volunteers("Yoshi", None, None, None, None, None)
+        search_list = search_volunteers("Yoshi", None, None, None, None, None, None, None)
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.v1, search_list)
         self.assertNotIn(self.v2, search_list)
         self.assertNotIn(self.v3, search_list)
 
-        search_list = search_volunteers(None, "Doe", None, None, None, None)
+        search_list = search_volunteers(None, "Doe", None, None, None, None, None, None)
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 2)
         self.assertIn(self.v3, search_list)
@@ -183,7 +189,7 @@ class VolunteerMethodTests(unittest.TestCase):
 
         # test no search matches
         search_list = search_volunteers("Billy", "Doe", "Montreal", "Quebec",
-                                        "Canada", "Ubisoft")
+                                        "Canada", "Ubisoft", "eventq", "jobq")
         self.assertEqual(len(search_list), 0)
         self.assertNotIn(self.v1, search_list)
         self.assertNotIn(self.v2, search_list)
