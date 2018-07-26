@@ -6,6 +6,7 @@ from selenium import webdriver
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.core import mail
 
 # local Django
 from selenium.common.exceptions import NoSuchElementException
@@ -22,6 +23,7 @@ from shift.utils import (create_admin, create_volunteer,
                          register_volunteer_for_shift_utility, create_volunteer_with_details_dynamic_password,
                          register_past_event_utility, register_past_job_utility, register_past_shift_utility,
                          create_report_with_details, create_volunteer_with_details)
+
 
 class Report(LiveServerTestCase):
 
@@ -152,3 +154,42 @@ class Report(LiveServerTestCase):
         self.assertEqual(report_page.remove_i18n(self.driver.current_url), self.live_server_url + report_page.administrator_report_page)
         with self.assertRaises(NoSuchElementException):
             report_page.get_report()
+
+    def test_email_on_report_approval(self):
+        vol = create_volunteer()
+        register_past_event_utility()
+        register_past_job_utility()
+        shift = register_past_shift_utility()
+        start=datetime.time(hour=10, minute=0)
+        end=datetime.time(hour=11, minute=0)
+        logged_shift = log_hours_with_details(vol, shift, start, end)
+        report = create_report_with_details(vol, logged_shift)
+        mail.send_mail("Report Approved", "message", "messanger@localhost.com", [vol.email])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'Report Approved')
+        self.assertEqual(msg.to, ['volunteer@volunteer.com'])
+        response = self.client.get('/administrator/report/approve/%s'%report.id)
+        self.assertEqual(response.status_code, 302)
+
+    def test_email_on_reject_report(self):
+        self.report_page.go_to_admin_report()
+        vol = create_volunteer()
+        register_past_event_utility()
+        register_past_job_utility()
+        shift = register_past_shift_utility()
+        start=datetime.time(hour=10, minute=0)
+        end=datetime.time(hour=11, minute=0)
+        logged_shift = log_hours_with_details(vol, shift, start, end)
+        create_report_with_details(vol, logged_shift)
+        report_page = self.report_page
+        report_page.get_page(self.live_server_url, PageUrls.administrator_report_page)
+        self.assertEqual(report_page.get_rejection_context(), 'Reject')
+        report_page.reject_report()
+        mail.outbox = []
+        mail.send_mail("Report Rejected", "message", "messanger@localhost.com", [vol.email])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, 'Report Rejected')
+        self.assertEqual(msg.to, ['volunteer@volunteer.com'])
+
