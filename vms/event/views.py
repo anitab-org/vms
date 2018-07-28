@@ -73,23 +73,23 @@ class EventCreateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
         else:
             event = form.save(commit=False)
             try:
-                country_id = self.request.POST.get('country')
-                country = Country.objects.get(pk=country_id)
+                country_name = self.request.POST.get('country')
+                country = Country.objects.get(name=country_name)
                 event.country = country
-            except:
-                country_id =None
+            except ObjectDoesNotExist:
+                country_name = None
             try:
-                state_id = self.request.POST.get('state')
-                state = Region.objects.get(pk=state_id)
+                state_name = self.request.POST.get('state')
+                state = Region.objects.get(name=state_name)
                 event.state = state
-            except:
-                state_id = None
+            except ObjectDoesNotExist:
+                state_name = None
             try:
-                city_id = self.request.POST.get('city')
-                city = City.objects.get(pk=city_id)
+                city_name = self.request.POST.get('city')
+                city = City.objects.get(name=city_name)
                 event.city = city
-            except:
-                state_id = None
+            except ObjectDoesNotExist:
+                city_name = None
             event.save()
             return HttpResponseRedirect(reverse('event:list'))
 
@@ -155,12 +155,14 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
         context['country_list'] = Country.objects.all()
         event_id = self.kwargs['event_id']
         event =  get_event_by_id(event_id)
-        context['country'] = event.country
-        context['country_id'] = event.country.pk
-        context['state'] = event.state
-        context['state_id'] = event.state.pk
-        context['city'] = event.city
-        context['city_id'] = event.city.pk
+        if event.country:
+            country = event.country
+            state_list = Region.objects.filter(country=country)
+            context['state_list'] = state_list
+        if event.state:
+            state = event.state
+            city_list = City.objects.filter(region=state)
+            context['city_list'] = city_list
         return context
 
     def post(self, request, *args, **kwargs):
@@ -190,7 +192,26 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
                         'form': form,
                     })
                 else:
-                    form.save()
+                    event_to_edit = form.save(commit=False)
+                    try:
+                        country_name = self.request.POST.get('country')
+                        country = Country.objects.get(name=country_name)
+                    except ObjectDoesNotExist:
+                        country = None
+                    event_to_edit.country = country
+                    try:
+                        state_name = self.request.POST.get('state')
+                        state = Region.objects.get(name=state_name)
+                    except ObjectDoesNotExist:
+                        state = None
+                    event_to_edit.state = state
+                    try:
+                        city_name = self.request.POST.get('city')
+                        city = City.objects.get(name=city_name)
+                    except ObjectDoesNotExist:
+                        city = None
+                    event_to_edit.city = city
+                    event_to_edit.save()
                     return HttpResponseRedirect(reverse('event:list'))
             else:
                 data = request.POST.copy()
@@ -274,9 +295,9 @@ class ApiForVolaView(APIView):
             event_data['end_date'] = event.end_date
             event_data['description'] = event.description
             event_data['address'] = event.address
-            event_data['city'] = event.city
-            event_data['state'] = event.state
-            event_data['country'] = event.country
+            event_data['city'] = event.city.name if event.city else None
+            event_data['state'] = event.state.name if event.state else None
+            event_data['country'] = event.country.name if event.country else None
             event_data['venue'] = event.venue
             event_list.append(event_data)
         return JsonResponse(event_list, safe=False)

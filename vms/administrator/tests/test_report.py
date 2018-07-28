@@ -16,9 +16,8 @@ from pom.locators.administratorReportPageLocators import AdministratorReportPage
 from pom.pages.administratorReportPage import AdministratorReportPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pageUrls import PageUrls
-from shift.utils import (create_admin, create_volunteer,
-                         create_organization_with_details,
-                         create_event_with_details, create_job_with_details,
+from shift.utils import (create_admin, create_country, create_state, create_city, create_volunteer,
+                         create_event_with_details, create_job_with_details, create_organization_with_details,
                          create_shift_with_details, log_hours_with_details,
                          register_volunteer_for_shift_utility, create_volunteer_with_details_dynamic_password,
                          register_past_event_utility, register_past_job_utility, register_past_shift_utility,
@@ -83,11 +82,13 @@ class Report(LiveServerTestCase):
 
     def test_check_report_volunteer(self):
         self.report_page.go_to_admin_report()
+        country = create_country()
+        state = create_state()
+        city = create_city()
         credentials = [
             'volunteer-username', 'VOLUNTEER-FIRST-NAME',
-            'volunteer-last-name', 'volunteer-address', 'volunteer-city',
-            'volunteer-state', 'volunteer-country', '9999999999',
-            'volunteer-email@systers.org'
+            'volunteer-last-name', 'volunteer-address', city, state, country,
+            '9999999999', 'volunteer-email@systers.org'
         ]
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)

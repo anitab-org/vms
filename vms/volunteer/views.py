@@ -3,6 +3,7 @@ import os
 
 # third party
 from braces.views import LoginRequiredMixin
+from cities_light.models import Country, Region, City
 
 # Django
 from django.conf import settings
@@ -10,6 +11,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from wsgiref.util import FileWrapper
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
@@ -119,8 +121,21 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(VolunteerUpdateView,self).get_context_data(**kwargs)
+        volunteer_id = self.kwargs['volunteer_id']
+        volunteer = get_volunteer_by_id(volunteer_id)
         organization_list = get_organizations_ordered_by_name()
         context['organization_list'] = organization_list
+        country_list = Country.objects.all()
+        if volunteer.country:
+            country = volunteer.country
+            state_list = Region.objects.filter(country=country)
+            context['state_list'] = state_list
+        if volunteer.state:
+            state = volunteer.state
+            city_list = City.objects.filter(region=state)
+            context['city_list'] = city_list
+        context['organization_list'] = organization_list
+        context['country_list'] = country_list
         return context
 
     def get_object(self, queryset=None):
@@ -152,7 +167,24 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
                     })
 
         volunteer_to_edit = form.save(commit=False)
-
+        try:
+            country_name = self.request.POST.get('country')
+            country = Country.objects.get(name=country_name)
+        except ObjectDoesNotExist:
+            country = None
+        volunteer_to_edit.country = country
+        try:
+            state_name = self.request.POST.get('state')
+            state = Region.objects.get(name=state_name)
+        except ObjectDoesNotExist:
+            state = None
+        volunteer_to_edit.state = state
+        try:
+            city_name = self.request.POST.get('city')
+            city = City.objects.get(name=city_name)
+        except ObjectDoesNotExist:
+            city = None
+        volunteer_to_edit.city = city
         organization_id = self.request.POST.get('organization_name')
         organization = get_organization_by_id(organization_id)
         if organization:

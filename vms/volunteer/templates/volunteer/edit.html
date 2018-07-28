@@ -121,72 +121,69 @@
                         </div>
                     </div>
                 {% endif %}
-                {% if form.city.errors %}
-                    <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "City" %}</label>
+                    <div id="div_id_country" class="form-group">
+                        <label class="col-md-2 control-label">
+                        {% trans "Country" %}
+                        </label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
-                            <p class="help-block">
-                                <strong>
-                                    {% for error in form.city.errors %}
-                                        {{ error }}
+                            <select id="select_country" class="form-control" name="country">
+                                <option value="0">-- {% trans "Select country" %} --</option>
+                                {% for country in country_list %}
+                                    {% if volunteer.country_id %}
+                                        {% if country.name == volunteer.country.name %}
+                                            <option selected value="{{country.name}}">{{country.name}}</option>
+                                        {% else %}
+                                            <option value="{{ country.name }}">{{ country.name }}</option>
+                                        {% endif %}
+                                    {% else %}
+                                        <option value="{{ country.name }}">{{ country.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div id="div_id_state" class="form-group">
+                        <label class="col-md-2 control-label">
+                        {% trans "State/Province" %}
+                        </label>
+                        <div class="col-md-8">
+                            <select id="select_state" class="form-control" name="state">
+                                <option value="0">-- {% trans "Select state" %} --</option>
+                                    {% for state in state_list %}
+                                        {% if volunteer.state_id %}
+                                            {% if state.name == volunteer.state.name %}
+                                                <option selected value="{{state.name}}">{{state.name}}</option>
+                                            {% else %}
+                                                <option value="{{ state.name }}">{{ state.name }}</option>
+                                            {% endif %}
+                                        {% else %}
+                                            <option value="{{ state.name }}">{{ state.name }}</option>
+                                        {% endif %}
                                     {% endfor %}
-                                </strong>
-                            </p>
+                            </select>
                         </div>
                     </div>
-                {% else %}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "City" %}</label>
+                    <div id="div_id_city" class="form-group">
+                        <label class="col-md-2 control-label">
+                        {% trans "City" %}
+                        </label>
                         <div class="col-md-8">
-                            <input class="form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                            <select id="select_city" class="form-control" name="city">
+                                <option value="0">-- {% trans "Select city" %} --</option>
+                                {% for city in city_list %}
+                                    {% if volunteer.city_id %}
+                                        {% if city.name == volunteer.city.name %}
+                                            <option selected value="{{city.name}}">{{city.name}}</option>
+                                        {% else %}
+                                            <option value="{{ city.name }}">{{ city.name }}</option>
+                                        {% endif %}
+                                    {% else %}
+                                        <option value="{{ city.name }}">{{ city.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
-                {% endif %}
-                {% if form.state.errors %}
-                    <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "State/Province" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
-                            <p class="help-block">
-                                <strong>
-                                    {% for error in form.state.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </strong>
-                            </p>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "State/Province" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
-                        </div>
-                    </div>
-                {% endif %}
-                {% if form.country.errors %}
-                    <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "Country" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
-                            <p class="help-block">
-                                <strong>
-                                    {% for error in form.country.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </strong>
-                            </p>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "Country" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
-                        </div>
-                    </div>
-                {% endif %}
                 {% if form.phone_number.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Phone Number" %}</label>
@@ -251,7 +248,7 @@
                             <input class="form-control" type="text" placeholder="{% blocktrans %}Organization{% endblocktrans %}" name="unlisted_organization" value="{% if form.unlisted_organization.value %}{{ form.unlisted_organization.value }}{% endif %}">
                         </div>
                     </div>
-                <script type="text/javascript" src="{% static 'vms/js/hide-organization.js' %}"></script>                 
+                <script type="text/javascript" src="{% static 'vms/js/hide-organization.js' %}"></script>
                 {% endif %}
                 {% if form.websites.errors %}
                     <div class="form-group has-error">

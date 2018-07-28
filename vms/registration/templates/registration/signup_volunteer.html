@@ -232,36 +232,32 @@
                 </div>
             </div>
         {% endif %}
-
             <div id="div_id_country" class="form-group">
                 <label class="control-label">
-                    {% trans "Country" %}
+                {% trans "Country" %}
                 </label>
-                 <select id="select_country" class="form-control" name="country">
-                <option value="0">-- {% trans "Select country" %} --</option>
-                {% for country in country_list %}
-                    <option value="{{ country.id }}">{{ country.name }}</option>
-                {% endfor %}
-            </select>
+                <select id="select_country" class="form-control" name="country">
+                    <option value="0">-- {% trans "Select country" %} --</option>
+                    {% for country in country_list %}
+                        <option value="{{ country.name }}">{{ country.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
-
-
             <div id="div_id_state" class="form-group">
                 <label class="control-label">
-                    {% trans "State/Province" %}
+                {% trans "State/Province" %}
                 </label>
                 <select id="select_state" class="form-control" name="state">
-            </select>
+                </select>
             </div>
 
-<div id="div_id_city" class="form-group">
-        <label class="control-label">
-        {% trans "City" %}
-        </label>
-        <select id="select_city" class="form-control" name="city">
-         </select>
+            <div id="div_id_city" class="form-group">
+                <label class="control-label">
+                    {% trans "City" %}
+                </label>
+                <select id="select_city" class="form-control" name="city">
+                </select>
             </div>
-
         {% if volunteer_form.phone_number.errors %}
             <div id="div_id_phone_number" class="form-group has-error">
                 <label class="control-label requiredField" for="id_phone_number">

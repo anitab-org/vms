@@ -4,6 +4,7 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
@@ -18,6 +19,7 @@ from django.views.generic import TemplateView
 # local Django
 from administrator.forms import AdministratorForm
 from administrator.models import Administrator
+from cities_light.models import City, Region, Country
 from organization.models import Organization
 from organization.services import (create_organization, get_organizations_ordered_by_name,
                                    get_organization_by_id)
@@ -27,8 +29,6 @@ from registration.utils import volunteer_denied, match_password
 from registration.tokens import account_activation_token
 from volunteer.forms import VolunteerForm
 from volunteer.validation import validate_file
-from volunteer.models import Volunteer
-from cities_light.models import City, Region, Country
 
 class AdministratorSignupView(TemplateView):
     """
@@ -90,26 +90,26 @@ class AdministratorSignupView(TemplateView):
                                 'organization_list': self.organization_list,
                             })
                     try:
-                        ad_country_id = request.POST.get('country')
-                        ad_country = Country.objects.get(pk=ad_country_id)
-                    except:
-                        ad_country = None
+                        admin_country_name = request.POST.get('country')
+                        admin_country = Country.objects.get(name=admin_country_name)
+                    except ObjectDoesNotExist:
+                        admin_country = None
 
                     try:
-                        ad_state_id = request.POST.get('state')
-                        ad_state = Region.objects.get(pk=ad_state_id)
-                    except:
-                        ad_state = None
+                        admin_state_name = request.POST.get('state')
+                        admin_state = Region.objects.get(name=admin_state_name)
+                    except ObjectDoesNotExist:
+                        admin_state = None
 
                     try:
-                        ad_city_id = request.POST.get('city')
-                        ad_city = City.objects.get(pk=ad_city_id)
-                    except:
-                        ad_city = None
+                        admin_city_name = request.POST.get('city')
+                        admin_city = City.objects.get(pk=admin_city_name)
+                    except ObjectDoesNotExist:
+                        admin_city = None
 
-                    ad_phone = request.POST.get('admin-phone_number')
-                    if (ad_country and ad_phone):
-                        if not validate_phone(ad_country, ad_phone):
+                    admin_phone = request.POST.get('admin-phone_number')
+                    if (admin_country and admin_phone):
+                        if not validate_phone(admin_country, admin_phone):
                             self.phone_error = True
                             return render(
                                 request,
@@ -143,12 +143,9 @@ class AdministratorSignupView(TemplateView):
                         org = create_organization(unlisted_org)
                         administrator.organization = org
 
-                    if ad_country:
-                       administrator.country = ad_country
-                    if ad_state:
-                        administrator.state = ad_state
-                    if ad_city:
-                        administrator.city = ad_city
+                    administrator.country = admin_country
+                    administrator.state = admin_state
+                    administrator.city = admin_city
 
                     administrator.save()
                     registered = True
@@ -191,7 +188,7 @@ class VolunteerSignupView(TemplateView):
                 'country_list': self.country_list,
             })
 
-    def post(self,request):
+    def post(self, request):
         organization_list = get_organizations_ordered_by_name()
         country_list = Country.objects.all()
 
@@ -216,21 +213,21 @@ class VolunteerSignupView(TemplateView):
                                 'organization_list': self.organization_list,
                             })
                     try:
-                        vol_country_id = request.POST.get('country')
-                        vol_country = Country.objects.get(pk=vol_country_id)
-                    except:
+                        vol_country_name = request.POST.get('country')
+                        vol_country = Country.objects.get(name=vol_country_name)
+                    except ObjectDoesNotExist:
                         vol_country = None
 
                     try:
-                        vol_state_id = request.POST.get('state')
-                        vol_state = Region.objects.get(pk=vol_state_id)
-                    except:
+                        vol_state_name = request.POST.get('state')
+                        vol_state = Region.objects.get(name=vol_state_name)
+                    except ObjectDoesNotExist:
                         vol_state = None
 
                     try:
-                        vol_city_id = request.POST.get('city')
-                        vol_city = City.objects.get(pk=vol_city_id)
-                    except:
+                        vol_city_name = request.POST.get('city')
+                        vol_city = City.objects.get(name=vol_city_name)
+                    except ObjectDoesNotExist:
                         vol_city = None
 
                     vol_phone = request.POST.get('vol-phone_number')
@@ -246,7 +243,7 @@ class VolunteerSignupView(TemplateView):
                                     'phone_error': self.phone_error,
                                     'organization_list':
                                     self.organization_list,
-                                    'country_list': self.countrylist,
+                                    'country_list': self.country_list,
                                 })
 
                     if 'resume_file' in request.FILES:
@@ -256,7 +253,7 @@ class VolunteerSignupView(TemplateView):
                                 request, 'registration/signup_volunteer.html',
                                 {
                                     'user_form': user_form,
-                                    'volunteer_fo-rm': volunteer_form,
+                                    'volunteer_form': volunteer_form,
                                     'registered': self.registered,
                                     'phone_error': self.phone_error,
                                     'organization_list':
@@ -284,12 +281,9 @@ class VolunteerSignupView(TemplateView):
                         org = Organization.objects.create(name=unlisted_org, approved_status=False)
                         org.save()
                         volunteer.organization = org
-                    if vol_country:
-                        volunteer.country = vol_country
-                    if vol_city:
-                        volunteer.city = vol_city
-                    if vol_state:
-                        volunteer.state = vol_state
+                    volunteer.country = vol_country
+                    volunteer.city = vol_city
+                    volunteer.state = vol_state
                     volunteer.save()
                     current_site = get_current_site(request)
                     mail_subject = 'Activate your account.'
@@ -341,38 +335,35 @@ def activate(request, uidb64, token):
 
 def check_states(request):
     """
-    check if states exist in a country
+    Check if states exist in a country
 
     :return: 1 if states exist, otherwise 0
     """
-    country_id = request.GET.get('country')
-    if Region.objects.filter(country_id=country_id).exists():
-       statecheck = 1
-    else:
-       statecheck = 0
+    country_name = request.GET.get('country')
+    statecheck = Region.objects.filter(country__name=country_name).exists()
     return JsonResponse(statecheck, safe=False)
 
 def load_states(request):
     """
-    renders the options of states dropdown list
+    Renders the options of states dropdown list
 
     :return: states belonging to the selected country
     """
-    country_id = request.GET.get('country')
-    states = Region.objects.filter(country_id=country_id).order_by('name')
-    return render(request, 'registration/state_dropdown_list_options.html',{'states':states})
+    country_name = request.GET.get('country')
+    states = Region.objects.filter(country__name=country_name).order_by('name')
+    return render(request, 'registration/state_dropdown_list_options.html', {'states':states})
 
 def load_cities(request):
     """
-    renders the options of cities dropdown
+    Renders the options of cities dropdown
 
     :return: cities belonging to the selected country and state
     """
-    country_id = request.GET.get('country')
-    state_id = request.GET.get('state')
-    if state_id is 0:
-        cities = City.objects.filter(country_id=country_id,region_id=state_id).order_by('name')
+    country_name = request.GET.get('country')
+    state_name = request.GET.get('state')
+    if state_name is '0':
+        cities = City.objects.filter(country__name=country_name).order_by('name')
     else:
-        cities = City.objects.filter(country_id=country_id).order_by('name')
+        cities = City.objects.filter(country__name=country_name,region__name=state_name).order_by('name')
     return render(request, 'registration/city_dropdown_list_options.html', {'cities': cities})
 

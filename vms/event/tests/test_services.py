@@ -9,9 +9,8 @@ from event.services import (
     get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer, search_events)
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (create_event_with_details, create_job_with_details,
-                         create_organization_with_details,
-                         create_volunteer_with_details,
+from shift.utils import (create_country, create_state, create_city, create_event_with_details,
+                         create_job_with_details,  create_organization_with_details, create_volunteer_with_details,
                          create_shift_with_details, clear_objects)
 
 
@@ -23,7 +22,11 @@ def setUpModule():
     global e1, e2, e3, e4, e5
     global j1, j2, j3, j4, j5
     global s1, s2, s3, s4
+    global city, state, country
 
+    country = create_country()
+    state = create_state()
+    city = create_city()
     event_1 = ["Open Source Event", "2012-10-22", "2012-10-23"]
     event_2 = ["Python Event", "2013-11-12", "2013-11-13"]
     event_3 = ["Django Event", "2015-07-02", "2015-07-03"]
@@ -161,6 +164,9 @@ class EventWithJobTests(unittest.TestCase):
         cls.s1 = s1
         cls.s2 = s2
         cls.j1 = j1
+        cls.country = country
+        cls.state = state
+        cls.city = city
 
     @classmethod
     def setUpClass(cls):
@@ -240,12 +246,12 @@ class EventWithJobTests(unittest.TestCase):
         self.assertIn(self.e3, search_list)
 
         # test exact search
-        e1.city = 'event-city'
-        e1.state = 'event-state'
-        e1.country = 'event-country'
+        e1.city = self.city
+        e1.state = self.state
+        e1.country = self.country
         e1.save()
         search_list = search_events("Open Source Event", "2012-10-22", "2012-10-23",
-                                    "event-city", "event-state", "event-country", "Software Developer")
+                                    "Roorkee", "Uttarakhand", "India", "Software Developer")
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.e1, search_list)
@@ -260,9 +266,9 @@ class EventWithJobTests(unittest.TestCase):
         self.assertNotIn(self.e2, search_list)
         self.assertNotIn(self.e3, search_list)
 
-        e2.city = 'event-city'
+        e2.city = self.city
         e2.save()
-        search_list = search_events(None, None, None, 'event-city', None, None, None)
+        search_list = search_events(None, None, None, 'Roorkee', None, None, None)
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 2)
         self.assertIn(self.e1, search_list)
@@ -316,17 +322,16 @@ class EventWithVolunteerTest(unittest.TestCase):
         cls.s4 = s4
 
         volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "yoshi@nintendo.com"
+            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
+            "2374983247", "yoshi@nintendo.com"
         ]
         volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
-            "USA", "23454545", "john@test.com"
+            'John', "John", "Doe", "7 Alpine Street", city, state, country,
+            "23454545", "john@test.com"
         ]
         volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
-            "Japan", "23454545", "ash@pikachu.com"
+            'Ash', "Ash", "Ketchum", "Pallet Town", city, state, country,
+            "23454545", "ash@pikachu.com"
         ]
 
         org_name = 'volunteer-organization'

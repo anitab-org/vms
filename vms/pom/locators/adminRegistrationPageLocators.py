@@ -7,9 +7,9 @@ class AdminRegistrationPageLocators(object):
     LAST_NAME = 'id_last_name'
     EMAIL = 'id_email'
     ADDRESS = 'id_address'
-    CITY = 'id_city'
-    STATE = 'id_state'
-    COUNTRY = 'id_country'
+    CITY = 'select_country'
+    STATE = 'select_state'
+    COUNTRY = 'select_country'
     PHONE = 'id_phone_number'
     ORGANIZATION = 'id_unlisted_organization'
 

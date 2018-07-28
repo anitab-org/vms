@@ -44,7 +44,7 @@ class VolunteerForm(forms.ModelForm):
     class Meta:
         model = Volunteer
         fields = [
-            'first_name', 'last_name', 'address', 'city', 'state', 'country',
-            'phone_number', 'email', 'websites',
+            'first_name', 'last_name', 'address', 'phone_number', 'email', 'websites',
             'description', 'resume', 'resume_file', 'reminder_days'
         ]
+

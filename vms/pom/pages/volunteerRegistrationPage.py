@@ -29,9 +29,9 @@ class VolunteerRegistrationPage(BasePage):
         self.send_value_to_element_id(elements.LAST_NAME, info[4])
         self.send_value_to_element_id(elements.EMAIL, info[5])
         self.send_value_to_element_id(elements.ADDRESS, info[6])
-        self.send_value_to_element_id(elements.CITY, info[7])
-        self.send_value_to_element_id(elements.STATE, info[8])
         self.send_value_to_element_id(elements.COUNTRY, info[9])
+        self.send_value_to_element_id(elements.STATE, info[8])
+        self.send_value_to_element_id(elements.CITY, info[7])
         self.send_value_to_element_id(elements.PHONE, info[10])
         self.send_value_to_element_id(elements.ORGANIZATION, info[11])
         self.submit_form()
@@ -108,7 +108,7 @@ class VolunteerRegistrationPage(BasePage):
             'volunteer-password!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email@systers.org', 'volunteer-address',
-            'volunteer-city', 'volunteer-state', 'volunteer-country',
+            'India', 'Roorkee', 'Uttarakhand',
             '9999999999', 'volunteer-org'
         ]
         self.fill_registration_form(entry)
