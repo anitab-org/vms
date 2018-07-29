@@ -1,5 +1,6 @@
 # third party
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -18,7 +19,9 @@ class JobDetails(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.job_details_page = JobDetailsPage(cls.driver)

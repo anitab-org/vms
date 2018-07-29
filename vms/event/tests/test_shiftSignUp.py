@@ -4,6 +4,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 # local Django
 from job.models import Job
@@ -23,7 +24,9 @@ class ShiftSignUp(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.sign_up_page = EventSignUpPage(cls.driver)

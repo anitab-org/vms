@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-
+from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -41,7 +41,9 @@ class ViewVolunteerShift(LiveServerTestCase):
         This method initiates Firefox WebDriver, WebDriverWait and
         the corresponding POM objects for this Test Class
         """
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.manage_shift_page = ManageShiftPage(cls.driver)

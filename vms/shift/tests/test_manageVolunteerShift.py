@@ -7,6 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
@@ -63,7 +64,9 @@ class ManageVolunteerShift(LiveServerTestCase):
             'volunteer-email2@systers.org', 'volunteer-two'
         ]
 
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.sign_up_page = EventSignUpPage(cls.driver)

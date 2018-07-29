@@ -2,13 +2,13 @@
 import json
 
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import NoSuchElementException
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
 
 # local Django
-from selenium.common.exceptions import NoSuchElementException
-
 from organization.models import Organization
 from pom.locators.administratorReportPageLocators import AdministratorReportPageLocators
 from pom.pages.administratorReportPage import AdministratorReportPage
@@ -25,7 +25,9 @@ class Report(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.authentication_page = AuthenticationPage(cls.driver)

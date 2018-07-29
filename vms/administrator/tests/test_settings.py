@@ -1,6 +1,7 @@
 # third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -61,7 +62,9 @@ class Settings(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.settings = EventsPage(cls.driver)
