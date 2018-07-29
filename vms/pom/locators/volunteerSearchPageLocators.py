@@ -11,3 +11,6 @@ class VolunteerSearchPageLocators(object):
     RESULT_BODY = '//table//tbody'
     HELP_BLOCK = 'help-block'
     SUBMIT_PATH = 'btn'
+    VIEW_REPORTS = '//table//tbody//tr[1]//td[10]'
+    TOTAL_REPORTS = '//div[2]//div[4]'
+

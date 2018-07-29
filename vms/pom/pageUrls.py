@@ -15,6 +15,7 @@ class PageUrls(object):
     volunteer_report_page = '/volunteer/report/'
     volunteer_registration_page = '/registration/signup_volunteer/'
     volunteer_search_page = '/volunteer/search/'
+    volunteer_history_page = '/volunteer/view_history/'
     manage_volunteer_shift_page = '/shift/volunteer_search/'
     upcoming_shifts_page = '/shift/view_volunteer_shifts/'
     completed_shifts_page = '/shift/view_hours/'
@@ -22,3 +23,4 @@ class PageUrls(object):
     volunteer_profile_page = '/volunteer/profile/'
     password_reset_page = '/authentication/password_reset/'
     password_reset_done_page = '/authentication/password_reset/done/'
+

@@ -1,4 +1,5 @@
 # third party
+import datetime
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,7 +12,13 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.volunteerSearchPage import VolunteerSearchPage
-from shift.utils import (create_admin, create_volunteer_with_details, create_organization_with_details, register_volunteer_for_shift_utility, register_event_utility, register_job_utility, register_shift_utility)
+from pom.pages.volunteerReportPage import VolunteerReportPage
+from pom.locators.volunteerSearchPageLocators import VolunteerSearchPageLocators
+from pom.pageUrls import PageUrls
+from shift.utils import (create_admin, create_volunteer_with_details, create_organization_with_details,
+                         register_past_event_utility, register_past_shift_utility, register_past_job_utility,
+                         create_report_with_details, log_hours_with_details, register_volunteer_for_shift_utility,
+                         register_event_utility, register_job_utility, register_shift_utility)
 
 
 class SearchVolunteer(LiveServerTestCase):
@@ -43,7 +50,9 @@ class SearchVolunteer(LiveServerTestCase):
         cls.driver.maximize_window()
         cls.search_page = VolunteerSearchPage(cls.driver)
         cls.authentication_page = AuthenticationPage(cls.driver)
+        cls.report_page = VolunteerReportPage(cls.driver)
         cls.wait = WebDriverWait(cls.driver, 10)
+        cls.elements = VolunteerSearchPageLocators()
         super(SearchVolunteer, cls).setUpClass()
 
     def setUp(self):
@@ -81,6 +90,16 @@ class SearchVolunteer(LiveServerTestCase):
             'password': 'admin'
         })
 
+    def verify_report_details(self, reports):
+        """
+        Utility function to verify the shift details.
+        :param total_reports: Total number of reports as filled in form.
+        :param reports: Total number of reports as filled in form.
+        """
+        total_no_of_reports = self.report_page.get_shift_summary().split(' ')[-1].strip('\n')
+        self.assertEqual(total_no_of_reports, reports)
+
+
     def wait_for_home_page(self):
         """
         Utility function to perform explicit wait for home page.
@@ -117,8 +136,11 @@ class SearchVolunteer(LiveServerTestCase):
 
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_one = ['VOLUNTEER-FIRST-NAME', 'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+                               'volunteer-state', 'volunteer-country', '9999999999', 'volunteer-email@systers.org', 'View']
+
+        expected_result_two = ['volunteer-first-name', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-stateq', 'volunteer-countryq', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.search_first_name_field('volunteer')
         search_page.submit_form()
@@ -180,8 +202,11 @@ class SearchVolunteer(LiveServerTestCase):
         ]
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_one = ['volunteer-first-name', 'VOLUNTEER-LAST-NAME', 'volunteer-address', 'volunteer-city',
+                               'volunteer-state', 'volunteer-country', '9999999999', 'volunteer-email@systers.org', 'View']
+
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-name', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-stateq', 'volunteer-countryq', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.search_last_name_field('volunteer')
         search_page.submit_form()
@@ -245,8 +270,11 @@ class SearchVolunteer(LiveServerTestCase):
 
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'VOLUNTEER-CITY',
+                               'volunteer-state', 'volunteer-country', '9999999999', 'volunteer-email@systers.org', 'View']
+
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-city',
+                               'volunteer-stateq', 'volunteer-countryq', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.search_city_field('volunteer')
         search_page.submit_form()
@@ -310,8 +338,11 @@ class SearchVolunteer(LiveServerTestCase):
 
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+                               'VOLUNTEER-STATE', 'volunteer-country', '9999999999', 'volunteer-email@systers.org', 'View']
+
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-state', 'volunteer-countryq', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.search_state_field('volunteer')
         search_page.submit_form()
@@ -375,8 +406,11 @@ class SearchVolunteer(LiveServerTestCase):
 
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+                               'volunteer-state', 'VOLUNTEER-COUNTRY', '9999999999', 'volunteer-email@systers.org', 'View']
+
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-stateq', 'volunteer-country', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.search_country_field('volunteer')
         search_page.submit_form()
@@ -446,19 +480,11 @@ class SearchVolunteer(LiveServerTestCase):
         volunteer_1.save()
         volunteer_2.save()
 
-        expected_result_one = [
-            'volunteer-first-nameq', 'volunteer-last-nameq',
-            'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
-            'volunteer-countryq', 'volunteer-organization', '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+                               'volunteer-state', 'volunteer-country', 'VOLUNTEER-ORGANIZATION', '9999999999', 'volunteer-email@systers.org', 'View']
 
-        expected_result_two = [
-            'volunteer-first-name', 'volunteer-last-name', 'volunteer-address',
-            'volunteer-city', 'volunteer-state', 'volunteer-country',
-            'VOLUNTEER-ORGANIZATION', '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-stateq', 'volunteer-countryq', 'volunteer-organization', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.navigate_to_volunteer_search_page()
         search_page.search_organization_field('volunteer')
@@ -492,8 +518,7 @@ class SearchVolunteer(LiveServerTestCase):
             'volunteer-username', 'volunteer-first-name',
             'volunteer-last-name', 'volunteer-address', 'volunteer-city',
             'volunteer-state', 'volunteer-country', '9999999999',
-            'volunteer-email@systers.org', 'volunteer-organization'
-        ]
+            'volunteer-email@systers.org', 'volunteer-organization']
 
         volunteer_1 = create_volunteer_with_details(credentials_1)
 
@@ -501,8 +526,7 @@ class SearchVolunteer(LiveServerTestCase):
             'volunteer-usernameq', 'volunteer-first-nameq',
             'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
             'volunteer-stateq', 'volunteer-countryq', '9999999999',
-            'volunteer-email2@systers.orgq', 'volunteer-organizationq'
-        ]
+            'volunteer-email2@systers.orgq', 'volunteer-organizationq']
 
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
@@ -510,8 +534,12 @@ class SearchVolunteer(LiveServerTestCase):
         register_job_utility()
         shift = register_shift_utility()
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+                               'volunteer-state', 'volunteer-country', '9999999999', 'volunteer-email@systers.org', 'View']
+
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-stateq', 'volunteer-countryq', '9999999999', 'volunteer-email2@systers.orgq', 'View']
+
 
         # search events with no volunteers
         search_page.search_event_field("event")
@@ -545,7 +573,7 @@ class SearchVolunteer(LiveServerTestCase):
             'volunteer-last-name', 'volunteer-address', 'volunteer-city',
             'volunteer-state', 'volunteer-country', '9999999999',
             'volunteer-email@systers.org', 'volunteer-organization'
-        ]
+            'View']
 
         volunteer_1 = create_volunteer_with_details(credentials_1)
 
@@ -554,16 +582,18 @@ class SearchVolunteer(LiveServerTestCase):
             'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
             'volunteer-stateq', 'volunteer-countryq', '9999999999',
             'volunteer-email2@systers.orgq', 'volunteer-organizationq'
-        ]
+            'View']
 
         volunteer_2 = create_volunteer_with_details(credentials_2)
 
         register_event_utility()
         register_job_utility()
         shift = register_shift_utility()
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'volunteer-city',
+                               'volunteer-state', 'volunteer-country', '9999999999', 'volunteer-email@systers.org', 'View']
 
-        expected_result_one = credentials_1[1:-1]
-        expected_result_two = credentials_2[1:-1]
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq',
+                               'volunteer-stateq', 'volunteer-countryq', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         # volunteer_1 and volunteer_2 registered for job
         register_volunteer_for_shift_utility(shift, volunteer_1)
@@ -622,19 +652,9 @@ class SearchVolunteer(LiveServerTestCase):
         register_volunteer_for_shift_utility(shift, volunteer_1)
         register_volunteer_for_shift_utility(shift, volunteer_2)
 
-        expected_result_one = [
-            'volunteer-first-nameq', 'volunteer-last-nameq',
-            'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq',
-            'volunteer-countryq', 'volunteer-organization', '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        expected_result_one = ['volunteer-first-name', 'volunteer-last-name', 'volunteer-address', 'volunteer-city', 'volunteer-state', 'volunteer-country', 'VOLUNTEER-ORGANIZATION', '9999999999', 'volunteer-email@systers.org', 'View']
 
-        expected_result_two = [
-            'volunteer-first-name', 'volunteer-last-name', 'volunteer-address',
-            'volunteer-city', 'volunteer-state', 'volunteer-country',
-            'VOLUNTEER-ORGANIZATION', '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        expected_result_two = ['volunteer-first-nameq', 'volunteer-last-nameq', 'volunteer-addressq', 'volunteer-cityq', 'volunteer-stateq', 'volunteer-countryq', 'volunteer-organization', '9999999999', 'volunteer-email2@systers.orgq', 'View']
 
         search_page.navigate_to_volunteer_search_page()
 
@@ -667,4 +687,33 @@ class SearchVolunteer(LiveServerTestCase):
         self.assertRaisesRegexp(NoSuchElementException,
                                 'Unable to locate element: //table//tbody',
                                 search_page.get_search_results)
+
+    def test_check_volunteer_reports(self):
+        search_page = self.search_page
+        search_page.live_server_url = self.live_server_url
+        credentials_1 = [
+            'volunteer-username', 'volunteer-first-name',
+            'VOLUNTEER-LAST-NAME', 'volunteer-address', 'volunteer-city',
+            'volunteer-state', 'volunteer-country', '9999999999',
+            'volunteer-email@systers.org', 'volunteer-organization'
+        ]
+        vol = create_volunteer_with_details(credentials_1)
+
+        register_past_event_utility()
+        register_past_job_utility()
+        shift = register_past_shift_utility()
+        start=datetime.time(hour=10, minute=0)
+        end=datetime.time(hour=11, minute=0)
+        logged_shift = log_hours_with_details(vol, shift, start, end)
+        report = create_report_with_details(vol, logged_shift)
+        report.confirm_status = 1
+        report.save()
+
+        search_page.navigate_to_volunteer_search_page()
+        search_page.submit_form()
+
+        self.assertEqual(search_page.element_by_xpath(self.elements.VIEW_REPORTS).text, 'View')
+        search_page.element_by_xpath(self.elements.VIEW_REPORTS + '//a').click()
+        self.assertEqual(search_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.volunteer_history_page + str(vol.id))
+        self.verify_report_details('1')
 

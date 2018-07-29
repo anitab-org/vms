@@ -8,10 +8,10 @@ from django.contrib.auth.models import User
 from administrator.models import Administrator
 from event.models import Event
 from job.models import Job
-from shift.models import Shift, VolunteerShift, EditRequest
+from shift.models import Shift, VolunteerShift, EditRequest, Report
+from shift.services import calculate_duration
 from volunteer.models import Volunteer
 from organization.models import Organization
-
 
 # Contains common functions which need to be frequently called by tests
 
@@ -44,6 +44,14 @@ def create_event_with_details(event):
     e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
     e1.save()
     return e1
+
+
+def create_report_with_details(vol, logged_shift):
+     total_hours = calculate_duration(logged_shift.start_time, logged_shift.end_time)
+     r1 = Report.objects.create(volunteer=vol, total_hrs=total_hours)
+     r1.volunteer_shifts.add(logged_shift)
+     r1.save()
+     return r1
 
 
 def create_job_with_details(job):
@@ -255,6 +263,7 @@ def register_past_shift_utility():
         job=Job.objects.get(name='job'))
 
     return shift
+
 
 def register_event_utility():
     event = Event.objects.create(
