@@ -14,7 +14,6 @@ class EventSignUpPage(BasePage):
         self.driver = driver
         self.home_page = HomePage(self.driver)
         self.elements = EventSignUpPageLocators()
-
         super(EventSignUpPage, self).__init__(driver)
 
     def submit_search_form(self):
@@ -66,6 +65,24 @@ class EventSignUpPage(BasePage):
         self.send_value_to_element_id(self.elements.EVENT_STATE, parameters[4])
         self.send_value_to_element_id(self.elements.EVENT_COUNTRY, parameters[5])
         self.submit_search_form()
+
+    def fill_job_search_form(self, parameters):
+        self.element_by_id(self.elements.SEARCH_JOB_NAME).clear()
+        self.element_by_id(self.elements.JOB_START_DATE_FROM).clear()
+        self.element_by_id(self.elements.JOB_START_DATE_TO).clear()
+        self.element_by_id(self.elements.JOB_CITY).clear()
+        self.element_by_id(self.elements.JOB_STATE).clear()
+        self.element_by_id(self.elements.JOB_COUNTRY).clear()
+        self.send_value_to_element_id(self.elements.SEARCH_JOB_NAME, parameters[0])
+        self.send_value_to_element_id(self.elements.JOB_START_DATE_FROM, parameters[1])
+        self.send_value_to_element_id(self.elements.JOB_START_DATE_TO, parameters[2])
+        self.send_value_to_element_id(self.elements.JOB_CITY, parameters[3])
+        self.send_value_to_element_id(self.elements.JOB_STATE, parameters[4])
+        self.send_value_to_element_id(self.elements.JOB_COUNTRY, parameters[5])
+        self.submit_search_form()
+
+    def get_job_name(self):
+        return self.element_by_xpath(self.elements.EVENT_JOB_NAME).text
 
     def get_info_box(self):
         return self.element_by_class_name(self.elements.INFO_BOX)
