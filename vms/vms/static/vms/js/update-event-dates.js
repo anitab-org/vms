@@ -1,9 +1,10 @@
-function update_event_dates(){
-	var event_list = document.getElementById("events");
-	var selected_event = event_list.options[event_list.selectedIndex];
-	var start_date = selected_event.getAttribute("start_date");
-	var end_date = selected_event.getAttribute("end_date");
-	document.getElementById("start_date_here").innerHTML = start_date;
-	document.getElementById("end_date_here").innerHTML = end_date;
+/** Shows start and end dates of selected event while creating/editing jobs */
+function updateEventDates() {
+  var eventList = document.getElementById("events");
+  var selectedEvent = eventList.options[eventList.selectedIndex];
+  var startDate = selectedEvent.getAttribute("start_date");
+  var endDate = selectedEvent.getAttribute("end_date");
+  document.getElementById("start_date_here").innerHTML = startDate;
+  document.getElementById("end_date_here").innerHTML = endDate;
 }
-update_event_dates();
+updateEventDates();

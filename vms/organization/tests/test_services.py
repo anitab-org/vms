@@ -3,7 +3,7 @@ import unittest
 
 # local Django
 from organization.models import Organization
-from organization.services import get_organization_by_id, delete_organization, get_organization_by_name, get_organizations_ordered_by_name 
+from organization.services import get_organization_by_id, delete_organization, get_organization_by_name, get_organizations_ordered_by_name
 from shift.utils import clear_objects, create_volunteer_with_details
 
 
@@ -38,21 +38,21 @@ class OrganizationMethodTests(unittest.TestCase):
         self.assertEqual(get_organization_by_id(self.o2.id), self.o2)
         self.assertEqual(get_organization_by_id(self.o3.id), self.o3)
 
-        self.assertIsNone(get_organization_by_id(100))
-        self.assertIsNone(get_organization_by_id(200))
-        self.assertIsNone(get_organization_by_id(300))
+        self.assertIsNone(get_organization_by_id(1000))
+        self.assertIsNone(get_organization_by_id(2000))
+        self.assertIsNone(get_organization_by_id(3000))
 
-        self.assertNotEqual(get_organization_by_id(100), self.o1)
-        self.assertNotEqual(get_organization_by_id(200), self.o1)
-        self.assertNotEqual(get_organization_by_id(300), self.o1)
+        self.assertNotEqual(get_organization_by_id(1000), self.o1)
+        self.assertNotEqual(get_organization_by_id(2000), self.o1)
+        self.assertNotEqual(get_organization_by_id(3000), self.o1)
 
-        self.assertNotEqual(get_organization_by_id(100), self.o2)
-        self.assertNotEqual(get_organization_by_id(200), self.o2)
-        self.assertNotEqual(get_organization_by_id(300), self.o2)
+        self.assertNotEqual(get_organization_by_id(1000), self.o2)
+        self.assertNotEqual(get_organization_by_id(2000), self.o2)
+        self.assertNotEqual(get_organization_by_id(3000), self.o2)
 
-        self.assertNotEqual(get_organization_by_id(100), self.o3)
-        self.assertNotEqual(get_organization_by_id(200), self.o3)
-        self.assertNotEqual(get_organization_by_id(300), self.o3)
+        self.assertNotEqual(get_organization_by_id(1000), self.o3)
+        self.assertNotEqual(get_organization_by_id(2000), self.o3)
+        self.assertNotEqual(get_organization_by_id(3000), self.o3)
 
     def test_get_organization_by_name(self):
 
@@ -111,9 +111,7 @@ class DeleteOrganizationTests(unittest.TestCase):
             "Nintendo State", "Nintendo Nation", "2374983247",
             "yoshi@nintendo.com"
         ]
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v1.organization = cls.o2
-        cls.v1.save()
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.o2)
 
     @classmethod
     def setUpClass(cls):
@@ -126,4 +124,4 @@ class DeleteOrganizationTests(unittest.TestCase):
     def test_delete_organization(self):
         self.assertTrue(delete_organization(self.o1.id))
         self.assertFalse(delete_organization(self.o2.id))
-        self.assertFalse(delete_organization(100))
+        self.assertFalse(delete_organization(1000))

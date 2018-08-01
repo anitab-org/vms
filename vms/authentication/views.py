@@ -23,3 +23,4 @@ def anonymous_required(func):
         return response
 
     return as_view
+

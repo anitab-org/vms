@@ -62,6 +62,46 @@
                 </div>
             </div>
         {% endif %}
+        {% if user_form.confirm_password.errors %}
+            <div id="div_id_confirm_password" class="form-group has-error">
+                <label class="control-label requiredField" for="id_confirm_password">
+                    {% trans "Confirm Password" %}<span class="asteriskField">*</span>
+                </label>
+                <div class="controls">
+                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
+                    <p class="help-block">
+                        <strong>
+                            {% for error in user_form.confirm_password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </strong>
+                    </p>
+                </div>
+            </div>
+         {% elif match_error %}
+            <div id="div_id_confirm_password" class="form-group has-error">
+                <label class="control-label requiredField" for="id_confirm_password">
+                    {% trans "Confirm Password" %}<span class="asteriskField">*</span>
+                </label>
+                <div class="controls">
+                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
+                    <p class="help-block">
+                        <strong>
+                         Passwords don't match.
+                       </strong>
+                     </p>
+                 </div>
+            </div>
+        {% else %}
+            <div id="div_id_confirm_password" class="form-group">
+                <label class="control-label requiredField" for="id_confirm_password">
+                    {% trans "Confirm Password" %}<span class="asteriskField">*</span>
+                </label>
+                <div class="controls">
+                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
+                </div>
+            </div>
+        {% endif %}
         {% if volunteer_form.description.errors %}
             <div id="div_id_description" class="form-group has-error">
                 <label class="control-label" for="id_description">
@@ -314,7 +354,7 @@
             <label class="control-label">
                 {% trans "Organization" %}
             </label>
-            <select id="select" class="form-control" name="organization_name" onchange="hide_organization()">
+            <select id="select" class="form-control" name="organization_name" onchange="hideOrganization()">
                 <option value="0">-- {% trans "Select Organization" %} --</option>
                 {% for organization in organization_list %}
                     <option value="{{ organization.id }}">{{ organization.name }}</option>
@@ -347,7 +387,7 @@
                 </div>
             </div>
         {% endif %}
-        <script type="text/javascript" src="{% static 'vms/js/hide_organization.js' %}"></script>
+        <script type="text/javascript" src="{% static 'vms/js/hide-organization.js' %}"></script>
         {% if volunteer_form.websites.errors %}
             <div id="div_id_websites" class="form-group has-error">
                 <label class="control-label" for="id_websites">

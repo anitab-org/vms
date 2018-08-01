@@ -1,0 +1,12 @@
+Hello admin,
+{{volunteer.first_name}} {{volunteer.last_name}}  has requested to edit their shift from {{original_start_time}} - {{original_end_time}} to {{new_start_time}} - {{new_end_time}} for {{event.name}}.
+
+Original Hours: {{original_start_time}} - {{original_end_time}}
+New Hours: {{new_start_time}} - {{new_end_time}}
+
+To confirm their changes, please click on the link below to edit.
+http://{{domain}}/shift/edit_request_manager/{{shift_id}}/{{volunteer.id}}/{{edit_request.id}}
+
+Thank you for your service,
+VMS
+

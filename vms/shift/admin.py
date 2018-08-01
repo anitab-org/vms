@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 # local Django
-from shift.models import Shift, VolunteerShift
+from shift.models import Shift, VolunteerShift, EditRequest, Report
 
 
 class ShiftAdmin(admin.ModelAdmin):
@@ -17,3 +17,18 @@ class VolunteerShiftAdmin(admin.ModelAdmin):
 
 
 admin.site.register(VolunteerShift, VolunteerShiftAdmin)
+
+
+class EditRequestAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(EditRequest, EditRequestAdmin)
+
+
+class ReportAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(Report, ReportAdmin)
+

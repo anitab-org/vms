@@ -1,5 +1,11 @@
 class BasePage(object):
     """Base class to initialize the base page that will be called from all pages"""
+    ENTER_VALID_VALUE = 'Enter a valid value.'
+    FIELD_REQUIRED = 'This field is required.'
+    FIELD_CANNOT_LEFT_BLANK = 'This field cannot be blank.'
+    START_BEFORE_END = 'Start date must be before the end date'
+    ENTER_VALID_USERNAME = 'Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.'
+
 
     def __init__(self, driver):
         self.driver = driver
@@ -48,3 +54,12 @@ class BasePage(object):
 
     def element_by_tag_name(self, tag):
         return self.driver.find_element_by_tag_name(tag)
+
+    def execute_script(self, script, element):
+        self.driver.execute_script(script, element)
+
+    @staticmethod
+    def remove_i18n(string):
+        slashes = [pos for pos, char in enumerate(string) if char == '/']
+        return string[:slashes[2]] + string[slashes[3]:]
+

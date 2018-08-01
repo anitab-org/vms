@@ -1,5 +1,5 @@
 # local Django
-from basePage import BasePage
+from pom.pages.basePage import BasePage
 from pom.locators.eventSignUpPageLocators import EventSignUpPageLocators
 from pom.locators.manageShiftPageLocators import ManageShiftPageLocators
 from pom.pages.homePage import HomePage
@@ -10,6 +10,8 @@ class ManageShiftPage(BasePage):
 
     shift_page = PageUrls.manage_volunteer_shift_page
     shift_assignment_text = 'Assign Shift'
+    VIEW_SHIFT = 'View Shifts'
+    VIEW_JOB = 'View Jobs'
     no_volunteer_shift_message = 'This volunteer does not have any upcoming shifts.'
     live_server_url = ''
 

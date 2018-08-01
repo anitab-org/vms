@@ -1,5 +1,5 @@
 # local Django
-from basePage import BasePage
+from pom.pages.basePage import BasePage
 from pom.locators.upcomingShiftsPageLocators import UpcomingShiftsPageLocators
 from pom.pages.completedShiftsPage import CompletedShiftsPage
 from pom.pages.homePage import HomePage
@@ -10,6 +10,7 @@ class UpcomingShiftsPage(BasePage):
 
     view_shift_page = PageUrls.upcoming_shifts_page
     no_shift_message = 'You do not have any upcoming shifts.'
+    live_server_url = ''
 
     def __init__(self, driver):
         self.driver = driver
@@ -19,7 +20,7 @@ class UpcomingShiftsPage(BasePage):
         super(UpcomingShiftsPage, self).__init__(driver)
 
     def view_upcoming_shifts(self):
-        self.home_page.get_upcoming_shifts_link().send_keys('\n')
+        self.home_page.get_upcoming_shifts_link().click()
 
     def submit_form(self):
         self.element_by_xpath(self.elements.SUBMIT_PATH).submit()
@@ -42,18 +43,9 @@ class UpcomingShiftsPage(BasePage):
     def get_shift_end_time(self):
         return self.element_by_xpath(self.elements.SHIFT_ETIME_PATH).text
 
-    def get_log_hours(self):
-        return self.element_by_xpath(self.elements.LOG_SHIFT_HOURS_PATH).text
-
-    def click_to_log_hours(self):
-        self.element_by_xpath(
-            self.elements.LOG_SHIFT_HOURS_PATH + "//a").click()
-
-    def log_shift_timings(self, stime, etime):
-        self.completed_shifts_page.log_shift_timings(stime, etime)
-
     def get_cancel_shift(self):
         return self.element_by_xpath(self.elements.SHIFT_CANCEL_PATH)
 
     def cancel_shift(self):
         self.element_by_xpath(self.elements.SHIFT_CANCEL_PATH + "//a").click()
+

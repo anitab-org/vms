@@ -1,8 +1,7 @@
 # local Django
-from basePage import BasePage
-from pom.locators.volunteerProfilePageLocators import VolunteerProfilePageLocators 
+from pom.pages.basePage import BasePage
+from pom.locators.volunteerProfilePageLocators import VolunteerProfilePageLocators
 from pom.pages.homePage import HomePage
-
 
 class VolunteerProfilePage(BasePage):
     def __init__(self, driver):
@@ -12,10 +11,11 @@ class VolunteerProfilePage(BasePage):
         super(VolunteerProfilePage, self).__init__(driver)
 
     def navigate_to_profile(self):
-        self.home_page.get_volunteer_profile_link().send_keys("\n")
+        element = self.home_page.get_volunteer_profile_link()
+        self.execute_script('arguments[0].click();', element)
 
     def edit_profile(self):
-        self.find_link(self.elements.EDIT_PROFILE_TEXT).send_keys("\n")
+        self.find_link(self.elements.EDIT_PROFILE_TEXT).click()
 
     def fill_values(self, new_details):
         elements = self.elements
@@ -27,7 +27,7 @@ class VolunteerProfilePage(BasePage):
         self.fill_field(elements.PROFILE_STATE, new_details[5])
         self.fill_field(elements.PROFILE_COUNTRY, new_details[6])
         self.fill_field(elements.PROFILE_PHONE, new_details[7])
-        self.send_value_to_xpath(elements.SELECT_ORGANIZATION, new_details[8])
+        self.element_by_xpath(self.elements.SELECT_NONE_ORGANIZATION).click()
         self.fill_field(elements.UNLISTED_ORGANIZATION, new_details[9])
         self.submit_form()
 

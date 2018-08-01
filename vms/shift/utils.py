@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from administrator.models import Administrator
 from event.models import Event
 from job.models import Job
-from shift.models import Shift, VolunteerShift
+from shift.models import Shift, VolunteerShift, EditRequest, Report
+from shift.services import calculate_duration
 from volunteer.models import Volunteer
 from organization.models import Organization
 
@@ -30,6 +31,12 @@ def clear_objects():
     Organization.objects.all().delete()
 
 
+def create_edit_request_with_details(start_time, end_time, logged_shift):
+    er1 = EditRequest(volunteer_shift=logged_shift, start_time=start_time, end_time=end_time)
+    er1.save()
+    return er1
+
+
 def create_event_with_details(event):
     """
     Creates and returns event with passed name and dates
@@ -37,6 +44,14 @@ def create_event_with_details(event):
     e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
     e1.save()
     return e1
+
+
+def create_report_with_details(vol, logged_shift):
+     total_hours = calculate_duration(logged_shift.start_time, logged_shift.end_time)
+     r1 = Report.objects.create(volunteer=vol, total_hrs=total_hours)
+     r1.volunteer_shifts.add(logged_shift)
+     r1.save()
+     return r1
 
 
 def create_job_with_details(job):
@@ -55,7 +70,7 @@ def create_job_with_details(job):
     return j1
 
 
-def create_volunteer_with_details(volunteer):
+def create_volunteer_with_details(volunteer, org_obj):
     """
     Creates and returns volunteer with passed name and dates
     """
@@ -69,7 +84,29 @@ def create_volunteer_with_details(volunteer):
         country=volunteer[6],
         phone_number=volunteer[7],
         email=volunteer[8],
-        user=u1)
+        user=u1,
+        organization=org_obj)
+
+    v1.save()
+    return v1
+
+
+def create_volunteer_with_details_dynamic_password(volunteer):
+    """
+    Creates and returns volunteer with passed name and dates
+    """
+    u1 = User.objects.create_user(username=volunteer[0], password=volunteer[1])
+    v1 = Volunteer(
+        email=volunteer[2],
+        first_name=volunteer[3],
+        last_name=volunteer[4],
+        address=volunteer[5],
+        city=volunteer[6],
+        state=volunteer[7],
+        country=volunteer[8],
+        phone_number=volunteer[9],
+        user=u1
+    )
 
     v1.save()
     return v1
@@ -79,12 +116,23 @@ def create_shift_with_details(shift):
     """
     Creates and returns shift with passed name and dates
     """
-    s1 = Shift(
-        date=shift[0],
-        start_time=shift[1],
-        end_time=shift[2],
-        max_volunteers=shift[3],
-        job=shift[4])
+    if len(shift) == 5:
+        s1 = Shift(
+            date=shift[0],
+            start_time=shift[1],
+            end_time=shift[2],
+            max_volunteers=shift[3],
+            job=shift[4])
+    elif len(shift) == 7:
+        s1 = Shift(
+            date=shift[0],
+            start_time=shift[1],
+            end_time=shift[2],
+            max_volunteers=shift[3],
+            job=shift[4],
+            address=shift[5],
+            venue=shift[6]
+        )
     s1.save()
     return s1
 
@@ -151,10 +199,10 @@ def create_country():
         phone='91')
 
 
-def create_admin():
-
+def create_admin_with_unlisted_org():
     user_1 = User.objects.create_user(username='admin', password='admin')
-
+    org_1 = Organization.objects.create(name='organization', approved_status=0)
+    org_1.save()
     admin = Administrator.objects.create(
         user=user_1,
         address='address',
@@ -163,16 +211,34 @@ def create_admin():
         country='country',
         phone_number='9999999999',
         email='admin@admin.com',
-        unlisted_organization='organization')
+        organization=org_1)
+
+    return admin
+
+def create_admin():
+    user_1 = User.objects.create_user(username='admin', password='admin')
+    org_name = 'organization'
+    org_1 = create_organization_with_details(org_name)
+    admin = Administrator.objects.create(
+        user=user_1,
+        address='address',
+        city='city',
+        state='state',
+        country='country',
+        phone_number='9999999999',
+        email='admin@admin.com',
+        first_name='Son',
+        last_name='Goku',
+        organization=org_1)
 
     return admin
 
 
 def create_volunteer():
-
     user_1 = User.objects.create_user(
         username='volunteer', password='volunteer')
-
+    org_name = 'volunteerorganization'
+    org_1 = create_organization_with_details(org_name)
     volunteer = Volunteer.objects.create(
         user=user_1,
         address='address',
@@ -181,14 +247,44 @@ def create_volunteer():
         country='country',
         phone_number='9999999999',
         email='volunteer@volunteer.com',
-        unlisted_organization='organization')
+        first_name='Prince',
+        last_name='Vegeta',
+        organization=org_1)
 
     return volunteer
 
 
+def register_past_event_utility():
+    event = Event.objects.create(
+        name='event', start_date='2012-05-10', end_date='2012-06-16')
+
+    return event
+
+
+def register_past_job_utility():
+    job = Job.objects.create(
+        name='job',
+        start_date='2012-05-10',
+        end_date='2012-06-15',
+        event=Event.objects.get(name='event'))
+
+    return job
+
+
+def register_past_shift_utility():
+    shift = Shift.objects.create(
+        date='2012-06-15',
+        start_time='09:00',
+        end_time='15:00',
+        max_volunteers='6',
+        job=Job.objects.get(name='job'))
+
+    return shift
+
+
 def register_event_utility():
     event = Event.objects.create(
-        name='event', start_date='2016-05-10', end_date='2018-06-16')
+        name='event', start_date='2050-05-10', end_date='2050-06-16')
 
     return event
 
@@ -196,8 +292,8 @@ def register_event_utility():
 def register_job_utility():
     job = Job.objects.create(
         name='job',
-        start_date='2016-05-10',
-        end_date='2017-06-15',
+        start_date='2050-05-10',
+        end_date='2050-06-15',
         event=Event.objects.get(name='event'))
 
     return job
@@ -205,7 +301,7 @@ def register_job_utility():
 
 def register_shift_utility():
     shift = Shift.objects.create(
-        date='2017-06-15',
+        date='2050-06-15',
         start_time='09:00',
         end_time='15:00',
         max_volunteers='6',

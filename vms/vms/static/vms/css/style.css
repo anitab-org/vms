@@ -23,6 +23,7 @@ body {
   margin-top: 40px;
 }
 
+
 /* Custom page CSS
 -------------------------------------------------- */
 body > .container {
@@ -44,6 +45,15 @@ body > .container {
   text-align: center;
   border: 0;
   box-shadow: none;
+}
+
+#approve {
+  border: 1px solid red;
+}
+
+.approve-heading {
+  text-align: center;
+  color: red;
 }
 
 /* Featurettes

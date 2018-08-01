@@ -8,7 +8,7 @@ from braces.views import LoginRequiredMixin
 from django.conf import settings
 # from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -21,8 +21,9 @@ from django.utils.decorators import method_decorator
 from administrator.utils import admin_required
 from event.services import get_signed_up_events_for_volunteer
 from job.services import get_signed_up_jobs_for_volunteer
-from organization.services import get_organization_by_id, get_organizations_ordered_by_name
-from shift.services import get_volunteer_report, calculate_total_report_hours
+from organization.services import create_organization, get_organization_by_id, get_organizations_ordered_by_name
+from shift.models import Report
+from shift.services import calculate_total_report_hours, get_volunteer_shifts, generate_report
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
 from volunteer.models import Volunteer
 from volunteer.services import (delete_volunteer_resume, search_volunteers,
@@ -40,8 +41,8 @@ def download_resume(request, volunteer_id):
         if request.method == 'POST':
             basename = get_volunteer_resume_file_url(volunteer_id)
             if basename:
-                filename = settings.MEDIA_ROOT + basename
-                wrapper = FileWrapper(file(filename))
+                filename = settings.MEDIA_ROOT + '/..' + basename
+                wrapper = FileWrapper(open(filename, 'rb'))
                 response = HttpResponse(wrapper)
                 response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(filename)
                 response['Content-Length'] = os.path.getsize(filename)
@@ -65,6 +66,41 @@ def delete_resume(request, volunteer_id):
                 raise Http404
     else:
         return HttpResponse(status=403)
+
+
+class VolunteerHistoryView(LoginRequiredMixin, ListView):
+    """
+    Returns reports volunteerwise
+
+    Extends ListView which is a generic class-based view to display list
+    """
+    template_name = 'volunteer/view_history.html'
+    model = Report
+
+    def get_queryset(self):
+       """
+       returns confirmed reports of a volunteer
+
+       :return: confirmed reports of the selected volunteer
+       """
+       volunteer_id = self.kwargs['volunteer_id']
+       volunteer = get_volunteer_by_id(volunteer_id)
+       reports = Report.objects.filter(confirm_status=1, volunteer=volunteer).order_by('date_submitted')
+       return reports
+
+    def get_context_data(self, **kwargs):
+       """
+       displays volunteer information
+
+       :return: volunteer object and its organization
+       """
+       context = super(VolunteerHistoryView, self).get_context_data(**kwargs)
+       volunteer_id = self.kwargs['volunteer_id']
+       volunteer = get_volunteer_by_id(volunteer_id)
+       context['volunteer'] = volunteer
+       organization = volunteer.organization
+       context['organization'] = organization
+       return context
 
 
 '''
@@ -122,7 +158,9 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
         if organization:
             volunteer_to_edit.organization = organization
         else:
-            volunteer_to_edit.organization = None
+            unlisted_org = self.request.POST.get('unlisted_organization')
+            org = create_organization(unlisted_org)
+            volunteer_to_edit.organization = org
 
         # update the volunteer
         volunteer_to_edit.save()
@@ -186,7 +224,7 @@ class ShowFormView(LoginRequiredMixin, FormView):
 
         return render(request, 'volunteer/report.html', {
             'event_list': event_list,
-            'job_list':job_list,
+            'job_list': job_list,
         })
 
 
@@ -198,45 +236,56 @@ class ShowReportListView(LoginRequiredMixin, ListView):
 
     def post(self, request, *args, **kwargs):
         volunteer_id = self.kwargs['volunteer_id']
+        volunteer = get_volunteer_by_id(volunteer_id)
         event_list = get_signed_up_events_for_volunteer(volunteer_id)
         job_list = get_signed_up_jobs_for_volunteer(volunteer_id)
         event_name = self.request.POST['event_name']
         job_name = self.request.POST['job_name']
         start_date = self.request.POST['start_date']
         end_date = self.request.POST['end_date']
-        report_list = get_volunteer_report(volunteer_id, event_name, job_name,
+        volunteer_shift_list = get_volunteer_shifts(volunteer_id, event_name, job_name,
                                            start_date, end_date)
-        total_hours = calculate_total_report_hours(report_list)
-        return render(
-            request, 'volunteer/report.html', {
-                'report_list': report_list,
-                'total_hours': total_hours,
-                'notification': True,
-                'job_list': job_list,
-                'event_list': event_list,
-                'selected_event': event_name,
-                'selected_job': job_name
-            })
+        if volunteer_shift_list:
+            report_list = generate_report(volunteer_shift_list)
+            total_hours = calculate_total_report_hours(report_list)
+            report = Report.objects.create(total_hrs=total_hours, volunteer=volunteer)
+            report.volunteer_shifts.add(*volunteer_shift_list)
+            report.save()
+            return render(request, 'volunteer/report.html', {
+                          'report_list': report_list,
+                          'total_hours': total_hours,
+                          'notification': True,
+                          'job_list': job_list,
+                          'event_list': event_list,
+                          'selected_event': event_name,
+                          'selected_job': job_name
+                          })
+        else:
+            return render(request, 'volunteer/report.html', {
+                          'job_list': job_list,
+                          'event_list': event_list,
+                          'notification': True,
+                          })
 
 
 @login_required
 @admin_required
 def search(request):
-    organizations_list = []
+    organizations_list = get_organizations_ordered_by_name()
     if request.method == 'POST':
         form = SearchVolunteerForm(request.POST)
         if form.is_valid():
-
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
             organization = form.cleaned_data['organization']
-            organizations_list = get_organizations_ordered_by_name()
-
+            event = form.cleaned_data['event']
+            job = form.cleaned_data['job']
             search_result_list = search_volunteers(
-                first_name, last_name, city, state, country, organization)
+                first_name, last_name, city, state, country, organization,
+                event, job)
             return render(
                 request, 'volunteer/search.html', {
                     'organizations_list': organizations_list,
@@ -245,7 +294,6 @@ def search(request):
                     'search_result_list': search_result_list
                 })
     else:
-        organizations_list = get_organizations_ordered_by_name()
         form = SearchVolunteerForm()
 
     return render(
@@ -254,3 +302,4 @@ def search(request):
             'form': form,
             'has_searched': False
         })
+

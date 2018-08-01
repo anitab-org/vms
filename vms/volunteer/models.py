@@ -55,13 +55,6 @@ class Volunteer(models.Model):
             ),
         ],
     )
-    unlisted_organization = models.CharField(
-        blank=True,
-        max_length=100,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', ),
-        ],
-    )
     # Organization to Volunteer is a one-to-many relationship
     organization = models.ForeignKey(Organization, null=True)
     # EmailField automatically checks if email address is a valid format
@@ -96,5 +89,7 @@ class Volunteer(models.Model):
         blank=True)
 
     user = models.OneToOneField(User)
+
     def __str__(self):
         return '{0} {1}'.format(self.first_name, self.last_name)
+

@@ -1,18 +1,17 @@
 # standard library
 import datetime
 import unittest
-# from datetime import date
 
 # local Django
 from job.services import (delete_job, check_edit_job, get_job_by_id,
                           get_jobs_by_event_id, get_jobs_ordered_by_title,
                           get_signed_up_jobs_for_volunteer,
-                          remove_empty_jobs_for_volunteer, job_not_empty)
+                          remove_empty_jobs_for_volunteer, search_jobs, job_not_empty)
 
 from shift.models import VolunteerShift
 from shift.services import register
 from shift.utils import (create_event_with_details, create_job_with_details,
-                         create_volunteer_with_details,
+                         create_volunteer_with_details, create_organization_with_details,
                          create_shift_with_details, clear_objects)
 
 
@@ -50,9 +49,9 @@ def tearDownModule():
 
 
 class JobTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require only job objects, no shifts
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -79,18 +78,18 @@ class JobTests(unittest.TestCase):
         self.assertEqual(get_job_by_id(self.j3.id), self.j3)
 
         # test non-existant cases
-        self.assertIsNone(get_job_by_id(100))
-        self.assertIsNone(get_job_by_id(200))
+        self.assertIsNone(get_job_by_id(1000))
+        self.assertIsNone(get_job_by_id(2000))
 
     def test_job_not_empty(self):
-        """ Test job_not_empty(j_id) 
+        """ Test job_not_empty(j_id)
         Uses jobs j1,j2 """
         self.assertTrue(job_not_empty(self.j1.id))
         self.assertTrue(job_not_empty(self.j2.id))
-        self.assertFalse(job_not_empty(100))
+        self.assertFalse(job_not_empty(1000))
 
     def test_get_jobs_by_event_id(self):
-        """ Test get_jobs_by_event_id(e_id) 
+        """ Test get_jobs_by_event_id(e_id)
         Uses jobs j1,j2,j3 and event e1, e2 """
 
         # test typical case
@@ -120,6 +119,65 @@ class JobTests(unittest.TestCase):
         self.assertEqual(job_list[0].name, self.j3.name)
         self.assertEqual(job_list[1].name, self.j1.name)
         self.assertEqual(job_list[2].name, self.j2.name)
+
+    def test_search_jobs(self):
+        """
+        tests search result for partial, exact and other searches on events
+        """
+        # if no search parameters are given,
+        # it returns all jobs
+        search_list = search_jobs("", "", "", "", "", "", "")
+
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 3)
+        self.assertIn(self.j1, search_list)
+        self.assertIn(self.j2, search_list)
+        self.assertIn(self.j3, search_list)
+
+        search_list = search_jobs(None, None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 3)
+        self.assertIn(self.j1, search_list)
+        self.assertIn(self.j2, search_list)
+        self.assertIn(self.j3, search_list)
+
+        # test exact search
+        e1.city = 'job-city'
+        e1.state = 'job-state'
+        e1.country = 'job-country'
+        e1.save()
+        search_list = search_jobs('Software Developer', '2012-10-22', '2012-10-25',
+                                  'job-city', 'job-state', 'job-country', 'Software Conference')
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.j1, search_list)
+        self.assertNotIn(self.j2, search_list)
+        self.assertNotIn(self.j3, search_list)
+
+        # test partial search
+        search_list = search_jobs("Systems Administrator", None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.j2, search_list)
+        self.assertNotIn(self.j3, search_list)
+        self.assertNotIn(self.j1, search_list)
+
+        e2.city = 'job-city'
+        e2.save()
+        search_list = search_jobs(None, None, None, 'job-city', None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 3)
+        self.assertIn(self.j1, search_list)
+        self.assertIn(self.j2, search_list)
+        self.assertIn(self.j3, search_list)
+
+        # test no search matches
+        search_list = search_jobs("Billy", "2015-07-25", "2015-08-08", "Quebec",
+                                        "Canada", "Ubisoft", "Program")
+        self.assertEqual(len(search_list), 0)
+        self.assertNotIn(self.j1, search_list)
+        self.assertNotIn(self.j2, search_list)
+        self.assertNotIn(self.j3, search_list)
 
 
 class DeleteJobTest(unittest.TestCase):
@@ -158,14 +216,14 @@ class DeleteJobTest(unittest.TestCase):
         # test typical cases
         self.assertFalse(delete_job(self.j1.id))
         self.assertTrue(delete_job(self.j2.id))
-        self.assertFalse(delete_job(100))
-        self.assertFalse(delete_job(200))
+        self.assertFalse(delete_job(1000))
+        self.assertFalse(delete_job(2000))
 
 
 class JobWithShiftTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require shift objects
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -209,10 +267,12 @@ class JobWithShiftTests(unittest.TestCase):
             'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
             "Japan", "23454545", "ash@pikachu.com"
         ]
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        cls.v1 = create_volunteer_with_details(volunteer_1, org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, org_obj)
 
     @classmethod
     def setUpClass(cls):
@@ -240,7 +300,7 @@ class JobWithShiftTests(unittest.TestCase):
         out3 = check_edit_job(self.j1.id, start_date3, stop_date3)
         out4 = check_edit_job(self.j1.id, start_date4, stop_date4)
         out5 = check_edit_job(self.j2.id, start_date1, stop_date1)
-        out6 = check_edit_job(100, start_date1, stop_date1)
+        out6 = check_edit_job(1000, start_date1, stop_date1)
 
         self.assertTrue(out1['result'])
         self.assertFalse(out2['result'])
@@ -257,7 +317,8 @@ class JobWithShiftTests(unittest.TestCase):
     def test_get_signed_up_jobs_for_volunteer(self):
         """ Uses jobs j1,j3, shifts s1,s2,s3 and volunteers v1,v2"""
 
-        # volunteer 1 registers for 3 shifts belonging to two jobs - registers for s1 first to check if sorting is successful
+        # volunteer 1 registers for 3 shifts belonging to two jobs
+        # - registers for s1 first to check if sorting is successful
         register(self.v1.id, self.s1.id)
         register(self.v1.id, self.s3.id)
         register(self.v1.id, self.s2.id)

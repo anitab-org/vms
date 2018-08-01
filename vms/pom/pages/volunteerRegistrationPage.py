@@ -1,6 +1,6 @@
 # local Django
-from basePage import BasePage
-from pom.locators.volunteerRegistrationPageLocators import VolunteerRegistrationPageLocators 
+from pom.pages.basePage import BasePage
+from pom.locators.volunteerRegistrationPageLocators import VolunteerRegistrationPageLocators
 from pom.pageUrls import PageUrls
 
 
@@ -10,6 +10,11 @@ class VolunteerRegistrationPage(BasePage):
     live_server_url = ''
     volunteer_registration_page = PageUrls.volunteer_registration_page
     success_message = "You have successfully registered!"
+    confirm_email_message = "Please confirm your email address before login."
+    USER_EXISTS = 'A user with that username already exists.'
+    INVALID_PHONE = 'Please enter a valid phone number'
+    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
+    NO_MATCH = 'Passwords don\'t match.'
 
     def __init__(self, driver):
         self.elements = VolunteerRegistrationPageLocators()
@@ -19,19 +24,20 @@ class VolunteerRegistrationPage(BasePage):
         elements = self.elements
         self.send_value_to_element_id(elements.USERNAME, info[0])
         self.send_value_to_element_id(elements.PASSWORD, info[1])
-        self.send_value_to_element_id(elements.FIRST_NAME, info[2])
-        self.send_value_to_element_id(elements.LAST_NAME, info[3])
-        self.send_value_to_element_id(elements.EMAIL, info[4])
-        self.send_value_to_element_id(elements.ADDRESS, info[5])
-        self.send_value_to_element_id(elements.CITY, info[6])
-        self.send_value_to_element_id(elements.STATE, info[7])
-        self.send_value_to_element_id(elements.COUNTRY, info[8])
-        self.send_value_to_element_id(elements.PHONE, info[9])
-        self.send_value_to_element_id(elements.ORGANIZATION, info[10])
+        self.send_value_to_element_id(elements.CONFIRM_PASSWORD, info[2])
+        self.send_value_to_element_id(elements.FIRST_NAME, info[3])
+        self.send_value_to_element_id(elements.LAST_NAME, info[4])
+        self.send_value_to_element_id(elements.EMAIL, info[5])
+        self.send_value_to_element_id(elements.ADDRESS, info[6])
+        self.send_value_to_element_id(elements.CITY, info[7])
+        self.send_value_to_element_id(elements.STATE, info[8])
+        self.send_value_to_element_id(elements.COUNTRY, info[9])
+        self.send_value_to_element_id(elements.PHONE, info[10])
+        self.send_value_to_element_id(elements.ORGANIZATION, info[11])
         self.submit_form()
 
     def get_field_values(self):
-        values = {}
+        values = dict()
         elements = self.elements
         values['username'] = self.get_value_for(elements.USERNAME)
         values['first_name'] = self.get_value_for(elements.FIRST_NAME)
@@ -64,6 +70,10 @@ class VolunteerRegistrationPage(BasePage):
     def get_username_error_text(self):
         return self.element_by_xpath(self.elements.USERNAME_ERROR).text
 
+    def get_password_error_text(self):
+        return self.element_by_xpath(self.elements.MATCH_ERROR).text
+
+
     def get_first_name_error_text(self):
         return self.element_by_xpath(self.elements.FIRST_NAME_ERROR).text
 
@@ -95,6 +105,7 @@ class VolunteerRegistrationPage(BasePage):
         self.get_volunteer_registration_page()
         entry = [
             'volunteer-username', 'volunteer-password!@#$%^&*()_',
+            'volunteer-password!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email@systers.org', 'volunteer-address',
             'volunteer-city', 'volunteer-state', 'volunteer-country',

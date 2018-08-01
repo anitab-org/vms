@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
@@ -16,12 +16,11 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: run with debug turned off (DEBUG = False) in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = (
+    'authentication',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,7 +28,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'administrator',
-    'authentication',
     'event',
     'home',
     'job',
@@ -40,6 +38,7 @@ INSTALLED_APPS = (
     'volunteer',
     'cities_light',
     'pom',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -69,14 +68,24 @@ DATABASES = {
     }
 }
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
-    "django.contrib.messages.context_processors.messages")
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 
@@ -109,13 +118,29 @@ FILE_UPLOAD_PERMISSIONS = 0o600
 
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o600
 
+# Instead of sending out real email, during development the emails will be sent
+# to stdout, where from they can be inspected.
+if DEBUG:
+    EMAIL_HOST = os.getenv('HOST', 'localhost')
+    EMAIL_PORT = os.getenv('PORT', '1025')
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # If user fails to authenticate, then they are redirected to the view
 # specified in the reverse_lazy call
 LOGIN_URL = reverse_lazy('authentication:login_process')
 
 STATIC_ROOT = './static/'
 
+#Instead of sending out real email, during development the emails will be sent
+# to stdout, where from they can be inspected.
+if DEBUG:
+    EMAIL_HOST = os.getenv('HOST','localhost')
+    EMAIL_PORT = os.getenv('PORT','1025')
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 LOGIN_REDIRECT_URL = reverse_lazy('home:index')
 RECOVER_ONLY_ACTIVE_USERS = False
 ACCOUNT_ACTIVATION_DAYS = 2
 ANONYMOUS_USER_ID = -1
+

@@ -11,15 +11,14 @@ from shift.models import VolunteerShift
 from shift.services import (
     add_shift_hours, calculate_duration, calculate_total_report_hours,
     cancel_shift_registration, clear_shift_hours, delete_shift,
-    edit_shift_hours, generate_report, get_all_volunteer_shifts_with_hours,
+    edit_shift_hours, generate_report, get_all_volunteer_shifts_with_hours, get_future_shifts_by_volunteer_id,
     get_shift_by_id, get_shifts_by_job_id, get_shifts_ordered_by_date,
     get_shift_slots_remaining, get_shifts_with_open_slots,
     get_unlogged_shifts_by_volunteer_id, get_volunteer_shift_by_id,
-    get_volunteer_shifts_with_hours, get_volunteers_by_shift_id,
+    get_volunteer_shifts, get_volunteer_shifts_with_hours, get_volunteers_by_shift_id,
     get_logged_volunteers_by_shift_id, is_signed_up, register, send_reminder,
-    get_shifts_with_open_slots_for_volunteer, get_volunteer_report,
-    get_administrator_report)
-from shift.utils import create_event_with_details, create_job_with_details, create_shift_with_details, clear_objects, get_report_list, create_volunteer_with_details, set_shift_location
+    get_shifts_with_open_slots_for_volunteer, get_report_by_id)
+from shift.utils import create_event_with_details, create_job_with_details, create_organization_with_details, create_shift_with_details, create_report_with_details, clear_objects, get_report_list, create_volunteer_with_details, register_event_utility, register_job_utility, register_shift_utility,  set_shift_location, log_hours_with_details
 
 
 def setUpModule():
@@ -61,7 +60,7 @@ def tearDownModule():
 
 class ShiftTests(unittest.TestCase):
     '''
-    Contains tests which require 
+    Contains tests which require
     - only shift objects
     - no objects to be created
     '''
@@ -137,7 +136,6 @@ class ShiftTests(unittest.TestCase):
             calculate_total_report_hours(report_list), total_hours)
 
     def test_calculate_duration(self):
-
         start_time = datetime.time(hour=1, minute=0)
         end_time = datetime.time(hour=2, minute=0)
         delta_time_hours = 1
@@ -185,12 +183,12 @@ class ShiftTests(unittest.TestCase):
         self.assertEqual(get_shift_by_id(self.s2.id), self.s2)
 
         # test non-existant cases
-        self.assertIsNone(get_shift_by_id(100))
-        self.assertIsNone(get_shift_by_id(200))
+        self.assertIsNone(get_shift_by_id(1000))
+        self.assertIsNone(get_shift_by_id(2000))
 
     def test_get_shifts_by_job_id(self):
-        """ 
-        Test get_shifts_by_job_id(j_id) 
+        """
+        Test get_shifts_by_job_id(j_id)
         Uses job j1
         """
         job_1_shifts = get_shifts_by_job_id(j1.id)
@@ -248,9 +246,11 @@ class ShiftWithVolunteerTest(unittest.TestCase):
             "Japan", "23454545", "ash@pikachu.com"
         ]
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        org_name = 'Locale'
+        cls.org_obj = create_organization_with_details(org_name)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):
@@ -259,6 +259,25 @@ class ShiftWithVolunteerTest(unittest.TestCase):
     def tearDown(self):
         # remove all registered volunteers
         VolunteerShift.objects.all().delete()
+
+    def test_get_report_by_id(self):
+        start = datetime.time(hour=10, minute=0)
+        end = datetime.time(hour=12, minute=0)
+        logged_shift_1 = log_hours_with_details(self.v1, self.s1, start, end)
+        r1 = create_report_with_details(self.v1, logged_shift_1)
+
+        logged_shift_2 = log_hours_with_details(self.v2, self.s2, start, end)
+        r2 = create_report_with_details(self.v2, logged_shift_2)
+
+        self.assertIsNotNone(get_report_by_id(r1.id))
+        self.assertIsNotNone(get_report_by_id(r2.id))
+
+        self.assertEqual(get_report_by_id(r1.id), r1)
+        self.assertEqual(get_report_by_id(r2.id), r2)
+
+        # test non-existant cases
+        self.assertIsNone(get_report_by_id(100))
+        self.assertIsNone(get_report_by_id(200))
 
     def test_get_shifts_with_open_slots_for_volunteer(self):
         """ Uses volunteer v1, v2 """
@@ -288,10 +307,13 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         end_time = datetime.time(hour=10, minute=0)
         add_shift_hours(self.v1.id, self.s1.id, start_time, end_time)
 
-        report_1 = get_volunteer_report(self.v1.id, self.e1.name, self.j1.name,
+        volunteer_shift_list_1 = get_volunteer_shifts(self.v1.id, self.e1.name, self.j1.name,
                                         "2012-10-22", "2012-10-30")
-        report_2 = get_volunteer_report(self.v1.id, self.e1.name, self.j2.name,
+        report_1 = generate_report(volunteer_shift_list_1)
+
+        volunteer_shift_list_2 = get_volunteer_shifts(self.v1.id, self.e1.name, self.j2.name,
                                         "2012-9-1", "2012-10-26")
+        report_2 = generate_report(volunteer_shift_list_2)
 
         # verify that report for logged shift appears
         self.assertEqual(len(report_1), 1)
@@ -303,40 +325,6 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         # self.assertEqual(start_time, report_1[0]["logged_start_time"])
         # self.assertEqual(end_time, report_1[0]["logged_end_time"])
         # self.assertEqual(1.0, report_1[0]["duration"])
-
-    def test_get_administrator_report(self):
-
-        register(self.v1.id, self.s1.id)
-        register(self.v2.id, self.s3.id)
-
-        start_time = datetime.time(hour=11, minute=0)
-        end_time = datetime.time(hour=12, minute=0)
-        add_shift_hours(self.v1.id, self.s1.id, start_time, end_time)
-        add_shift_hours(self.v2.id, self.s3.id, start_time, end_time)
-
-        report_1 = get_administrator_report(self.v1.first_name, "", "",
-                                            self.e1.name, self.j1.name,
-                                            "2012-10-22", "2012-10-30")
-        report_2 = get_administrator_report(self.v1.first_name, "", "",
-                                            self.e1.name, self.j2.name,
-                                            "2012-9-1", "2012-10-26")
-        report_3 = get_administrator_report("", "", "", self.e1.name,
-                                            self.j2.name, "", "")
-
-        # verify that report for logged shift appears
-        self.assertEqual(len(report_1), 1)
-        self.assertEqual(len(report_2), 0)
-        self.assertEqual(len(report_3), 1)
-        self.assertEqual(self.v1.first_name, report_1[0]["first_name"])
-        self.assertEqual(self.v2.first_name, report_3[0]["first_name"])
-
-        # commented out due to bug #327
-        # self.assertEqual(start_time, report_1[0]["logged_start_time"])
-        # self.assertEqual(start_time, report_3[0]["logged_start_time"])
-        # self.assertEqual(end_time, report_1[0]["logged_end_time"])
-        # self.assertEqual(end_time, report_3[0]["logged_end_time"])
-        # self.assertEqual(1.0, report_1[0]["duration"])
-        # self.assertEqual(1.0, report_3[0]["duration"])
 
     def test_add_shift_hours(self):
         """ Uses shifts s1, s2, s3 and volunteers v1,v2,v3 """
@@ -623,6 +611,24 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         self.assertIn(self.s2, shift_list)
         self.assertNotIn(self.s3, shift_list)
 
+    def test_get_future_shifts_by_volunteer_id(self):
+        """ Uses shifts s2, s4 and volunteer v1 """
+        register_event_utility()
+        register_job_utility()
+        s4 = register_shift_utility()
+        # sign up
+        register(self.v1.id, s4.id)
+        register(self.v1.id, self.s2.id)
+        start_time = datetime.time(hour=9, minute=0)
+        end_time = datetime.time(hour=10, minute=0)
+        # test typical case
+        shift_list = get_future_shifts_by_volunteer_id(self.v1.id)
+        self.assertIsNotNone(shift_list)
+        self.assertNotEqual(shift_list, False)
+        self.assertEqual(len(shift_list), 1)
+        self.assertNotIn(self.s2, shift_list)
+        self.assertIn(s4, shift_list)
+
     def test_get_volunteer_shift_by_id(self):
         """ Uses shifts s1,s2,s3 and volunteers v1,v2"""
 
@@ -849,8 +855,10 @@ class ShiftReminderTest(unittest.TestCase):
             "Wyoming", "USA", "23454545", "dora@test.com"
         ]
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
+        org_name = 'Google'
+        cls.org_obj = create_organization_with_details(org_name)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):
@@ -913,7 +921,9 @@ class DeleteShiftTest(unittest.TestCase):
             "Nintendo State", "Nintendo Nation", "2374983247",
             "aaron@nintendo.com"
         ]
-        cls.v1 = create_volunteer_with_details(volunteer_1)
+        org_name = 'organization'
+        cls.org_obj = create_organization_with_details(org_name)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):
@@ -930,7 +940,8 @@ class DeleteShiftTest(unittest.TestCase):
         # Test delete_shift(shift_id)
 
         self.assertTrue(delete_shift(self.s1.id))
-        self.assertFalse(delete_shift(100))
+        self.assertFalse(delete_shift(1000))
 
         register(self.v1.id, self.s2.id)
         self.assertFalse(delete_shift(self.s2.id))
+

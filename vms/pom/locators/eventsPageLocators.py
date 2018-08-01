@@ -1,20 +1,25 @@
 class EventsPageLocators(object):
-
     # locators for events, jobs, shifts  listed
-    EVENT_NAME = '//table//tbody//tr[1]//td[1]'
+    EVENT_NAME = '//table//tbody//tr//td[1]'
+    EVENT_START_DATE = '//table//tbody//tr//td[2]'
+    EVENT_END_DATE = '//table//tbody//tr//td[3]'
     JOB_NAME = '//table//tbody//tr[1]//td[1]'
     JOB_EVENT = '//table//tbody//tr[1]//td[2]'
     SHIFT_DATE = '//table//tbody//tr[1]//td[1]'
-    CREATED_ORG_NAME = '//table//tbody//tr[1]//td[1]'
+    CREATED_ORG_NAME = '//*[@id="confirmed"]//tbody//tr//td[1]'
+    UNLISTED_ORG_NAME = '//*[@id="approve"]//tbody//tr//td[1]' 
     MESSAGE_BOX = 'alert-success'
     HELP_BLOCK = 'help-block'
 
     VIEW_SHIFT = '//table//tbody//tr[1]/td[5]//a'
+    VIEW_EVENT = '//table//tbody//tr[1]//td[4]//a'
     EDIT_EVENT = '//table//tbody//tr[1]//td[5]//a'
     EDIT_JOB = '//table//tbody//tr[1]//td[6]//a'
     EDIT_SHIFT = '//table//tbody//tr[1]//td[5]//a'
-    EDIT_ORG = '//table//tbody//tr[1]//td[2]'
-    DELETE_ORG = '//table//tbody//tr[1]//td[3]'
+    EDIT_ORG = '//*[@id="confirmed"]//tbody//tr//td[2]'
+    DELETE_ORG = '//*[@id="confirmed"]//tbody//tr[1]//td[3]'
+    APPROVE_ORG = '//*[@id="approve"]//tbody//tr//td[2]'
+    REJECT_ORG = '//*[@id="approve"]/tbody//tr//td[4]' 
     DELETE_SHIFT = '//table//tbody//tr[1]//td[6]'
     DELETE_JOB = '//table//tbody//tr[1]//td[7]'
     DELETE_EVENT = '//table//tbody//tr[1]//td[6]'
@@ -57,5 +62,7 @@ class EventsPageLocators(object):
     SHIFT_START_TIME_ERROR = "//form//div[5]/div/p/strong"
     SHIFT_END_TIME_ERROR = "//form//div[6]/div/p/strong"
     SHIFT_MAX_VOLUNTEER_ERROR = "//form//div[7]/div/p/strong"
+    ORGANIZATION_NAME_ERROR = "//form//div[1]/div/p/strong"
 
     GENERAL_SUBMIT_PATH = '//form[1]'
+

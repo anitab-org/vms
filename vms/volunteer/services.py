@@ -90,25 +90,24 @@ def has_resume_file(volunteer_id):
 
 
 def search_volunteers(first_name, last_name, city, state, country,
-                      organization):
+                      organization, event, job):
     """Volunteers search
     None, one, or more parameters may be sent:
-    first_name, last_name, city, state, country, organization
+    first_name, last_name, city, state, country, organization, event, job
 
     If no search parameters are given, it returns all volunteers
 
     Examples:
-    search_volunteers(None, None, None, None, None, None)
+    search_volunteers(None, None, None, None, None, None, None, None))
     will return all volunteers
-    search_volunteers("Yoshi", None, None, None, None, None)
+    search_volunteers("Yoshi", None, None, None, None, None, None, None)
     will return all volunteers with the first name "Yoshi"
-    search_volunteers(None, "Doe", None, None, None, None)
+    search_volunteers(None, "Doe", None, None, None, None, None, None)
     will return all volunteers with the last name "Doe"
     """
 
     # if no search parameters are given, it returns all volunteers
     search_query = Volunteer.objects.all()
-
     # build query based on parameters provided
     if first_name:
         search_query = search_query.filter(first_name__icontains=first_name)
@@ -120,25 +119,11 @@ def search_volunteers(first_name, last_name, city, state, country,
         search_query = search_query.filter(state__icontains=state)
     if country:
         search_query = search_query.filter(country__icontains=country)
-    if organization:
-        organization_obj = get_organization_by_name(organization)
-        organization_list = get_organizations_ordered_by_name()
-        if organization_obj in organization_list:
-            # organization associated with a volunteer can be null
-            # therefore exclude from the search
-            # query volunteers with no associated organization
-            # then filter by organization_name
-            search_query = search_query.exclude(
-                organization__isnull=True).filter(
-                    organization__name__icontains=organization)
-        else:
-            # unlisted_organization associated
-            # with a volunteer can be left blank
-            # therefore exclude from the search query volunteers
-            # with a blank unlisted_organization
-            # then filter by the unlisted organization name
-            search_query = search_query.exclude(
-                unlisted_organization__exact='').filter(
-                    unlisted_organization__icontains=organization)
-
+    if organization: 
+        search_query = search_query.filter(organization__name__icontains=organization)
+    if event:
+        search_query = search_query.filter(shift__job__event__name__icontains=event).distinct()
+    if job:
+        search_query = search_query.filter(shift__job__name__icontains=job).distinct()
     return search_query
+
