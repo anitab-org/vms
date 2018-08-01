@@ -77,7 +77,7 @@ class FormFields(LiveServerTestCase):
 
     def test_null_values_in_create_event(self):
         self.settings.go_to_events_page()
-        event = ['', '', '']
+        event = ['', '', '', 'in!valid', 'in!valid']
         settings = self.settings
         settings.go_to_create_event_page()
         settings.fill_event_form(event)
@@ -87,10 +87,12 @@ class FormFields(LiveServerTestCase):
         # Error messages appear
         self.assertEqual(settings.remove_i18n(self.driver.current_url),
                          self.live_server_url + settings.create_event_page)
-        self.assertEqual(len(settings.get_help_blocks()), 3)
-        self.assertEqual(settings.get_event_name_error(), 'This field is required.')
-        self.assertEqual(settings.get_event_start_date_error(), 'This field is required.')
-        self.assertEqual(settings.get_event_end_date_error(), 'This field is required.')
+        self.assertEqual(len(settings.get_help_blocks()), 5)
+        self.assertEqual(settings.get_event_name_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_event_start_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_event_end_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_event_address_error(), settings.ENTER_VALID_VALUE)
+        self.assertEqual(settings.get_event_venue_error(), settings.ENTER_VALID_VALUE)
 
     def test_null_values_in_edit_event(self):
         event = ['event-name', '2018-05-24', '2018-05-28']
@@ -111,9 +113,9 @@ class FormFields(LiveServerTestCase):
         # Error messages appear
         self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
         self.assertEqual(len(settings.get_help_blocks()), 3)
-        self.assertEqual(settings.get_event_name_error(), 'This field is required.')
-        self.assertEqual(settings.get_event_start_date_error(), 'This field is required.')
-        self.assertEqual(settings.get_event_end_date_error(), 'This field is required.')
+        self.assertEqual(settings.get_event_name_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_event_start_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_event_end_date_error(), settings.FIELD_REQUIRED)
 
     def test_null_values_in_create_job(self):
         # Register Event
@@ -136,9 +138,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.create_job_page)
         self.assertEqual(len(settings.get_help_blocks()), 3)
 
-        self.assertEqual(settings.get_job_name_error(), 'This field is required.')
-        self.assertEqual(settings.get_job_start_date_error(), 'This field is required.')
-        self.assertEqual(settings.get_job_end_date_error(), 'This field is required.')
+        self.assertEqual(settings.get_job_name_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_job_start_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_job_end_date_error(), settings.FIELD_REQUIRED)
 
     def test_null_values_in_edit_job(self):
         # Register Event
@@ -164,9 +166,9 @@ class FormFields(LiveServerTestCase):
         # Error messages appear
         self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
         self.assertEqual(len(settings.get_help_blocks()), 3)
-        self.assertEqual(settings.get_job_name_error(), 'This field is required.')
-        self.assertEqual(settings.get_job_start_date_error(), 'This field is required.')
-        self.assertEqual(settings.get_job_end_date_error(), 'This field is required.')
+        self.assertEqual(settings.get_job_name_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_job_start_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_job_end_date_error(), settings.FIELD_REQUIRED)
 
     def test_null_values_in_create_shift(self):
         # Register Event
@@ -184,18 +186,20 @@ class FormFields(LiveServerTestCase):
         settings.go_to_create_shift_page()
 
         # Create Shift
-        shift = ['', '', '', '']
+        shift = ['', '', '', '', 'in!valid', 'in!valid']
         settings.fill_shift_form(shift)
 
         # Checks:
         # Shift not created
         # Error messages appear
-        self.assertEqual(len(settings.get_help_blocks()), 4)
+        self.assertEqual(len(settings.get_help_blocks()), 6)
 
-        self.assertEqual(settings.get_shift_date_error(), 'This field is required.')
-        self.assertEqual(settings.get_shift_start_time_error(), 'This field is required.')
-        self.assertEqual(settings.get_shift_end_time_error(), 'This field is required.')
-        self.assertEqual(settings.get_shift_max_volunteer_error(), 'This field is required.')
+        self.assertEqual(settings.get_shift_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_start_time_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_end_time_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_max_volunteer_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_address_error(), settings.ENTER_VALID_VALUE)
+        self.assertEqual(settings.get_shift_venue_error(), settings.ENTER_VALID_VALUE)
 
     def test_null_values_in_edit_shift(self):
         # Register Event
@@ -224,10 +228,10 @@ class FormFields(LiveServerTestCase):
         # expected
         self.assertEqual(len(settings.get_help_blocks()), 4)
 
-        self.assertEqual(settings.get_shift_date_error(), 'This field is required.')
-        self.assertEqual(settings.get_shift_start_time_error(), 'This field is required.')
-        self.assertEqual(settings.get_shift_end_time_error(), 'This field is required.')
-        self.assertEqual(settings.get_shift_max_volunteer_error(), 'This field is required.')
+        self.assertEqual(settings.get_shift_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_start_time_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_end_time_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(settings.get_shift_max_volunteer_error(), settings.FIELD_REQUIRED)
 
     def test_max_volunteer_field(self):
         self.settings.go_to_events_page()
