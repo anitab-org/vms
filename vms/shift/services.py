@@ -312,10 +312,11 @@ def get_unlogged_shifts_by_volunteer_id(v_id):
 
     # get shifts that the volunteer signed up for and
     # that have not been logged yet (in terms of logged start and end times)
-    shift_signed_up_list = Shift.objects.filter(
+    shift_signed_up_list = Shift.objects.filter(Q(
         volunteershift__volunteer_id=v_id,
         volunteershift__start_time__isnull=True,
-        volunteershift__end_time__isnull=True)
+        volunteershift__end_time__isnull=True)&Q(date__lte=timezone.now().date())|
+        Q(date=timezone.now().date(), start_time__lte=timezone.now().time()))
 
     # this filtering is buggy when done this way, why?
     # it shows the same shift multiple times if
