@@ -96,6 +96,9 @@ class EventsPage(BasePage):
     def go_to_details_event_page(self):
         self.element_by_xpath(self.elements.VIEW_EVENT).click()
 
+    def get_event_description(self): 
+        return self.element_by_xpath('//div[@class="panel-body"]').text
+
     def go_to_edit_event_page(self):
         self.element_by_xpath(self.elements.EDIT_EVENT).click()
 

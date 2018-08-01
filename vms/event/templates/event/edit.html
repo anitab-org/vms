@@ -44,6 +44,28 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if form.description.errors %}
+                    <div class="form-group has-error">
+                        <label class="col-md-2 control-label">{% trans "Description" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Description{% endblocktrans %}" type="text" name="description" value="{% if form.description.value %}{{ form.description.value }}{% endif %}">
+                            <p class="help-block">
+                                <strong>
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">{% trans "Description" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Description{% endblocktrans %}" type="text" name="description" value="{% if form.description.value %}{{ form.description.value }}{% endif %}">
+                        </div>
+                    </div>
+                {% endif %}
                 {% if form.start_date.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Start Date" %}<span class="asteriskField">*</span></label>

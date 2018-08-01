@@ -16,7 +16,7 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
     """
 
     def setUp(self):
-        event = ['event', '2015-02-05', '2015-05-05']
+        event = ['event', '2015-02-05', '2015-05-05', 'event-description']
         self.event_1 = create_event_with_details(event)
         self.event_1.city = 'city'
         self.event_1.state = 'state'
@@ -27,13 +27,14 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
         self.expected_result_one = {'event_name': 'event',
                   'start_date': '2015-02-05',
                   'end_date': '2015-05-05',
+                  'description': 'event-description',
                   'address': 'address',
                   'city': 'city',
                   'state': 'state',
                   'country': 'country',
                   'venue': 'venue'}
 
-        event = ['eventq', '2050-02-05', '2050-05-05']
+        event = ['eventq', '2050-02-05', '2050-05-05', 'eventq-description']
         self.event_2 = create_event_with_details(event)
         self.event_2.city = 'cityq'
         self.event_2.state = 'stateq'
@@ -44,6 +45,7 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
         self.expected_result_two = {'event_name': 'eventq',
                    'start_date': '2050-02-05',
                    'end_date': '2050-05-05',
+                   'description': 'eventq-description',
                    'address': 'addressq',
                    'city': 'cityq',
                    'state': 'stateq',

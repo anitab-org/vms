@@ -232,6 +232,7 @@ class ApiForVolaView(APIView):
             event_data['event_name'] = event.name
             event_data['start_date'] = event.start_date
             event_data['end_date'] = event.end_date
+            event_data['description'] = event.description
             event_data['address'] = event.address
             event_data['city'] = event.city
             event_data['state'] = event.state

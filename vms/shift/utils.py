@@ -40,8 +40,11 @@ def create_edit_request_with_details(start_time, end_time, logged_shift):
 def create_event_with_details(event):
     """
     Creates and returns event with passed name and dates
-    """
-    e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
+    """ 
+    if len(event) == 4:
+       e1 = Event(name=event[0], start_date=event[1], end_date=event[2], description=event[3])
+    else: 
+       e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
     e1.save()
     return e1
 
