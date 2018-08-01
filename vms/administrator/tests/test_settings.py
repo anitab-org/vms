@@ -542,7 +542,7 @@ class Settings(LiveServerTestCase):
         settings.fill_shift_form(shift)
 
         # verify that shift was not created and error message displayed
-        self.assertEqual(settings.get_warning_context(), 'Shift end time should be greater than start time')
+        self.assertEqual(settings.get_help_block().text, 'Start time must be before the end time')
 
     def test_edit_shift_with_invalid_timings(self):
         # register event first to create job
@@ -568,7 +568,7 @@ class Settings(LiveServerTestCase):
         settings.fill_shift_form(invalid_shift)
 
         # verify that shift was not edited and error message displayed
-        self.assertEqual(settings.get_warning_context(), 'Shift end time should be greater than start time')
+        self.assertEqual(settings.get_help_block().text, 'Start time must be before the end time')
 
     def test_create_shift_with_invalid_date(self):
         # register event first to create job
