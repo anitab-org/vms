@@ -11,7 +11,7 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSignUpPage import EventSignUpPage
 from shift.utils import (
     create_volunteer, register_event_utility, register_job_utility,
-    register_shift_utility, create_shift_with_details, create_volunteer_with_details,
+    register_shift_utility, create_shift_with_details, create_organization_with_details, create_volunteer_with_details,
     register_volunteer_for_shift_utility)
 
 
@@ -174,7 +174,9 @@ class ShiftSignUp(LiveServerTestCase):
         # Create another volunteer
         volunteer_2 = ['volunteer-2', "Sam", "Turtle", "Mario Land", "Nintendo Land", "Nintendo State",
                        "Nintendo Nation", "2374983247", "volunteer2@volunteer.com"]
-        v2 = create_volunteer_with_details(volunteer_2)
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
+        v2 = create_volunteer_with_details(volunteer_2, org_obj)
 
         # Assign shift to the volunteer
         registered_vol_shift = register_volunteer_for_shift_utility(s2, v2)

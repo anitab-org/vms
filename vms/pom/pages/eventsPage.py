@@ -165,8 +165,20 @@ class EventsPage(BasePage):
     def get_org_name(self):
         return self.element_by_xpath(self.elements.CREATED_ORG_NAME).text
 
-    def get_help_blocks(self):
-        return self.elements_by_class_name(self.elements.HELP_BLOCK)
+    def get_unlisted_org_name(self):
+        return self.element_by_xpath(self.elements.UNLISTED_ORG_NAME).text
+
+    def get_rejection_context(self):
+        return self.element_by_xpath(self.elements.REJECT_ORG).text
+
+    def reject_org(self):
+        self.element_by_xpath(self.elements.REJECT_ORG + '//a').click()
+
+    def get_approval_context(self):
+        return self.element_by_xpath(self.elements.APPROVE_ORG).text
+
+    def approve_org(self):
+        self.element_by_xpath(self.elements.APPROVE_ORG + '//a').click()
 
     def get_event_name_error(self):
         return self.element_by_xpath(self.elements.EVENT_NAME_ERROR).text
@@ -249,3 +261,6 @@ class EventsPage(BasePage):
     def get_shift_max_volunteers(self):
         return self.get_value_for_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER)
 
+    def get_help_blocks(self):
+        blocks = self.elements_by_class_name(self.elements.HELP_BLOCK)
+        return blocks

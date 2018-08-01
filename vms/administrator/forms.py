@@ -3,12 +3,15 @@ from django.forms import ModelForm
 from administrator.models import Administrator
 
 
-class AdministratorForm(ModelForm):
+class AdministratorForm(forms.ModelForm): 
+    unlisted_organization = forms.RegexField(
+        regex=r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', max_length=100, required=False)
+
     class Meta:
         model = Administrator
         fields = [
             'first_name', 'last_name', 'address', 'city', 'state', 'country',
-            'phone_number', 'unlisted_organization', 'email'
+            'phone_number', 'email'
         ]
 
 

@@ -10,6 +10,7 @@ from event.services import (
 from shift.models import VolunteerShift
 from shift.services import register
 from shift.utils import (create_event_with_details, create_job_with_details,
+                         create_organization_with_details,
                          create_volunteer_with_details,
                          create_shift_with_details, clear_objects)
 
@@ -328,9 +329,12 @@ class EventWithVolunteerTest(unittest.TestCase):
             "Japan", "23454545", "ash@pikachu.com"
         ]
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        org_name = 'volunteer-organization'
+        cls.org_obj = create_organization_with_details(org_name)
+
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):

@@ -10,7 +10,7 @@ from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.jobDetailsPage import JobDetailsPage
 from pom.locators.eventsPageLocators import EventsPageLocators
-from shift.utils import (
+from shift.utils import ( create_admin_with_unlisted_org, 
     create_admin, create_event_with_details, create_job_with_details,
     create_shift_with_details, create_volunteer,
     register_volunteer_for_shift_utility, create_organization)
@@ -72,7 +72,7 @@ class Settings(LiveServerTestCase):
         super(Settings, cls).setUpClass()
 
     def setUp(self):
-        create_admin()
+        create_admin_with_unlisted_org()
         self.login_admin()
 
     def tearDown(self):
@@ -766,7 +766,7 @@ class Settings(LiveServerTestCase):
 
         # check org deleted
         with self.assertRaises(NoSuchElementException):
-            settings.element_by_xpath('//table//tbody//tr[1]')
+            settings.element_by_xpath('//*[@id="confirmed"]//tbody//tr[1]')
 
     def test_delete_org_with_associated_users(self):
         # create org

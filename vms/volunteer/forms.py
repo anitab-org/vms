@@ -37,11 +37,14 @@ class SearchVolunteerForm(forms.Form):
     job = forms.CharField(required=False)
 
 
-class VolunteerForm(ModelForm):
+class VolunteerForm(forms.ModelForm):
+    unlisted_organization = forms.RegexField(
+        regex=r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', max_length=100, required=False)
+
     class Meta:
         model = Volunteer
         fields = [
             'first_name', 'last_name', 'address', 'city', 'state', 'country',
-            'phone_number', 'unlisted_organization', 'email', 'websites',
+            'phone_number', 'email', 'websites',
             'description', 'resume', 'resume_file', 'reminder_days'
         ]

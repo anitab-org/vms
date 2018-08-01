@@ -16,7 +16,8 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
-from shift.utils import (create_volunteer, create_event_with_details,
+from shift.utils import (create_organization_with_details,
+                         create_volunteer, create_event_with_details,
                          create_job_with_details, create_shift_with_details,
                          register_volunteer_for_shift_utility, create_volunteer_with_details,
                          register_past_event_utility, register_past_job_utility, register_past_shift_utility)
@@ -119,8 +120,10 @@ class ViewVolunteerShift(LiveServerTestCase):
                          upcoming_shift_page.no_shift_message)
         details = ['test_volunteer', 'volunteer-first-name', 'volunteer-last-name',
                    'volunteer-address', 'volunteer-city', 'volunteer-state', 'volunteer-country',
-                   '9999999999', 'volunteer-email2@systers.org', 'volunteer-organization']
-        test_volunteer = create_volunteer_with_details(details)
+                   '9999999999', 'volunteer-email2@systers.org']
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
+        test_volunteer = create_volunteer_with_details(details, org_obj)
         upcoming_shift_page.get_page(upcoming_shift_page.live_server_url,
                                      upcoming_shift_page.view_shift_page + str(test_volunteer.id))
         found = re.search('You don\'t have the required rights',

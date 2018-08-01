@@ -11,7 +11,7 @@ from job.services import (delete_job, check_edit_job, get_job_by_id,
 from shift.models import VolunteerShift
 from shift.services import register
 from shift.utils import (create_event_with_details, create_job_with_details,
-                         create_volunteer_with_details,
+                         create_volunteer_with_details, create_organization_with_details,
                          create_shift_with_details, clear_objects)
 
 
@@ -267,10 +267,12 @@ class JobWithShiftTests(unittest.TestCase):
             'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
             "Japan", "23454545", "ash@pikachu.com"
         ]
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        cls.v1 = create_volunteer_with_details(volunteer_1, org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, org_obj)
 
     @classmethod
     def setUpClass(cls):

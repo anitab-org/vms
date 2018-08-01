@@ -18,7 +18,7 @@ from shift.services import (
     get_volunteer_shifts, get_volunteer_shifts_with_hours, get_volunteers_by_shift_id,
     get_logged_volunteers_by_shift_id, is_signed_up, register, send_reminder,
     get_shifts_with_open_slots_for_volunteer, get_report_by_id)
-from shift.utils import create_event_with_details, create_job_with_details, create_shift_with_details, create_report_with_details, clear_objects, get_report_list, create_volunteer_with_details, register_event_utility, register_job_utility, register_shift_utility,  set_shift_location, log_hours_with_details
+from shift.utils import create_event_with_details, create_job_with_details, create_organization_with_details, create_shift_with_details, create_report_with_details, clear_objects, get_report_list, create_volunteer_with_details, register_event_utility, register_job_utility, register_shift_utility,  set_shift_location, log_hours_with_details
 
 
 def setUpModule():
@@ -246,9 +246,11 @@ class ShiftWithVolunteerTest(unittest.TestCase):
             "Japan", "23454545", "ash@pikachu.com"
         ]
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        org_name = 'Locale'
+        cls.org_obj = create_organization_with_details(org_name)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):
@@ -853,8 +855,10 @@ class ShiftReminderTest(unittest.TestCase):
             "Wyoming", "USA", "23454545", "dora@test.com"
         ]
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
+        org_name = 'Google'
+        cls.org_obj = create_organization_with_details(org_name)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):
@@ -917,7 +921,9 @@ class DeleteShiftTest(unittest.TestCase):
             "Nintendo State", "Nintendo Nation", "2374983247",
             "aaron@nintendo.com"
         ]
-        cls.v1 = create_volunteer_with_details(volunteer_1)
+        org_name = 'organization'
+        cls.org_obj = create_organization_with_details(org_name)
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):
