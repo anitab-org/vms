@@ -97,6 +97,30 @@ def create_volunteer_with_details_dynamic_password(volunteer):
     return v1
 
 
+def create_admin_with_details(admin):
+    """
+    Creates an administrator with received param.
+    :param admin: Iterable containing information of administrator.
+    :return: Administrator type object.
+    """
+    user = User.objects.create_user(username=admin[0], password=admin[1])
+    org = create_organization_with_details(admin[10])
+    created_admin = Administrator(
+        first_name=admin[2],
+        last_name=admin[3],
+        email=admin[4],
+        address=admin[5],
+        city=admin[6],
+        state=admin[7],
+        country=admin[8],
+        phone_number=admin[9],
+        organization=org,
+        user=user
+    )
+    created_admin.save()
+    return created_admin
+
+
 def create_shift_with_details(shift):
     """
     Creates and returns shift with passed name and dates
