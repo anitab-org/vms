@@ -76,12 +76,104 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
         self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
 
-    def test_invalid_model_create(self):
+    def test_invalid_username_in_model_create(self):
         """
-        Database test for model creation with invalid values.
+        Database test for model creation with invalid username.
         """
-        invalid_volunteer = VolunteerModelTests.create_invalid_vol()
-        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, invalid_volunteer.full_clean)
+        volunteer = [
+            'Goku~', "Son", "Goku", "Kame House", "East District",
+            "East District", "East District", "9999999999", "idonthave1@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_first_name_in_model_create(self):
+        """
+        Database test for model creation with invalid first name.
+        """
+        volunteer = [
+            'Goku2', "Son~", "Goku", "Kame House", "East District",
+            "East District", "East District", "9999999999", "idonthave2@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_last_name_in_model_create(self):
+        """
+        Database test for model creation with invalid last name.
+        """
+        volunteer = [
+            'Goku3', "Son", "Goku!", "Kame House", "East District",
+            "East District", "East District", "9999999999", "idonthave3@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_address_in_model_create(self):
+        """
+        Database test for model creation with invalid address.
+        """
+        volunteer = [
+            'Goku4', "Son", "Goku", "Kame!House!", "East District",
+            "East District", "East District", "9999999999", "idonthave4@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_city_in_model_create(self):
+        """
+        Database test for model creation with invalid city.
+        """
+        volunteer = [
+            'Goku5', "Son", "Goku", "Kame House", "East!District!",
+            "East District", "East District", "9999999999", "idonthave5@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_state_in_model_create(self):
+        """
+        Database test for model creation with invalid state.
+        """
+        volunteer = [
+            'Goku6', "Son", "Goku", "Kame House", "East District",
+            "East!District!", "East District", "9999999999", "idonthave6@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_country_in_model_create(self):
+        """
+        Database test for model creation with invalid country.
+        """
+        volunteer = [
+            'Goku7', "Son", "Goku", "Kame House", "East District",
+            "East District", "East!District!", "9999999999", "idonthave7@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, created_volunteer.full_clean)
+
+    def test_invalid_phone_number_in_model_create(self):
+        """
+        Database test for model creation with invalid phone number.
+        """
+        volunteer = [
+            'Goku8', "Son", "Goku", "Kame House", "East District",
+            "East District", "East District", "99999999!9", "idonthave8@gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, 'Please enter a valid phone number', created_volunteer.full_clean)
+
+    def test_invalid_email_in_model_create(self):
+        """
+        Database test for model creation with invalid email.
+        """
+        volunteer = [
+            'Goku9', "Son", "Goku", "Kame House", "East District",
+            "East District", "East District", "9999999999", "idonthave9~gmail.com"
+        ]
+        created_volunteer = create_volunteer_with_details(volunteer)
+        self.assertRaisesRegexp(ValidationError, 'Enter a valid email address.', created_volunteer.full_clean)
 
     def test_model_edit_with_valid_values(self):
         """

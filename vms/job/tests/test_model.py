@@ -50,15 +50,46 @@ class JobModelTests(TestCase):
         self.assertEqual(job_in_db.description, job[3])
 
     def test_invalid_model_create(self):
-        job = ['job~name', '2016-05-25', '2016-05-26', 'job-description', self.event]
+        """
+        Database test for model creation with invalid name.
+        """
+        job = ['job~name', '2050-05-25', '2050-05-26', 'job description', self.event]
         created_job = create_job_with_details(job)
-
         self.assertRaisesRegexp(ValidationError,
                                 JobDetailsPage.ENTER_VALID_VALUE,
                                 created_job.full_clean)
 
-        # Check database for instance creation
-        self.assertNotEqual(len(Job.objects.all()), 0)
+    # def test_invalid_start_date_in_model_create(self):
+    #     """
+    #      Database test for model creation with invalid start date.
+    #     """
+    #     This test need to be uncommented after clean method is defined for model.
+    #     job = ['job name', '2016-05-25', '2050-05-26', 'job description', self.event]
+    #     created_job = create_job_with_details(job)
+    #     self.assertRaisesRegexp(ValidationError,
+    #                             JobDetailsPage.ENTER_VALID_VALUE,
+    #                             created_job.full_clean)
+
+    # def test_invalid_start_date_in_model_create(self):
+    #     """
+    #      Database test for model creation with invalid end date.
+    #     """
+    #     This test need to be uncommented after clean method is defined for model.
+    #     job = ['job name', '2050-05-25', '2016-05-26', 'job description', self.event]
+    #     created_job = create_job_with_details(job)
+    #     self.assertRaisesRegexp(ValidationError,
+    #                             JobDetailsPage.ENTER_VALID_VALUE,
+    #                             created_job.full_clean)
+
+    def test_invalid_description_in_model_create(self):
+        """
+         Database test for model creation with invalid description.
+        """
+        job = ['job name', '2050-05-25', '2050-05-26', 'job@description@', self.event]
+        created_job = create_job_with_details(job)
+        self.assertRaisesRegexp(ValidationError,
+                                JobDetailsPage.ENTER_VALID_VALUE,
+                                created_job.full_clean)
 
     def test_model_edit_with_valid_values(self):
         job = self.create_job()
