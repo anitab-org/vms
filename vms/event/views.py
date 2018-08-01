@@ -2,7 +2,6 @@
 import datetime
 import json
 import requests
-from datetime import datetime
 
 # third party
 from braces.views import LoginRequiredMixin
@@ -262,7 +261,7 @@ class ApiForVolaView(APIView):
 
 
 def get_meetup(request):
-    date = str(datetime.today().date())
+    date = str(datetime.datetime.today().date())
     data = {'date': date}
     response = requests.post('http://127.0.0.1:8000/meetup/api/v1/request_meetup_data/', data)
     if response.status_code == 200:
