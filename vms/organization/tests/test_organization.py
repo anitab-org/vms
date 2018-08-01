@@ -224,7 +224,7 @@ class OrganizationTest(LiveServerTestCase):
 
         # Check Organization is deleted.
         with self.assertRaises(NoSuchElementException):
-            organization_page.element_by_xpath('//table//tbody//tr[2]')
+            organization_page.get_org_name()
 
     def test_delete_org_with_users_linked(self):
         # Create volunteer
