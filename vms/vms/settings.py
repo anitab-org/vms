@@ -16,7 +16,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: run with debug turned off (DEBUG = False) in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['systers-vms-dev.eu-central-1.elasticbeanstalk.com']
 
 # Application definition
 INSTALLED_APPS = (
