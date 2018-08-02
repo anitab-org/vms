@@ -36,19 +36,19 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 			</button>
-                <a class="navbar-brand" href="{% url 'home:index' %}">Systers</a>
+                <a class="navbar-brand" href="{% url 'home:index' %}"><img id= 'systers-logo' src="{% static 'vms/images/logo.png' %}"></a>
             </div>
 
 		<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
 
-            <ul class="nav navbar-nav navbar-right text-uppercase">
+            <ul class="nav navbar-nav text-uppercase" id="lower-nav">
                     {% if user.is_authenticated %}
                         {% if user.administrator %}
                             <li><a href="{% url 'volunteer:search' %}">{% trans "Volunteer Search" %}</a></li>
                             <li><a href="{% url 'shift:volunteer_search' %}">{% trans "Manage Volunteer Shifts" %}</a></li>
                             <li><a href="{% url 'administrator:report' %}">{% trans "Report" %}</a></li>
                             <li><a href="{% url 'administrator:settings' %}">{% trans "Events" %}</a></li>
-                     <ul class="nav navbar-nav navbar-right">
+                     <ul class="nav navbar-nav text-uppercase" id="upper-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
                               style="text-transform: capitalize; text-decoration: none;">{% trans user.administrator.first_name %}
@@ -86,8 +86,8 @@
                         {% endif %}
 
                     {% else %}
-                        <li><a href="{% url 'registration:signup_volunteer' %}">{% trans "Sign Up" %}</a></li>
-                        <li><a href="{% url 'authentication:login_process' %}">{% trans "Log In" %}</a></li>
+                        <li><a href="{% url 'registration:signup_volunteer' %}" id="signup-btn">{% trans "Sign Up" %}</a></li>
+                        <li><a href="{% url 'authentication:login_process' %}" id="log-btn">{% trans "Log In" %}</a></li>
                     {% endif %}
                 </ul>
             </div>
