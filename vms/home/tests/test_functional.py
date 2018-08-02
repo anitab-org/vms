@@ -146,7 +146,6 @@ class CheckURLAccess(LiveServerTestCase):
         self.verify_admin_page_error(PageUrls.manage_volunteer_shift_page)
         self.verify_admin_page_error(PageUrls.admin_settings_page)
         self.verify_admin_page_error(PageUrls.volunteer_search_page)
-        self.verify_admin_page_error(PageUrls.administrator_report_page)
 
 
 class CheckContentAndRedirection(LiveServerTestCase):
