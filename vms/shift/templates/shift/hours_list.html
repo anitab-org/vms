@@ -7,7 +7,7 @@
     <h3>{% trans "Unlogged Shift Hours" %}</h3>
     <hr>
     {% if shift_list %}
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover" id="unlogged">
             <thead>
                 <tr>
                     <th>{% trans "Job" %}</th>
@@ -32,14 +32,14 @@
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-info">
-            {% trans "You have not logged any hours." %}
+        <div id="unlogged_alert" class="alert alert-info">
+            {% trans "You have no unlogged shifts." %}
         </div>
         {% endif %}
     <h3>{% trans "Shift Hours" %}</h3>
     <hr>
     {% if logged_volunteer_shift_list %}
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover" id="logged">
             <thead>
                 <tr>
                     <th>{% trans "Job" %}</th>
@@ -68,7 +68,7 @@
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-info">
+        <div id="logged_alert" class="alert alert-info">
             {% trans "You have not logged any hours." %}
         </div>
     {% endif %}

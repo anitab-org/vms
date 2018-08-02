@@ -100,7 +100,7 @@ def send_reminder():
         else:
             email_word = " in " + str(days) + " days."
         v_id = volunteer.id
-        shift_list = get_unlogged_shifts_by_volunteer_id(v_id)
+        shift_list = get_future_shifts_by_volunteer_id(v_id)
         subject = "The Systers - VMS Volunteer Shift Reminder Mail"
         for shift in shift_list:
             date_shift = shift.date

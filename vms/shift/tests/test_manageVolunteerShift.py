@@ -545,6 +545,34 @@ class ManageVolunteerShift(LiveServerTestCase):
         self.assertEqual(msg.subject, "Log Hours Edited")
         self.assertEqual(msg.to, ['volunteer@volunteer.com'])
 
+    def test_clear_hours(self):
+        """
+        Test clearing of shift hours.
+        """
+        manage_shift_page = self.manage_shift_page
+        self.manage_shift_page.live_server_url = self.live_server_url
+
+        volunteer_1 = create_volunteer()
+
+        shift = ['09:00', '15:00', '1']
+        shift_1 = self.create_shift(shift)
+        start = datetime.time(hour=10, minute=0)
+        end = datetime.time(hour=14, minute=0)
+        logged_shift = log_hours_with_details(volunteer_1, shift_1, start, end)
+
+        self.wait_for_home_page()
+
+        # Open manage volunteer shift
+        manage_shift_page.navigate_to_manage_shift_page()
+
+        manage_shift_page.select_volunteer(1)
+
+        self.assertEqual(manage_shift_page.get_clear_shift_hours_text(), 'Clear Hours')
+        manage_shift_page.click_to_clear_hours()
+        manage_shift_page.submit_form()
+        self.assertEqual(manage_shift_page.get_logged_info_box(), "This volunteer does not have any shifts with logged hours.")
+
+
     def test_assign_same_shift_to_volunteer_twice(self):
         """
         Test errors while assignment of same shift to volunteer to which they are already assigned.
