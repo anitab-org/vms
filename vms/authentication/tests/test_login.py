@@ -12,9 +12,11 @@ from django.core import mail
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
 
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
+from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
 from pom.locators.authenticationPageLocators import AuthenticationPageLocators
 from shift.utils import (create_admin, create_volunteer)
@@ -41,6 +43,7 @@ class TestAccessControl(LiveServerTestCase):
         """
         cls.driver = webdriver.Firefox()
         cls.driver.maximize_window()
+        cls.home_page = HomePage(cls.driver)
         cls.authentication_page = AuthenticationPage(cls.driver)
         cls.wait = WebDriverWait(cls.driver, 5)
         super(TestAccessControl, cls).setUpClass()
@@ -79,6 +82,17 @@ class TestAccessControl(LiveServerTestCase):
             'username': username,
             'password': password
         })
+
+    def wait_for_home_page(self):
+        """
+        Utility function to perform a explicit wait for home page.
+        """
+        self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH,
+                 "//h1[contains(text(), 'Volunteer Management System')]")
+            )
+        )
 
     def test_correct_admin_credentials(self):
         """
@@ -233,4 +247,18 @@ class TestAccessControl(LiveServerTestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse('authentication:password_reset_complete'))
         self.assertEqual(response.status_code, 200)
- 
+
+    def test_change_password(self):
+        home_page = self.home_page
+        authentication_page = self.authentication_page
+        authentication_page.server_url = self.live_server_url
+        self.login(username='volunteer', password='volunteer')
+        self.wait_for_home_page()
+        home_page.go_to_change_password_page()
+        self.assertEqual(home_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.password_change_page)
+        password = ['volunteer', 'new-password', 'new-password']
+        home_page.fill_password_change_form(password)
+        self.assertEqual(home_page.remove_i18n(self.driver.current_url), self.live_server_url + PageUrls.password_change_done_page)
+        usr = User.objects.get(username='volunteer')
+        self.assertEqual(usr.check_password('new-password'), True)
+
