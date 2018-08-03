@@ -4,7 +4,7 @@ import unittest
 # local Django
 from organization.models import Organization
 from shift.utils import (create_volunteer_with_details, create_organization_with_details, clear_objects,
-    register_event_utility, register_job_utility, register_shift_utility,
+    register_event_utility, register_job_utility, register_shift_utility, get_country_by_name, get_state_by_name, get_city_by_name,
     register_volunteer_for_shift_utility)
 from volunteer.services import (
     delete_volunteer, delete_volunteer_resume, get_all_volunteers,
@@ -15,17 +15,22 @@ from volunteer.services import (
 class VolunteerMethodTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        country_name = 'India'
+        country = get_country_by_name(country_name)
+        state_name = 'Uttarakhand'
+        state = get_state_by_name(state_name)
+        city_name = 'Roorkee'
+        city = get_city_by_name(city_name)
         volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "yoshi@nintendo.com"
+            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
+            "2374983247", "yoshi@nintendo.com"
         ]
         volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
-            "USA", "23454545", "john@test.com"
+            'John', "John", "Doe", "7 Alpine Street", city, state,
+            country, "23454545", "john@test.com"
         ]
         volunteer_3 = [
-            'Ash', "Ash", "Doe", "Pallet Town", "Kanto", "Gameboy", "Japan",
+            'Ash', "Ash", "Doe", "Pallet Town", city, state, country,
             "23454545", "ash@pikachu.com"
         ]
         o1 = 'Apple'
@@ -137,12 +142,12 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertFalse(has_resume_file(self.v3.id))
 
     def test_search_volunteers(self):
-        
+
         register_event_utility()
         register_job_utility()
         shift = register_shift_utility()
         register_volunteer_for_shift_utility(shift, self.v1)
-        
+
         # if no search parameters are given,
         # it returns all volunteers
         search_list = search_volunteers("", "", "", "", "", "", "", "")
@@ -160,8 +165,8 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertIn(self.v3, search_list)
 
         # test exact search
-        search_list = search_volunteers("Yoshi", "Turtle", "Nintendo Land",
-                                        "Nintendo State", "Nintendo Nation",
+        search_list = search_volunteers("Yoshi", "Turtle", "Roorkee",
+                                        "Uttarakhand", "India",
                                         "Apple", "event", "job")
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
@@ -195,18 +200,24 @@ class VolunteerMethodTests(unittest.TestCase):
 class DeleteVolunteerTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        country_name = 'United States'
+        country = get_country_by_name(country_name)
+        state_name = 'Washington'
+        state = get_state_by_name(state_name)
+        city_name = 'Bothell'
+        city = get_city_by_name(city_name)
         volunteer_1 = [
-            'Margaret', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
+            'Margaret', "Yoshi", "Turtle", "Mario Land", city,
+            state, country, "2374983247",
             "yoshi1@nintendo.com"
         ]
         volunteer_2 = [
-            'Miu', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
-            "USA", "23454545", "john1@test.com"
+            'Miu', "John", "Doe", "7 Alpine Street", city, state,
+            country, "23454545", "john1@test.com"
         ]
         volunteer_3 = [
-            'Brock', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
-            "Japan", "23454545", "ash1@pikachu.com"
+            'Brock', "Ash", "Ketchum", "Pallet Town", city, state,
+            country, "23454545", "ash1@pikachu.com"
         ]
         org_name = 'volunteer-organization'
         cls.org_obj = create_organization_with_details(org_name)

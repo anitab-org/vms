@@ -10,9 +10,10 @@ from job.models import Job
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSignUpPage import EventSignUpPage
 from shift.utils import (
-    create_volunteer, register_event_utility, register_job_utility,
-    register_shift_utility, create_shift_with_details, create_organization_with_details, create_volunteer_with_details,
-    register_volunteer_for_shift_utility)
+    create_volunteer, create_organization_with_details, create_second_country,
+    create_second_state, create_second_city, get_country_by_name, get_state_by_name, get_city_by_name,
+    register_event_utility, register_job_utility, register_shift_utility, create_shift_with_details,
+    create_volunteer_with_details, register_volunteer_for_shift_utility)
 
 
 class ShiftSignUp(LiveServerTestCase):
@@ -172,10 +173,14 @@ class ShiftSignUp(LiveServerTestCase):
         s2 = create_shift_with_details(shift_2)
 
         # Create another volunteer
-        volunteer_2 = ['volunteer-2', "Sam", "Turtle", "Mario Land", "Nintendo Land", "Nintendo State",
-                       "Nintendo Nation", "2374983247", "volunteer2@volunteer.com"]
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
+
+        second_country = create_second_country()
+        second_state = create_second_state()
+        second_city = create_second_city()
+        volunteer_2 = ['volunteer-2', "Sam", "Turtle", "Mario Land", second_city, second_state, second_country,
+                       "2374983247", "volunteer2@volunteer.com"]
         v2 = create_volunteer_with_details(volunteer_2, org_obj)
 
         # Assign shift to the volunteer
@@ -263,7 +268,9 @@ class ShiftSignUp(LiveServerTestCase):
         tests for search results on the basis of event city
         """
         event = register_event_utility()
-        event.city = 'event-city'
+        city_name = 'Roorkee'
+        city = get_city_by_name(city_name)
+        event.city = city
         event.save()
         register_job_utility()
         register_shift_utility()
@@ -273,7 +280,7 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct city
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '', 'event-city', '', '']
+        parameters = ['', '', '', 'Roorkee', '', '']
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -283,7 +290,9 @@ class ShiftSignUp(LiveServerTestCase):
         tests for search results on the basis of event state
         """
         event = register_event_utility()
-        event.state = 'event-state'
+        state_name = 'Uttarakhand'
+        state = get_state_by_name(state_name)
+        event.state = state
         event.save()
         register_job_utility()
         register_shift_utility()
@@ -293,7 +302,7 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct state
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '', '', 'event-state', '']
+        parameters = ['', '', '', '', 'Uttarakhand', '']
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -303,7 +312,9 @@ class ShiftSignUp(LiveServerTestCase):
         tests for search results on the basis of event country
         """
         event = register_event_utility()
-        event.country = 'event-country'
+        country_name = 'India'
+        country = get_country_by_name(country_name)
+        event.country = country
         event.save()
         register_job_utility()
         register_shift_utility()
@@ -313,7 +324,7 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct country
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '', '', '', 'event-country']
+        parameters = ['', '', '', '', '', 'India']
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -399,7 +410,9 @@ class ShiftSignUp(LiveServerTestCase):
         tests for search results on the basis of city
         """
         event_obj = register_event_utility()
-        event_obj.city = 'job-city'
+        city_name = 'Roorkee'
+        city = get_city_by_name(city_name)
+        event_obj.city = city
         event_obj.save()
         register_job_utility()
         register_shift_utility()
@@ -410,7 +423,7 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct city
-        parameters = ['', '', '', 'job-city', '', '']
+        parameters = ['', '', '', 'Roorkee', '', '']
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -420,7 +433,9 @@ class ShiftSignUp(LiveServerTestCase):
         tests for search results on the basis of state
         """
         event_obj = register_event_utility()
-        event_obj.state = 'job-state'
+        state_name = 'Uttarakhand'
+        state = get_state_by_name(state_name)
+        event_obj.state = state
         event_obj.save()
         register_job_utility()
         register_shift_utility()
@@ -431,7 +446,7 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct state
-        parameters = ['', '', '', '', 'job-state', '']
+        parameters = ['', '', '', '', 'Uttarakhand', '']
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -441,7 +456,9 @@ class ShiftSignUp(LiveServerTestCase):
         tests for search results on the basis of country
         """
         event_obj = register_event_utility()
-        event_obj.country = 'job-country'
+        country_name = 'India'
+        country = get_country_by_name(country_name)
+        event_obj.country = country
         event_obj.save()
         register_job_utility()
         register_shift_utility()
@@ -452,7 +469,7 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct country
-        parameters = ['', '', '', '', '', 'job-country']
+        parameters = ['', '', '', '', '', 'India']
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')

@@ -164,11 +164,11 @@ def search_jobs(name, start_date, end_date, city, state, country, event):
     if start_date or end_date:
         search_query = get_jobs_by_date(start_date, end_date)
     if city:
-       search_query = search_query.filter(event__city__icontains=city)
+       search_query = search_query.filter(event__city__name__icontains=city)
     if state:
-       search_query = search_query.filter(event__state__icontains=state)
+       search_query = search_query.filter(event__state__name__icontains=state)
     if country:
-        search_query = search_query.filter(event__country__icontains=country)
+        search_query = search_query.filter(event__country__name__icontains=country)
     if event:
         search_query = search_query.filter(event__name__icontains=event)
     return search_query

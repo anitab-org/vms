@@ -78,11 +78,11 @@
                     </p>
                 </div>
             </div>
-        {% elif match_error %}     
+        {% elif match_error %}
             <div id="div_id_confirm_password" class="form-group has-error">
                 <label class="control-label requiredField" for="id_confirm_password">
                     {% trans "Confirm Password" %}<span class="asteriskField">*</span>
-                </label> 
+                </label>
                 <div class="controls">
                     <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
                     <p class="help-block">
@@ -206,84 +206,70 @@
                 </div>
             </div>
         {% endif %}
-        {% if administrator_form.city.errors %}
-            <div id="div_id_city" class="form-group has-error">
-                <label class="control-label requiredField" for="id_city">
-                    {% trans "City" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="admin-city" value="{{ administrator_form.city.value }}">
-                    <p class="help-block">
-                        <strong>
-                            {% for error in administrator_form.city.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong>
-                    </p>
-                </div>
-            </div>
-        {% else %}
-            <div id="div_id_city" class="form-group">
-                <label class="control-label requiredField" for="id_city">
-                    {% trans "City" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="admin-city" value="{% if administrator_form.city.value %}{{ administrator_form.city.value }}{% endif %}">
-                </div>
-            </div>
-        {% endif %}
-        {% if administrator_form.state.errors %}
-            <div id="div_id_state" class="form-group has-error">
-                <label class="control-label requiredField" for="id_state">
-                    {% trans "State/Province" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="admin-state" value="{{ administrator_form.state.value }}">
-                    <p class="help-block">
-                        <strong>
-                            {% for error in administrator_form.state.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong>
-                    </p>
-                </div>
-            </div>
-        {% else %}
-            <div id="div_id_state" class="form-group">
-                <label class="control-label requiredField" for="id_state">
-                    {% trans "State/Province" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="admin-state" value="{% if administrator_form.state.value %}{{ administrator_form.state.value }}{% endif %}">
-                </div>
-            </div>
-        {% endif %}
-        {% if administrator_form.country.errors %}
-            <div id="div_id_country" class="form-group has-error">
-                <label class="control-label requiredField" for="id_country">
-                    {% trans "Country" %}<span class="asteriskField">*</span>
-                </label>
-                <div class="controls">
-                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="admin-country" value="{{ administrator_form.country.value }}">
-                    <p class="help-block">
-                        <strong>
-                            {% for error in administrator_form.country.errors %}
-                                {{ error }}
-                            {% endfor %}
-                        </strong>
-                    </p>
-                </div>
-            </div>
-        {% else %}
+
             <div id="div_id_country" class="form-group">
-                <label class="control-label requiredField" for="id_country">
-                    {% trans "Country" %}<span class="asteriskField">*</span>
+                <label class="col-md-2 control-label">
+                {% trans "Country" %}
                 </label>
-                <div class="controls">
-                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="admin-country" value="{% if administrator_form.country.value %}{{ administrator_form.country.value }}{% endif %}">
+                <div class="col-md-8">
+                    <select id="select_country" class="form-control" name="country">
+                        <option value="0">-- {% trans "Select country" %} --</option>
+                        {% for country in country_list %}
+                            {% if volunteer.country_id %}
+                                {% if country.name == volunteer.country.name %}
+                                    <option selected value="{{country.name}}">{{country.name}}</option>
+                                {% else %}
+                                    <option value="{{ country.name }}">{{ country.name }}</option>
+                                {% endif %}
+                            {% else %}
+                                <option value="{{ country.name }}">{{ country.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
-        {% endif %}
+            <div id="div_id_state" class="form-group">
+                <label class="col-md-2 control-label">
+                {% trans "State/Province" %}
+                </label>
+                <div class="col-md-8">
+                    <select id="select_state" class="form-control" name="state">
+                        <option value="0">-- {% trans "Select state" %} --</option>
+                        {% for state in state_list %}
+                            {% if volunteer.state_id %}
+                                {% if state.name == volunteer.state.name %}
+                                    <option selected value="{{state.name}}">{{state.name}}</option>
+                                {% else %}
+                                    <option value="{{ state.name }}">{{ state.name }}</option>
+                                {% endif %}
+                            {% else %}
+                                <option value="{{ state.name }}">{{ state.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div id="div_id_city" class="form-group">
+                <label class="col-md-2 control-label">
+                {% trans "City" %}
+                </label>
+                <div class="col-md-8">
+                    <select id="select_city" class="form-control" name="city">
+                        <option value="0">-- {% trans "Select city" %} --</option>
+                        {% for city in city_list %}
+                            {% if volunteer.city_id %}
+                                {% if city.name == volunteer.city.name %}
+                                    <option selected value="{{city.name}}">{{city.name}}</option>
+                                {% else %}
+                                    <option value="{{ city.name }}">{{ city.name }}</option>
+                                {% endif %}
+                            {% else %}
+                                <option value="{{ city.name }}">{{ city.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
         {% if administrator_form.phone_number.errors %}
             <div id="div_id_phone_number" class="form-group has-error">
                 <label class="control-label requiredField" for="id_phone_number">

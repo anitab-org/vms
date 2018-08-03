@@ -1,5 +1,5 @@
 # third party
-from cities_light.models import Country
+from cities_light.models import Country, Region, City
 
 # Django
 from django.contrib.auth.models import User
@@ -89,7 +89,6 @@ def create_volunteer_with_details(volunteer, org_obj):
         email=volunteer[8],
         user=u1,
         organization=org_obj)
-
     v1.save()
     return v1
 
@@ -182,6 +181,21 @@ def get_report_list(duration_list, report_list, total_hours):
     return (report_list, total_hours)
 
 
+def get_country_by_name(country_name):
+    country = Country.objects.get(name=country_name)
+    return country
+
+
+def get_state_by_name(state_name):
+    state = Region.objects.get(name=state_name)
+    return state
+
+
+def get_city_by_name(city_name):
+    city = City.objects.get(name=city_name)
+    return city
+
+
 def create_organization():
     org = Organization.objects.create(name='DummyOrg')
 
@@ -189,7 +203,7 @@ def create_organization():
 
 
 def create_country():
-    Country.objects.create(
+    country = Country.objects.create(
         name_ascii='India',
         slug='india',
         geoname_id='1269750',
@@ -200,34 +214,129 @@ def create_country():
         continent='AS',
         tld='in',
         phone='91')
+    return country
+
+
+def create_state():
+    country = Country.objects.get(name='India')
+    state = Region.objects.create(
+        name_ascii = "Uttarakhand",
+        slug='uttarakhand',
+        geoname_id='1444366',
+        alternate_names='',
+        name='Uttarakhand',
+        geoname_code='39',
+        country=country
+        )
+    return state
+
+
+def create_city():
+    country = Country.objects.get(name='India')
+    state = Region.objects.get(name='Uttarakhand')
+    city = City.objects.create(
+        name_ascii = 'Roorkee',
+        slug='roorkee',
+        geoname_id=1258044,
+        alternate_names='',
+        name='Roorkee',
+        region=state,
+        country=country,
+        )
+    return city
+
+
+def create_other_city():
+    country = Country.objects.get(name='India')
+    state = Region.objects.get(name='Uttarakhand')
+    city = City.objects.create(
+        name_ascii = 'Mussoorie',
+        slug='mussoorie',
+        geoname_id=1262374,
+        alternate_names='',
+        name='Mussoorie',
+        region=state,
+        country=country,
+        )
+    return city
+
+
+def create_second_country():
+    country = Country.objects.create(
+        name_ascii='United States',
+        slug='united states',
+        geoname_id='6252001',
+        alternate_names='',
+        name='United States',
+        code2='US',
+        code3='USA',
+        continent='NA',
+        tld='us',
+        phone='1')
+    return country
+
+
+def create_second_state():
+    country = Country.objects.get(name='United States')
+    state = Region.objects.create(
+        name_ascii = "Washington",
+        slug='washington',
+        geoname_id='5815135',
+        alternate_names='',
+        name='Washington',
+        geoname_code='WA',
+        country=country)
+    return state
+
+
+def create_second_city():
+    country = Country.objects.get(name='United States')
+    state = Region.objects.get(name='Washington')
+    city = City.objects.create(
+        name_ascii = 'Bothell',
+        slug='bothell',
+        geoname_id=5787829,
+        alternate_names='',
+        name='Bothell',
+        region=state,
+        country=country,
+        )
+    return city
 
 
 def create_admin_with_unlisted_org():
     user_1 = User.objects.create_user(username='admin', password='admin')
     org_1 = Organization.objects.create(name='organization', approved_status=0)
     org_1.save()
+    country = create_second_country()
+    state = create_second_state()
+    city = create_second_city()
     admin = Administrator.objects.create(
         user=user_1,
         address='address',
-        city='city',
-        state='state',
-        country='country',
+        city=city,
+        state=state,
+        country=country,
         phone_number='9999999999',
         email='admin@admin.com',
         organization=org_1)
 
     return admin
 
+
 def create_admin():
     user_1 = User.objects.create_user(username='admin', password='admin')
     org_name = 'organization'
     org_1 = create_organization_with_details(org_name)
+    country = create_second_country()
+    state = create_second_state()
+    city = create_second_city()
     admin = Administrator.objects.create(
         user=user_1,
         address='address',
-        city='city',
-        state='state',
-        country='country',
+        city=city,
+        state=state,
+        country=country,
         phone_number='9999999999',
         email='admin@admin.com',
         first_name='Son',
@@ -242,12 +351,15 @@ def create_volunteer():
         username='volunteer', password='volunteer')
     org_name = 'volunteerorganization'
     org_1 = create_organization_with_details(org_name)
+    country = create_country()
+    state = create_state()
+    city = create_city()
     volunteer = Volunteer.objects.create(
         user=user_1,
         address='address',
-        city='city',
-        state='state',
-        country='country',
+        city=city,
+        state=state,
+        country=country,
         phone_number='9999999999',
         email='volunteer@volunteer.com',
         first_name='Prince',

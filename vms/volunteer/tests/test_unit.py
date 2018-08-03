@@ -7,8 +7,9 @@ from django.test.testcases import TestCase
 
 # local Django
 from pom.pages.basePage import BasePage
-from shift.utils import create_organization_with_details, create_volunteer_with_details
+from shift.utils import create_organization_with_details, create_country, create_state, create_city, create_volunteer_with_details
 from volunteer.models import Volunteer
+
 
 class VolunteerModelTests(TestCase):
     """
@@ -39,9 +40,12 @@ class VolunteerModelTests(TestCase):
         Utility function to create a valid volunteer.
         :return: Volunteer type object
         """
+        country = create_country()
+        state = create_state()
+        city = create_city()
         vol = [
-            'Goku', "Son", "Goku", "Kame House", "",
-            "East District", "East District", "9999999999", "idonthave@gmail.com"
+            'Goku', "Son", "Goku", "",  city, state, country,
+             "9999999999", "idonthave@gmail.com"
         ]
         org_name = 'organization'
         org_obj = create_organization_with_details(org_name)
@@ -53,9 +57,12 @@ class VolunteerModelTests(TestCase):
         Utility function to create an invalid volunteer.
         :return: Volunteer type object
         """
+        country = create_country()
+        state = create_state()
+        city = create_city()
         vol = [
-            'Goku~', "Son", "Goku", "Kame House", "East District",
-            "East District", "East District", "9999999999", ""
+            'Goku~', "Son", "Goku", "Kame House", city, state, country,
+            "9999999999", ""
         ]
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)

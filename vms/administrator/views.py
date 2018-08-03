@@ -1,9 +1,11 @@
 # third-party
 from braces.views import LoginRequiredMixin
+from cities_light.models import Country, Region, City
 
 # Django
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -145,7 +147,19 @@ class AdminUpdateView(AdministratorLoginRequiredMixin, UpdateView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(AdminUpdateView, self).get_context_data(**kwargs)
+        admin_id = self.kwargs['admin_id']
+        admin = Administrator.objects.get(pk=admin_id)
+        country_list = Country.objects.all()
+        if admin.country:
+            country = admin.country
+            state_list = Region.objects.filter(country=country)
+            context['state_list'] = state_list
+        if admin.state:
+            state = admin.state
+            city_list = City.objects.filter(region=state)
+            context['city_list'] = city_list
         context['organization_list'] = self.organization_list
+        context['country_list'] = country_list
         return context
 
     def get_object(self, queryset=None):
@@ -157,7 +171,24 @@ class AdminUpdateView(AdministratorLoginRequiredMixin, UpdateView, FormView):
         admin_id = self.kwargs['admin_id']
         administrator = Administrator.objects.get(pk=admin_id)
         admin_to_edit = form.save(commit=False)
-
+        try:
+            country_name = self.request.POST.get('country')
+            country = Country.objects.get(name=country_name)
+        except ObjectDoesNotExist:
+            country = None
+        admin_to_edit.country = country
+        try:
+            state_name = self.request.POST.get('state')
+            state = Region.objects.get(name=state_name)
+        except ObjectDoesNotExist:
+            state = None
+        admin_to_edit.state = state
+        try:
+            city_name = self.request.POST.get('city')
+            city = City.objects.get(name=city_name)
+        except ObjectDoesNotExist:
+            city = None
+        admin_to_edit.city = city
         organization_id = self.request.POST.get('organization_name')
         organization = get_organization_by_id(organization_id)
         if organization:

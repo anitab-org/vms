@@ -18,7 +18,9 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.volunteerProfilePage import VolunteerProfilePage
-from shift.utils import create_organization_with_details, create_volunteer_with_details
+from shift.utils import (create_country, create_state, create_city, create_other_city, create_volunteer_with_details,
+                         create_organization_with_details)
+
 
 class VolunteerProfile(LiveServerTestCase):
     """
@@ -51,9 +53,12 @@ class VolunteerProfile(LiveServerTestCase):
         Method consists of statements to be executed before
         start of each test.
         """
+        country = create_country()
+        state = create_state()
+        city = create_city()
         vol = [
-            'Goku', "Son", "Goku", "Kame House", "East District",
-            "East District", "East District", "9999999999", "idonthave@gmail.com"
+            'Goku', "Son", "Goku", "Kame House", city,
+            state, country, "9999999999", "idonthave@gmail.com"
         ]
         org_name='Detective'
         org_obj = create_organization_with_details(org_name)
@@ -130,13 +135,13 @@ class VolunteerProfile(LiveServerTestCase):
         found_email = re.search(self.volunteer_1.email, page_source)
         self.assertNotEqual(found_email, None)
 
-        found_city = re.search(self.volunteer_1.city, page_source)
+        found_city = re.search(self.volunteer_1.city.name, page_source)
         self.assertNotEqual(found_city, None)
 
-        found_state = re.search(self.volunteer_1.state, page_source)
+        found_state = re.search(self.volunteer_1.state.name, page_source)
         self.assertNotEqual(found_state, None)
 
-        found_country = re.search(self.volunteer_1.country, page_source)
+        found_country = re.search(self.volunteer_1.country.name, page_source)
         self.assertNotEqual(found_country, None)
 
         found_org = re.search(self.volunteer_1.organization.name, page_source)
@@ -146,6 +151,7 @@ class VolunteerProfile(LiveServerTestCase):
         """
         Test profile edit in volunteer profile.
         """
+        create_other_city()
         profile_page = self.profile_page
         profile_page.navigate_to_profile()
         self.wait_for_profile_load('Son Goku')
@@ -153,7 +159,7 @@ class VolunteerProfile(LiveServerTestCase):
 
         new_details = [
             'Harvey', 'Specter', 'hspecter@ps.com', 'Empire State Building',
-            'NYC', 'New York', 'USA', '9999999998', 'None', 'Lawyer'
+            'Mussoorie', 'Uttarakhand', 'India', '9999999998', 'None', 'Lawyer'
         ]
         profile_page.fill_values(new_details)
         self.wait_for_profile_load('Harvey Specter')
@@ -163,14 +169,8 @@ class VolunteerProfile(LiveServerTestCase):
         found_email = re.search(self.volunteer_1.email, page_source)
         self.assertEqual(found_email, None)
 
-        found_city = re.search(self.volunteer_1.city, page_source)
+        found_city = re.search(self.volunteer_1.city.name, page_source)
         self.assertEqual(found_city, None)
-
-        found_state = re.search(self.volunteer_1.state, page_source)
-        self.assertEqual(found_state, None)
-
-        found_country = re.search(self.volunteer_1.country, page_source)
-        self.assertEqual(found_country, None)
 
         found_org = re.search(self.volunteer_1.organization.name, page_source)
         self.assertEqual(found_org, None)

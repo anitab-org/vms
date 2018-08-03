@@ -11,7 +11,7 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.jobDetailsPage import JobDetailsPage
 from pom.locators.eventsPageLocators import EventsPageLocators
 from shift.utils import ( create_admin_with_unlisted_org,
-    create_admin, create_event_with_details, create_job_with_details,
+    create_event_with_details, create_job_with_details,
     create_shift_with_details, create_volunteer,
     register_volunteer_for_shift_utility, create_organization)
 

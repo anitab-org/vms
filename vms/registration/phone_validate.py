@@ -1,12 +1,10 @@
 # third party
 import phonenumbers
-from cities_light.models import Country
 
 
 def validate_phone(my_country, my_phone):
     try:
-        entry = Country.objects.get(name__iexact=my_country)
-        country_code = entry.code2
+        country_code = my_country.code2
     except:
         print('No matching country in database')
         return "missing"

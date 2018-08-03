@@ -11,7 +11,9 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSearchPage import EventSearchPage
-from shift.utils import create_admin, create_event_with_details, create_job_with_details
+from shift.utils import (create_country, create_city, create_state, create_admin, create_event_with_details,
+                        create_job_with_details, get_city_by_name, get_state_by_name, get_country_by_name)
+
 
 class SearchEvent(LiveServerTestCase):
     """
@@ -205,39 +207,39 @@ class SearchEvent(LiveServerTestCase):
         search_page.live_server_url = self.live_server_url
         search_page.navigate_to_event_search_page()
 
+        create_country()
+        create_state()
+        city = create_city()
         credentials_1 = ['event-name', '2015-01-01', '2015-03-01']
 
         event_1 = create_event_with_details(credentials_1)
-
-        event_1.city = 'event-city'
+        event_1.city = city
         event_1.save()
 
         credentials_2 = [
             'event-nameq', '2015-02-01', '2015-04-01']
 
+        city_name = 'Bothell'
+        second_city = get_city_by_name(city_name)
         event_2 = create_event_with_details(credentials_2)
-        event_2.city = 'event-cityq'
+        event_2.city = second_city
         event_2.save()
 
         expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
         expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
-        search_page.search_city_field('event')
+        search_page.search_city_field('Roorkee')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-
+        self.assertEqual(len(result), 1)
         self.assertTrue(expected_result_one in result)
-        self.assertTrue(expected_result_two in result)
 
-        search_page.search_city_field('e')
+        search_page.search_city_field('Bothell')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-
-        self.assertTrue(expected_result_one in result)
+        self.assertEqual(len(result), 1)
         self.assertTrue(expected_result_two in result)
 
         search_page.search_city_field('eve-')
@@ -268,33 +270,36 @@ class SearchEvent(LiveServerTestCase):
 
         credentials_1 = ['event-name', '2015-01-01', '2015-03-01']
         event_1 = create_event_with_details(credentials_1)
-        event_1.state = 'event-state'
+        create_country()
+        state = create_state()
+        event_1.state = state
         event_1.save()
 
         credentials_2 = [
             'event-nameq', '2015-02-01', '2015-04-01']
         event_2 = create_event_with_details(credentials_2)
-        event_2.state = 'event-stateq'
+
+        state_name = 'Washington'
+        second_state = get_state_by_name(state_name)
+        event_2.state = second_state
         event_2.save()
 
         expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
         expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
-        search_page.search_state_field('event')
+        search_page.search_state_field('Uttarakhand')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(expected_result_two in result)
+        self.assertEqual(len(result), 1)
         self.assertTrue(expected_result_one in result)
 
-        search_page.search_state_field('e')
+        search_page.search_state_field('Washington')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 1)
         self.assertTrue(expected_result_two in result)
-        self.assertTrue(expected_result_one in result)
 
         search_page.search_state_field('eve-')
         search_page.submit_form()
@@ -322,35 +327,36 @@ class SearchEvent(LiveServerTestCase):
 
         credentials_1 = ['event-name', '2015-01-01', '2015-03-01']
 
+        country = create_country()
         event_1 = create_event_with_details(credentials_1)
-        event_1.country = 'event-country'
+        event_1.country = country
         event_1.save()
 
         credentials_2 = [
             'event-nameq', '2015-02-01', '2015-04-01']
 
+        country_name = 'United States'
+        second_country = get_country_by_name(country_name)
         event_2 = create_event_with_details(credentials_2)
-        event_2.country = 'event-countryq'
+        event_2.country = second_country
         event_2.save()
 
         expected_result_one = ['event-name', 'Jan.', '1,', '2015', 'March', '1,', '2015', 'Details', 'Edit', 'Delete']
         expected_result_two = ['event-nameq', 'Feb.', '1,', '2015', 'April', '1,', '2015', 'Details', 'Edit', 'Delete']
 
-        search_page.search_country_field('event')
+        search_page.search_country_field('India')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(expected_result_two in result)
+        self.assertEqual(len(result), 1)
         self.assertTrue(expected_result_one in result)
 
-        search_page.search_country_field('e')
+        search_page.search_country_field('United States')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 1)
         self.assertTrue(expected_result_two in result)
-        self.assertTrue(expected_result_one in result)
 
         search_page.search_country_field('eve-')
         search_page.submit_form()
@@ -412,10 +418,13 @@ class SearchEvent(LiveServerTestCase):
 
         credentials_1 = ['event-name', '2015-01-01', '2015-03-01']
 
+        country = create_country()
+        state = create_state()
+        city = create_city()
         event_1 = create_event_with_details(credentials_1)
-        event_1.country = 'event-country'
-        event_1.state = 'event-state'
-        event_1.city = 'event-city'
+        event_1.country = country
+        event_1.state = state
+        event_1.city = city
         event_1.save()
         job = ['job', '2015-02-01', '2015-02-15', 'descriptionq', event_1]
         job_1 = create_job_with_details(job)
@@ -424,9 +433,15 @@ class SearchEvent(LiveServerTestCase):
         credentials_2 = [
             'event-nameq', '2015-02-01', '2015-04-01']
         event_2 = create_event_with_details(credentials_2)
-        event_2.country = 'event-countryq'
-        event_2.state = 'event-stateq'
-        event_2.city = 'event-cityq'
+        country_name = 'United States'
+        state_name = 'Washington'
+        city_name = 'Bothell'
+        second_country = get_country_by_name(country_name)
+        second_state = get_state_by_name(state_name)
+        second_city = get_city_by_name(city_name)
+        event_2.country = second_country
+        event_2.state = second_state
+        event_2.city = second_city
         event_2.save()
         job = ['jobq', '2015-02-02', '2015-02-15', 'job-description', event_2]
         job_2 = create_job_with_details(job)
@@ -439,14 +454,13 @@ class SearchEvent(LiveServerTestCase):
         search_page.search_name_field('event')
         search_page.search_start_date_field('2015-01-01')
         search_page.search_end_date_field('2015-04-01')
-        search_page.search_state_field('event')
-        search_page.search_country_field('event')
+        search_page.search_state_field('Uttarakhand')
+        search_page.search_country_field('India')
         search_page.search_job_field('job')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
         self.assertTrue(expected_result_one in result)
-        self.assertTrue(expected_result_two in result)
 
         search_page.search_name_field('event')
         search_page.search_country_field('wrong-country')

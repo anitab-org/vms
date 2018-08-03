@@ -116,9 +116,9 @@ def send_reminder():
                 "\nShift End Time: " + str(shift.end_time) + \
                 "\n\nAddress: " + shift.address + \
                 "\nVenue: " + shift.venue + \
-                "\nCity: " + shift.city + \
-                "\nState: " + shift.state + \
-                "\nCountry: " + shift.country + \
+                "\nCity: " + shift.city.name + \
+                "\nState: " + shift.state.name + \
+                "\nCountry: " + shift.country.name + \
                 "\n\nThank you for registering!"
                 send_mail(
                     subject,
