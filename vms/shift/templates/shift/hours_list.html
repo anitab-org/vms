@@ -24,7 +24,7 @@
                         <td>{{ shift.date }}</td>
                         <td>{{ shift.start_time }}</td>
                         <td>{{ shift.end_time }}</td>
-                        <td><a href="{% url 'shift:add_hours' shift.id user.volunteer.id %}" class="btn btn-success btn-sm">{% trans "Log Hours" %}
+                        <td><a href="{% url 'shift:add_hours' shift.id user.volunteer.id %}" class="btn btn-info btn-sm">{% trans "Log Hours" %}
                         </a>
                         </td>
                     </tr>
@@ -36,7 +36,7 @@
             {% trans "You have no unlogged shifts." %}
         </div>
         {% endif %}
-    <h3>{% trans "Shift Hours" %}</h3>
+    <h3 class="header">{% trans "Shift Hours" %}</h3>
     <hr>
     {% if logged_volunteer_shift_list %}
         <table class="table table-striped table-hover" id="logged">
@@ -58,9 +58,9 @@
                         <td>{{ volunteershift.end_time }}</td>
                         <td>
                             {% if volunteershift.date_logged >= init_date and not volunteershift.edit_requested  and not volunteershift.report_status %}
-                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-info btn-sm">{% trans "Edit Hours" %}</a>
+                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-primary btn-sm">{% trans "Edit Hours" %}</a>
                              {% else %}
-                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-info btn-sm" disabled/>{% trans "Edit Hours" %}</a>
+                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-primary btn-sm" disabled/>{% trans "Edit Hours" %}</a>
                             {% endif %}
                         </td>
                     </tr>

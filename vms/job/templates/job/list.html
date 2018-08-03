@@ -11,7 +11,7 @@
         <form class="form-horizontal" action="{% url 'job:list' %}" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Search jobs" %}</legend>
+                <legend class="header">{% trans "Search jobs" %}</legend>
                 {% if form.name.errors %}
                 <div class="form-group has-error">
                     <label class="col-md-2 control-label">{% trans "Name" %}</label>
@@ -198,7 +198,7 @@
                             <a href="{% url 'job:details' job.id %}" class="btn btn-default btn-sm">{% trans "Details" %}</a>
                         </td>
                         <td>
-                            <a href="{% url 'job:edit' job.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
+                            <a href="{% url 'job:edit' job.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
                         </td>
                         <td>
                             <a href="{% url 'job:delete' job.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>

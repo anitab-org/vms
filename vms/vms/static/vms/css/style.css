@@ -41,6 +41,12 @@ body {
   color: #101820;
 }
 
+
+#lower-nav>li>a:hover {
+  background-color: #54BCEB;
+  color: white;
+}
+
 #upper-nav>li>a {
   color: white;
   height: 40px;
@@ -73,9 +79,23 @@ body {
   background-color: #47bca0;
 }
 
+#log-btn:hover{
+  background-color: #288F79;
+}
+
 #signup-btn {
   background-color: #8d2165;
   right: 20%;
+}
+
+
+#signup-btn:hover, #signup-admin-btn:hover {
+  background-color: #690344;
+}
+
+#signup-admin-btn {
+  background-color: #8d2165;
+  right: 10%;
 }
 
 
@@ -85,11 +105,67 @@ body {
   margin-top: 40px;
 }
 
+.header {
+  font-family: Cairo;
+  color: #8d2165;
+}
+
+.link {
+  color: #54BCEB;
+}
+
+.link:hover {
+  color: #005C88;
+}
+
+
+.btn-success {
+  background-color: #47BCA0;
+  border-color: #47BCA0;
+}
+
+.btn-success:hover {
+  background-color: #288F79;
+  border-color: #288F79; 
+}
+
+.btn-info {
+  background-color: #54BCEB;
+  border-color: #54BCEB;
+}
+
+.btn-info:hover {
+  background-color:#3F8CAB;
+  border-color:#3F8CAB;
+}
+
+.btn-danger {
+ background-color: #EF4135;
+ border-color: #EF4135;
+}
+
+.btn-danger:hover {
+ background-color: #A72D25;
+ border-color: #A72D25;
+}
+
+
+.btn-primary, .btn-primary[disabled] {
+  background-color: #005c88; 
+  border-color: #005c88; 
+
+}
+
+.btn-primary:hover {
+  background-color: #158cba;
+  border-color: #158cba;
+}
 
 /* Custom page CSS
 -------------------------------------------------- */
 body > .container {
-  padding: 60px 15px 0;
+  padding: 15px 0;
+  padding-top: 0px;
   overflow-x: hidden;
 }
 
@@ -109,6 +185,11 @@ body > .container {
   box-shadow: none;
 }
 
+.jumbotron-custom .index {
+  font-family: Cairo;
+  color: #8d2165;
+}
+
 #approve {
   border: 1px solid red;
 }
@@ -117,6 +198,12 @@ body > .container {
   text-align: center;
   color: red;
 }
+
+.default {
+  background-color: #158cba;
+  border-color: #158cba;
+}
+
 
 /* Featurettes
 ------------------------- */

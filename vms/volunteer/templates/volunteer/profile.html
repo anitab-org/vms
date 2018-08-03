@@ -5,7 +5,7 @@
 {% block content %}
     <div class="spacer"></div>
     <div class="row">
-        <h1>
+        <h1 class="header">
             {{ user.volunteer.first_name }} {{ user.volunteer.last_name }}
         </h1>
         <hr>
@@ -113,7 +113,7 @@
                     </h4>
                 </div>
                 <div class="panel-body">
-                    <a href="{% url 'volunteer:edit' volunteer.id %}" class="btn btn-default">{% trans "Edit Profile" %}</a>
+                    <a href="{% url 'volunteer:edit' volunteer.id %}" class="btn btn-primary">{% trans "Edit Profile" %}</a>
                 </div>
             </div>
         </div>

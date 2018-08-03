@@ -31,11 +31,11 @@
                 <br>
                 <br>
                 {% if user.administrator %}
-                    <button class="btn btn-default" type="submit">{% trans "Yes, Assign this Shift" %}</button>
+                    <button class="btn btn-success btn-sm" type="submit">{% trans "Yes, Assign this Shift" %}</button>
                 {% else %}
-                    <button class="btn btn-default" type="submit">{% trans "Yes, Sign Up for this Shift" %}</button>
+                    <button class="btn btn-success" type="submit">{% trans "Yes, Sign Up for this Shift" %}</button>
                 {% endif %}
-                <input type="button" class="btn btn-default" value="{% blocktrans %}Cancel{% endblocktrans %}" onClick="javascript:history.go(-1);">
+                <input type="button" class="btn btn-danger btn-sm" value="{% blocktrans %}Cancel{% endblocktrans %}" onClick="javascript:history.go(-1);">
             </div>
         </div>
     </form>

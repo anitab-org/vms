@@ -18,7 +18,7 @@
         <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Report" %}</legend>
+                <legend class="header">{% trans "Report" %}</legend>
                 {% if form.event_name.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Event Name" %}</label>
