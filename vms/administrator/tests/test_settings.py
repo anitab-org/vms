@@ -10,7 +10,7 @@ from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.jobDetailsPage import JobDetailsPage
 from pom.locators.eventsPageLocators import EventsPageLocators
-from shift.utils import ( create_admin_with_unlisted_org, 
+from shift.utils import ( create_admin_with_unlisted_org,
     create_admin, create_event_with_details, create_job_with_details,
     create_shift_with_details, create_volunteer,
     register_volunteer_for_shift_utility, create_organization)
@@ -162,6 +162,15 @@ class Settings(LiveServerTestCase):
         # Check event created
         self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.event_list_page)
         self.assertEqual(settings.get_event_name(), 'event-name')
+
+    ''' commented till the portal gets live with its api
+    def test_create_event_from_meetup(self):
+        self.settings.go_to_events_page()
+        settings = self.settings
+        settings.live_server_url = self.live_server_url
+        settings.go_to_create_event_page()
+        settings.create_meetup()
+        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.event_list_page)'''
 
     def test_edit_event(self):
         event = ['event-name', '2050-08-21', '2050-09-28']

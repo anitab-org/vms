@@ -1,5 +1,7 @@
 # standard library
 import datetime
+import json
+import requests
 
 # third party
 from braces.views import LoginRequiredMixin
@@ -27,6 +29,7 @@ from event.services import (check_edit_event, get_event_by_id, get_events_ordere
 from job.services import get_jobs_by_event_id
 from volunteer.utils import vol_id_check
 from vms.utils import check_correct_volunteer_shift_sign_up
+from shift.utils import create_event_with_details
 
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -255,4 +258,22 @@ class ApiForVolaView(APIView):
         events = Event.objects.filter(start_date__gte=date).order_by('start_date')
         api_for_vola_view = ApiForVolaView()
         return(api_for_vola_view.return_event_data(events))
+
+
+def get_meetup(request):
+    date = str(datetime.datetime.today().date())
+    data = {'date': date}
+    response = requests.post('http://127.0.0.1:8000/meetup/api/v1/request_meetup_data/', data)
+    if response.status_code == 200:
+        json_data = json.loads(response.text)
+        for meetup in json_data:
+             start_date = meetup['start_date']
+             venue = meetup['venue']
+             name = meetup['event_name']
+             end_date = start_date
+             event_details = [name, start_date, end_date]
+             event = create_event_with_details(event_details)
+             event.venue = venue
+             event.save()
+        return HttpResponseRedirect(reverse('event:list'))
 
