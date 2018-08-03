@@ -22,9 +22,22 @@ from shift.utils import (create_admin, create_volunteer,
 
 
 class Report(LiveServerTestCase):
+    """
+    Contains Tests for
+    - Report generation with data filled
+    - Report generation with data empty
+    - Only shift with logged hours are shown
+    - Report details verified against the filled details.
+    """
 
     @classmethod
     def setUpClass(cls):
+
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -36,18 +49,33 @@ class Report(LiveServerTestCase):
         super(Report, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(Report, cls).tearDownClass()
 
     def login_admin(self):
+        """
+        Utility function to login as administrator with correct credentials.
+        """
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login({
             'username': 'admin',
@@ -55,12 +83,20 @@ class Report(LiveServerTestCase):
         })
 
     def verify_shift_details(self, total_shifts, hours):
+        """
+        Utility function to verify the shift details.
+        :param total_shifts: Total number of shifts as filled in form.
+        :param hours: Total number of hours as filled in form.
+        """
         total_no_of_shifts = self.report_page.get_shift_summary().split(' ')[10].strip('\nTotal')
         total_no_of_hours = self.report_page.get_shift_summary().split(' ')[-1].strip('\n')
         self.assertEqual(total_no_of_shifts, total_shifts)
         self.assertEqual(total_no_of_hours, hours)
 
     def test_null_values_with_dataset(self):
+        """
+        Test null values filled in report generation form with the valid data.
+        """
         self.report_page.go_to_admin_report()
         # Register dataset
         org = create_organization_with_details('organization-one')
@@ -97,6 +133,9 @@ class Report(LiveServerTestCase):
         self.assertEqual(report_page.element_by_xpath(self.elements.HOURS).text, '3.0')
 
     def test_null_values_with_empty_dataset(self):
+        """
+        Test null values filled in report generation form with the empty data.
+        """
         # Should return no entries
         self.report_page.go_to_admin_report()
         report_page = self.report_page
@@ -106,6 +145,9 @@ class Report(LiveServerTestCase):
         self.assertEqual(report_page.get_alert_box_text(), report_page.no_results_message)
 
     def test_only_logged_shifts_are_reported(self):
+        """
+        Test only shifts with logged hours are reported from form.
+        """
         report_page = self.report_page
         # Register dataset
         org = create_organization_with_details('organization-one')
@@ -141,6 +183,10 @@ class Report(LiveServerTestCase):
 
     @staticmethod
     def register_dataset(parameters):
+        """
+        Utility function to register the data received in param parameters.
+        :param parameters: Iterable consisting data in dictionary format.
+        """
         # Register dataset
         # Register dataset
         volunteer = create_volunteer_with_details_dynamic_password(parameters['volunteer'])
@@ -163,6 +209,9 @@ class Report(LiveServerTestCase):
         log_hours_with_details(volunteer, created_shift, parameters['vshift'][0], parameters['vshift'][0])
 
     def create_dataset(self):
+        """
+        Utility function to register data from external test JSON.
+        """
         orgs = Organization.create_multiple_organizations(4)
 
         test_data = open('test_data.json').read()
@@ -192,11 +241,14 @@ class Report(LiveServerTestCase):
         parameters[7]["org"] = orgs[3]
         self.register_dataset(parameters[7])
 
-    """
+    '''
     Test giving inconsistent results for log hours and total shifts
     For log hours: Possibly https://github.com/systers/vms/issues/327 wasn't fixed correctly.
 
     def test_check_intersection_of_fields(self):
+        """
+        Test the shift report details generated from form search against the filled data.
+        """
         self.create_dataset()
 
         report_page = self.report_page
@@ -226,4 +278,4 @@ class Report(LiveServerTestCase):
         search_parameters_5 = ['', 'sherlock', 'two', '', '']
         report_page.fill_report_form(search_parameters_5)
         self.verify_shift_details('1','2.0')
-    """
+    '''

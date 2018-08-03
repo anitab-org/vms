@@ -17,16 +17,20 @@ from shift.utils import (create_admin,
 
 class OrganizationTest(LiveServerTestCase):
     """
-    E2E Tests for Organization views:
-        - Create Organization
-        - Edit Organization
-        - Check duplicate Organization
-        - Delete Org with registered volunteers
-        - Delete Org without registered volunteers
+    Contains Tests for Organization app:
+    - Creation of organization with valid and invalid values
+    - Edit organization with valid and invalid values
+    - Deletion of organization with volunteers registered
+    - Deletion of organization with volunteers not registered
     """
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -38,18 +42,33 @@ class OrganizationTest(LiveServerTestCase):
         super(OrganizationTest, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(OrganizationTest, cls).tearDownClass()
 
     def login_admin(self):
+        """
+        Utility function to login as administrator with correct credentials.
+        """
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login({
             'username': 'admin',
@@ -57,6 +76,9 @@ class OrganizationTest(LiveServerTestCase):
         })
 
     def delete_organization_from_list(self):
+        """
+        Utility function to delete organization using form.
+        """
         organization_page = self.organization_page
         self.assertEqual(organization_page.element_by_xpath(self.elements.DELETE_ORG).text, 'Delete')
         organization_page.element_by_xpath(self.elements.DELETE_ORG + '//a').click()
@@ -68,6 +90,9 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.submit_form()
 
     def test_view_organization(self):
+        """
+        Test display of registered organization.
+        """
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page
         organization_page.live_server_url = self.live_server_url
@@ -84,6 +109,9 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_org_name(), organization.name)
 
     def test_create_valid_organization(self):
+        """
+        Test creation of organization with valid values.
+        """
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page
         organization_page.live_server_url = self.live_server_url
@@ -98,6 +126,9 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_org_name(), 'Systers Open-Source Community')
 
     def test_create_duplicate_organization(self):
+        """
+        Test creation of organization with existing name.
+        """
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page
         organization_page.live_server_url = self.live_server_url
@@ -118,6 +149,9 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_help_block().text, 'Organization with this Name already exists.')
 
     def test_create_invalid_organization(self):
+        """
+        Test creation of organization with invalid values.
+        """
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page
         organization_page.live_server_url = self.live_server_url
@@ -133,6 +167,9 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_organization_name_error(), 'Enter a valid value.')
 
     def test_edit_organization_with_invalid_value(self):
+        """
+        Test edit of organization with invalid values.
+        """
         # Create Organization
         org = create_organization()
 
@@ -153,6 +190,9 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_organization_name_error(), 'Enter a valid value.')
 
     def test_edit_organization_with_valid_value(self):
+        """
+        Test edit of organization with valid values.
+        """
         # Create Organization
         org = create_organization()
 
@@ -173,6 +213,9 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_org_name(), 'New Organization')
 
     def test_delete_organization_without_users_linked(self):
+        """
+        Test deletion of organization with no users linked to it.
+        """
         # Create org
         org = create_organization()
 
@@ -191,6 +234,9 @@ class OrganizationTest(LiveServerTestCase):
             organization_page.element_by_xpath('//table//tbody//tr[1]')
 
     def test_delete_org_with_users_linked(self):
+        """
+        Test deletion of organization with users linked to it.
+        """
         # Create Organization
         org = create_organization()
 

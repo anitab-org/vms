@@ -18,12 +18,21 @@ from shift.utils import (
 
 class ShiftSignUp(LiveServerTestCase):
     """
-    Tests dealing with Event app in aspect
-    of Volunteer's view of website.
+    Contains tests for for event app from volunteer view:
+    -
+    -
+    -
+    -
     """
 
     @classmethod
     def setUpClass(cls):
+
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -34,19 +43,33 @@ class ShiftSignUp(LiveServerTestCase):
         super(ShiftSignUp, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_volunteer()
         self.login_volunteer()
 
     def tearDown(self):
-        pass
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
+        self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
-        cls.authentication_page.logout()
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(ShiftSignUp, cls).tearDownClass()
 
     def login_volunteer(self):
+        """
+        Utility function to login as volunteer with correct credentials.
+        """
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login({
             'username': 'volunteer',
@@ -54,11 +77,17 @@ class ShiftSignUp(LiveServerTestCase):
         })
 
     def test_events_page_with_no_events(self):
+        """
+        Test event view with no registered events.
+        """
         sign_up_page = self.sign_up_page
         sign_up_page.navigate_to_sign_up()
         self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
 
     def test_signup_shifts_with_registered_shifts(self):
+        """
+        Test volunteer signing for a shift which is registered.
+        """
         registered_event = register_event_utility()
         registered_job = register_job_utility()
         registered_shift = register_shift_utility()
@@ -90,6 +119,9 @@ class ShiftSignUp(LiveServerTestCase):
         self.assertEqual(sign_up_page.get_shift_end_time(), '3 p.m.')
 
     def test_signup_for_same_shift_again(self):
+        """
+        Test volunteer signing up for the same shift again.
+        """
         registered_event = register_event_utility()
         registered_job = register_job_utility()
         registered_shift = register_shift_utility()
@@ -125,6 +157,9 @@ class ShiftSignUp(LiveServerTestCase):
             sign_up_page.find_table_tag()
 
     def test_empty_events(self):
+        """
+        Test no events present in the event view.
+        """
         registered_event = register_event_utility()
         sign_up_page = self.sign_up_page
         # Open Shift Sign Up
@@ -145,6 +180,9 @@ class ShiftSignUp(LiveServerTestCase):
             sign_up_page.find_table_tag()
 
     def test_shift_sign_up_with_outdated_shifts(self):
+        """
+        Test signing up for the shifts whose date have passed.
+        """
         registered_event = register_event_utility()
         registered_job = register_job_utility()
         sign_up_page = self.sign_up_page
@@ -165,6 +203,9 @@ class ShiftSignUp(LiveServerTestCase):
                          sign_up_page.get_message_shift_not_available_for_job('job'))
 
     def test_shift_sign_up_with_no_slots(self):
+        """
+        Test signing up for a shift for which volunteer needed is zero.
+        """
         registered_event = register_event_utility()
         registered_job = register_job_utility()
 
@@ -189,6 +230,9 @@ class ShiftSignUp(LiveServerTestCase):
         self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
 
     def test_search_event_both_date_present(self):
+        """
+        Test search of event with both using both date.
+        """
         register_event_utility()
         register_job_utility()
         register_shift_utility()
@@ -203,7 +247,10 @@ class ShiftSignUp(LiveServerTestCase):
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 
-    def test_search_event_start_date_presesnt(self):
+    def test_search_event_start_date_present(self):
+        """
+        Test search of event with only start date.
+        """
         register_event_utility()
         register_job_utility()
         register_shift_utility()
@@ -218,6 +265,9 @@ class ShiftSignUp(LiveServerTestCase):
         self.assertEqual(sign_up_page.get_event_name(), 'event')
 
     def test_search_event_end_date_present(self):
+        """
+        Test search of event with only end date.
+        """
         register_event_utility()
         register_job_utility()
         register_shift_utility()

@@ -13,12 +13,21 @@ from shift.utils import (create_admin, create_event_with_details)
 
 class EventDetails(LiveServerTestCase):
     """
-    Contains Tests for Job app in aspect of
-    an admin's view of website.
+    Contains tests for event app from administrator view:
+    - Event details view
+    - Event creation with valid and invalid values
+    - Event deletion
+    - Start date of event after end date
     """
 
     @classmethod
     def setUpClass(cls):
+
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -30,22 +39,41 @@ class EventDetails(LiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(EventDetails, cls).tearDownClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @staticmethod
     def register_valid_event():
+        """
+        Utility function to create a valid event.
+        :return: Event type object
+        """
         created_event = create_event_with_details(['event', '2050-06-11', '2050-06-19'])
         return created_event
 
     def check_error_messages(self):
+        """
+        Utility function to check event errors raised after form filling
+        """
         event_details_page = self.event_details_page
         self.assertEqual(len(event_details_page.get_help_blocks()), 3)
         self.assertEqual(event_details_page.get_event_name_error(), event_details_page.FIELD_REQUIRED)
@@ -53,6 +81,9 @@ class EventDetails(LiveServerTestCase):
         self.assertEqual(event_details_page.get_event_end_date_error(), event_details_page.FIELD_REQUIRED)
 
     def login_admin(self):
+        """
+        Utility function to login as administrator with correct credentials.
+        """
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
         authentication_page.login(
@@ -63,6 +94,9 @@ class EventDetails(LiveServerTestCase):
         )
 
     def test_event_details_view(self):
+        """
+         Test event details view for existing events.
+        """
         # Navgate to event view
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
@@ -81,6 +115,9 @@ class EventDetails(LiveServerTestCase):
         self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
 
     def test_valid_event_create(self):
+        """
+        Test event create with valid details.
+        """
         created_event = EventDetails.register_valid_event()
 
         event_details_page = self.event_details_page
@@ -93,6 +130,9 @@ class EventDetails(LiveServerTestCase):
         self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
 
     def test_invalid_event_create(self):
+        """
+        Test event create with invalid values.
+        """
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
         event_details_page.go_to_events_page()
@@ -106,6 +146,9 @@ class EventDetails(LiveServerTestCase):
         self.check_error_messages()
 
     def test_invalid_event_edit(self):
+        """
+        Test event edit with invalid values.
+        """
         registered_event = EventDetails.register_valid_event()
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
@@ -118,6 +161,9 @@ class EventDetails(LiveServerTestCase):
         self.check_error_messages()
 
     def test_valid_event_edit(self):
+        """
+        Test event edit with valid values.
+        """
         registered_event = EventDetails.register_valid_event()
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
@@ -133,6 +179,9 @@ class EventDetails(LiveServerTestCase):
         self.assertEqual(event_details_page.get_event_end_date(), 'June 20, 2050')
 
     def test_event_delete(self):
+        """
+        Test event delete.
+        """
         registered_event = EventDetails.register_valid_event()
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
@@ -144,6 +193,9 @@ class EventDetails(LiveServerTestCase):
         event_details_page.submit_form()
 
     def test_start_date_after_end_date(self):
+        """
+        Test event start date after its end date.
+        """
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
         event_details_page.go_to_events_page()

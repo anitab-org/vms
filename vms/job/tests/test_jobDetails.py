@@ -15,10 +15,20 @@ from shift.utils import (create_admin, create_event_with_details,
 class JobDetails(LiveServerTestCase):
     """
     Contains Tests for Job app.
+    - Creation with valid and invalid values.
+    - Edit with valid and invalid values.
+    - Deletion of registered job.
+    - Registering job with no event registered
+    - Registering with start date after end date.
     """
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -30,27 +40,51 @@ class JobDetails(LiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(JobDetails, cls).tearDownClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         self.admin = create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @staticmethod
     def register_valid_event():
+        """
+        Utility function to register event with valid details.
+        :return: Event type object.
+        """
         created_event = create_event_with_details(['event', '2050-06-11', '2050-06-19'])
         return created_event
 
     @staticmethod
     def register_valid_job(created_event):
+        """
+        Utility function to register job with valid details.
+        :param created_event: Event type object.
+        :return: Job type object.
+        """
         created_job = create_job_with_details(['job', '2050-06-15', '2050-06-18', '', created_event])
         return created_job
 
     def check_error_messages(self):
+        """
+        Utility function to check error messages which appear in job form.
+        """
         job_details_page = self.job_details_page
         error_message = job_details_page.FIELD_REQUIRED
         self.assertEqual(len(job_details_page.get_help_blocks()), 3)
@@ -59,6 +93,9 @@ class JobDetails(LiveServerTestCase):
         self.assertEqual(job_details_page.get_job_end_date_error(), error_message)
 
     def login_admin(self):
+        """
+        Utility function to login as administrator.
+        """
         authentication_page = self.authentication_page
         authentication_page.server_url = self.live_server_url
         authentication_page.login(
@@ -69,6 +106,9 @@ class JobDetails(LiveServerTestCase):
         )
 
     def test_job_details_view(self):
+        """
+        Test job details view table with registered job.
+        """
         created_event = JobDetails.register_valid_event()
 
         self.job_details_page.navigate_to_event_list_view()
@@ -86,6 +126,9 @@ class JobDetails(LiveServerTestCase):
         self.assertEqual(job_details_page.get_event_name(), created_event.name)
 
     def test_valid_job_create(self):
+        """
+        Test job creation with valid values.
+        """
         created_event = JobDetails.register_valid_event()
         self.job_details_page.navigate_to_event_list_view()
         created_job = JobDetails.register_valid_job(created_event)
@@ -99,6 +142,9 @@ class JobDetails(LiveServerTestCase):
         self.assertEqual(job_details_page.get_event_name(), created_event.name)
 
     def test_invalid_job_create(self):
+        """
+        Test job creation with invalid values.
+        """
         created_event = JobDetails.register_valid_event()
         self.job_details_page.navigate_to_event_list_view()
 
@@ -115,6 +161,9 @@ class JobDetails(LiveServerTestCase):
         self.check_error_messages()
 
     def test_invalid_job_edit(self):
+        """
+        Test job edit with invalid values.
+        """
         created_event = JobDetails.register_valid_event()
         self.job_details_page.navigate_to_event_list_view()
         JobDetails.register_valid_job(created_event)
@@ -129,6 +178,9 @@ class JobDetails(LiveServerTestCase):
         self.check_error_messages()
 
     def test_valid_job_edit(self):
+        """
+        Test job edit with valid values.
+        """
         created_event = JobDetails.register_valid_event()
         self.job_details_page.navigate_to_event_list_view()
         JobDetails.register_valid_job(created_event)
@@ -146,6 +198,9 @@ class JobDetails(LiveServerTestCase):
         self.assertEqual(job_details_page.get_description(), edit_job[2])
 
     def test_job_delete(self):
+        """
+        Test job deletion.
+        """
         job_details_page = self.job_details_page
         job_details_page.live_server_url = self.live_server_url
 
@@ -160,6 +215,9 @@ class JobDetails(LiveServerTestCase):
         job_details_page.submit_form()
 
     def test_create_job_with_no_event_present(self):
+        """
+        Test job creation with no registered events present.
+        """
         job_details_page = self.job_details_page
         job_details_page.navigate_to_event_list_view()
         job_details_page.click_link(job_details_page.jobs_tab)
@@ -175,6 +233,9 @@ class JobDetails(LiveServerTestCase):
                          job_details_page.ADD_EVENTS_TO_JOB)
 
     def test_start_date_after_end_date(self):
+        """
+        Test start date of job after end date.
+        """
         created_event = JobDetails.register_valid_event()
         self.job_details_page.navigate_to_event_list_view()
 

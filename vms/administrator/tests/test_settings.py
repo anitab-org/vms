@@ -62,6 +62,11 @@ class Settings(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -73,18 +78,33 @@ class Settings(LiveServerTestCase):
         super(Settings, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(Settings, cls).tearDownClass()
 
     def login_admin(self):
+        """
+        Utility function to login as administrator with correct credentials.
+        """
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login({
             'username': 'admin',
@@ -92,6 +112,9 @@ class Settings(LiveServerTestCase):
         })
 
     def delete_event_from_list(self):
+        """
+        Utility function to delete a particular event.
+        """
         settings = self.settings
         self.assertEqual(settings.element_by_xpath(self.elements.DELETE_EVENT).text, 'Delete')
         settings.element_by_xpath(self.elements.DELETE_EVENT + '//a').click()
@@ -100,6 +123,9 @@ class Settings(LiveServerTestCase):
         settings.submit_form()
 
     def delete_job_from_list(self):
+        """
+        Utility function to delete a particular job.
+        """
         settings = self.settings
         self.assertEqual(settings.element_by_xpath(self.elements.DELETE_JOB).text, 'Delete')
         settings.element_by_xpath(self.elements.DELETE_JOB + '//a').click()
@@ -109,6 +135,9 @@ class Settings(LiveServerTestCase):
         settings.submit_form()
 
     def delete_shift_from_list(self):
+        """
+        Utility function to delete a particular shift.
+        """
         settings = self.settings
         self.assertEqual(settings.element_by_xpath(self.elements.DELETE_SHIFT).text, 'Delete')
         settings.element_by_xpath(self.elements.DELETE_SHIFT + '//a').click()
@@ -119,6 +148,9 @@ class Settings(LiveServerTestCase):
         settings.submit_form()
 
     def delete_organization_from_list(self):
+        """
+        Utility function to delete a particular organization.
+        """
         settings = self.settings
         self.assertEqual(settings.element_by_xpath(self.elements.DELETE_ORG).text, 'Delete')
         settings.element_by_xpath(self.elements.DELETE_ORG + '//a').click()
@@ -129,12 +161,18 @@ class Settings(LiveServerTestCase):
         settings.submit_form()
 
     def test_event_tab(self):
+        """
+        Test event details view with no events registered.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
 
         self.assertEqual(settings.get_message_context(), 'There are currently no events. Please create events first.')
 
     def test_job_tab_and_create_job_without_event(self):
+        """
+        Test job details view with no events registered.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.click_link(settings.jobs_tab)
@@ -146,6 +184,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_message_context(), 'Please add events to associate with jobs first.')
 
     def test_shift_tab_and_create_shift_without_job(self):
+        """
+        Test shift details view with no jobs registered.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.click_link(settings.shift_tab)
@@ -153,6 +194,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_message_context(), 'There are currently no jobs. Please create jobs first.')
 
     def test_create_event(self):
+        """
+        Test event creation with valid values.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -166,6 +210,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_event_name(), 'event-name')
 
     def test_edit_event(self):
+        """
+        Test event edit with valid values.
+        """
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
 
@@ -187,6 +234,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_event_name(), 'new-event-name')
 
     def test_create_and_edit_event_with_invalid_start_date(self):
+        """
+        Test event creation and edit with invalid start date.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -214,6 +264,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(), "Start date should be today's date or later.")
 
     def test_edit_event_with_elapsed_start_date(self):
+        """
+        Test edit of an event which is currently going on.
+        """
         elapsed_event = ['event-name', '2016-05-21', '2050-08-09']
 
         # Create an event with elapsed start date
@@ -236,6 +289,9 @@ class Settings(LiveServerTestCase):
         self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
 
     def test_edit_event_with_invalid_job_date(self):
+        """
+        Test edit of event with invalid date such that the job dates do not lie in it.
+        """
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
 
@@ -262,6 +318,9 @@ class Settings(LiveServerTestCase):
                          'lies within the new date range :')
 
     def test_delete_event_with_no_associated_job(self):
+        """
+        Test deletion of events with no jobs linked.
+        """
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
 
@@ -281,6 +340,9 @@ class Settings(LiveServerTestCase):
             settings.get_results()
 
     def test_delete_event_with_associated_job(self):
+        """
+        Test deletion of events with linked jobs.
+        """
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
 
@@ -308,6 +370,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_event_name(), 'event-name')
 
     def test_create_job(self):
+        """
+        Test creation of job with valid values.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -328,6 +393,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_job_event(), created_event.name)
 
     def test_edit_job(self):
+        """
+        Test edit of job with valid values.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -351,6 +419,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_job_name(), 'changed job name')
 
     def test_create_job_with_invalid_event_date(self):
+        """
+        Test creation of job with date not lying in event's date.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         create_event_with_details(event)
@@ -380,6 +451,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
 
     def test_edit_job_with_invalid_event_date(self):
+        """
+        Test edit of job with date not lying in event's date.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -413,6 +487,10 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
 
     def test_edit_job_with_invalid_shift_date(self):
+        """
+        Test edit of job with date not lying in shift's date.
+        """
+
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -443,6 +521,9 @@ class Settings(LiveServerTestCase):
                          'You cannot edit this job as 1 associated shift no longer lies within the new date range')
 
     def test_delete_job_without_associated_shift(self):
+        """
+        Test deletion of job with shifts not linked.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -468,6 +549,9 @@ class Settings(LiveServerTestCase):
             settings.get_results()
 
     def test_delete_job_with_associated_shifts(self):
+        """
+        Test deletion of job with shifts linked.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -497,6 +581,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_job_name(), 'job')
 
     def test_create_shift(self):
+        """
+        Test creation of shift with valid values.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -522,6 +609,9 @@ class Settings(LiveServerTestCase):
             settings.get_help_block()
 
     def test_create_shift_with_invalid_timings(self):
+        """
+        Test creation of shift with invalid time.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -545,6 +635,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_help_block().text, 'Start time must be before the end time')
 
     def test_edit_shift_with_invalid_timings(self):
+        """
+        Test edit of shift with invalid time.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -571,6 +664,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_help_block().text, 'Start time must be before the end time')
 
     def test_create_shift_with_invalid_date(self):
+        """
+        Test creation of shift with date not lying in job's date.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -594,6 +690,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(), 'Shift date should lie within Job dates')
 
     def test_edit_shift_with_invalid_date(self):
+        """
+        Test edit of shift with date not lying in job's date.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -620,6 +719,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_warning_context(), 'Shift date should lie within Job dates')
 
     def test_edit_shift(self):
+        """
+        Test edit of shift with valid values.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -648,6 +750,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_shift_date(), 'Aug. 25, 2050')
 
     def test_delete_shift(self):
+        """
+        Test deletion of shift.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -674,6 +779,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_message_context(), 'There are currently no shifts. Please create shifts first.')
 
     def test_delete_shift_with_volunteer(self):
+        """
+        Test deletion of shift with volunteer linked with it.
+        """
         # register event first to create job
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -703,6 +811,9 @@ class Settings(LiveServerTestCase):
                          'You cannot delete a shift that a volunteer has signed up for.')
 
     def test_organization(self):
+        """
+        Test creation of organization with valid values.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -720,6 +831,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_org_name(), 'Org-name 92:4 CA')
 
     def test_replication_of_organization(self):
+        """
+        Test creation of organization with name same as that of existing one.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -736,6 +850,9 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_help_block().text, 'Organization with this Name already exists.')
 
     def test_edit_org(self):
+        """
+        Test edit of organization with valid values.
+        """
         # create org
         create_organization()
         self.settings.go_to_events_page()
@@ -756,6 +873,9 @@ class Settings(LiveServerTestCase):
         self.assertTrue('changed-organization' in org_list)
 
     def test_delete_org_without_associated_users(self):
+        """
+        Test deletion of organization with no users linked with it.
+        """
         # create org
         create_organization()
         self.settings.go_to_events_page()
@@ -771,6 +891,9 @@ class Settings(LiveServerTestCase):
             settings.element_by_xpath('//table//tbody//tr[1]')
 
     def test_delete_org_with_associated_users(self):
+        """
+        Test deletion of organization with users linked with it.
+        """
         # create org
         org = create_organization()
         volunteer = create_volunteer()
@@ -791,8 +914,11 @@ class Settings(LiveServerTestCase):
                          'You cannot delete an organization that users are currently associated with.')
 
     # Feature not yet added.
-    """
+    '''
     def test_duplicate_event(self):
+        """
+        Test creation of duplicate event with same details.
+        """
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
 
@@ -810,6 +936,9 @@ class Settings(LiveServerTestCase):
 
     # Feature not yet implemented
     def test_duplicate_job(self):
+        """
+        Test creation of duplicate job with same details.
+        """
         # register event first to create job
         event = ['event-name', '2017-08-21', '2017-09-28']
         created_event = create_event_with_details(event)
@@ -832,4 +961,4 @@ class Settings(LiveServerTestCase):
         # TBA here - more checks depending on logic that should be reflected
         # check job not created - commented out due to bug
         self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
-    """
+    '''

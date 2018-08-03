@@ -72,9 +72,9 @@ def tearDownModule():
 
 
 class EventTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require only event objects
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -146,9 +146,9 @@ class EventTests(unittest.TestCase):
 
 
 class EventWithJobTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require jobs and shifts
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -236,9 +236,9 @@ class DeleteEventTest(unittest.TestCase):
 
 
 class EventWithVolunteerTest(unittest.TestCase):
-    '''
+    """
     Contains tests which require only volunteer objects
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):

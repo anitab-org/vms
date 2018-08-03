@@ -19,13 +19,20 @@ from shift.utils import (create_admin, create_event_with_details,
 class FormFields(LiveServerTestCase):
     """
     Contains Tests for
-    - checking if value in forms are saved for event, shift
-    and job forms
-    - validation of number of volunteers field
+    - Null values filled in event, job and shift forms.
+    - Job and event linked correctly with newly created shift
+    - Event linked correctly with newly created job.
+    - Field values retained in event, job and shift forms
+      if invalid entries are filled
     """
 
     @classmethod
     def setUpClass(cls):
+        """Method to initiate class level objects.
+
+        This method initiates Firefox WebDriver, WebDriverWait and
+        the corresponding POM objects for this Test Class
+        """
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -37,24 +44,46 @@ class FormFields(LiveServerTestCase):
         super(FormFields, cls).setUpClass()
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         create_admin()
         self.login_admin()
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         self.authentication_page.logout()
 
     @classmethod
     def tearDownClass(cls):
+        """
+        Class method to quit the Firefox WebDriver session after
+        execution of all tests in class.
+        """
         cls.driver.quit()
         super(FormFields, cls).tearDownClass()
 
     def check_event_form_values(self, event):
+        """
+        Utility function to perform assertion for details of
+        events against the event list received as param.
+        :param event: Iterable consisting values for events.
+        """
         settings = self.settings
         self.assertEqual(settings.get_event_name_value(), event[0])
         self.assertEqual(settings.get_event_start_date_value(), event[1])
         self.assertEqual(settings.get_event_end_date_value(), event[2])
 
     def check_job_form_values(self, job):
+        """
+        Utility function to perform assertion for details of
+        job against the job list received as param.
+        :param job: Iterable consisting values for job.
+        """
         settings = self.settings
         self.assertEqual(settings.get_job_name_value(), job[1])
         self.assertEqual(settings.get_job_description_value(), job[2])
@@ -62,6 +91,11 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_job_end_date_value(), job[4])
 
     def check_shift_form_values(self, shift):
+        """
+        Utility function to perform assertion for details of
+        shift against the shift list received as param.
+        :param shift: Iterable consisting values for shift.
+        """
         settings = self.settings
         self.assertEqual(settings.get_shift_date_value(), shift[0])
         self.assertEqual(settings.get_shift_start_time_value(), shift[1])
@@ -69,6 +103,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_shift_max_volunteers(), shift[3])
 
     def login_admin(self):
+        """
+        Utility function to login as administrator with correct credentials.
+        """
         self.authentication_page.server_url = self.live_server_url
         self.authentication_page.login({
             'username': 'admin',
@@ -76,6 +113,10 @@ class FormFields(LiveServerTestCase):
         })
 
     def test_null_values_in_create_event(self):
+        """
+        Test null values in event form will give error messages
+        for the non-nullable fields while creating a new event.
+        """
         self.settings.go_to_events_page()
         event = ['', '', '', 'in!valid', 'in!valid']
         settings = self.settings
@@ -95,6 +136,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_event_venue_error(), settings.ENTER_VALID_VALUE)
 
     def test_null_values_in_edit_event(self):
+        """
+        Test null values in event form will give error messages
+        for the non-nullable fields while editing an existing event.
+        """
         event = ['event-name', '2018-05-24', '2018-05-28']
         created_event = create_event_with_details(event)
         self.settings.go_to_events_page()
@@ -118,6 +163,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_event_end_date_error(), settings.FIELD_REQUIRED)
 
     def test_null_values_in_create_job(self):
+        """
+        Test null values in job form will give error messages
+        for the non-nullable fields while creating a new job.
+        """
         # Register Event
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
@@ -143,6 +192,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_job_end_date_error(), settings.FIELD_REQUIRED)
 
     def test_null_values_in_edit_job(self):
+        """
+        Test null values in job form will give error messages
+        for the non-nullable fields while editing an existing job.
+        """
         # Register Event
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
@@ -171,6 +224,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_job_end_date_error(), settings.FIELD_REQUIRED)
 
     def test_null_values_in_create_shift(self):
+        """
+        Test null values in shift form will give error messages
+        for the non-nullable fields while creating a new shift.
+        """
         # Register Event
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
@@ -202,6 +259,10 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_shift_venue_error(), settings.ENTER_VALID_VALUE)
 
     def test_null_values_in_edit_shift(self):
+        """
+        Test null values in shift form will give error messages
+        for the non-nullable fields while editing an existing shift.
+        """
         # Register Event
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
@@ -234,6 +295,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_shift_max_volunteer_error(), settings.FIELD_REQUIRED)
 
     def test_max_volunteer_field(self):
+        """
+        Test shift can not have maximum number of volunteers less than one.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -276,6 +340,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_shift_max_volunteer_error(), 'Ensure this value is greater than or equal to 1.')
 
     def test_simplify_shift(self):
+        """
+        Test shift is linked correctly with the existing job and event.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -305,6 +372,9 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_shift_job_end_date(), 'May 28, 2050')
 
     def test_simplify_job(self):
+        """
+        Test job is linked correctly with the existing event.
+        """
         event = ['event', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
 
@@ -324,12 +394,15 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(element.get_attribute('start_date'), 'Aug. 21, 2050')
         self.assertEqual(element.get_attribute('end_date'), 'Sept. 28, 2050')
 
-    """
+    '''
     # Retention tests are buggy.
     # The results change every time a new build starts
     # i.e. The values in forms are not always retained.
 
     def test_field_value_retention_for_event(self):
+        """
+        Test field values are retained after filling invalid values in event form.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -382,6 +455,9 @@ class FormFields(LiveServerTestCase):
     # i.e. The values in forms are not always retained.
 
     def test_field_value_retention_for_job(self):
+        """
+        Test field values are retained after filling invalid values in job form.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -440,6 +516,9 @@ class FormFields(LiveServerTestCase):
     # i.e. The values in forms are not always retained.
     
     def test_field_value_retention_for_shift(self):
+        """
+        Test field values are retained after filling invalid values in shift form.
+        """
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
@@ -484,4 +563,4 @@ class FormFields(LiveServerTestCase):
                 break
             except StaleElementReferenceException:
                 pass
-    """
+    '''

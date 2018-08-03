@@ -12,20 +12,42 @@ from pom.pages.eventsPage import EventsPage
 
 
 class EventModelTests(TestCase):
+    """
+    Contains database tests for
+    - event create with valid and invalid values.
+    - event edit with valid and invalid values.
+    - event delete.
+    - event mode representation.
+    """
 
     def setUp(self):
+        """
+        Method consists of statements to be executed before
+        start of each test.
+        """
         pass
 
     def tearDown(self):
+        """
+        Method consists of statements to be executed at
+        end of each test.
+        """
         pass
 
     @staticmethod
     def create_event():
+        """
+        Utility function to create a valid event.
+        :return: Event type object
+        """
         event = ['event-name', '2050-05-24', '2050-05-28']
         created_event = create_event_with_details(event)
         return created_event
 
     def test_valid_model_create(self):
+        """
+        Database test for model creation with valid values.
+        """
         event = ['event-name', '2050-05-24', '2050-05-28', 'event address', 'event venue']
         create_event_with_details(event)
 
@@ -46,6 +68,7 @@ class EventModelTests(TestCase):
         """
         event_data = ['event~name', '2050-05-21', '2050-05-24']
         event = create_event_with_details(event_data)
+
         self.assertRaisesRegexp(ValidationError, EventsPage.ENTER_VALID_VALUE, event.full_clean)
 
     # def test_invalid_start_date_in_model_create(self):
@@ -67,6 +90,9 @@ class EventModelTests(TestCase):
     #     self.assertRaisesRegexp(ValidationError, EventsPage.ENTER_VALID_VALUE, event.full_clean)
 
     def test_model_edit_with_valid_values(self):
+        """
+        Database test for model edit with valid values.
+        """
         created_event = EventModelTests.create_event()
 
         # Check db for instance creation
@@ -86,6 +112,9 @@ class EventModelTests(TestCase):
         self.assertEqual(len(Event.objects.all()), 1)
 
     def test_model_edit_with_invalid_values(self):
+        """
+        Database test for model edit with invalid values.
+        """
         created_event = EventModelTests.create_event()
 
         # Check db for instance creation
@@ -107,6 +136,9 @@ class EventModelTests(TestCase):
         self.assertNotEqual(len(Event.objects.all()), 0)
 
     def test_model_delete(self):
+        """
+        Database test for model deletion.
+        """
         created_event = EventModelTests.create_event()
 
         # Check db for instance creation
@@ -123,6 +155,9 @@ class EventModelTests(TestCase):
         self.assertEqual(len(Event.objects.all()), 0)
 
     def test_model_representation(self):
+        """
+        Database test for model representation.
+        """
         EventModelTests.create_event()
 
         # Check db for instance creation
