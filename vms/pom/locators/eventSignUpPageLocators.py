@@ -40,5 +40,5 @@ class EventSignUpPageLocators(object):
 
     SUBMIT_PATH = '//form[1]'
 
-    SHIFT_SIGNUP_PAGE = '//div[1]//div[1]//div[2]//ul[1]//li[3]'
+    SHIFT_SIGNUP_PAGE = '//*[@id="lower-nav"]/li[3]'
 
