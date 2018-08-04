@@ -241,30 +241,6 @@ def cancel(request, shift_id, volunteer_id):
         raise Http404
 
 
-class ClearHoursView(LoginRequiredMixin, TemplateView):
-    template_name = 'shift/clear_hours.html'
-    success_url = reverse_lazy('shift:view_hours')
-
-    def get_context_data(self, **kwargs):
-        context = super(ClearHoursView, self).get_context_data(**kwargs)
-        shift_id = self.kwargs['shift_id']
-        volunteer_id = self.kwargs['volunteer_id']
-        context['volunteer_id'] = volunteer_id
-        context['shift_id'] = shift_id
-        context['result'] = clear_shift_hours(volunteer_id, shift_id)
-        return context
-
-    def post(self, request, *args, **kwargs):
-        volunteer_id = self.kwargs['volunteer_id']
-        shift_id = self.kwargs['shift_id']
-        result = clear_shift_hours(volunteer_id, shift_id)
-        if result:
-            return HttpResponseRedirect(
-                reverse('shift:view_hours', args=(volunteer_id, )))
-        else:
-            raise Http404
-
-
 class ClearHoursManager(AdministratorLoginRequiredMixin, TemplateView):
     template_name = 'shift/clear_hours.html'
 
@@ -702,6 +678,7 @@ class ManageVolunteerShiftView(AdministratorLoginRequiredMixin, TemplateView):
             **kwargs)
         volunteer_id = self.kwargs['volunteer_id']
         context['volunteer'] = get_volunteer_by_id(volunteer_id)
+        context['upcoming_shift_list'] = get_future_shifts_by_volunteer_id(volunteer_id)
         context['shift_list'] = get_unlogged_shifts_by_volunteer_id(
             volunteer_id)
         context['shift_list_with_hours'] = get_volunteer_shifts_with_hours(
@@ -802,7 +779,9 @@ class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
         context = super(ViewHoursView, self).get_context_data(**kwargs)
         volunteer_id = self.kwargs['volunteer_id']
         context['volunteer'] = get_volunteer_by_id(volunteer_id)
-        context['volunteer_shift_list'] = get_volunteer_shifts_with_hours(
+        context['shift_list'] = get_unlogged_shifts_by_volunteer_id(
+            volunteer_id)
+        context['logged_volunteer_shift_list'] = get_volunteer_shifts_with_hours(
             volunteer_id)
         context['init_date'] = timezone.now()-timedelta(days=7)
         return context
