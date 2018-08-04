@@ -9,10 +9,16 @@ from selenium.webdriver.common.by import By
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.core import mail
 
 # local Django
 from pom.pages.adminRegistrationPage import AdminRegistrationPage
 from pom.pageUrls import PageUrls
+from registration.tokens import account_activation_token
 from shift.utils import create_organization, create_country, create_state, create_city
 
 
@@ -132,7 +138,7 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertEqual(page.get_help_blocks(), None)
-        self.assertEqual(page.get_message_box_text(), page.success_message)
+        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
 
     def test_user_registration_with_same_username(self):
         """
@@ -447,6 +453,19 @@ class SignUpAdmin(LiveServerTestCase):
     def test_ajax_check_states(self):
         response = self.client.post('/registration/check_states/',{'country':'India'})
         self.assertEqual(response.status_code, 302)
+
+    def test_activation_email(self):
+        u1 = User.objects.create_user(username='admin',password='admin')
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertEqual(page.get_help_blocks(), None)
+        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        uid = urlsafe_base64_encode(force_bytes(u1.pk))
+        token = account_activation_token.make_token(u1)
+        response = self.client.get(reverse('registration:activate', args=[uid,token]))
+        self.assertEqual(response.status_code, 200)
+
 
 # Retention test are buggy and unstable, issue is open to fix them
 # https://github.com/systers/vms/pull/794

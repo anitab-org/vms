@@ -148,10 +148,19 @@ class AdministratorSignupView(TemplateView):
                     administrator.city = admin_city
 
                     administrator.save()
-                    registered = True
-                    messages.success(request,
-                                     'You have successfully registered!')
-                    return HttpResponseRedirect(reverse('home:index'))
+                    current_site = get_current_site(request)
+                    mail_subject = 'Activate your account.'
+                    message = render_to_string(
+                        'registration/acc_active_email.html', {
+                            'user': user,
+                            'domain': current_site.domain,
+                            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                            'token': account_activation_token.make_token(user),
+                        })
+                    to_email = administrator_form.cleaned_data.get('email')
+                    email = EmailMessage(mail_subject, message, to=[to_email])
+                    email.send()
+                    return render(request, 'home/email_ask_confirm.html')
                 else:
                     return render(
                         request, 'registration/signup_administrator.html', {
