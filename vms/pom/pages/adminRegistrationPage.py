@@ -14,7 +14,7 @@ class AdminRegistrationPage(BasePage):
     INVALID_PHONE = 'Please enter a valid phone number'
     INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
-    confirm_email_message = "Please confirm your email address before login."
+    CONFIRM_EMAIL_MESSAGE = "Please confirm your email address before login."
 
     def __init__(self, driver):
         self.elements = AdminRegistrationPageLocators()
