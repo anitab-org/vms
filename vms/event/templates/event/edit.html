@@ -21,7 +21,7 @@
         <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Edit Event" %}</legend>
+                <legend class="header">{% trans "Edit Event" %}</legend>
                 {% if form.name.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Event Name" %}<span class="asteriskField">*</span></label>
@@ -41,6 +41,28 @@
                         <label class="col-md-2 control-label">{% trans "Event Name" %}<span class="asteriskField">*</span></label>
                         <div class="col-md-8">
                             <input class="form-control" placeholder="{% blocktrans %}Event Name{% endblocktrans %}" type="text" name="name" value="{% if form.name.value %}{{ form.name.value }}{% endif %}">
+                        </div>
+                    </div>
+                {% endif %}
+                {% if form.description.errors %}
+                    <div class="form-group has-error">
+                        <label class="col-md-2 control-label">{% trans "Description" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Description{% endblocktrans %}" type="text" name="description" value="{% if form.description.value %}{{ form.description.value }}{% endif %}">
+                            <p class="help-block">
+                                <strong>
+                                    {% for error in form.description.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </strong>
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">{% trans "Description" %}</label>
+                        <div class="col-md-8">
+                            <input class="form-control" placeholder="{% blocktrans %}Description{% endblocktrans %}" type="text" name="description" value="{% if form.description.value %}{{ form.description.value }}{% endif %}">
                         </div>
                     </div>
                 {% endif %}
@@ -99,77 +121,70 @@
                                 {% endfor %}
                         </div>
                     </div>
-
-				{% if form.country.errors %}
-                    <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "Country" %}</label>
+                    <div id="div_id_country" class="form-group">
+                        <label class="col-md-2 control-label">
+                        {% trans "Country" %}
+                        </label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Event Country{% endblocktrans %}" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
-                            <p class="help-block">
-                                <strong>
-                                    {% for error in form.country.errors %}
-                                        {{ error }}
+                            <select id="select_country" class="form-control" name="country">
+                                <option value="0">-- {% trans "Select country" %}
+                                    {% for country in country_list %}
+                                        {% if event.country_id %}
+                                            {% if country.name == event.country.name %}
+                                                <option selected value="{{country.name}}">{{country.name}}</option>
+                                            {% else %}
+                                                <option value="{{ country.name }}">{{ country.name }}</option>
+                                            {% endif %}
+                                        {% else %}
+                                            <option value="{{ country.name }}">{{ country.name }}</option>
+                                        {% endif %}
                                     {% endfor %}
-                                </strong>
-                            </p>
+                            </select>
                         </div>
                     </div>
-                {% else %}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "Country" %}</label>
+                    <div id="div_id_state" class="form-group">
+                        <label class="col-md-2 control-label">
+                        {% trans "State/Province" %}
+                        </label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Event Country{% endblocktrans %}" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                            <select id="select_state" class="form-control" name="state">
+                                <option value="0">-- {% trans "Select state" %} --</option>
+                                {% for state in state_list %}
+                                    {% if event.state_id %}
+                                        {% if state.name == event.state.name %}
+                                            <option selected value="{{state.name}}">{{state.name}}</option>
+                                        {% else %}
+                                            <option value="{{ state.name }}">{{ state.name }}</option>
+                                        {% endif %}
+                                    {% else %}
+                                    <option value="{{ state.name }}">{{ state.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
-                {% endif %}
-
-				{% if form.state.errors %}
-                    <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "State" %}</label>
+                    <div id="div_id_city" class="form-group">
+                        <label class="col-md-2 control-label">
+                        {% trans "City" %}
+                        </label>
                         <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Event State{% endblocktrans %}" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
-                            <p class="help-block">
-                                <strong>
-                                    {% for error in form.state.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </strong>
-                            </p>
+                            <select id="select_city" class="form-control" name="city">
+                                <option value="0">-- {% trans "Select city" %} --</option>
+                                {% for city in city_list %}
+                                    {% if event.city_id %}
+                                        {% if city.name == event.city.name %}
+                                            <option selected value="{{city.name}}">{{city.name}}</option>
+                                        {% else %}
+                                            <option value="{{ city.name }}">{{ city.name }}</option>
+                                        {% endif %}
+                                    {% else %}
+                                        <option value="{{ city.name }}">{{ city.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
-                {% else %}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "State" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Event State{% endblocktrans %}" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
-                        </div>
-                    </div>
-                {% endif %}
-
-				{% if form.city.errors %}
-                    <div class="form-group has-error">
-                        <label class="col-md-2 control-label">{% trans "City" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Event City{% endblocktrans %}" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
-                            <p class="help-block">
-                                <strong>
-                                    {% for error in form.city.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </strong>
-                            </p>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="form-group">
-                        <label class="col-md-2 control-label">{% trans "City" %}</label>
-                        <div class="col-md-8">
-                            <input class="form-control" placeholder="{% blocktrans %}Event City{% endblocktrans %}" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
-                        </div>
-                    </div>
-                {% endif %}
-
-				{% if form.address.errors %}
+    			{% if form.address.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Address" %}</label>
                         <div class="col-md-8">

@@ -4,6 +4,8 @@ class BasePage(object):
     FIELD_REQUIRED = 'This field is required.'
     FIELD_CANNOT_LEFT_BLANK = 'This field cannot be blank.'
     START_BEFORE_END = 'Start date must be before the end date'
+    ENTER_VALID_USERNAME = 'Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.'
+
 
     def __init__(self, driver):
         self.driver = driver

@@ -48,7 +48,8 @@ class EventModelTests(TestCase):
         """
         Database test for model creation with valid values.
         """
-        event = ['event-name', '2050-05-24', '2050-05-28', 'event address', 'event venue']
+        event = ['event-name', '2050-05-24', '2050-05-28', 'event-description',
+                 'event address', 'event venue']
         create_event_with_details(event)
 
         # Check database for instance creation
@@ -59,8 +60,9 @@ class EventModelTests(TestCase):
         self.assertEqual(event_in_db.name, event[0])
         self.assertEqual(str(event_in_db.start_date), event[1])
         self.assertEqual(str(event_in_db.end_date), event[2])
-        self.assertEqual(event_in_db.address, event[3])
-        self.assertEqual(event_in_db.venue, event[4])
+        self.assertEqual(event_in_db.description, event[3])
+        self.assertEqual(event_in_db.address, event[4])
+        self.assertEqual(event_in_db.venue, event[5])
 
     def test_invalid_name_in_model_create(self):
         """

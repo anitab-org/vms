@@ -16,9 +16,10 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
-from shift.utils import (create_volunteer, create_event_with_details,
-                         create_job_with_details, create_shift_with_details,
-                         register_volunteer_for_shift_utility, create_volunteer_with_details)
+from shift.utils import (create_second_city, create_second_state, create_second_country, create_volunteer, create_event_with_details,
+                         create_job_with_details, create_shift_with_details, create_organization_with_details,
+                         register_volunteer_for_shift_utility, create_volunteer_with_details,
+                         register_past_event_utility, register_past_job_utility, register_past_shift_utility)
 
 
 class ViewVolunteerShift(LiveServerTestCase):
@@ -29,7 +30,7 @@ class ViewVolunteerShift(LiveServerTestCase):
     - Access another registered volunteer
     - Access another unregistered volunteer
     - Access no assigned shifts view
-    - Log hours and Shift not displayed in Upcoming Shifts
+    - Only future shifts displayed in Upcoming Shifts
     - View Assigned and Unlogged shifts
     - Cancel shift registration
     """
@@ -118,10 +119,17 @@ class ViewVolunteerShift(LiveServerTestCase):
         upcoming_shift_page.view_upcoming_shifts()
         self.assertEqual(upcoming_shift_page.get_info_box(),
                          upcoming_shift_page.no_shift_message)
+        second_country = create_second_country()
+        second_state = create_second_state()
+        second_city = create_second_city()
         details = ['test_volunteer', 'volunteer-first-name', 'volunteer-last-name',
-                   'volunteer-address', 'volunteer-city', 'volunteer-state', 'volunteer-country',
-                   '9999999999', 'volunteer-email2@systers.org', 'volunteer-organization']
-        test_volunteer = create_volunteer_with_details(details)
+                   'volunteer-address', second_city, second_state, second_country,
+                   '9999999999', 'volunteer-email2@systers.org']
+
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
+        test_volunteer = create_volunteer_with_details(details, org_obj)
+
         upcoming_shift_page.get_page(upcoming_shift_page.live_server_url,
                                      upcoming_shift_page.view_shift_page + str(test_volunteer.id))
         found = re.search('You don\'t have the required rights',
@@ -173,21 +181,28 @@ class ViewVolunteerShift(LiveServerTestCase):
         self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
 
-    def test_log_hours_and_logged_shift_does_not_appear_in_upcoming_shifts(self):
+    def test_future_shifts_appear_in_upcoming_shifts(self):
         """
-        Test that already logged shift and hours do not appear in upcoming shifts.
+        Test display of only future shifts.
         """
         self.register_dataset()
         upcoming_shift_page = self.upcoming_shift_page
         upcoming_shift_page.live_server_url = self.live_server_url
         upcoming_shift_page.view_upcoming_shifts()
 
-        self.assertEqual(upcoming_shift_page.get_log_hours(), 'Log Hours')
+        self.assertEqual(upcoming_shift_page.get_shift_job(), 'jobOneInEventFour')
+        self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
+        self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
+        self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
 
-        upcoming_shift_page.click_to_log_hours()
-        upcoming_shift_page.log_shift_timings('09:00', '12:00')
+    def test_past_shifts_donot_appear_in_upcoming_shifts(self):
+        register_past_event_utility()
+        register_past_job_utility()
+        shift = register_past_shift_utility()
+        register_volunteer_for_shift_utility(shift, self.v1)
 
-        # Check logged shift does not appear in Upcoming Shifts
+        upcoming_shift_page = self.upcoming_shift_page
+        upcoming_shift_page.live_server_url = self.live_server_url
         upcoming_shift_page.view_upcoming_shifts()
         self.assertEqual(upcoming_shift_page.get_info_box(),
                          upcoming_shift_page.no_shift_message)

@@ -6,11 +6,11 @@ import unittest
 from event.services import (
     event_not_empty, delete_event, check_edit_event, get_event_by_id,
     get_events_ordered_by_name, get_events_by_date, get_event_by_shift_id,
-    get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer)
+    get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer, search_events)
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (create_event_with_details, create_job_with_details,
-                         create_volunteer_with_details,
+from shift.utils import (create_country, create_state, create_city, create_event_with_details,
+                         create_job_with_details,  create_organization_with_details, create_volunteer_with_details,
                          create_shift_with_details, clear_objects)
 
 
@@ -22,7 +22,11 @@ def setUpModule():
     global e1, e2, e3, e4, e5
     global j1, j2, j3, j4, j5
     global s1, s2, s3, s4
+    global city, state, country
 
+    country = create_country()
+    state = create_state()
+    city = create_city()
     event_1 = ["Open Source Event", "2012-10-22", "2012-10-23"]
     event_2 = ["Python Event", "2013-11-12", "2013-11-13"]
     event_3 = ["Django Event", "2015-07-02", "2015-07-03"]
@@ -152,10 +156,17 @@ class EventWithJobTests(unittest.TestCase):
 
     @classmethod
     def setup_test_data(cls):
+        cls.e1 = e1
+        cls.e2 = e2
+        cls.e3 = e3
         cls.e4 = e4
         cls.e5 = e5
         cls.s1 = s1
         cls.s2 = s2
+        cls.j1 = j1
+        cls.country = country
+        cls.state = state
+        cls.city = city
 
     @classmethod
     def setUpClass(cls):
@@ -213,6 +224,63 @@ class EventWithJobTests(unittest.TestCase):
         self.assertIn(j4.name, out4['invalid_jobs'])
         self.assertIn(j3.name, out4['invalid_jobs'])
 
+    def test_search_events(self):
+        """
+        tests search result for partial, exact and other searches on events
+        """
+        # if no search parameters are given,
+        # it returns all events
+        search_list = search_events("", "", "", "", "", "", "")
+
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 5)
+        self.assertIn(self.e1, search_list)
+        self.assertIn(self.e2, search_list)
+        self.assertIn(self.e3, search_list)
+
+        search_list = search_events(None, None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 5)
+        self.assertIn(self.e1, search_list)
+        self.assertIn(self.e2, search_list)
+        self.assertIn(self.e3, search_list)
+
+        # test exact search
+        e1.city = self.city
+        e1.state = self.state
+        e1.country = self.country
+        e1.save()
+        search_list = search_events("Open Source Event", "2012-10-22", "2012-10-23",
+                                    "Roorkee", "Uttarakhand", "India", "Software Developer")
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.e1, search_list)
+        self.assertNotIn(self.e2, search_list)
+        self.assertNotIn(self.e3, search_list)
+
+        # test partial search
+        search_list = search_events("Systers Event", None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.e4, search_list)
+        self.assertNotIn(self.e2, search_list)
+        self.assertNotIn(self.e3, search_list)
+
+        e2.city = self.city
+        e2.save()
+        search_list = search_events(None, None, None, 'Roorkee', None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 2)
+        self.assertIn(self.e1, search_list)
+        self.assertIn(self.e2, search_list)
+
+        # test no search matches
+        search_list = search_events("Billy", "2015-07-25", "2015-08-08", "Quebec",
+                                        "Canada", "Ubisoft", "abc")
+        self.assertEqual(len(search_list), 0)
+        self.assertNotIn(self.e1, search_list)
+        self.assertNotIn(self.e2, search_list)
+        self.assertNotIn(self.e3, search_list)
 
 class DeleteEventTest(unittest.TestCase):
     @classmethod
@@ -254,22 +322,24 @@ class EventWithVolunteerTest(unittest.TestCase):
         cls.s4 = s4
 
         volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "yoshi@nintendo.com"
+            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
+            "2374983247", "yoshi@nintendo.com"
         ]
         volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
-            "USA", "23454545", "john@test.com"
+            'John', "John", "Doe", "7 Alpine Street", city, state, country,
+            "23454545", "john@test.com"
         ]
         volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
-            "Japan", "23454545", "ash@pikachu.com"
+            'Ash', "Ash", "Ketchum", "Pallet Town", city, state, country,
+            "23454545", "ash@pikachu.com"
         ]
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        org_name = 'volunteer-organization'
+        cls.org_obj = create_organization_with_details(org_name)
+
+        cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, cls.org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, cls.org_obj)
 
     @classmethod
     def setUpClass(cls):

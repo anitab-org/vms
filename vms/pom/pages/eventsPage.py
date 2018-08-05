@@ -20,7 +20,7 @@ class EventsPage(BasePage):
     organization_tab = 'Organizations'
     live_server_url = ''
     FIELD_REQUIRED = 'This field is required.'
-    NO_EVENT_PRESENT = 'There are currently no events. Please create events first.'
+    NO_EVENT_PRESENT = 'No event found.'
     START_BEFORE_END = 'Start date must be before the end date'
 
     def __init__(self, driver):
@@ -100,6 +100,12 @@ class EventsPage(BasePage):
     def go_to_create_event_page(self):
         self.click_link('Create Event')
 
+    def go_to_details_event_page(self):
+        self.element_by_xpath(self.elements.VIEW_EVENT).click()
+
+    def get_event_description(self): 
+        return self.element_by_xpath('//div[@class="panel-body"]').text
+
     def go_to_edit_event_page(self):
         self.element_by_xpath(self.elements.EDIT_EVENT).click()
 
@@ -169,8 +175,20 @@ class EventsPage(BasePage):
     def get_org_name(self):
         return self.element_by_xpath(self.elements.CREATED_ORG_NAME).text
 
-    def get_help_blocks(self):
-        return self.elements_by_class_name(self.elements.HELP_BLOCK)
+    def get_unlisted_org_name(self):
+        return self.element_by_xpath(self.elements.UNLISTED_ORG_NAME).text
+
+    def get_rejection_context(self):
+        return self.element_by_xpath(self.elements.REJECT_ORG).text
+
+    def reject_org(self):
+        self.element_by_xpath(self.elements.REJECT_ORG + '//a').click()
+
+    def get_approval_context(self):
+        return self.element_by_xpath(self.elements.APPROVE_ORG).text
+
+    def approve_org(self):
+        self.element_by_xpath(self.elements.APPROVE_ORG + '//a').click()
 
     def get_event_name_error(self):
         return self.element_by_xpath(self.elements.EVENT_NAME_ERROR).text
@@ -265,3 +283,6 @@ class EventsPage(BasePage):
     def get_shift_max_volunteers(self):
         return self.get_value_for_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER)
 
+    def get_help_blocks(self):
+        blocks = self.elements_by_class_name(self.elements.HELP_BLOCK)
+        return blocks

@@ -3,11 +3,41 @@
 {% load i18n %}
 
 {% block setting_content %}
-    <div class="spacer"></div>
-    <div class="well well-sm">
+<div class="spacer"></div>
+<div class="approve-heading">Pending Approval</div>
+   <table class="table table-striped table-hover" id="approve">
+      <thead>
+         <tr>
+            <th>{% trans "Organization Name" %}</th>
+            <th>{% trans "Approve" %}</th>
+            <th>{% trans "Edit" %}</th>
+            <th>{% trans "Reject" %}</th>
+         </tr>
+      </thead>
+      <tbody>
+         {% for organization in organization_list %}
+         {% if organization.approved_status is 0 %}
+         <tr>
+            <td>{{ organization.name }}</td>
+            <td>
+               <a href="{% url 'organization:approve' organization.id %}" class="btn btn-success btn-sm">{% trans "Approve" %}</a>
+            </td>
+            <td>
+               <a href="{% url 'organization:edit' organization.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
+            </td>
+            <td>
+               <a href="{% url 'organization:reject' organization.id %}" class="btn btn-danger btn-sm">{% trans "Reject" %}</a>
+            </td>
+         </tr>
+         {% endif %}
+         {% endfor %}
+      </tbody>
+   </table>
+     <div class="spacer"></div>
+ <div class="well well-sm">
         <a href="{% url 'organization:create' %}" class="btn btn-success btn-sm">{% trans "Create Organization" %}</a>
-    </div>    
-    <table class="table table-striped table-hover">
+    </div>
+    <table class="table table-striped table-hover" id="confirmed">
         <thead>
             <tr>
                 <th>{% trans "Organization Name" %}</th>
@@ -17,15 +47,17 @@
         </thead>
         <tbody>
             {% for organization in organization_list %}
+                 {% if organization.approved_status is 1 %}
                 <tr>
                     <td>{{ organization.name }}</td>
                     <td>
-                        <a href="{% url 'organization:edit' organization.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
+                        <a href="{% url 'organization:edit' organization.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
                     </td>
                     <td>
                         <a href="{% url 'organization:delete' organization.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
                     </td>
                 </tr>
+             {% endif %}
             {% endfor %}
         </tbody>
     </table>

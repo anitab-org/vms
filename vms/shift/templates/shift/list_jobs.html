@@ -25,7 +25,7 @@
                         <td>{{ job.start_date }}</td>
                         <td>{{ job.end_date }}</td>
                         <td>
-                            <a href="{% url 'shift:list_shifts' job.id %}" class="btn btn-success btn-sm">{% trans "Shifts" %}</a>
+                            <a href="{% url 'shift:list_shifts' job.id %}" class="btn btn-info">{% trans "Shifts" %}</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -33,7 +33,7 @@
         </table>
     {% else %}
         <div class="alert alert-success">
-            {% trans "There are currently no jobs. Please create jobs first." %}
+            {% trans "No jobs present." %}
         </div>
     {% endif %}            
 {% endblock %}

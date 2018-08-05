@@ -5,6 +5,14 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organization.models import Organization
 
 
+
+def create_organization(name):
+    
+    org, created = Organization.objects.get_or_create(name=name, approved_status=False)
+    if created:
+        org.save()
+    return org
+    
 # need to check that this organization is not currently associated with a user (otherwise the user gets cascade deleted)
 def delete_organization(organization_id):
 
@@ -67,5 +75,5 @@ def get_organization_by_name(organization_name):
 
 
 def get_organizations_ordered_by_name():
-    organization_list = Organization.objects.all().order_by('name')
+    organization_list = Organization.objects.filter(approved_status=1).order_by('name')
     return organization_list

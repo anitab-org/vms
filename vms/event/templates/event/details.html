@@ -1,0 +1,40 @@
+{% extends "administrator/settings.html" %}
+
+{% load i18n %}
+
+{% block setting_content %}
+    <div class="spacer"></div>
+    {% if event.description %}
+        <div class="panel panel-default">
+            <div class="panel-heading">{% trans "Event Description" %}</div>
+            <div class="panel-body">
+                {{ event.description }}
+            </div>
+        </div>
+    {% endif %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <th>{% trans "Event Name" %}</th>
+            <th>{% trans "Start Date" %}</th>
+            <th>{% trans "End Date" %}</th>
+            <th>{% trans "Address" %}</th>
+            <th>{% trans "Venue"   %}</th>
+            <th>{% trans "City" %}</th>
+            <th>{% trans "State" %}</th>
+            <th>{% trans "Country" %}</th>
+            
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ event.name }}</td> 
+                <td>{{ event.start_date }}</td> 
+                <td>{{ event.end_date }}</td> 
+                <td>{{ event.address }}</td>
+                <td>{{ event.venue   }}</td> 
+                <td>{{ event.city }}</td>  
+                <td>{{ event.state }}</td> 
+                <td>{{ event.country }}</td> 
+            </tr> 
+        </tbody>
+    </table>
+{% endblock %}

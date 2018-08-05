@@ -5,23 +5,26 @@ from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.core import mail
 
 # local Django
 from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.eventsPageLocators import EventsPageLocators
-from shift.utils import (create_admin,
-                         create_volunteer,
-                         create_organization)
+from shift.utils import (create_admin, create_admin_with_unlisted_org,
+                         create_volunteer, create_organization)
 
 
 class OrganizationTest(LiveServerTestCase):
     """
-    Contains Tests for Organization app:
-    - Creation of organization with valid and invalid values
-    - Edit organization with valid and invalid values
-    - Deletion of organization with volunteers registered
-    - Deletion of organization with volunteers not registered
+    E2E Tests for Organization views:
+        - Create Organization
+        - Edit Organization
+        - Approve unlisted Organization
+        - Reject unlisted Organization
+        - Check duplicate Organization
+        - Delete Org with registered volunteers
+        - Delete Org without registered volunteers
     """
 
     @classmethod
@@ -46,7 +49,7 @@ class OrganizationTest(LiveServerTestCase):
         Method consists of statements to be executed before
         start of each test.
         """
-        create_admin()
+        create_admin_with_unlisted_org()
         self.login_admin()
 
     def tearDown(self):
@@ -88,6 +91,43 @@ class OrganizationTest(LiveServerTestCase):
         self.assertEqual(organization_page.get_deletion_context(),
                          'Delete Organization')
         organization_page.submit_form()
+
+    def test_approve_organization(self):
+        """
+        tests if the organization moves to the listed section if the admin approves it
+        """
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        organization_page.navigate_to_organization_view()
+
+        # tests admin unlisted org
+        self.assertEqual(organization_page.get_approval_context(), 'Approve')
+        organization_page.approve_org()
+
+        self.assertEqual(organization_page.get_org_name(), 'organization')
+
+    def test_reject_organization(self):
+        """
+        tests if the organization gets removed from the unlisted section if the admin rejects it
+        """
+        self.organization_page.go_to_events_page()
+        organization_page = self.organization_page
+        organization_page.live_server_url = self.live_server_url
+
+        organization_page.navigate_to_organization_view()
+
+        # tests admin unlisted org
+        self.assertEqual(organization_page.get_rejection_context(), 'Reject')
+        organization_page.reject_org()
+
+        mail.outbox = []
+        mail.send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected", "messanger@localhost.com", ['admin@admin.com'])
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Organization Rejected")
+        self.assertEqual(msg.to, ['admin@admin.com'])
 
     def test_view_organization(self):
         """
@@ -231,19 +271,14 @@ class OrganizationTest(LiveServerTestCase):
 
         # Check Organization is deleted.
         with self.assertRaises(NoSuchElementException):
-            organization_page.element_by_xpath('//table//tbody//tr[1]')
+            organization_page.get_org_name()
 
     def test_delete_org_with_users_linked(self):
         """
         Test deletion of organization with users linked to it.
         """
-        # Create Organization
-        org = create_organization()
-
         # Create volunteer
         volunteer = create_volunteer()
-        volunteer.organization = org
-        volunteer.save()
 
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page

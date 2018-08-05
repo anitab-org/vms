@@ -1,0 +1,4 @@
+{% autoescape off %}
+{{admin_first_name}} {{admin_last_name}} has assigned you a shift on {{shift_date}} scheduled from {{shift_start_time}} to {{shift_end_time}}  of {{job_name}} during the {{event_name}} event. For any questions or concerns, email {{admin_email}}.
+{% endautoescape %}
+

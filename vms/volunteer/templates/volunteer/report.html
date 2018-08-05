@@ -18,7 +18,7 @@
         <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Report" %}</legend>
+                <legend class="header">{% trans "Report" %}</legend>
                 {% if form.event_name.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "Event Name" %}</label>
@@ -105,10 +105,10 @@
     </div>
     {% if report_list %}
         <div class="well">
-            <legend>{% trans "Report Statistics" %}</legend>
-            <label><h4><span class="label label-default">{% trans "Total Number of Shifts" %}</span></h4></label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ report_list|length }}
-            <br>
-            <label><h4><span class="label label-default">{% trans "Total Hours" %}</span></h4></label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ total_hours }}
+            <legend>{% trans "Report Statistics" %}</legend> 
+            <table>
+                <tr><td class="centered"><label><h4><span class="label label-default">{% trans "Total Hours" %}</span></h4></label></td><td class="centered">{{ total_hours }}</td></tr>
+            </table>
         </div>
         <div class="well">
             <table class="table table-striped table-hover">

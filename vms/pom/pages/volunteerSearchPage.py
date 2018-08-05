@@ -47,6 +47,12 @@ class VolunteerSearchPage(BasePage):
     def search_organization_field(self, search_text):
         self.element_by_id('select').send_keys(search_text)
 
+    def search_event_field(self, search_text):
+         self.send_to_field(self.elements.EVENT_FIELD, search_text)
+
+    def search_job_field(self, search_text):
+         self.send_to_field(self.elements.JOB_FIELD, search_text)
+
     def get_help_block(self):
         return self.element_by_class_name(self.elements.HELP_BLOCK)
 
@@ -63,3 +69,6 @@ class VolunteerSearchPage(BasePage):
             result.append(row)
 
         return result
+
+    def get_shift_summary(self):
+        return self.element_by_xpath(self.elements.TOTAL_SHIFTS).text

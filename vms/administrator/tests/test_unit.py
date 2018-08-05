@@ -8,7 +8,7 @@ from django.test.testcases import TestCase
 # local Django
 from administrator.models import Administrator
 from pom.pages.basePage import BasePage
-from shift.utils import create_admin_with_details
+from shift.utils import (create_admin_with_details, create_country, create_state, create_city)
 
 
 class AdministratorModelTests(TestCase):
@@ -25,7 +25,9 @@ class AdministratorModelTests(TestCase):
         Method consists of statements to be executed before
         start of each test.
         """
-        pass
+        self.country = create_country()
+        self.state = create_state()
+        self.city = create_city()
 
     def tearDown(self):
         """
@@ -34,8 +36,7 @@ class AdministratorModelTests(TestCase):
         """
         pass
 
-    @staticmethod
-    def create_valid_administrator():
+    def create_valid_administrator(self):
         """
         Utility function to create a valid administrator.
         :return: Event type object
@@ -43,7 +44,7 @@ class AdministratorModelTests(TestCase):
         admin = [
             'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
             'admin-last-name', 'admin-email1@systers.org', 'admin-address',
-            'admin-city', 'admin-state', 'admin-country', '9999999999',
+            self.city, self.state, self.country, '9999999999',
             'admin-org'
         ]
         return create_admin_with_details(admin)
@@ -55,7 +56,7 @@ class AdministratorModelTests(TestCase):
         admin = [
             'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
             'admin-last-name', 'admin-email1@systers.org', 'admin-address',
-            'admin-city', 'admin-state', 'admin-country', '9999999999',
+            self.city, self.state, self.country, '9999999999',
             'admin-org'
         ]
         created_admin = create_admin_with_details(admin)
@@ -82,7 +83,7 @@ class AdministratorModelTests(TestCase):
         admin = [
             'adminusername1', 'admin-password!@#$%^&*()_', 'admin~first~name',
             'admin last name', 'adminemail2@systers.org', 'admin address',
-            'admin city', 'admin state', 'admin country', '9999999999',
+            self.city, self.state, self.country, '9999999999',
             'admin org2'
         ]
         created_admin = create_admin_with_details(admin)
@@ -95,11 +96,59 @@ class AdministratorModelTests(TestCase):
         admin = [
             'adminusername2', 'admin-password!@#$%^&*()_', 'admin first name',
             'admin~last~name', 'adminemail3@systers.org', 'admin address',
-            'admin city', 'admin state', 'admin country', '9999999999',
+            self.city, self.state, self.country, '9999999999',
             'admin org3'
         ]
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+
+    def test_invalid_city_in_model_create(self):
+        """
+        Database test for model creation with invalid city.
+        """
+        admin = [
+            'adminusername5', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail6@systers.org', 'admin address',
+            'admin~city', self.state, self.country, '9999999999',
+            'admin org6'
+        ]
+
+        self.assertRaisesRegexp(ValueError,
+                                'Cannot assign "\'admin~city\'": '
+                                '"Administrator.city" must be a "City" instance.',
+                                create_admin_with_details, admin)
+
+    def test_invalid_state_in_model_create(self):
+        """
+        Database test for model creation with invalid state.
+        """
+        admin = [
+            'adminusername6', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail7@systers.org', 'admin address',
+            self.city, 'admin~state', self.country, '9999999999',
+            'admin org7'
+        ]
+
+        self.assertRaisesRegexp(ValueError,
+                                'Cannot assign "\'admin~state\'": '
+                                '"Administrator.state" must be a "Region" instance.',
+                                create_admin_with_details, admin)
+
+    def test_invalid_country_in_model_create(self):
+        """
+        Database test for model creation with invalid country.
+        """
+        admin = [
+            'adminusername7', 'admin-password!@#$%^&*()_', 'admin first name',
+            'admin last name', 'adminemail8@systers.org', 'admin address',
+            self.city, self.state, 'admin~country', '9999999999',
+            'admin org8'
+        ]
+
+        self.assertRaisesRegexp(ValueError,
+                                'Cannot assign "\'admin~country\'": '
+                                '"Administrator.country" must be a "Country" instance.',
+                                create_admin_with_details, admin)
 
     def test_invalid_email_in_model_create(self):
         """
@@ -108,7 +157,7 @@ class AdministratorModelTests(TestCase):
         admin = [
             'adminusername3', 'admin-password!@#$%^&*()_', 'admin first name',
             'admin last name', 'adminemail4~systers.org', 'admin address',
-            'admin city', 'admin state', 'admin country', '9999999999',
+            self.city, self.state, self.country, '9999999999',
             'admin org4'
         ]
         created_admin = create_admin_with_details(admin)
@@ -121,47 +170,8 @@ class AdministratorModelTests(TestCase):
         admin = [
             'adminusername4', 'admin-password!@#$%^&*()_', 'admin first name',
             'admin last name', 'adminemail5@systers.org', 'admin!address!',
-            'admin city', 'admin state', 'admin country', '9999999999',
+            self.city, self.state, self.country, '9999999999',
             'admin org5'
-        ]
-        created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
-
-    def test_invalid_city_in_model_create(self):
-        """
-        Database test for model creation with invalid city.
-        """
-        admin = [
-            'adminusername5', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail6@systers.org', 'admin address',
-            'admin~city', 'admin state', 'admin country', '9999999999',
-            'admin org6'
-        ]
-        created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
-
-    def test_invalid_state_in_model_create(self):
-        """
-        Database test for model creation with invalid state.
-        """
-        admin = [
-            'adminusername6', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail7@systers.org', 'admin address',
-            'admin city', 'admin~state', 'admin country', '9999999999',
-            'admin org7'
-        ]
-        created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
-
-    def test_invalid_country_in_model_create(self):
-        """
-        Database test for model creation with invalid country.
-        """
-        admin = [
-            'adminusername7', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail8@systers.org', 'admin address',
-            'admin city', 'admin state', 'admin~country', '9999999999',
-            'admin org8'
         ]
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
@@ -173,7 +183,7 @@ class AdministratorModelTests(TestCase):
         admin = [
             'adminusername8', 'admin-password!@#$%^&*()_', 'admin first name',
             'admin last name', 'adminemail9@systers.org', 'admin address',
-            'admin city', 'admin state', 'admin country', '9999999~99',
+            self.city, self.state, self.country, '99999999~99',
             'admin org9'
         ]
         created_admin = create_admin_with_details(admin)
@@ -204,7 +214,6 @@ class AdministratorModelTests(TestCase):
         self.assertEqual(admin_in_db.state, created_admin.state)
         self.assertEqual(admin_in_db.country, created_admin.country)
         self.assertEqual(admin_in_db.phone_number, created_admin.phone_number)
-        self.assertEqual(admin_in_db.unlisted_organization, created_admin.unlisted_organization)
 
     def test_model_edit_with_invalid_values(self):
         """

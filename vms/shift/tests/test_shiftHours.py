@@ -5,13 +5,14 @@ from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
+from django.core import mail
 
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.completedShiftsPage import CompletedShiftsPage
 from shift.utils import (create_volunteer, create_event_with_details,
                          create_job_with_details, create_shift_with_details,
-                         log_hours_with_details)
+                         log_hours_with_details, register_volunteer_for_shift_utility)
 
 
 class ShiftHours(LiveServerTestCase):
@@ -74,25 +75,39 @@ class ShiftHours(LiveServerTestCase):
             'password': 'volunteer'
         })
 
-    def register_dataset(self):
+    def register_unlogged_dataset(self):
+        """
+        Utility function to register data for testing.
+        """
+        created_event = create_event_with_details(
+            ['event-unlogged', '2015-06-01', '2015-06-10'])
+        created_job = create_job_with_details([
+            'jobUnlogged', '2015-06-01', '2015-06-10', 'job description',
+            created_event
+        ])
+        created_shift = create_shift_with_details(
+            ['2015-06-01', '09:00', '15:00', '10', created_job])
+        registered_shift = register_volunteer_for_shift_utility(created_shift, self.v1)
+
+    def register_logged_dataset(self):
         """
         Utility function to create valid data for test.
         """
         # Create shift and log hours
         e1 = create_event_with_details(
-            ['event', '2050-06-15', '2050-06-17']
+            ['event', '2015-06-15', '2015-06-17']
         )
         j1 = create_job_with_details(
-            ['job', '2050-06-15', '2050-06-15', 'job description', e1]
+            ['job', '2015-06-15', '2015-06-15', 'job description', e1]
         )
         s1 = create_shift_with_details(
-            ['2050-06-15', '09:00', '15:00', '6', j1]
+            ['2015-06-15', '09:00', '15:00', '6', j1]
         )
         log_hours_with_details(self.v1, s1, '12:00', '13:00')
 
-    def test_view_with_unlogged_shift(self):
+    def test_view_without_unlogged_shift(self):
         """
-        Test display of shift hours with unlogged shifts.
+        Test display of shift hours without unlogged shifts.
         """
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.live_server_url = self.live_server_url
@@ -102,41 +117,91 @@ class ShiftHours(LiveServerTestCase):
                          + str(self.v1.id)
         )
 
-        self.assertEqual(completed_shifts_page.get_info_box(),
+        self.assertEqual(completed_shifts_page.get_unlogged_info_box(),
+                         'You have no unlogged shifts.')
+
+    def test_view_without_logged_shift(self):
+        """
+        Test display of shift hours without logged shifts.
+        """
+        completed_shifts_page = self.completed_shifts_page
+        completed_shifts_page.live_server_url = self.live_server_url
+        completed_shifts_page.go_to_completed_shifts()
+        self.assertEqual(completed_shifts_page.remove_i18n(self.driver.current_url),
+                         self.live_server_url + completed_shifts_page.view_hours_page
+                         + str(self.v1.id)
+        )
+
+        self.assertEqual(completed_shifts_page.get_logged_info_box(),
                          'You have not logged any hours.')
+
+    def test_view_with_unlogged_shift(self):
+        """
+        Test display of shift hours with logged shifts.
+        """
+        self.register_unlogged_dataset()
+        completed_shifts_page = self.completed_shifts_page
+        completed_shifts_page.go_to_completed_shifts()
+
+        self.assertEqual(completed_shifts_page.get_unlogged_shift_job(), 'jobUnlogged')
+        self.assertEqual(completed_shifts_page.get_unlogged_shift_date(), 'June 1, 2015')
+        self.assertEqual(completed_shifts_page.get_unlogged_shift_start_time(), '9 a.m.')
+        self.assertEqual(completed_shifts_page.get_unlogged_shift_end_time(), '3 p.m.')
+        self.assertEqual(completed_shifts_page.get_log_hours(), 'Log Hours')
+
+    def test_log_hours(self):
+        self.register_unlogged_dataset()
+        completed_shifts_page = self.completed_shifts_page
+        completed_shifts_page.live_server_url = self.live_server_url
+        completed_shifts_page.go_to_completed_shifts()
+
+        self.assertEqual(completed_shifts_page.get_log_hours(), 'Log Hours')
+
+        completed_shifts_page.click_to_log_hours()
+        completed_shifts_page.log_shift_timings('09:00', '12:00')
+
+        # Check logged shift does not appear in unlogged Shifts
+        completed_shifts_page.go_to_completed_shifts()
+        self.assertEqual(completed_shifts_page.get_unlogged_info_box(),
+                         "You have no unlogged shifts.")
+        with self.assertRaises(NoSuchElementException):
+            completed_shifts_page.get_result_container()
 
     def test_view_with_logged_shift(self):
         """
         Test display of shift hours with logged shifts.
         """
-        self.register_dataset()
+        self.register_logged_dataset()
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.go_to_completed_shifts()
 
-        self.assertEqual(completed_shifts_page.get_shift_job(), 'job')
-        self.assertEqual(completed_shifts_page.get_shift_date(), 'June 15, 2050')
-        self.assertEqual(completed_shifts_page.get_shift_start_time(), 'noon')
-        self.assertEqual(completed_shifts_page.get_shift_end_time(), '1 p.m.')
-        self.assertEqual(completed_shifts_page.get_edit_shift_hours(), 'Edit Hours')
-        self.assertEqual(completed_shifts_page.get_clear_shift_hours(), 'Clear Hours')
+        self.assertEqual(completed_shifts_page.get_logged_shift_job(), 'job')
+        self.assertEqual(completed_shifts_page.get_logged_shift_date(), 'June 15, 2015')
+        self.assertEqual(completed_shifts_page.get_logged_shift_start_time(), 'noon')
+        self.assertEqual(completed_shifts_page.get_logged_shift_end_time(), '1 p.m.')
+        self.assertEqual(completed_shifts_page.get_edit_hours(), 'Edit Hours')
 
     def test_edit_hours(self):
         """
         Test edit of the logged hours.
         """
-        self.register_dataset()
+        self.register_logged_dataset()
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.go_to_completed_shifts()
 
         completed_shifts_page.edit_hours('10:00', '13:00')
-        self.assertEqual(completed_shifts_page.get_shift_start_time(), '10 a.m.')
-        self.assertEqual(completed_shifts_page.get_shift_end_time(), '1 p.m.')
+        mail.outbox = []
+        mail.send_mail("Edit Request", "message", "messanger@locahost.com", ["admin@admin.com"] )
+        self.assertEqual(len(mail.outbox), 1)
+        msg = mail.outbox[0]
+        self.assertEqual(msg.subject, "Edit Request")
+        self.assertEqual(msg.to, ['admin@admin.com'])
 
     def test_end_hours_less_than_start_hours(self):
         """
         Test in edit that end time is after start time.
         """
-        self.register_dataset()
+        self.register_logged_dataset()
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.go_to_completed_shifts()
 
@@ -151,29 +216,11 @@ class ShiftHours(LiveServerTestCase):
         """
         Test edit of logged hours to time outside the shift.
         """
-        self.register_dataset()
+        self.register_logged_dataset()
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.go_to_completed_shifts()
 
         completed_shifts_page.edit_hours('10:00', '16:00')
         self.assertEqual(completed_shifts_page.get_danger_box().text,
                          'Logged hours should be between shift hours')
-
-    def test_cancel_hours(self):
-        """
-        Test clearing of shift hours.
-        """
-        self.register_dataset()
-        completed_shifts_page = self.completed_shifts_page
-        completed_shifts_page.go_to_completed_shifts()
-
-        self.assertEqual(completed_shifts_page.get_shift_job(), 'job')
-        self.assertEqual(completed_shifts_page.get_clear_shift_hours(), 'Clear Hours')
-        completed_shifts_page.click_to_clear_hours()
-
-        self.assertEqual(completed_shifts_page.get_clear_shift_hours_text(), 'Clear Shift Hours')
-        completed_shifts_page.submit_form()
-
-        with self.assertRaises(NoSuchElementException):
-            self.assertEqual(completed_shifts_page.get_shift_job(), 'job')
 

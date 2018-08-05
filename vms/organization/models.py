@@ -10,8 +10,10 @@ class Organization(models.Model):
         max_length=75,
         validators=[
             RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)|(\')]+$', ),
-        ],
-    )
+        ],)
+    # approved_status divides organizations into three categories namely
+    # pending: 0, approved: 1 and rejected: 2
+    approved_status = models.IntegerField(default=1)
 
     def __str__(self):
         return str(self.name)

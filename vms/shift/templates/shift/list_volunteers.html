@@ -4,7 +4,7 @@
 
 {% block setting_content %}
     <div class="spacer"></div>
-    <h2>{% trans "Shift Details" %}</h2>
+    <h2 class="header">{% trans "Shift Details" %}</h2>
     <hr>
     <table class="table table-striped table-hover">
     	<thead>
@@ -34,7 +34,7 @@
     </table>
 	<br>
     {% if volunteer_list %}
-    	<h3>{% trans "Assigned Volunteers" %}</h3>
+    	<h3 class="header">{% trans "Assigned Volunteers" %}</h3>
     	<br>
         <table class="table table-striped table-hover">
             <thead>
@@ -57,14 +57,7 @@
                         <td>{{ volunteer.city }}</td>
                         <td>{{ volunteer.state }}</td>
                         <td>{{ volunteer.country }}</td>
-                        <td>
-                        	{% if volunteer.organization.name %}
-                        		{{ volunteer.organization.name }}
-                        	{% elif volunteer.unlisted_organization %}                                    
-                        		{{ volunteer.unlisted_organization }}
-                        	{% else %}
-                        	{% endif %}
-                        </td>
+                        <td>{{ volunteer.organization.name }}</td>
                         <td>{{ volunteer.phone_number }}</td>
                         <td>{{ volunteer.email }}</td>
                     </tr>
@@ -88,14 +81,7 @@
                     	<tr>
                         	<td>{{ logged_volunteer.volunteer.first_name }}</td>
                         	<td>{{ logged_volunteer.volunteer.last_name }}</td>
-                        	<td>
-                        		{% if logged_volunteer.volunteer.organization.name %}
-                        			{{ logged_volunteer.volunteer.organization.name }}
-                        		{% elif logged_volunteer.volunteer.unlisted_organization %}                                    
-                        			{{ logged_volunteer.volunteer.unlisted_organization }}
-                        		{% else %}
-                        		{% endif %}
-                        	</td>
+                        	<td>{{ logged_volunteer.volunteer.organization.name }}</td>
                         	<td>{{ logged_volunteer.start_time }}</td>
                         	<td>{{ logged_volunteer.end_time }}</td>
                     	</tr>
@@ -110,10 +96,10 @@
             </div>
         {% endif %}
     {% else %}
-    	<h3>{% trans "Assigned Volunteers" %}</h3>
+    	<h3 class="header">{% trans "Assigned Volunteers" %}</h3>
     	<br>
         <div class="alert alert-success">
             {% trans "There are currently no volunteers assigned to this shift. Please assign volunteers to view more details" %}
         </div>
-    {% endif %}   
+    {% endif %}
 {% endblock %}
