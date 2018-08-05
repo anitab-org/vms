@@ -10,7 +10,7 @@
         <form class="form-horizontal" method="post" action="{% url 'volunteer:edit' volunteer.id %}" enctype="multipart/form-data">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Edit Profile" %}</legend>
+                <legend class="header">{% trans "Edit Profile" %}</legend>
                 {% if form.description.errors %}
                     <div class="form-group has-error">
                         <label class="col-md-2 control-label">{% trans "About Me" %}</label>

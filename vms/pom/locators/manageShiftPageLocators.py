@@ -4,7 +4,7 @@ class ManageShiftPageLocators(object):
     CLEAR_SHIFT_HOURS_TEXT = 'html/body/div[2]/form/div/div[1]/h3'
     INFO_BOX = 'alert-info'
     CANCELLATION_PANEL = 'panel-danger'
-    CANCELLATION_CONFIRMATION = 'btn-danger'
+    CANCELLATION_CONFIRMATION = 'btn-success'
     CANCELLATION_HEAD = 'panel-title'
     SUBMIT_PATH = '//form[1]'
     SHIFT_CLEAR_PATH = '//*[@id="logged"]/tbody/tr/td[6]'

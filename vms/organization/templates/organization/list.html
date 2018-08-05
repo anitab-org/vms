@@ -23,7 +23,7 @@
                <a href="{% url 'organization:approve' organization.id %}" class="btn btn-success btn-sm">{% trans "Approve" %}</a>
             </td>
             <td>
-               <a href="{% url 'organization:edit' organization.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
+               <a href="{% url 'organization:edit' organization.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
             </td>
             <td>
                <a href="{% url 'organization:reject' organization.id %}" class="btn btn-danger btn-sm">{% trans "Reject" %}</a>
@@ -51,7 +51,7 @@
                 <tr>
                     <td>{{ organization.name }}</td>
                     <td>
-                        <a href="{% url 'organization:edit' organization.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
+                        <a href="{% url 'organization:edit' organization.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
                     </td>
                     <td>
                         <a href="{% url 'organization:delete' organization.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>

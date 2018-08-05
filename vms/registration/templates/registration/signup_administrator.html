@@ -8,7 +8,7 @@
 
     <form class="signup form-signup" id="signup_form" method="post" action="{% url 'registration:signup_administrator' %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <h2>{% trans "Sign Up" %}</h2>
+        <h2 class="header">{% trans "Sign Up" %}</h2>
         <hr>
         {% if user_form.username.errors %}
             <div id="div_id_username" class="form-group has-error">
@@ -208,10 +208,9 @@
         {% endif %}
 
             <div id="div_id_country" class="form-group">
-                <label class="col-md-2 control-label">
+                <label class="control-label">
                 {% trans "Country" %}
                 </label>
-                <div class="col-md-8">
                     <select id="select_country" class="form-control" name="country">
                         <option value="0">-- {% trans "Select country" %} --</option>
                         {% for country in country_list %}
@@ -226,50 +225,21 @@
                             {% endif %}
                         {% endfor %}
                     </select>
-                </div>
             </div>
             <div id="div_id_state" class="form-group">
-                <label class="col-md-2 control-label">
+                <label class="control-label">
                 {% trans "State/Province" %}
                 </label>
-                <div class="col-md-8">
                     <select id="select_state" class="form-control" name="state">
-                        <option value="0">-- {% trans "Select state" %} --</option>
-                        {% for state in state_list %}
-                            {% if volunteer.state_id %}
-                                {% if state.name == volunteer.state.name %}
-                                    <option selected value="{{state.name}}">{{state.name}}</option>
-                                {% else %}
-                                    <option value="{{ state.name }}">{{ state.name }}</option>
-                                {% endif %}
-                            {% else %}
-                                <option value="{{ state.name }}">{{ state.name }}</option>
-                            {% endif %}
-                        {% endfor %}
                     </select>
                 </div>
-            </div>
             <div id="div_id_city" class="form-group">
-                <label class="col-md-2 control-label">
+                <label class="control-label">
                 {% trans "City" %}
                 </label>
-                <div class="col-md-8">
                     <select id="select_city" class="form-control" name="city">
-                        <option value="0">-- {% trans "Select city" %} --</option>
-                        {% for city in city_list %}
-                            {% if volunteer.city_id %}
-                                {% if city.name == volunteer.city.name %}
-                                    <option selected value="{{city.name}}">{{city.name}}</option>
-                                {% else %}
-                                    <option value="{{ city.name }}">{{ city.name }}</option>
-                                {% endif %}
-                            {% else %}
-                                <option value="{{ city.name }}">{{ city.name }}</option>
-                            {% endif %}
-                        {% endfor %}
                     </select>
-                </div>
-            </div>
+             </div>
         {% if administrator_form.phone_number.errors %}
             <div id="div_id_phone_number" class="form-group has-error">
                 <label class="control-label requiredField" for="id_phone_number">

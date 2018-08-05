@@ -8,7 +8,7 @@
 
     <form class="signup form-signup" id="signup_form" method="post" action="{% url 'registration:signup_volunteer' %}" enctype="multipart/form-data">
         {% csrf_token %}
-        <h2>{% trans "Sign Up" %}</h2>
+        <h2 class="header">{% trans "Sign Up" %}</h2>
         <hr>
         {% if user_form.username.errors %}
             <div id="div_id_username" class="form-group has-error">
@@ -394,7 +394,7 @@
 	{% endif %}
         <button type="submit" class="btn btn-lg btn-primary btn-block">{% trans "Create Account" %}</button>
         <p>
-            {% trans "Already have an account? Then please "%}<a href="{% url 'authentication:login_process' %}">{% trans "sign in" %}</a>.
+            {% trans "Already have an account? Then please "%}<a href="{% url 'authentication:login_process' %}" class="link">{% trans "sign in" %}</a>.
         </p>
     </form>
 {% endblock %}

@@ -26,7 +26,7 @@
         <form class="form-horizontal" action="{% url 'shift:edit' shift.id %}" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Edit Shift" %}</legend>
+                <legend class="header">{% trans "Edit Shift" %}</legend>
 				<label class="col-md-2 control-label">{% trans "Job Name" %}</label>
                 <div class="col-md-10">
                     <p class="form-control-static">{{ job.name }}</p>

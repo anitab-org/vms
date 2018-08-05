@@ -26,13 +26,13 @@
                         <td>{{ shift.end_time }}</td>
                         <td>{{ shift.max_volunteers }}</td>
                         <td>
-                            <a href="{% url 'shift:edit' shift.id %}" class="btn btn-info btn-sm">{% trans "Edit"%}</a>
+                            <a href="{% url 'shift:edit' shift.id %}" class="btn btn-primary">{% trans "Edit"%}</a>
                         </td>
                         <td>
                             <a href="{% url 'shift:delete' shift.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
                         </td>
                         <td>
-                            <a href="{% url 'shift:view_volunteers' shift.id %}" class="btn btn-default btn-sm">{% trans "View"%}</a>
+                            <a href="{% url 'shift:view_volunteers' shift.id %}" class="btn btn-info">{% trans "View"%}</a>
                         </td>
                     </tr>
                 {% endfor %}
