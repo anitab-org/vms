@@ -43,6 +43,6 @@ class VolunteerReportPage(BasePage):
     def get_alert_box_text(self):
         return self.element_by_class_name(self.elements.NO_RESULT_BOX).text
 
-    def get_shift_summary(self):
-        return self.element_by_xpath(
-            self.elements.REPORT_SHIFT_SUMMARY_PATH).text
+    def get_report_hours(self):
+        return self.element_by_xpath(self.elements.REPORT_HOURS_PATH).text
+

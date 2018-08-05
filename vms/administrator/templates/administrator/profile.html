@@ -22,18 +22,12 @@
 
                 <div class="panel-body">
                 <table>
-                    <!-- Better to have css padding instead of nbsp to insert spaces -->
-                   <tr> <td><label><h4><span class="label label-info">Email</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.email }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">City</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.city.name }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">State/Province</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.state.name }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">Country</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.country.name }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">Phone No-</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.phone_number }}</td></tr>
-                    <tr><td>{% if administrator.organization %}
-                        <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ administrator.organization.name }}
-                    {% elif administrator.unlisted_organization  %}
-                        <label><h4><span class="label label-info">Organization</span></h4></label>{{ administrator.unlisted_organization }}
-                    {% else %}
-                    {% endif %}</td></tr>
+                   <tr> <td class="centered"><label><h4><span class="label label-info">Email</span></h4></label></td><td class="centered">{{ administrator.email }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">City</span></h4></label></td><td class="centered">{{ administrator.city }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">State/Province</span></h4></label></td><td class="centered">{{ administrator.state }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">Country</span></h4></label></td><td class="centered">{{ administrator.country }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">Phone No-</span></h4></label></td><td class="centered">{{ administrator.phone_number }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">Organization</span></h4></label></td><td class="centered">{{ administrator.organization.name }}</td></tr>
                 </table>
                 </div>
             </div>
@@ -50,3 +44,4 @@
         </div>
     </div>
 {% endblock %}
+

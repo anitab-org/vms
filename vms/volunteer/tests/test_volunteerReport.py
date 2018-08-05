@@ -65,7 +65,7 @@ class VolunteerReport(LiveServerTestCase):
         :param total_shifts: Total number of shifts as filled in form.
         :param hours: Total number of hours as filled in form.
         """
-        total_no_of_hours = self.report_page.get_shift_summary().split(' ')[-1].strip('\n')
+        total_no_of_hours = self.report_page.get_report_hours()
         self.assertEqual(total_no_of_hours, hours)
 
     def login(self):

@@ -21,13 +21,13 @@
                 {% else %}
                     {% trans "Are you sure that you want to sign up for this shift?" %}
                 {% endif %}
-                <br>
-                <br>
-                <label><h4><span class="label label-default">{% trans "Date" %}</span></h4></label>&nbsp&nbsp&nbsp{{ shift.date }}
-                <br>
-                <label><h4><span class="label label-default">{% trans "Start Time" %}</span></h4></label>&nbsp&nbsp&nbsp{{ shift.start_time }}
-                <br>
-                <label><h4><span class="label label-default">{% trans "End Time" %}</span></h4></label>&nbsp&nbsp&nbsp{{ shift.end_time }}
+                <table>
+                    <tr><td class="centered"><label><h4><span class="label label-default">{% trans "Date" %}</span></h4></label></td><td class="centered">{{ shift.date }}</td></tr>
+                    <br>
+                    <tr><td class="centered"><label><h4><span class="label label-default">{% trans "Start Time" %}</span></h4></label></td><td class="centered">{{ shift.start_time }}</td></tr>
+                    <br>
+                    <tr><td class="centered"><label><h4><span class="label label-default">{% trans "End Time" %}</span></h4></label></td><td class="centered">{{ shift.end_time }}</td></tr>
+                </table>
                 <br>
                 <br>
                 {% if user.administrator %}
