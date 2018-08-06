@@ -41,7 +41,6 @@ class AdministratorSignupView(TemplateView):
     admin user, he/she is allowed to register others as an admin user.
     """
     registered = False
-    organization_list = get_organizations_ordered_by_name()
     country_list = Country.objects.all()
     phone_error = False
     match_error = False
@@ -51,6 +50,7 @@ class AdministratorSignupView(TemplateView):
         return super(AdministratorSignupView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
+        organization_list = get_organizations_ordered_by_name()
         user_form = UserForm(prefix="usr")
         administrator_form = AdministratorForm(prefix="admin")
         return render(
@@ -60,7 +60,7 @@ class AdministratorSignupView(TemplateView):
                 'registered': self.registered,
                 'phone_error': self.phone_error,
                 'match_error': self.match_error,
-                'organization_list': self.organization_list,
+                'organization_list': organization_list,
                 'country_list': self.country_list,
             })
 
@@ -87,7 +87,7 @@ class AdministratorSignupView(TemplateView):
                                 'registered': self.registered,
                                 'phone_error': self.phone_error,
                                 'match_error': self.match_error,
-                                'organization_list': self.organization_list,
+                                'organization_list': organization_list,
                             })
                     try:
                         admin_country_name = request.POST.get('country')
@@ -120,7 +120,7 @@ class AdministratorSignupView(TemplateView):
                                     'phone_error': self.phone_error,
                                     'match_error': self.match_error,
                                     'organization_list':
-                                    self.organization_list,
+                                    organization_list,
                                     'country_list': self.country_list,
                                 })
 
@@ -169,7 +169,7 @@ class AdministratorSignupView(TemplateView):
                             'registered': self.registered,
                             'phone_error': self.phone_error,
                             'match_error': self.match_error,
-                            'organization_list': self.organization_list,
+                            'organization_list': organization_list,
                             'country_list': self.country_list,
                         })
         else:
@@ -178,12 +178,12 @@ class AdministratorSignupView(TemplateView):
 
 class VolunteerSignupView(TemplateView):
     registered = False
-    organization_list = get_organizations_ordered_by_name()
     country_list = Country.objects.all()
     phone_error = False
     match_error = False
 
     def get(self, request):
+        organization_list = get_organizations_ordered_by_name()
         user_form = UserForm(prefix="usr")
         volunteer_form = VolunteerForm(prefix="vol")
         return render(
@@ -193,7 +193,7 @@ class VolunteerSignupView(TemplateView):
                 'registered': self.registered,
                 'phone_error': self.phone_error,
                 'match_error': self.match_error,
-                'organization_list': self.organization_list,
+                'organization_list': organization_list,
                 'country_list': self.country_list,
             })
 
@@ -219,7 +219,7 @@ class VolunteerSignupView(TemplateView):
                                 'registered': self.registered,
                                 'phone_error': self.phone_error,
                                 'match_error': self.match_error,
-                                'organization_list': self.organization_list,
+                                'organization_list': organization_list,
                             })
                     try:
                         vol_country_name = request.POST.get('country')
@@ -251,7 +251,7 @@ class VolunteerSignupView(TemplateView):
                                     'registered': self.registered,
                                     'phone_error': self.phone_error,
                                     'organization_list':
-                                    self.organization_list,
+                                    organization_list,
                                     'country_list': self.country_list,
                                 })
 
@@ -266,7 +266,7 @@ class VolunteerSignupView(TemplateView):
                                     'registered': self.registered,
                                     'phone_error': self.phone_error,
                                     'organization_list':
-                                    self.organization_list,
+                                    organization_list,
                                     'country_list': self.country_list,
                                 })
 
@@ -314,7 +314,7 @@ class VolunteerSignupView(TemplateView):
                             'volunteer_form': volunteer_form,
                             'registered': self.registered,
                             'phone_error': self.phone_error,
-                            'organization_list': self.organization_list,
+                            'organization_list': organization_list,
                             'country_list': country_list,
                         })
         else:
