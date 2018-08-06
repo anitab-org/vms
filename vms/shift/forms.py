@@ -4,7 +4,7 @@ from django import forms
 from django.forms import ModelForm
 
 # local Django
-from shift.models import Shift
+from shift.models import Shift, EditRequest
 
 
 class HoursForm(forms.Form):
@@ -33,4 +33,12 @@ class ShiftForm(ModelForm):
                 self._errors['start_time'] = self.error_class([msg])
 
         return self.cleaned_data
+
+
+class EditForm(ModelForm):
+    class Meta:
+        model = EditRequest
+        fields = [
+           'start_time', 'end_time'
+              ]
 

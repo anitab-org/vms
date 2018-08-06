@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import (RegexValidator, MaxValueValidator,
                                     MinValueValidator)
 from django.db import models
+from cities_light.models import City, Country, Region
 
 # local Django
 from organization.models import Organization
@@ -28,24 +29,9 @@ class Volunteer(models.Model):
             RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\.)|(,)|(\:)]+$', ),
         ],
     )
-    city = models.CharField(
-        max_length=75,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
-        ],
-    )
-    state = models.CharField(
-        max_length=50,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
-        ],
-    )
-    country = models.CharField(
-        max_length=75,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(\s)|(\-)]+$', ),
-        ],
-    )
+    city = models.ForeignKey(City, null=True, blank=True)
+    state = models.ForeignKey(Region, null=True, blank=True)
+    country = models.ForeignKey(Country, null=True, blank=True)
     phone_number = models.CharField(
         max_length=20,
         validators=[
@@ -53,13 +39,6 @@ class Volunteer(models.Model):
                 r'^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$',
                 message="Please enter a valid phone number",
             ),
-        ],
-    )
-    unlisted_organization = models.CharField(
-        blank=True,
-        max_length=100,
-        validators=[
-            RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', ),
         ],
     )
     # Organization to Volunteer is a one-to-many relationship
@@ -99,3 +78,4 @@ class Volunteer(models.Model):
 
     def __str__(self):
         return '{0} {1}'.format(self.first_name, self.last_name)
+

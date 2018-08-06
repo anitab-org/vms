@@ -3,7 +3,6 @@ from pom.pages.basePage import BasePage
 from pom.locators.volunteerProfilePageLocators import VolunteerProfilePageLocators
 from pom.pages.homePage import HomePage
 
-
 class VolunteerProfilePage(BasePage):
     def __init__(self, driver):
         self.driver = driver
@@ -24,11 +23,11 @@ class VolunteerProfilePage(BasePage):
         self.fill_field(elements.PROFILE_LAST_NAME, new_details[1])
         self.fill_field(elements.PROFILE_EMAIL, new_details[2])
         self.fill_field(elements.PROFILE_ADDRESS, new_details[3])
-        self.fill_field(elements.PROFILE_CITY, new_details[4])
-        self.fill_field(elements.PROFILE_STATE, new_details[5])
-        self.fill_field(elements.PROFILE_COUNTRY, new_details[6])
+        self.send_value_to_xpath(elements.PROFILE_COUNTRY, new_details[6])
+        self.send_value_to_xpath(elements.PROFILE_STATE, new_details[5])
+        self.send_value_to_xpath(elements.PROFILE_CITY, new_details[4])
         self.fill_field(elements.PROFILE_PHONE, new_details[7])
-        self.send_value_to_xpath(elements.SELECT_ORGANIZATION, new_details[8])
+        self.element_by_xpath(self.elements.SELECT_NONE_ORGANIZATION).click()
         self.fill_field(elements.UNLISTED_ORGANIZATION, new_details[9])
         self.submit_form()
 

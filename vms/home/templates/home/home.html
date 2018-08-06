@@ -18,15 +18,8 @@
 {% endif %}
 
     <div class="jumbotron jumbotron-custom">
-        <h1>Volunteer Management System</h1>
+        <h1 class="index">Volunteer Management System</h1>
         <p>{% trans "Systers, an Anita Borg Institute Community, has many volunteers that devote their time, skills and commitment to our vision. Volunteer Management System serves as a place where volunteers can view volunteer events, sign up for volunteer jobs and log volunteer hours. Volunteer Management System also enables volunteer managers to manage their volunteers and run volunteer related reports." %}</p>
-		{% if not user.is_authenticated %}
-            <p>
-                <a class="btn btn-lg btn-success" href="{% url 'registration:signup_volunteer' %}">{% trans "Sign Up" %}</a>
-                <a class="btn btn-lg btn-default" href="{% url 'registration:signup_administrator' %}">{% trans "Sign Up Admin" %}</a>
-                <a class="btn btn-lg btn-primary" href="{% url 'authentication:login_process' %}">{% trans "Log In" %}</a>
-            </p>
-        {% endif %}
         {% if error %}
             <div class="alert alert-danger" role="alert">
               You will need to have atleast one organisation to Sign up as a volunteer

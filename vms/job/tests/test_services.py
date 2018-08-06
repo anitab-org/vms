@@ -6,13 +6,13 @@ import unittest
 from job.services import (delete_job, check_edit_job, get_job_by_id,
                           get_jobs_by_event_id, get_jobs_ordered_by_title,
                           get_signed_up_jobs_for_volunteer,
-                          remove_empty_jobs_for_volunteer, job_not_empty)
+                          remove_empty_jobs_for_volunteer, search_jobs, job_not_empty)
 
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (create_event_with_details, create_job_with_details,
-                         create_volunteer_with_details,
-                         create_shift_with_details, clear_objects)
+from shift.utils import (create_second_city, create_second_state, create_second_country, create_event_with_details, create_job_with_details,
+                         create_volunteer_with_details, create_organization_with_details,
+                         create_shift_with_details, clear_objects, get_city_by_name, get_state_by_name, get_country_by_name)
 
 
 def setUpModule():
@@ -120,6 +120,71 @@ class JobTests(unittest.TestCase):
         self.assertEqual(job_list[1].name, self.j1.name)
         self.assertEqual(job_list[2].name, self.j2.name)
 
+    def test_search_jobs(self):
+        """
+        tests search result for partial, exact and other searches on events
+        """
+        # if no search parameters are given,
+        # it returns all jobs
+        search_list = search_jobs("", "", "", "", "", "", "")
+
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 3)
+        self.assertIn(self.j1, search_list)
+        self.assertIn(self.j2, search_list)
+        self.assertIn(self.j3, search_list)
+
+        search_list = search_jobs(None, None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 3)
+        self.assertIn(self.j1, search_list)
+        self.assertIn(self.j2, search_list)
+        self.assertIn(self.j3, search_list)
+
+        # test exact search
+        country_name = 'India'
+        state_name = 'Uttarakhand'
+        city_name = 'Roorkee'
+        country = get_country_by_name(country_name)
+        state = get_state_by_name(state_name)
+        city = get_city_by_name(city_name)
+        e1.city = city
+        e1.state = state
+        e1.country = country
+        e1.save()
+        search_list = search_jobs('Software Developer', '2012-10-22', '2012-10-25',
+                                  'Roorkee', 'Uttarakhand', 'India', 'Software Conference')
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.j1, search_list)
+        self.assertNotIn(self.j2, search_list)
+        self.assertNotIn(self.j3, search_list)
+
+        # test partial search
+        search_list = search_jobs("Systems Administrator", None, None, None, None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 1)
+        self.assertIn(self.j2, search_list)
+        self.assertNotIn(self.j3, search_list)
+        self.assertNotIn(self.j1, search_list)
+
+        e2.city = city
+        e2.save()
+        search_list = search_jobs(None, None, None, 'Roorkee', None, None, None)
+        self.assertNotEqual(search_list, False)
+        self.assertEqual(len(search_list), 3)
+        self.assertIn(self.j1, search_list)
+        self.assertIn(self.j2, search_list)
+        self.assertIn(self.j3, search_list)
+
+        # test no search matches
+        search_list = search_jobs("Billy", "2015-07-25", "2015-08-08", "Quebec",
+                                        "Canada", "Ubisoft", "Program")
+        self.assertEqual(len(search_list), 0)
+        self.assertNotIn(self.j1, search_list)
+        self.assertNotIn(self.j2, search_list)
+        self.assertNotIn(self.j3, search_list)
+
 
 class DeleteJobTest(unittest.TestCase):
     @classmethod
@@ -195,23 +260,27 @@ class JobWithShiftTests(unittest.TestCase):
         cls.s4 = create_shift_with_details(shift_4)
 
         # creating volunteers who would register for the shifts
+        country = create_second_country()
+        state = create_second_state()
+        city = create_second_city()
         volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "yoshi@nintendo.com"
+            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
+            "2374983247", "yoshi@nintendo.com"
         ]
         volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
-            "USA", "23454545", "john@test.com"
+            'John', "John", "Doe", "7 Alpine Street", city, state,
+            country, "23454545", "john@test.com"
         ]
         volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
-            "Japan", "23454545", "ash@pikachu.com"
+            'Ash', "Ash", "Ketchum", "Pallet Town", city, state,
+            country, "23454545", "ash@pikachu.com"
         ]
+        org_name = 'volunteer-organization'
+        org_obj = create_organization_with_details(org_name)
 
-        cls.v1 = create_volunteer_with_details(volunteer_1)
-        cls.v2 = create_volunteer_with_details(volunteer_2)
-        cls.v3 = create_volunteer_with_details(volunteer_3)
+        cls.v1 = create_volunteer_with_details(volunteer_1, org_obj)
+        cls.v2 = create_volunteer_with_details(volunteer_2, org_obj)
+        cls.v3 = create_volunteer_with_details(volunteer_3, org_obj)
 
     @classmethod
     def setUpClass(cls):

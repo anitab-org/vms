@@ -37,7 +37,7 @@ def get_event_by_shift_id(shift_id):
 
 
 def delete_event(event_id):
-    """ 
+    """
     Deletes an event if no jobs are associated with it
     """
 
@@ -163,3 +163,33 @@ def remove_empty_events_for_volunteer(event_list, volunteer_id):
         if job_list:
             new_event_list.append(event)
     return new_event_list
+
+
+def search_events(name, start_date, end_date, city, state, country, job):
+    """
+    searches event on the basis of name, start date, end date, city, state, country and job
+    :param name: The name of the event
+    :param start_date: The start date of the event
+    :param end_date: The end date of event
+    :param city: The city where event takes place
+    :param state: The state where event takes place
+    :param country: The country where event takes place
+    :return: search_query
+
+    """
+    search_query = Event.objects.all()
+    if name:
+        search_query = search_query.filter(name__icontains=name)
+    if start_date or end_date:
+        search_query = get_events_by_date(start_date, end_date)
+    if city:
+        search_query = search_query.filter(city__name__icontains=city)
+    if state:
+        search_query = search_query.filter(state__name__icontains=state)
+    if country:
+        search_query = search_query.filter(country__name__icontains=country)
+    if job:
+        search_query = search_query.filter(job__name__icontains=job)
+    return search_query
+
+

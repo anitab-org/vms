@@ -132,8 +132,6 @@ class FormFields(LiveServerTestCase):
         self.assertEqual(settings.get_event_name_error(), settings.FIELD_REQUIRED)
         self.assertEqual(settings.get_event_start_date_error(), settings.FIELD_REQUIRED)
         self.assertEqual(settings.get_event_end_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_event_address_error(), settings.ENTER_VALID_VALUE)
-        self.assertEqual(settings.get_event_venue_error(), settings.ENTER_VALID_VALUE)
 
     def test_null_values_in_edit_event(self):
         """

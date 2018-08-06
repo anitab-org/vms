@@ -15,10 +15,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # local Django
 from event.services import get_events_ordered_by_name, get_event_by_id
-from job.forms import JobForm
+from job.forms import JobForm, SearchJobForm
 from job.models import Job
-from job.services import get_job_by_id, check_edit_job, get_jobs_by_event_id, remove_empty_jobs_for_volunteer
-
+from job.services import (get_job_by_id, get_jobs_ordered_by_title, check_edit_job,
+                          remove_empty_jobs_for_volunteer, search_jobs, get_jobs_by_event_id)
 
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -159,28 +159,62 @@ class JobUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
             })
 
 
-class JobListView(LoginRequiredMixin, ListView):
-    model_form = Job
-    template_name = "job/list.html"
-
-    def get_queryset(self):
-        jobs = Job.objects.all().order_by('name')
-        return jobs
-
-
 @login_required
 def list_sign_up(request, event_id, volunteer_id):
     if event_id:
         event = get_event_by_id(event_id)
-        if event:
-            job_list = get_jobs_by_event_id(event_id)
-            job_list = remove_empty_jobs_for_volunteer(job_list, volunteer_id)
-            return render(request, 'job/list_sign_up.html', {
-                'event': event,
-                'job_list': job_list,
-                'volunteer_id': volunteer_id
-            })
+        if request.method == 'POST':
+            form = SearchJobForm(request.POST)
+            if form.is_valid():
+                name = form.cleaned_data['name']
+                start_date = form.cleaned_data['start_date']
+                end_date = form.cleaned_data['end_date']
+                city = form.cleaned_data['city']
+                state = form.cleaned_data['state']
+                country = form.cleaned_data['country']
+                search_result = search_jobs(name, start_date, end_date,
+                                            city, state, country, '')
+                search_result_list = search_result.filter(event_id=event_id)
         else:
-            raise Http404
+                form = SearchJobForm()
+                search_result_list = get_jobs_by_event_id(event_id)
+        job_list = remove_empty_jobs_for_volunteer(search_result_list, volunteer_id)
+        return render(
+            request, 'job/list_sign_up.html', {
+                'form': form,
+                'job_list': job_list,
+                'volunteer_id': volunteer_id,
+                'event': event,
+            })
     else:
         raise Http404
+
+
+class JobListView(AdministratorLoginRequiredMixin, FormView):
+    template_name = "job/list.html"
+    form_class = SearchJobForm
+
+    def get(self, request, *args, **kwargs):
+        search_result_list = get_jobs_ordered_by_title()
+        return render(
+            request, 'job/list.html', {
+            'search_result_list': search_result_list,
+        })
+
+    def post(self, request, *args, **kwargs):
+        search_result_list = get_jobs_ordered_by_title()
+        form = SearchJobForm(self.request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+            city = form.cleaned_data['city']
+            state = form.cleaned_data['state']
+            country = form.cleaned_data['country']
+            event = form.cleaned_data['event']
+            search_result_list = search_jobs(name, start_date, end_date, city, state, country, event)
+        return render(request, 'job/list.html', {
+                     'form': form,
+                     'search_result_list': search_result_list,
+                     })
+

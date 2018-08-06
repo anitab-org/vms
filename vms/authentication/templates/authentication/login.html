@@ -3,7 +3,7 @@
 {% block content %}
     <form class="login form-signin" role="form" method="POST" action="{% url 'authentication:login_process' %}">
         {% csrf_token %}
-        <h2>{% trans "Please sign in" %}</h2>
+        <h2 class="header">{% trans "Please sign in" %}</h2>
         <hr>
         {% if is_invalid_credentials %}
             <div class="alert alert-danger">
@@ -67,6 +67,7 @@
             "Your username and password didn't match. Please try again."
         </div> <!-- alert alert-danger -->
         {% endif %}
+         <a class="link" href="{% url 'authentication:password_reset' %}" id="forgot">Forgot password</a>
         <button class="primaryAction btn btn-lg btn-primary btn-block" type="submit">
             {% trans "Sign In" %}
         </button>

@@ -11,7 +11,7 @@ class JobDetailsPage(BasePage):
     create_job_page = '/job/create/'
     jobs_tab = 'Jobs'
     create_job_tab = 'Create Job'
-    NO_JOBS_PRESENT = 'There are currently no jobs. Please create jobs first.'
+    NO_JOBS_PRESENT = 'No jobs present.'
     ADD_EVENTS_TO_JOB = 'Please add events to associate with jobs first.'
 
     def __init__(self, driver):

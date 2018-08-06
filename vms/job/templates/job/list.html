@@ -7,9 +7,177 @@
     <div class="well well-sm">
         <a href="{% url 'job:create' %}" class="btn btn-success btn-sm">{% trans "Create Job" %}</a>
     </div>
-    {% if job_list %}
+    <div class="well">
+        <form class="form-horizontal" action="{% url 'job:list' %}" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <legend class="header">{% trans "Search jobs" %}</legend>
+                {% if form.name.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "Name" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Name{% endblocktrans %}" type="text" name="name" value="{% if form.name.value %}{{ form.name.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Name" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Name{% endblocktrans %}" type="text" name="name" value="{% if form.name.value %}{{ form.name.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+                {% if form.start_date.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "Start Date" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Start Date{% endblocktrans %}" type="text" id="from" name="start_date" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.start_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Start Date" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Start Date{% endblocktrans %}" type="text" id="from" name="start_date" value="{% if form.start_date.value %}{{ form.start_date.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+                {% if form.end_date.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "End Date" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by End Date{% endblocktrans %}" type="text" id="to" name="end_date" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.end_date.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "End Date" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by End Date{% endblocktrans %}" type="text" id="to" name="end_date" value="{% if form.end_date.value %}{{ form.end_date.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+                {% if form.city.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "City" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by City{% endblocktrans %}" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.city.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "City" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by City{% endblocktrans %}" type="text" name="city" value="{% if form.city.value %}{{ form.city.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+                {% if form.state.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "State/Province" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by State/Province{% endblocktrans %}" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.state.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "State/Province" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by State/Province{% endblocktrans %}" type="text" name="state" value="{% if form.state.value %}{{ form.state.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+                {% if form.country.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "Country" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Country{% endblocktrans %}" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.country.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Country" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Country{% endblocktrans %}" type="text" name="country" value="{% if form.country.value %}{{ form.country.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+                {% if form.event.errors %}
+                <div class="form-group has-error">
+                    <label class="col-md-2 control-label">{% trans "Event" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Event{% endblocktrans %}" type="text" name="event" value="{% if form.event.value %}{{ form.event.value }}{% endif %}">
+                        <p class="help-block">
+                            <strong>
+                                        {% for error in form.event.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </strong>
+                        </p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label class="col-md-2 control-label">{% trans "Event" %}</label>
+                    <div class="col-md-8">
+                        <input class="form-control" placeholder="{% blocktrans %}Search by Event{% endblocktrans %}" type="text" name="event" value="{% if form.event.value %}{{ form.event.value }}{% endif %}">
+                    </div>
+                </div>
+                {% endif %}
+            </fieldset>
+            <div class="form-group">
+                <div class="col-md-12 col-md-offset-2">
+                    <button class="btn btn-primary" id="submit" type="submit">{% trans "Search" %}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% if search_result_list %}
         <table class="table table-striped table-hover">
             <thead>
+                <tr>
                 <th>{% trans "Job Name" %}</th>
                 <th>{% trans "Event" %}</th>
                 <th>{% trans "Start Date" %}</th>
@@ -17,9 +185,10 @@
                 <th>{% trans "Details" %}</th>
                 <th>{% trans "Edit" %}</th>
                 <th>{% trans "Delete" %}</th>
+                </tr>
             </thead>
             <tbody>
-                {% for job in job_list %}
+                {% for job in search_result_list %}
                     <tr>
                         <td>{{ job.name }}</td>
                         <td>{{ job.event.name }}</td>
@@ -29,7 +198,7 @@
                             <a href="{% url 'job:details' job.id %}" class="btn btn-default btn-sm">{% trans "Details" %}</a>
                         </td>
                         <td>
-                            <a href="{% url 'job:edit' job.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
+                            <a href="{% url 'job:edit' job.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
                         </td>
                         <td>
                             <a href="{% url 'job:delete' job.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>
@@ -40,7 +209,8 @@
         </table>
     {% else %}
         <div class="alert alert-success">
-            {% trans "There are currently no jobs. Please create jobs first." %}
+            {% trans "No jobs present." %}
         </div>
-    {% endif %}            
+    {% endif %}
 {% endblock %}
+

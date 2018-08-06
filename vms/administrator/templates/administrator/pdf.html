@@ -1,0 +1,47 @@
+<html>
+<body>
+{{report.date_submitted}}<br>
+AnitaB.org<br>
+1501 Page Mill Road<br>
+MS 1105<br>
+Palo Alto, CA 94304<br>
+<br>
+To Whom It May Concern:<br> 
+<br>
+Re: {{report.volunteer.first_name}} {{report.volunteer.last_name}}<br>
+<br>
+This letter is to confirm that {{report.volunteer.first_name}} {{report.volunteer.last_name}} completed {{report.total_hrs}} of unpaid volunteer work at AnitaB.org. All details related to their volunteer work is included below:
+
+<hr />
+<div class="well">
+   <table class="table table-striped table-hover">
+            <td>Event Name</td>
+            <td>Job Name</td>
+            <td>Date</td>
+            <td>Logged Start Time</td>
+            <td>Logged End Time</td>
+            <td>Duration</td>
+         {% for report in report_list %}
+         <tr>
+            <td>{{report.event_name}}</td>
+            <td>{{report.job_name}}</td>
+            <td>{{report.date}}</td>
+            <td>{{report.logged_start_time}}</td>
+            <td>{{report.logged_end_time}}</td>
+            <td>{{report.duration}}</td>
+         </tr>
+         {% endfor %}
+   </table>
+</div>
+<hr />
+
+<br>
+If you require further confirmation of the report generated above, please contact {{admin.first_name}} {{admin.last_name}} at {{admin.email}}.
+<br><br>
+
+{{admin.first_name}} {{admin.last_name}}<br>
+{{admin.organization}}<br>
+{{admin.email}}
+</body>
+</html>
+

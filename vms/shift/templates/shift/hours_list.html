@@ -4,10 +4,42 @@
 
 {% block content %}
     <div class="spacer"></div>
-    <h3>{% trans "Shift Hours" %}</h3>
+    <h3>{% trans "Unlogged Shift Hours" %}</h3>
     <hr>
-    {% if volunteer_shift_list %}
-        <table class="table table-striped table-hover">
+    {% if shift_list %}
+        <table class="table table-striped table-hover" id="unlogged">
+            <thead>
+                <tr>
+                    <th>{% trans "Job" %}</th>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Scheduled Start Time" %}</th>
+                    <th>{% trans "Scheduled End Time" %}</th>
+                    <th>{% trans "Add Hours" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shift in shift_list %}
+                    <tr>
+                        <td>{{ shift.job.name }}</td>
+                        <td>{{ shift.date }}</td>
+                        <td>{{ shift.start_time }}</td>
+                        <td>{{ shift.end_time }}</td>
+                        <td><a href="{% url 'shift:add_hours' shift.id user.volunteer.id %}" class="btn btn-info btn-sm">{% trans "Log Hours" %}
+                        </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div id="unlogged_alert" class="alert alert-info">
+            {% trans "You have no unlogged shifts." %}
+        </div>
+        {% endif %}
+    <h3 class="header">{% trans "Shift Hours" %}</h3>
+    <hr>
+    {% if logged_volunteer_shift_list %}
+        <table class="table table-striped table-hover" id="logged">
             <thead>
                 <tr>
                     <th>{% trans "Job" %}</th>
@@ -15,28 +47,28 @@
                     <th>{% trans "Logged Start Time" %}</th>
                     <th>{% trans "Logged End Time" %}</th>
                     <th>{% trans "Edit Hours" %}</th>
-                    <th>{% trans "Clear Hours" %}</th>
                 </tr>
             </thead>
             <tbody>
-                {% for volunteershift in volunteer_shift_list %}
+                {% for volunteershift in logged_volunteer_shift_list %}
                     <tr>
                         <td>{{ volunteershift.shift.job.name }}</td>
                         <td>{{ volunteershift.shift.date }}</td>
                         <td>{{ volunteershift.start_time }}</td>
                         <td>{{ volunteershift.end_time }}</td>
                         <td>
-                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-info btn-sm">{% trans "Edit Hours" %}</a>
-                        </td>
-                        <td>
-                            <a href="{% url 'shift:clear_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-default btn-sm">{% trans "Clear Hours" %}</a>
+                            {% if volunteershift.date_logged >= init_date and not volunteershift.edit_requested  and not volunteershift.report_status %}
+                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-primary btn-sm">{% trans "Edit Hours" %}</a>
+                             {% else %}
+                            <a href="{% url 'shift:edit_hours' volunteershift.shift.id user.volunteer.id %}" class="btn btn-primary btn-sm" disabled/>{% trans "Edit Hours" %}</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-info">
+        <div id="logged_alert" class="alert alert-info">
             {% trans "You have not logged any hours." %}
         </div>
     {% endif %}

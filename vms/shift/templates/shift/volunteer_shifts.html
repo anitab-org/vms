@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="spacer"></div>
-    <h3>{% trans "Upcoming Shifts" %}</h3>
+    <h3 class="header">{% trans "Upcoming Shifts" %}</h3>
     <hr>
     {% if shift_list %}
         <table class="table table-striped table-hover">
@@ -14,7 +14,6 @@
                     <th>{% trans "Date" %}</th>
                     <th>{% trans "Scheduled Start Time" %}</th>
                     <th>{% trans "Scheduled End Time" %}</th>
-                    <th>{% trans "Log Hours" %}</th>
                     <th>{% trans "Cancel Shift Registration" %}</th>
                 </tr>
             </thead>
@@ -25,9 +24,6 @@
                         <td>{{ shift.date }}</td>
                         <td>{{ shift.start_time }}</td>
                         <td>{{ shift.end_time }}</td>
-                        <td>
-                            <a href="{% url 'shift:add_hours' shift.id user.volunteer.id %}" class="btn btn-success btn-sm">{% trans "Log Hours" %}</a>
-                        </td>
                         <td>
                             <a href="{% url 'shift:cancel' shift.id user.volunteer.id %}" class="btn btn-danger btn-sm">{% trans "Cancel Shift Registration" %}</a>
                         </td>
