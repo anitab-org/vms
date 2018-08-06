@@ -261,6 +261,7 @@ def list_events(request):
     :return: SearchEventForm
     """
     search_result_list = get_events_ordered_by_name()
+    today = datetime.date.today()
     if request.method == 'POST':
         form = SearchEventForm(request.POST)
         if form.is_valid():
@@ -279,7 +280,8 @@ def list_events(request):
     return render(
         request, 'event/list.html', {
             'form': form,
-            'search_result_list': search_result_list
+            'search_result_list': search_result_list,
+            'today': today
         })
 
 class ApiForVolaView(APIView):
