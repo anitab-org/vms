@@ -18,7 +18,9 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.volunteerProfilePage import VolunteerProfilePage
-from shift.utils import (create_country, create_state, create_city, create_other_city, create_volunteer_with_details,
+from shift.utils import (create_country, create_state,
+                         create_city, create_other_city,
+                         create_volunteer_with_details,
                          create_organization_with_details)
 
 
@@ -62,7 +64,7 @@ class VolunteerProfile(LiveServerTestCase):
             'Goku', "Son", "Goku", "Kame House", city,
             state, country, "9999999999", "idonthave@gmail.com"
         ]
-        org_name='Detective'
+        org_name = 'Detective'
         org_obj = create_organization_with_details(org_name)
         self.volunteer_1 = create_volunteer_with_details(vol, org_obj)
         self.login_correctly()
@@ -111,7 +113,11 @@ class VolunteerProfile(LiveServerTestCase):
         """
         self.wait.until(
             EC.presence_of_element_located(
-                (By.XPATH, "//h1[contains(text(), 'Volunteer Management System')]")
+                (
+                    By.XPATH,
+                    "//h1[contains(text(),"
+                    " 'Volunteer Management System')]"
+                )
             )
         )
 
@@ -120,10 +126,15 @@ class VolunteerProfile(LiveServerTestCase):
         """
         Utility functions to download dummy resume uploaded to dropbox.
         """
-        urlretrieve('https://dl.dropboxusercontent.com/s/08wpfj4n9f9jdnk/DummyResume.pdf',
-                    'DummyResume.pdf')
-        urlretrieve('https://dl.dropboxusercontent.com/s/uydlhww0ekdy6j7/DummyZip.zip',
-                    'DummyZip.zip')
+        urlretrieve(
+            'https://dl.dropboxusercontent.com/s/'
+            '08wpfj4n9f9jdnk/DummyResume.pdf',
+            'DummyResume.pdf'
+        )
+        urlretrieve(
+            'https://dl.dropboxusercontent.com/s/uydlhww0ekdy6j7/DummyZip.zip',
+            'DummyZip.zip'
+        )
 
     def test_details_tab(self):
         """
@@ -211,7 +222,10 @@ class VolunteerProfile(LiveServerTestCase):
 
         profile_page.upload_resume(path)
         profile_page.submit_form()
-        self.assertEqual(profile_page.get_invalid_format_error(), 'Uploaded file is invalid.')
+        self.assertEqual(
+            profile_page.get_invalid_format_error(),
+            'Uploaded file is invalid.'
+        )
 
 # Resume Upload is buggy, it is taking too long to be uploaded on travis.
 # https://github.com/systers/vms/issues/776

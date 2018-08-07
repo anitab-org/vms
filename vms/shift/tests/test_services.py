@@ -8,21 +8,30 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # local Django
 from shift.models import VolunteerShift
-from shift.services import (
-    add_shift_hours, calculate_duration, calculate_total_report_hours,
-    cancel_shift_registration, clear_shift_hours, delete_shift,
-    edit_shift_hours, generate_report, get_all_volunteer_shifts_with_hours, get_future_shifts_by_volunteer_id,
-    get_shift_by_id, get_shifts_by_job_id, get_shifts_ordered_by_date,
-    get_shift_slots_remaining, get_shifts_with_open_slots,
-    get_unlogged_shifts_by_volunteer_id, get_volunteer_shift_by_id,
-    get_volunteer_shifts, get_volunteer_shifts_with_hours, get_volunteers_by_shift_id,
-    get_logged_volunteers_by_shift_id, is_signed_up, register, send_reminder,
-    get_shifts_with_open_slots_for_volunteer, get_report_by_id)
-from shift.utils import (create_report_with_details, create_organization_with_details,
-                        create_event_with_details, create_job_with_details, create_shift_with_details,
-                        clear_objects, get_report_list, create_volunteer_with_details, register_event_utility,
-                        register_job_utility, register_shift_utility,
-                        set_shift_location, log_hours_with_details, get_country_by_name, get_state_by_name, get_city_by_name)
+from shift.services import (add_shift_hours, cancel_shift_registration,
+                            calculate_total_report_hours, calculate_duration,
+                            clear_shift_hours, delete_shift, edit_shift_hours,
+                            generate_report, get_shifts_with_open_slots,
+                            get_future_shifts_by_volunteer_id, get_shift_by_id,
+                            get_shifts_by_job_id, get_shifts_ordered_by_date,
+                            get_shift_slots_remaining, send_reminder,
+                            get_unlogged_shifts_by_volunteer_id,
+                            get_volunteer_shift_by_id, get_volunteer_shifts,
+                            get_volunteer_shifts_with_hours,
+                            get_volunteers_by_shift_id, register,
+                            get_logged_volunteers_by_shift_id, is_signed_up,
+                            get_all_volunteer_shifts_with_hours,
+                            get_shifts_with_open_slots_for_volunteer,
+                            get_report_by_id)
+from shift.utils import (create_report_with_details, create_event_with_details,
+                         create_organization_with_details, clear_objects,
+                         create_job_with_details, get_report_list,
+                         create_shift_with_details,
+                         create_volunteer_with_details,
+                         register_event_utility, register_job_utility,
+                         register_shift_utility, set_shift_location,
+                         log_hours_with_details, get_country_by_name,
+                         get_state_by_name, get_city_by_name)
 
 
 def setUpModule():
@@ -235,7 +244,6 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         cls.s2 = s2
         cls.s3 = s3
 
-
         country_name = 'United States'
         country = get_country_by_name(country_name)
         state_name = 'Washington'
@@ -249,10 +257,12 @@ class ShiftWithVolunteerTest(unittest.TestCase):
             "yoshi@nintendo.com"
         ]
         volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", city, state, country, "23454545", "john@test.com"
+            'John', "John", "Doe", "7 Alpine Street",
+            city, state, country, "23454545", "john@test.com"
         ]
         volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", city, state, country, "23454545", "ash@pikachu.com"
+            'Ash', "Ash", "Ketchum", "Pallet Town",
+            city, state, country, "23454545", "ash@pikachu.com"
         ]
 
         org_name = 'Locale'
@@ -316,12 +326,16 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         end_time = datetime.time(hour=10, minute=0)
         add_shift_hours(self.v1.id, self.s1.id, start_time, end_time)
 
-        volunteer_shift_list_1 = get_volunteer_shifts(self.v1.id, self.e1.name, self.j1.name,
-                                        "2012-10-22", "2012-10-30")
+        volunteer_shift_list_1 = get_volunteer_shifts(
+            self.v1.id, self.e1.name, self.j1.name,
+            "2012-10-22", "2012-10-30"
+        )
         report_1 = generate_report(volunteer_shift_list_1)
 
-        volunteer_shift_list_2 = get_volunteer_shifts(self.v1.id, self.e1.name, self.j2.name,
-                                        "2012-9-1", "2012-10-26")
+        volunteer_shift_list_2 = get_volunteer_shifts(
+            self.v1.id, self.e1.name, self.j2.name,
+            "2012-9-1", "2012-10-26"
+        )
         report_2 = generate_report(volunteer_shift_list_2)
 
         # verify that report for logged shift appears
@@ -862,7 +876,7 @@ class ShiftReminderTest(unittest.TestCase):
         city = get_city_by_name(city_name)
         volunteer_1 = [
             'Jake', "Jake", "Flamoy", "Mario Land", city,
-             state, country, "2374983247",
+            state, country, "2374983247",
             "jake@nintendo.com"
         ]
         volunteer_2 = [
@@ -945,7 +959,7 @@ class DeleteShiftTest(unittest.TestCase):
         city = get_city_by_name(city_name)
         volunteer_1 = [
             'Aaron', "Aaron", "Turtle", "Mario Land", city, state,
-             country, "2374983247", "aaron@nintendo.com"
+            country, "2374983247", "aaron@nintendo.com"
         ]
         org_name = 'organization'
         cls.org_obj = create_organization_with_details(org_name)

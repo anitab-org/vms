@@ -2,14 +2,17 @@
 import unittest
 
 # local Django
-from organization.models import Organization
-from shift.utils import (create_volunteer_with_details, create_organization_with_details, clear_objects,
-    register_event_utility, register_job_utility, register_shift_utility, get_country_by_name, get_state_by_name, get_city_by_name,
-    register_volunteer_for_shift_utility)
-from volunteer.services import (
-    delete_volunteer, delete_volunteer_resume, get_all_volunteers,
-    get_volunteer_by_id, get_volunteer_resume_file_url,
-    get_volunteers_ordered_by_first_name, has_resume_file, search_volunteers)
+from shift.utils import (create_volunteer_with_details,
+                         create_organization_with_details, clear_objects,
+                         register_event_utility, register_job_utility,
+                         register_shift_utility, get_country_by_name,
+                         get_state_by_name, get_city_by_name,
+                         register_volunteer_for_shift_utility)
+from volunteer.services import (delete_volunteer, delete_volunteer_resume,
+                                get_all_volunteers, get_volunteer_by_id,
+                                get_volunteer_resume_file_url,
+                                get_volunteers_ordered_by_first_name,
+                                has_resume_file, search_volunteers)
 
 
 class VolunteerMethodTests(unittest.TestCase):
@@ -157,7 +160,10 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertIn(self.v2, search_list)
         self.assertIn(self.v3, search_list)
 
-        search_list = search_volunteers(None, None, None, None, None, None, None, None)
+        search_list = search_volunteers(
+            None, None, None, None,
+            None, None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 3)
         self.assertIn(self.v1, search_list)
@@ -175,14 +181,20 @@ class VolunteerMethodTests(unittest.TestCase):
         self.assertNotIn(self.v3, search_list)
 
         # test partial search
-        search_list = search_volunteers("Yoshi", None, None, None, None, None, None, None)
+        search_list = search_volunteers(
+            "Yoshi", None, None, None,
+            None, None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.v1, search_list)
         self.assertNotIn(self.v2, search_list)
         self.assertNotIn(self.v3, search_list)
 
-        search_list = search_volunteers(None, "Doe", None, None, None, None, None, None)
+        search_list = search_volunteers(
+            None, "Doe", None, None,
+            None, None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 2)
         self.assertIn(self.v3, search_list)

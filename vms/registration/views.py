@@ -1,13 +1,11 @@
 # third party
 
 # Django
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -18,10 +16,10 @@ from django.views.generic import TemplateView
 
 # local Django
 from administrator.forms import AdministratorForm
-from administrator.models import Administrator
 from cities_light.models import City, Region, Country
 from organization.models import Organization
-from organization.services import (create_organization, get_organizations_ordered_by_name,
+from organization.services import (create_organization,
+                                   get_organizations_ordered_by_name,
                                    get_organization_by_id)
 from registration.forms import UserForm
 from registration.phone_validate import validate_phone
@@ -29,6 +27,7 @@ from registration.utils import volunteer_denied, match_password
 from registration.tokens import account_activation_token
 from volunteer.forms import VolunteerForm
 from volunteer.validation import validate_file
+
 
 class AdministratorSignupView(TemplateView):
     """
@@ -91,7 +90,9 @@ class AdministratorSignupView(TemplateView):
                             })
                     try:
                         admin_country_name = request.POST.get('country')
-                        admin_country = Country.objects.get(name=admin_country_name)
+                        admin_country = Country.objects.get(
+                            name=admin_country_name
+                        )
                     except ObjectDoesNotExist:
                         admin_country = None
 
@@ -108,7 +109,7 @@ class AdministratorSignupView(TemplateView):
                         admin_city = None
 
                     admin_phone = request.POST.get('admin-phone_number')
-                    if (admin_country and admin_phone):
+                    if admin_country and admin_phone:
                         if not validate_phone(admin_country, admin_phone):
                             self.phone_error = True
                             return render(
@@ -139,7 +140,9 @@ class AdministratorSignupView(TemplateView):
                     if organization:
                         administrator.organization = organization
                     else:
-                        unlisted_org = request.POST.get('admin-unlisted_organization')
+                        unlisted_org = request.POST.get(
+                            'admin-unlisted_organization'
+                        )
                         org = create_organization(unlisted_org)
                         administrator.organization = org
 
@@ -240,7 +243,7 @@ class VolunteerSignupView(TemplateView):
                         vol_city = None
 
                     vol_phone = request.POST.get('vol-phone_number')
-                    if (vol_country and vol_phone):
+                    if vol_country and vol_phone:
                         if not validate_phone(vol_country, vol_phone):
                             self.phone_error = True
                             return render(
@@ -286,8 +289,12 @@ class VolunteerSignupView(TemplateView):
                     if organization:
                         volunteer.organization = organization
                     else:
-                        unlisted_org = request.POST.get('vol-unlisted_organization')
-                        org = Organization.objects.create(name=unlisted_org, approved_status=False)
+                        unlisted_org = request.POST.get(
+                            'vol-unlisted_organization'
+                        )
+                        org = Organization.objects.create(
+                            name=unlisted_org, approved_status=False
+                        )
                         org.save()
                         volunteer.organization = org
                     volunteer.country = vol_country
@@ -342,6 +349,7 @@ def activate(request, uidb64, token):
     else:
         return HttpResponseBadRequest('Activation link is invalid!')
 
+
 def check_states(request):
     """
     Check if states exist in a country
@@ -352,6 +360,7 @@ def check_states(request):
     statecheck = Region.objects.filter(country__name=country_name).exists()
     return JsonResponse(statecheck, safe=False)
 
+
 def load_states(request):
     """
     Renders the options of states dropdown list
@@ -360,7 +369,12 @@ def load_states(request):
     """
     country_name = request.GET.get('country')
     states = Region.objects.filter(country__name=country_name).order_by('name')
-    return render(request, 'registration/state_dropdown_list_options.html', {'states':states})
+    return render(
+        request,
+        'registration/state_dropdown_list_options.html',
+        {'states': states}
+    )
+
 
 def load_cities(request):
     """
@@ -371,8 +385,17 @@ def load_cities(request):
     country_name = request.GET.get('country')
     state_name = request.GET.get('state')
     if state_name is '0':
-        cities = City.objects.filter(country__name=country_name).order_by('name')
+        cities = City.objects.filter(
+            country__name=country_name
+        ).order_by('name')
     else:
-        cities = City.objects.filter(country__name=country_name,region__name=state_name).order_by('name')
-    return render(request, 'registration/city_dropdown_list_options.html', {'cities': cities})
+        cities = City.objects.filter(
+            country__name=country_name,
+            region__name=state_name
+        ).order_by('name')
+    return render(
+        request,
+        'registration/city_dropdown_list_options.html',
+        {'cities': cities}
+    )
 

@@ -6,6 +6,7 @@ from pom.locators.jobSearchPageLocators import JobSearchPageLocators
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pageUrls import PageUrls
 
+
 class JobSearchPage(BasePage):
 
     job_search_page = PageUrls.job_list_page

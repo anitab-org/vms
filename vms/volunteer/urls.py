@@ -4,7 +4,7 @@ from django.conf.urls import url
 # local Django
 from volunteer import views
 from volunteer.views import (VolunteerUpdateView, ProfileView,
-                            GenerateReportView, VolunteerHistoryView)
+                             GenerateReportView, VolunteerHistoryView)
 
 urlpatterns = [
     url(r'^delete_resume/(?P<volunteer_id>\d+)$',

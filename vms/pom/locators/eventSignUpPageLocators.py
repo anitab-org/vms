@@ -11,7 +11,6 @@ class EventSignUpPageLocators(object):
     SLOTS_REMAINING_PATH = '//table//tbody//tr[1]//td[5]'
     EVENT_JOB_NAME = '//table//tbody//tr[1]//td[1]'
 
-
     # search form locators
     START_DATE_FROM = 'from'
     START_DATE_TO = 'to'
@@ -20,7 +19,6 @@ class EventSignUpPageLocators(object):
     EVENT_STATE = 'state'
     EVENT_COUNTRY = 'country'
 
-
     # search from locators for job
     SEARCH_JOB_NAME = 'job_name'
     JOB_START_DATE_FROM = 'from'
@@ -28,7 +26,6 @@ class EventSignUpPageLocators(object):
     JOB_CITY = 'job_city'
     JOB_STATE = 'job_state'
     JOB_COUNTRY = 'job_country'
-
 
     # Two choices depending on whether volunteer or admin
     ASSIGN_SHIFTS_PATH = '//table//tbody//tr[1]//td[4]'

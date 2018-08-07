@@ -11,8 +11,10 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.shiftDetailsPage import ShiftDetailsPage
-from shift.utils import (create_volunteer, create_admin, create_event_with_details, create_job_with_details,
-                         create_shift_with_details, log_hours_with_details, register_volunteer_for_shift_utility)
+from shift.utils import (create_volunteer, create_admin,
+                         create_event_with_details, create_job_with_details,
+                         create_shift_with_details, log_hours_with_details,
+                         register_volunteer_for_shift_utility)
 
 
 class ShiftDetails(LiveServerTestCase):
@@ -129,8 +131,9 @@ class ShiftDetails(LiveServerTestCase):
 
         # Verify that there are no registered shifts or logged hours
         self.assertEqual(shift_details_page.get_message_box(),
-                         'There are currently no volunteers assigned to this shift. '
-                         'Please assign volunteers to view more details'
+                         'There are currently no volunteers assigned '
+                         'to this shift. Please assign volunteers to '
+                         'view more details'
                          )
 
     def test_view_with_only_registered_volunteers(self):
@@ -153,9 +156,18 @@ class ShiftDetails(LiveServerTestCase):
 
         # verify that assigned volunteers shows up but no logged hours yet
         self.assertEqual(len(shift_details_page.get_registered_volunteers()), 1)
-        self.assertEqual(shift_details_page.get_registered_volunteer_name(), 'Prince')
-        self.assertEqual(shift_details_page.get_registered_volunteer_email(), 'volunteer@volunteer.com')
-        self.assertEqual(shift_details_page.get_message_box(), 'There are no logged hours at the moment')
+        self.assertEqual(
+            shift_details_page.get_registered_volunteer_name(),
+            'Prince'
+        )
+        self.assertEqual(
+            shift_details_page.get_registered_volunteer_email(),
+            'volunteer@volunteer.com'
+        )
+        self.assertEqual(
+            shift_details_page.get_message_box(),
+            'There are no logged hours at the moment'
+        )
 
     def test_view_with_logged_hours(self):
         """
@@ -177,11 +189,17 @@ class ShiftDetails(LiveServerTestCase):
 
         # verify that assigned volunteers shows up
         self.assertEqual(len(shift_details_page.get_registered_volunteers()), 1)
-        self.assertEqual(shift_details_page.get_registered_volunteer_email(), 'volunteer@volunteer.com')
+        self.assertEqual(
+            shift_details_page.get_registered_volunteer_email(),
+            'volunteer@volunteer.com'
+        )
 
         # verify that hours are logged by volunteer
         self.assertEqual(len(shift_details_page.get_logged_volunteers()), 1)
-        self.assertEqual(shift_details_page.get_logged_volunteer_name(), 'Prince')
+        self.assertEqual(
+            shift_details_page.get_logged_volunteer_name(),
+            'Prince'
+        )
         self.assertEqual(shift_details_page.get_logged_start_time(), '1 p.m.')
         self.assertEqual(shift_details_page.get_logged_end_time(), '2 p.m.')
 

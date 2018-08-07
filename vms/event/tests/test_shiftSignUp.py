@@ -10,11 +10,15 @@ from selenium.webdriver.firefox.options import Options
 from job.models import Job
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSignUpPage import EventSignUpPage
-from shift.utils import (
-    create_volunteer, create_organization_with_details, create_second_country,
-    create_second_state, create_second_city, get_country_by_name, get_state_by_name, get_city_by_name,
-    register_event_utility, register_job_utility, register_shift_utility, create_shift_with_details,
-    create_volunteer_with_details, register_volunteer_for_shift_utility)
+from shift.utils import (create_volunteer, create_second_country,
+                         create_organization_with_details,
+                         create_second_state, create_second_city,
+                         get_country_by_name, get_state_by_name,
+                         get_city_by_name, register_event_utility,
+                         register_job_utility, register_shift_utility,
+                         create_shift_with_details,
+                         create_volunteer_with_details,
+                         register_volunteer_for_shift_utility)
 
 
 class ShiftSignUp(LiveServerTestCase):
@@ -83,7 +87,10 @@ class ShiftSignUp(LiveServerTestCase):
         """
         sign_up_page = self.sign_up_page
         sign_up_page.navigate_to_sign_up()
-        self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.no_event_message
+        )
 
     def test_signup_shifts_with_registered_shifts(self):
         """
@@ -113,7 +120,10 @@ class ShiftSignUp(LiveServerTestCase):
             sign_up_page.get_danger_box()
 
         # check shift signed up
-        self.assertEqual(sign_up_page.get_signed_up_shift_text(), 'Upcoming Shifts')
+        self.assertEqual(
+            sign_up_page.get_signed_up_shift_text(),
+            'Upcoming Shifts'
+        )
         self.assertEqual(sign_up_page.get_shift_job(), 'job')
         self.assertEqual(sign_up_page.get_shift_date(), 'June 15, 2050')
         self.assertEqual(sign_up_page.get_shift_start_time(), '9 a.m.')
@@ -152,7 +162,10 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.navigate_to_sign_up()
 
         # Events page
-        self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.no_event_message
+        )
 
         with self.assertRaises(NoSuchElementException):
             sign_up_page.find_table_tag()
@@ -167,7 +180,10 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.navigate_to_sign_up()
 
         # On event page
-        self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.no_event_message
+        )
 
         with self.assertRaises(NoSuchElementException):
             sign_up_page.find_table_tag()
@@ -175,7 +191,10 @@ class ShiftSignUp(LiveServerTestCase):
 
         registered_job = register_job_utility()
 
-        self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.no_event_message
+        )
 
         with self.assertRaises(NoSuchElementException):
             sign_up_page.find_table_tag()
@@ -189,7 +208,10 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page = self.sign_up_page
 
         # create outdated shift
-        shift_1 = ["2016-05-11", "9:00", "15:00", 6, Job.objects.get(name='job')]
+        shift_1 = [
+            "2016-05-11", "9:00", "15:00",
+            6, Job.objects.get(name='job')
+        ]
         created_shift = create_shift_with_details(shift_1)
 
         # open Shift Sign Up
@@ -200,8 +222,10 @@ class ShiftSignUp(LiveServerTestCase):
 
         # on jobs page
         sign_up_page.click_to_view_shifts()
-        self.assertEqual(sign_up_page.get_info_box().text,
-                         sign_up_page.get_message_shift_not_available_for_job('job'))
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.get_message_shift_not_available_for_job('job')
+        )
 
     def test_shift_sign_up_with_no_slots(self):
         """
@@ -213,7 +237,10 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page = self.sign_up_page
 
         # create shift with no slot
-        shift_2 = ["2050-05-11", "9:00", "15:00", 1, Job.objects.get(name='job')]
+        shift_2 = [
+            "2050-05-11", "9:00", "15:00", 1,
+            Job.objects.get(name='job')
+        ]
         s2 = create_shift_with_details(shift_2)
 
         # Create another volunteer
@@ -223,8 +250,11 @@ class ShiftSignUp(LiveServerTestCase):
         second_country = create_second_country()
         second_state = create_second_state()
         second_city = create_second_city()
-        volunteer_2 = ['volunteer-2', "Sam", "Turtle", "Mario Land", second_city, second_state, second_country,
-                       "2374983247", "volunteer2@volunteer.com"]
+        volunteer_2 = [
+            'volunteer-2', "Sam", "Turtle", "Mario Land",
+            second_city, second_state, second_country,
+            "2374983247", "volunteer2@volunteer.com"
+        ]
         v2 = create_volunteer_with_details(volunteer_2, org_obj)
 
         # Assign shift to the volunteer
@@ -234,7 +264,10 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.navigate_to_sign_up()
 
         # on event page
-        self.assertEqual(sign_up_page.get_info_box().text, sign_up_page.no_event_message)
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.no_event_message
+        )
 
     def test_search_event_name_present(self):
         """

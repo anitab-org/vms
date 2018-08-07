@@ -3,7 +3,9 @@ from django.conf.urls import url
 
 # local Django
 from job import views
-from job.views import CreateJobView, JobDeleteView, JobDetailView, JobUpdateView, JobListView
+from job.views import (CreateJobView, JobDeleteView,
+                       JobDetailView, JobUpdateView,
+                       JobListView)
 
 urlpatterns = [
     url(r'^create/$', CreateJobView.as_view(), name='create'),

@@ -70,7 +70,10 @@ class JobDetailsPage(BasePage):
         return self.element_by_xpath('//div[@class="panel-body"]').text
 
     def get_delete_element(self, relative):
-        return self.events_page.element_by_xpath(self.events_page.elements.DELETE_JOB + relative)
+        return self.events_page.element_by_xpath(
+            self.events_page.elements.DELETE_JOB +
+            relative
+        )
 
     def get_deletion_context(self):
         return self.events_page.get_deletion_context()

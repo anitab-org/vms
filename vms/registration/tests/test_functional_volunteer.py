@@ -5,8 +5,6 @@ import re
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.firefox.options import Options
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.common.by import By
 
 # Django
 from django.contrib.auth.models import User
@@ -14,13 +12,12 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.core import mail
 
 # local Django
-from pom.pageUrls import PageUrls
 from pom.pages.volunteerRegistrationPage import VolunteerRegistrationPage
 from registration.tokens import account_activation_token
-from shift.utils import create_organization, create_country, create_state, create_city
+from shift.utils import (create_organization, create_country,
+                         create_state, create_city)
 
 
 class SignUpVolunteer(LiveServerTestCase):
@@ -55,7 +52,8 @@ class SignUpVolunteer(LiveServerTestCase):
         - Test legit characters as per Models defined
 
     Retention of fields:
-        - Field values are checked to see that they are not lost when the page gets reloaded
+        - Field values are checked to see that they are
+          not lost when the page gets reloaded
     """
 
     @classmethod
@@ -136,15 +134,23 @@ class SignUpVolunteer(LiveServerTestCase):
         self.assertEqual(len(blocks), 8)
 
     def test_activation_email(self):
-        u1 = User.objects.create_user(username='volunteer',password='volunteer')
+        u1 = User.objects.create_user(
+            username='volunteer',
+            password='volunteer'
+        )
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertEqual(page.get_help_blocks(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
         uid = urlsafe_base64_encode(force_bytes(u1.pk))
         token = account_activation_token.make_token(u1)
-        response = self.client.get(reverse('registration:activate', args=[uid,token]))
+        response = self.client.get(
+            reverse('registration:activate', args=[uid, token])
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_successful_registration(self):
@@ -155,22 +161,31 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertEqual(page.get_help_blocks(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
 
     def test_user_registration_with_same_username(self):
         """
-        Test error raised when user registers with username which already exists.
+        Test error raised when user registers with
+        username which already exists.
         """
         # Register valid volunteer user
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
 
         # Register a user again with username same as already registered user
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
         page.get_volunteer_registration_page()
 
         entry = [
@@ -197,7 +212,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
 
         page.get_volunteer_registration_page()
 
@@ -215,7 +233,6 @@ class SignUpVolunteer(LiveServerTestCase):
         self.assertEqual(page.get_password_error_text(),
                          page.NO_MATCH)
 
-
     def test_numeric_characters_in_first_and_last_name(self):
         """
         Test error raised when using numeric characters in
@@ -226,7 +243,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
 
         page.get_volunteer_registration_page()
 
@@ -256,7 +276,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
 
         page.get_volunteer_registration_page()
 
@@ -286,7 +309,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
 
         page.get_volunteer_registration_page()
 
@@ -325,9 +351,14 @@ class SignUpVolunteer(LiveServerTestCase):
 
         # verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
 
         # Try to register volunteer again with same email address
         page.get_volunteer_registration_page()
@@ -343,8 +374,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # Verify that volunteer wasn't registered
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_email_error_text(),
                          'Volunteer with this Email already exists.')
@@ -369,9 +402,14 @@ class SignUpVolunteer(LiveServerTestCase):
 
         # verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
 
         # Try to register volunteer with incorrect phone number for country
         page.get_volunteer_registration_page()
@@ -387,8 +425,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_phone_error_text(),
                          page.INVALID_PHONE_FOR_COUNTRY)
@@ -412,8 +452,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_phone_error_text(),
                          page.INVALID_PHONE)
@@ -438,9 +480,14 @@ class SignUpVolunteer(LiveServerTestCase):
 
         # Verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.confirm_email_message
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
 
     def test_organization_with_invalid_characters(self):
         """
@@ -461,8 +508,10 @@ class SignUpVolunteer(LiveServerTestCase):
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_organization_error_text(),
                          page.ENTER_VALID_VALUE)
@@ -473,7 +522,8 @@ class SignUpVolunteer(LiveServerTestCase):
 '''
     def test_field_value_retention_in_first_name_state_phone_organization(self):
         """
-        Test field values are retained in first name, state and phone when entered
+        Test field values are retained in first name,
+        state and phone when entered
         invalid information in form.
         """
         page = self.page
@@ -490,7 +540,8 @@ class SignUpVolunteer(LiveServerTestCase):
         ]
         page.fill_registration_form(entry)
 
-        # verify that user wasn't registered and that field values are not erased
+        # verify that user wasn't registered and
+        # that field values are not erased
         self.assertEqual(
             page.remove_i18n(self.driver.current_url),
             self.live_server_url + page.volunteer_registration_page)
@@ -505,7 +556,8 @@ class SignUpVolunteer(LiveServerTestCase):
 
     def test_field_value_retention_in_last_name_address_city_country(self):
         """
-        Test field values are retained in last name, address, city and country when entered
+        Test field values are retained in last name, address,
+        city and country when entered
         invalid information in form.
         """
         page = self.page
@@ -522,9 +574,12 @@ class SignUpVolunteer(LiveServerTestCase):
         ]
         page.fill_registration_form(entry)
 
-        # verify that user wasn't registered and that field values are not erased
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + page.volunteer_registration_page)
+        # verify that user wasn't registered and
+        # that field values are not erased
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + page.volunteer_registration_page
+        )
         details = [
             'volunteer-username', 'volunteer-first-name',
             'volunteer-last-name-3', 'volunteer-email@systers.org',
@@ -532,6 +587,13 @@ class SignUpVolunteer(LiveServerTestCase):
             'India 15', '9999999999', 'volunteer-org'
         ]
         self.wait.until(EC.presence_of_element_located((By.ID, "id_username")))
-        self.wait.until(EC.presence_of_element_located((By.ID, "id_first_name")))
+        self.wait.until(
+            EC.presence_of_element_located(
+                (
+                    By.ID,
+                    "id_first_name"
+                )
+            )
+        )
         self.verify_field_values(details)
 '''

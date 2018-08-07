@@ -6,6 +6,7 @@ from pom.locators.eventSearchPageLocators import EventSearchPageLocators
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pageUrls import PageUrls
 
+
 class EventSearchPage(BasePage):
 
     event_search_page = PageUrls.event_list_page

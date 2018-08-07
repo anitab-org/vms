@@ -12,7 +12,8 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.completedShiftsPage import CompletedShiftsPage
 from shift.utils import (create_volunteer, create_event_with_details,
                          create_job_with_details, create_shift_with_details,
-                         log_hours_with_details, register_volunteer_for_shift_utility)
+                         log_hours_with_details,
+                         register_volunteer_for_shift_utility)
 
 
 class ShiftHours(LiveServerTestCase):
@@ -87,7 +88,8 @@ class ShiftHours(LiveServerTestCase):
         ])
         created_shift = create_shift_with_details(
             ['2015-06-01', '09:00', '15:00', '10', created_job])
-        registered_shift = register_volunteer_for_shift_utility(created_shift, self.v1)
+        registered_shift =\
+            register_volunteer_for_shift_utility(created_shift, self.v1)
 
     def register_logged_dataset(self):
         """
@@ -112,9 +114,11 @@ class ShiftHours(LiveServerTestCase):
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.live_server_url = self.live_server_url
         completed_shifts_page.go_to_completed_shifts()
-        self.assertEqual(completed_shifts_page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + completed_shifts_page.view_hours_page
-                         + str(self.v1.id)
+        self.assertEqual(
+            completed_shifts_page.remove_i18n(self.driver.current_url),
+            self.live_server_url +
+            completed_shifts_page.view_hours_page +
+            str(self.v1.id)
         )
 
         self.assertEqual(completed_shifts_page.get_unlogged_info_box(),
@@ -127,9 +131,11 @@ class ShiftHours(LiveServerTestCase):
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.live_server_url = self.live_server_url
         completed_shifts_page.go_to_completed_shifts()
-        self.assertEqual(completed_shifts_page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + completed_shifts_page.view_hours_page
-                         + str(self.v1.id)
+        self.assertEqual(
+            completed_shifts_page.remove_i18n(self.driver.current_url),
+            self.live_server_url +
+            completed_shifts_page.view_hours_page +
+            str(self.v1.id)
         )
 
         self.assertEqual(completed_shifts_page.get_logged_info_box(),
@@ -143,11 +149,26 @@ class ShiftHours(LiveServerTestCase):
         completed_shifts_page = self.completed_shifts_page
         completed_shifts_page.go_to_completed_shifts()
 
-        self.assertEqual(completed_shifts_page.get_unlogged_shift_job(), 'jobUnlogged')
-        self.assertEqual(completed_shifts_page.get_unlogged_shift_date(), 'June 1, 2015')
-        self.assertEqual(completed_shifts_page.get_unlogged_shift_start_time(), '9 a.m.')
-        self.assertEqual(completed_shifts_page.get_unlogged_shift_end_time(), '3 p.m.')
-        self.assertEqual(completed_shifts_page.get_log_hours(), 'Log Hours')
+        self.assertEqual(
+            completed_shifts_page.get_unlogged_shift_job(),
+            'jobUnlogged'
+        )
+        self.assertEqual(
+            completed_shifts_page.get_unlogged_shift_date(),
+            'June 1, 2015'
+        )
+        self.assertEqual(
+            completed_shifts_page.get_unlogged_shift_start_time(),
+            '9 a.m.'
+        )
+        self.assertEqual(
+            completed_shifts_page.get_unlogged_shift_end_time(),
+            '3 p.m.'
+        )
+        self.assertEqual(
+            completed_shifts_page.get_log_hours(),
+            'Log Hours'
+        )
 
     def test_log_hours(self):
         self.register_unlogged_dataset()
@@ -176,9 +197,18 @@ class ShiftHours(LiveServerTestCase):
         completed_shifts_page.go_to_completed_shifts()
 
         self.assertEqual(completed_shifts_page.get_logged_shift_job(), 'job')
-        self.assertEqual(completed_shifts_page.get_logged_shift_date(), 'June 15, 2015')
-        self.assertEqual(completed_shifts_page.get_logged_shift_start_time(), 'noon')
-        self.assertEqual(completed_shifts_page.get_logged_shift_end_time(), '1 p.m.')
+        self.assertEqual(
+            completed_shifts_page.get_logged_shift_date(),
+            'June 15, 2015'
+        )
+        self.assertEqual(
+            completed_shifts_page.get_logged_shift_start_time(),
+            'noon'
+        )
+        self.assertEqual(
+            completed_shifts_page.get_logged_shift_end_time(),
+            '1 p.m.'
+        )
         self.assertEqual(completed_shifts_page.get_edit_hours(), 'Edit Hours')
 
     def test_edit_hours(self):
@@ -191,7 +221,10 @@ class ShiftHours(LiveServerTestCase):
 
         completed_shifts_page.edit_hours('10:00', '13:00')
         mail.outbox = []
-        mail.send_mail("Edit Request", "message", "messanger@locahost.com", ["admin@admin.com"] )
+        mail.send_mail(
+            "Edit Request", "message",
+            "messanger@locahost.com", ["admin@admin.com"]
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Edit Request")

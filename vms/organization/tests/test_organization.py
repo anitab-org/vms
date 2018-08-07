@@ -11,7 +11,7 @@ from django.core import mail
 from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.locators.eventsPageLocators import EventsPageLocators
-from shift.utils import (create_admin, create_admin_with_unlisted_org,
+from shift.utils import (create_admin_with_unlisted_org,
                          create_volunteer, create_organization)
 
 
@@ -83,8 +83,13 @@ class OrganizationTest(LiveServerTestCase):
         Utility function to delete organization using form.
         """
         organization_page = self.organization_page
-        self.assertEqual(organization_page.element_by_xpath(self.elements.DELETE_ORG).text, 'Delete')
-        organization_page.element_by_xpath(self.elements.DELETE_ORG + '//a').click()
+        self.assertEqual(
+            organization_page.element_by_xpath(self.elements.DELETE_ORG).text,
+            'Delete'
+        )
+        organization_page.element_by_xpath(
+            self.elements.DELETE_ORG + '//a'
+        ).click()
 
         # Check if Organization is deleted.
         self.assertNotEqual(organization_page.get_deletion_box(), None)
@@ -94,7 +99,8 @@ class OrganizationTest(LiveServerTestCase):
 
     def test_approve_organization(self):
         """
-        tests if the organization moves to the listed section if the admin approves it
+        tests if the organization moves to
+         the listed section if the admin approves it
         """
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page
@@ -110,7 +116,8 @@ class OrganizationTest(LiveServerTestCase):
 
     def test_reject_organization(self):
         """
-        tests if the organization gets removed from the unlisted section if the admin rejects it
+        tests if the organization gets removed
+         from the unlisted section if the admin rejects it
         """
         self.organization_page.go_to_events_page()
         organization_page = self.organization_page
@@ -123,7 +130,12 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.reject_org()
 
         mail.outbox = []
-        mail.send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected", "messanger@localhost.com", ['admin@admin.com'])
+        mail.send_mail(
+            "Organization Rejected",
+            "The organization you filled while sign-up has been rejected",
+            "messanger@localhost.com",
+            ['admin@admin.com']
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Organization Rejected")
@@ -144,8 +156,10 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.navigate_to_organization_view()
 
         # Check correctness of organization
-        self.assertEqual(organization_page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + organization_page.organization_list_page)
+        self.assertEqual(
+            organization_page.remove_i18n(self.driver.current_url),
+            self.live_server_url + organization_page.organization_list_page
+        )
         self.assertEqual(organization_page.get_org_name(), organization.name)
 
     def test_create_valid_organization(self):
@@ -161,9 +175,14 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.go_to_create_organization_page()
 
         # Navigate to Organization Edit
-        organization_page.fill_organization_form('Systers Open-Source Community')
+        organization_page.fill_organization_form(
+            'Systers Open-Source Community'
+        )
         # Correctness.
-        self.assertEqual(organization_page.get_org_name(), 'Systers Open-Source Community')
+        self.assertEqual(
+            organization_page.get_org_name(),
+            'Systers Open-Source Community'
+        )
 
     def test_create_duplicate_organization(self):
         """
@@ -179,14 +198,20 @@ class OrganizationTest(LiveServerTestCase):
 
         # Navigate to Organization Edit
         organization_page.fill_organization_form('DuplicateOrganization')
-        self.assertEqual(organization_page.get_org_name(), 'DuplicateOrganization')
+        self.assertEqual(
+            organization_page.get_org_name(),
+            'DuplicateOrganization'
+        )
 
         # Create Organization with same name
         organization_page.go_to_create_organization_page()
         organization_page.fill_organization_form('DuplicateOrganization')
 
         # Check error.
-        self.assertEqual(organization_page.get_help_block().text, 'Organization with this Name already exists.')
+        self.assertEqual(
+            organization_page.get_help_block().text,
+            'Organization with this Name already exists.'
+        )
 
     def test_create_invalid_organization(self):
         """
@@ -201,10 +226,15 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.go_to_create_organization_page()
 
         # Navigate to Organization Edit
-        organization_page.fill_organization_form('Systers Open~Source Community')
+        organization_page.fill_organization_form(
+            'Systers Open~Source Community'
+        )
 
         # Check Error
-        self.assertEqual(organization_page.get_organization_name_error(), 'Enter a valid value.')
+        self.assertEqual(
+            organization_page.get_organization_name_error(),
+            'Enter a valid value.'
+        )
 
     def test_edit_organization_with_invalid_value(self):
         """
@@ -221,13 +251,19 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.navigate_to_organization_view()
 
         # Edit Organization
-        self.assertEqual(organization_page.element_by_xpath(self.elements.EDIT_ORG).text, 'Edit')
+        self.assertEqual(
+            organization_page.element_by_xpath(self.elements.EDIT_ORG).text,
+            'Edit'
+        )
 
         organization_page.go_to_edit_organization_page()
         organization_page.fill_organization_form('New~Organization')
 
         # Check Error
-        self.assertEqual(organization_page.get_organization_name_error(), 'Enter a valid value.')
+        self.assertEqual(
+            organization_page.get_organization_name_error(),
+            'Enter a valid value.'
+        )
 
     def test_edit_organization_with_valid_value(self):
         """
@@ -244,7 +280,10 @@ class OrganizationTest(LiveServerTestCase):
         organization_page.navigate_to_organization_view()
 
         # Edit Organization
-        self.assertEqual(organization_page.element_by_xpath(self.elements.EDIT_ORG).text, 'Edit')
+        self.assertEqual(
+            organization_page.element_by_xpath(self.elements.EDIT_ORG).text,
+            'Edit'
+        )
 
         organization_page.go_to_edit_organization_page()
         organization_page.fill_organization_form('New Organization')
@@ -290,5 +329,8 @@ class OrganizationTest(LiveServerTestCase):
 
         # Check error message
         self.assertNotEqual(organization_page.get_danger_message(), None)
-        self.assertEqual(organization_page.get_template_error_message(),
-                         'You cannot delete an organization that users are currently associated with.')
+        self.assertEqual(
+            organization_page.get_template_error_message(),
+            'You cannot delete an organization that users '
+            'are currently associated with.'
+        )

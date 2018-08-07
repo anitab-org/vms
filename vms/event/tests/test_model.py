@@ -71,25 +71,39 @@ class EventModelTests(TestCase):
         event_data = ['event~name', '2050-05-21', '2050-05-24']
         event = create_event_with_details(event_data)
 
-        self.assertRaisesRegexp(ValidationError, EventsPage.ENTER_VALID_VALUE, event.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            EventsPage.ENTER_VALID_VALUE,
+            event.full_clean
+        )
 
     # def test_invalid_start_date_in_model_create(self):
     #     """
     #      Database test for model creation with invalid start date.
     #     """
-    #     This test need to be uncommented after clean method is defined for model.
+    #     This test need to be uncommented after
+    #     clean method is defined for model.
     #     event_data = ['event-name', '2013-05-21', '2050-05-24']
     #     event = create_event_with_details(event_data)
-    #     self.assertRaisesRegexp(ValidationError, EventsPage.ENTER_VALID_VALUE, event.full_clean)
+    #     self.assertRaisesRegexp(
+    #         ValidationError,
+    #         EventsPage.ENTER_VALID_VALUE,
+    #         event.full_clean
+    #     )
 
     # def test_invalid_start_date_in_model_create(self):
     #     """
     #      Database test for model creation with invalid end date.
     #     """
-    #     This test need to be uncommented after clean method is defined for model.
+    #     This test need to be uncommented after
+    #     clean method is defined for model.
     #     event_data = ['event-name', '2050-05-21', '2013-05-24']
     #     event = create_event_with_details(event_data)
-    #     self.assertRaisesRegexp(ValidationError, EventsPage.ENTER_VALID_VALUE, event.full_clean)
+    #     self.assertRaisesRegexp(
+    #         ValidationError,
+    #         EventsPage.ENTER_VALID_VALUE,
+    #         event.full_clean
+    #     )
 
     def test_model_edit_with_valid_values(self):
         """

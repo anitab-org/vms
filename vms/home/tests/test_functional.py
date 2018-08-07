@@ -132,9 +132,15 @@ class CheckURLAccess(LiveServerTestCase):
         self.wait_for_home_page()
 
         self.verify_volunteer_page_error(PageUrls.upcoming_shifts_page + '1000')
-        self.verify_volunteer_page_error(PageUrls.completed_shifts_page + '1000')
-        self.verify_volunteer_page_error(PageUrls.volunteer_report_page + '1000')
-        self.verify_volunteer_page_error(PageUrls.volunteer_profile_page + '1000')
+        self.verify_volunteer_page_error(
+            PageUrls.completed_shifts_page + '1000'
+        )
+        self.verify_volunteer_page_error(
+            PageUrls.volunteer_report_page + '1000'
+        )
+        self.verify_volunteer_page_error(
+            PageUrls.volunteer_profile_page + '1000'
+        )
 
     def test_volunteer_cannot_access_admin_urls(self):
         """
@@ -311,39 +317,62 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.login(username='admin', password='admin')
         self.wait_for_home_page()
 
-        self.assertEqual(authentication_page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.homepage)
+        self.assertEqual(
+            authentication_page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.homepage
+        )
         self.assertRaisesRegexp(NoSuchElementException,
                                 'Unable to locate element: Log In',
                                 home_page.get_login_link)
 
-        volunteer_search_link = home_page.get_volunteer_search_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(volunteer_search_link),
-                         self.live_server_url + PageUrls.volunteer_search_page)
+        volunteer_search_link = \
+            home_page.get_volunteer_search_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(volunteer_search_link),
+            self.live_server_url + PageUrls.volunteer_search_page
+        )
 
-        manage_volunteer_shift_link = home_page.get_manage_shifts_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(manage_volunteer_shift_link),
-                         self.live_server_url + PageUrls.manage_volunteer_shift_page)
+        manage_volunteer_shift_link = \
+            home_page.get_manage_shifts_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(manage_volunteer_shift_link),
+            self.live_server_url + PageUrls.manage_volunteer_shift_page
+        )
 
-        report_link = home_page.get_admin_report_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(report_link),
-                         self.live_server_url + PageUrls.administrator_report_page)
+        report_link = \
+            home_page.get_admin_report_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(report_link),
+            self.live_server_url + PageUrls.administrator_report_page
+        )
 
-        settings_link = home_page.get_events_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(settings_link),
-                         self.live_server_url + PageUrls.admin_settings_page)
+        settings_link = \
+            home_page.get_events_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(settings_link),
+            self.live_server_url + PageUrls.admin_settings_page
+        )
 
-        create_account_link = home_page.get_create_admin_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(create_account_link),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        create_account_link = \
+            home_page.get_create_admin_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(create_account_link),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
-        change_password_link = home_page.get_change_password_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(change_password_link),
-                         self.live_server_url + PageUrls.password_change_page)
+        change_password_link = \
+            home_page.get_change_password_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(change_password_link),
+            self.live_server_url + PageUrls.password_change_page
+        )
 
-        logout_link = home_page.get_logout_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(logout_link),
-                         self.live_server_url + PageUrls.logout_page)
+        logout_link = \
+            home_page.get_logout_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(logout_link),
+            self.live_server_url + PageUrls.logout_page
+        )
 
     def test_volunteer_page_redirection(self):
         """
@@ -357,33 +386,61 @@ class CheckContentAndRedirection(LiveServerTestCase):
         self.login(username='volunteer', password='volunteer')
         self.wait_for_home_page()
 
-        self.assertEqual(home_page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.homepage)
+        self.assertEqual(
+            home_page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.homepage
+        )
         self.assertRaisesRegexp(NoSuchElementException,
                                 'Unable to locate element: Log In',
                                 home_page.get_login_link)
 
-        upcoming_shift_link = home_page.get_upcoming_shifts_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(upcoming_shift_link), self.live_server_url +
-                         PageUrls.upcoming_shifts_page + self.volunteer_id)
+        upcoming_shift_link = \
+            home_page.get_upcoming_shifts_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(upcoming_shift_link),
+            self.live_server_url +
+            PageUrls.upcoming_shifts_page +
+            self.volunteer_id
+        )
 
-        shift_hours_link = home_page.get_completed_shifts_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(shift_hours_link), self.live_server_url +
-                         PageUrls.completed_shifts_page + self.volunteer_id)
+        shift_hours_link = \
+            home_page.get_completed_shifts_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(shift_hours_link),
+            self.live_server_url +
+            PageUrls.completed_shifts_page +
+            self.volunteer_id
+        )
 
-        shift_signup_link = home_page.get_shift_signup_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(shift_signup_link), self.live_server_url +
-                         PageUrls.shift_sign_up_page + self.volunteer_id)
+        shift_signup_link = \
+            home_page.get_shift_signup_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(shift_signup_link),
+            self.live_server_url +
+            PageUrls.shift_sign_up_page +
+            self.volunteer_id
+        )
 
-        report_link = home_page.get_volunteer_report_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(report_link),
-                         self.live_server_url + PageUrls.volunteer_report_page + self.volunteer_id)
+        report_link = \
+            home_page.get_volunteer_report_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(report_link),
+            self.live_server_url +
+            PageUrls.volunteer_report_page +
+            self.volunteer_id
+        )
 
-        profile_link = home_page.get_volunteer_profile_link().get_attribute('href')
-        self.assertEqual(home_page.remove_i18n(profile_link),
-                         self.live_server_url + PageUrls.volunteer_profile_page + self.volunteer_id)
+        profile_link = \
+            home_page.get_volunteer_profile_link().get_attribute('href')
+        self.assertEqual(
+            home_page.remove_i18n(profile_link),
+            self.live_server_url +
+            PageUrls.volunteer_profile_page +
+            self.volunteer_id
+        )
 
-        change_password_link = home_page.get_change_password_link().get_attribute('href')
+        change_password_link = \
+            home_page.get_change_password_link().get_attribute('href')
         self.assertEqual(home_page.remove_i18n(change_password_link),
                          self.live_server_url + PageUrls.password_change_page)
 

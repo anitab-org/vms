@@ -36,7 +36,8 @@ class Volunteer(models.Model):
         max_length=20,
         validators=[
             RegexValidator(
-                r'^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$',
+                r'^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?'
+                r'((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$',
                 message="Please enter a valid phone number",
             ),
         ],
@@ -49,7 +50,10 @@ class Volunteer(models.Model):
         blank=True,
         validators=[
             RegexValidator(
-                r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})+$',
+                r'^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+'
+                r'[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+'
+                r'[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))'
+                r'[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9]\.[^\s]{2,})+$',
             ),
         ],
     )

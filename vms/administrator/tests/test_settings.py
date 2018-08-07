@@ -11,10 +11,11 @@ from pom.pages.eventsPage import EventsPage
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.jobDetailsPage import JobDetailsPage
 from pom.locators.eventsPageLocators import EventsPageLocators
-from shift.utils import ( create_admin_with_unlisted_org,
-    create_event_with_details, create_job_with_details,
-    create_shift_with_details, create_volunteer,
-    register_volunteer_for_shift_utility, create_organization)
+from shift.utils import (create_admin_with_unlisted_org,
+                         create_event_with_details, create_job_with_details,
+                         create_shift_with_details, create_volunteer,
+                         register_volunteer_for_shift_utility,
+                         create_organization)
 
 
 class Settings(LiveServerTestCase):
@@ -118,7 +119,10 @@ class Settings(LiveServerTestCase):
         Utility function to delete a particular event.
         """
         settings = self.settings
-        self.assertEqual(settings.element_by_xpath(self.elements.DELETE_EVENT).text, 'Delete')
+        self.assertEqual(
+            settings.element_by_xpath(self.elements.DELETE_EVENT).text,
+            'Delete'
+        )
         settings.element_by_xpath(self.elements.DELETE_EVENT + '//a').click()
         self.assertNotEqual(settings.get_deletion_box(), None)
         self.assertEqual(settings.get_deletion_context(), 'Delete Event')
@@ -129,7 +133,10 @@ class Settings(LiveServerTestCase):
         Utility function to delete a particular job.
         """
         settings = self.settings
-        self.assertEqual(settings.element_by_xpath(self.elements.DELETE_JOB).text, 'Delete')
+        self.assertEqual(
+            settings.element_by_xpath(self.elements.DELETE_JOB).text,
+            'Delete'
+        )
         settings.element_by_xpath(self.elements.DELETE_JOB + '//a').click()
 
         self.assertNotEqual(settings.get_deletion_box(), None)
@@ -141,7 +148,10 @@ class Settings(LiveServerTestCase):
         Utility function to delete a particular shift.
         """
         settings = self.settings
-        self.assertEqual(settings.element_by_xpath(self.elements.DELETE_SHIFT).text, 'Delete')
+        self.assertEqual(
+            settings.element_by_xpath(self.elements.DELETE_SHIFT).text,
+            'Delete'
+        )
         settings.element_by_xpath(self.elements.DELETE_SHIFT + '//a').click()
 
         # confirm on delete
@@ -154,7 +164,10 @@ class Settings(LiveServerTestCase):
         Utility function to delete a particular organization.
         """
         settings = self.settings
-        self.assertEqual(settings.element_by_xpath(self.elements.DELETE_ORG).text, 'Delete')
+        self.assertEqual(
+            settings.element_by_xpath(self.elements.DELETE_ORG).text,
+            'Delete'
+        )
         settings.element_by_xpath(self.elements.DELETE_ORG + '//a').click()
 
         # confirm on delete
@@ -178,11 +191,23 @@ class Settings(LiveServerTestCase):
         self.settings.go_to_events_page()
         settings = self.settings
         settings.click_link(settings.jobs_tab)
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_message_context(), self.job_details_page.NO_JOBS_PRESENT)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.job_list_page
+        )
+        self.assertEqual(
+            settings.get_message_context(),
+            self.job_details_page.NO_JOBS_PRESENT
+        )
         settings.click_link('Create Job')
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.create_job_page)
-        self.assertEqual(settings.get_message_context(), 'Please add events to associate with jobs first.')
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.create_job_page
+        )
+        self.assertEqual(
+            settings.get_message_context(),
+            'Please add events to associate with jobs first.'
+        )
 
     def test_shift_tab_and_create_shift_without_job(self):
         """
@@ -191,8 +216,14 @@ class Settings(LiveServerTestCase):
         self.settings.go_to_events_page()
         settings = self.settings
         settings.click_link(settings.shift_tab)
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.shift_list_page)
-        self.assertEqual(settings.get_message_context(), self.job_details_page.NO_JOBS_PRESENT)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.shift_list_page
+        )
+        self.assertEqual(
+            settings.get_message_context(),
+            self.job_details_page.NO_JOBS_PRESENT
+        )
 
     def test_create_event(self):
         """
@@ -207,7 +238,10 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_event_list_view()
 
         # Check event created
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.event_list_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.event_list_page
+        )
         self.assertEqual(settings.get_event_name(), 'event-name')
 
     ''' commented till the portal gets live with its api
@@ -217,7 +251,10 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
         settings.go_to_create_event_page()
         settings.create_meetup()
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.event_list_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.event_list_page
+        )
     '''
 
     def test_edit_event(self):
@@ -241,7 +278,10 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_event_list_view()
 
         # Check event edit
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.event_list_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.event_list_page
+        )
         self.assertEqual(settings.get_event_name(), 'new-event-name')
 
     def test_create_and_edit_event_with_invalid_start_date(self):
@@ -256,8 +296,14 @@ class Settings(LiveServerTestCase):
         settings.fill_event_form(invalid_event)
 
         # Check event not created and error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
-        self.assertEqual(settings.get_warning_context(), "Start date should be today's date or later.")
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+        )
+        self.assertEqual(
+            settings.get_warning_context(),
+            "Start date should be today's date or later."
+        )
 
         settings.navigate_to_event_list_view()
         settings.go_to_create_event_page()
@@ -271,8 +317,14 @@ class Settings(LiveServerTestCase):
         settings.fill_event_form(invalid_event)
 
         # check event not edited and error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
-        self.assertEqual(settings.get_warning_context(), "Start date should be today's date or later.")
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+        )
+        self.assertEqual(
+            settings.get_warning_context(),
+            "Start date should be today's date or later."
+        )
 
     def test_edit_event_with_elapsed_start_date(self):
         """
@@ -293,15 +345,22 @@ class Settings(LiveServerTestCase):
 
         # Try editing any one field - (event name in this case)
         settings.element_by_xpath(self.elements.CREATE_EVENT_NAME).clear()
-        settings.send_value_to_xpath(self.elements.CREATE_EVENT_NAME, 'changed-event-name')
+        settings.send_value_to_xpath(
+            self.elements.CREATE_EVENT_NAME,
+            'changed-event-name'
+        )
         settings.submit_form()
 
         # check event not edited
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+        )
 
     def test_edit_event_with_invalid_job_date(self):
         """
-        Test edit of event with invalid date such that the job dates do not lie in it.
+        Test edit of event with invalid date such
+        that the job dates do not lie in it.
         """
         event = ['event-name', '2050-08-21', '2050-09-28']
         created_event = create_event_with_details(event)
@@ -323,10 +382,17 @@ class Settings(LiveServerTestCase):
         settings.fill_event_form(new_event)
 
         # check event not edited and error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
-        self.assertEqual(settings.element_by_xpath(self.elements.TEMPLATE_ERROR_MESSAGE).text,
-                         'You cannot edit this event as the following associated job no longer '
-                         'lies within the new date range :')
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+        )
+        self.assertEqual(
+            settings.element_by_xpath(
+                self.elements.TEMPLATE_ERROR_MESSAGE
+            ).text,
+            'You cannot edit this event as the following associated job '
+            'no longer lies within the new date range :'
+        )
 
     def test_delete_event_with_no_associated_job(self):
         """
@@ -346,7 +412,10 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_event_list_view()
 
         # check event deleted
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.event_list_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.event_list_page
+        )
         with self.assertRaises(NoSuchElementException):
             settings.get_results()
 
@@ -373,8 +442,11 @@ class Settings(LiveServerTestCase):
         self.delete_event_from_list()
 
         self.assertNotEqual(settings.get_danger_message(), None)
-        self.assertEqual(settings.get_template_error_message(),
-                         'You cannot delete an event that a job is currently associated with.')
+        self.assertEqual(
+            settings.get_template_error_message(),
+            'You cannot delete an event that a job '
+            'is currently associated with.'
+        )
 
         # check event NOT deleted
         settings.navigate_to_event_list_view()
@@ -393,7 +465,10 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
 
         # create job
-        job = ['event-name', 'job name', 'job description', '2050-08-21', '2050-08-28']
+        job = [
+            'event-name', 'job name', 'job description',
+            '2050-08-21', '2050-08-28'
+        ]
         settings.navigate_to_job_list_view()
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
@@ -419,14 +494,20 @@ class Settings(LiveServerTestCase):
         settings = self.settings
         settings.live_server_url = self.live_server_url
 
-        edit_job = ['event-name', 'changed job name', 'job description', '2050-08-25', '2050-08-25']
+        edit_job = [
+            'event-name', 'changed job name', 'job description',
+            '2050-08-25', '2050-08-25'
+        ]
         settings.navigate_to_job_list_view()
         settings.go_to_edit_job_page()
         settings.fill_job_form(edit_job)
 
         settings.navigate_to_job_list_view()
         # check job edited
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.job_list_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.job_list_page
+        )
         self.assertEqual(settings.get_job_name(), 'changed job name')
 
     def test_create_job_with_invalid_event_date(self):
@@ -442,24 +523,42 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
 
         # create job with start date outside range
-        job = ['event-name', 'job name', 'job description', '08/10/2050', '09/11/2050']
+        job = [
+            'event-name', 'job name', 'job description',
+            '08/10/2050', '09/11/2050'
+        ]
         settings.navigate_to_job_list_view()
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
 
         # check job not created and proper error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
+        self.assertEqual(
+            settings.get_warning_context(),
+            'Job dates should lie within Event dates'
+        )
 
         # create job with end date outside range
-        job = ['event-name', 'job name', 'job description', '08/30/2050', '09/29/2050']
+        job = [
+            'event-name', 'job name', 'job description',
+            '08/30/2050', '09/29/2050'
+        ]
         settings.navigate_to_job_list_view()
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
 
         # check job not created and proper error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
+        self.assertEqual(
+            settings.get_warning_context(),
+            'Job dates should lie within Event dates'
+        )
 
     def test_edit_job_with_invalid_event_date(self):
         """
@@ -473,7 +572,10 @@ class Settings(LiveServerTestCase):
         job = ['job', '2050-08-21', '2050-08-21', '', created_event]
         create_job_with_details(job)
 
-        invalid_job_one = ['event-name', 'changed job name', 'job description', '2050-05-03', '2050-11-09']
+        invalid_job_one = [
+            'event-name', 'changed job name', 'job description',
+            '2050-05-03', '2050-11-09'
+        ]
 
         self.settings.go_to_events_page()
         settings = self.settings
@@ -485,17 +587,32 @@ class Settings(LiveServerTestCase):
         settings.fill_job_form(invalid_job_one)
 
         # check job not edited and proper error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
+        self.assertEqual(
+            settings.get_warning_context(),
+            'Job dates should lie within Event dates'
+        )
 
-        invalid_job_two = ['event-name', 'changed job name', 'job description', '2050-09-14', '2050-12-31']
+        invalid_job_two = [
+            'event-name', 'changed job name', 'job description',
+            '2050-09-14', '2050-12-31'
+        ]
         settings.navigate_to_job_list_view()
         settings.go_to_edit_job_page()
         settings.fill_job_form(invalid_job_two)
 
         # check job not edited and proper error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_warning_context(), 'Job dates should lie within Event dates')
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
+        self.assertEqual(
+            settings.get_warning_context(),
+            'Job dates should lie within Event dates'
+        )
 
     def test_edit_job_with_invalid_shift_date(self):
         """
@@ -519,7 +636,10 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
         settings.navigate_to_job_list_view()
 
-        invalid_job_one = ['event-name', 'changed job name', 'job description', '2050-09-01', '2050-09-11']
+        invalid_job_one = [
+            'event-name', 'changed job name', 'job description',
+            '2050-09-01', '2050-09-11'
+        ]
 
         # edit job with date range such that the shift start date no longer
         # falls in the range
@@ -527,9 +647,15 @@ class Settings(LiveServerTestCase):
         settings.fill_job_form(invalid_job_one)
 
         # check job not edited and proper error message displayed
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
-        self.assertEqual(settings.get_template_error_message(),
-                         'You cannot edit this job as 1 associated shift no longer lies within the new date range')
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
+        self.assertEqual(
+            settings.get_template_error_message(),
+            'You cannot edit this job as 1 associated shift '
+            'no longer lies within the new date range'
+        )
 
     def test_delete_job_without_associated_shift(self):
         """
@@ -555,7 +681,10 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_job_list_view()
 
         # check event deleted
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.job_list_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.job_list_page
+        )
         with self.assertRaises(NoSuchElementException):
             settings.get_results()
 
@@ -584,8 +713,10 @@ class Settings(LiveServerTestCase):
         self.delete_job_from_list()
 
         self.assertNotEqual(settings.get_danger_message(), None)
-        self.assertEqual(settings.get_template_error_message(),
-                         'You cannot delete a job that a shift is currently associated with.')
+        self.assertEqual(
+            settings.get_template_error_message(),
+            'You cannot delete a job that a shift is currently associated with.'
+        )
 
         # check job NOT deleted
         settings.navigate_to_job_list_view()
@@ -643,7 +774,10 @@ class Settings(LiveServerTestCase):
         settings.fill_shift_form(shift)
 
         # verify that shift was not created and error message displayed
-        self.assertEqual(settings.get_help_block().text, 'Start time must be before the end time')
+        self.assertEqual(
+            settings.get_help_block().text,
+            'Start time must be before the end time'
+        )
 
     def test_edit_shift_with_invalid_timings(self):
         """
@@ -672,7 +806,10 @@ class Settings(LiveServerTestCase):
         settings.fill_shift_form(invalid_shift)
 
         # verify that shift was not edited and error message displayed
-        self.assertEqual(settings.get_help_block().text, 'Start time must be before the end time')
+        self.assertEqual(
+            settings.get_help_block().text,
+            'Start time must be before the end time'
+        )
 
     def test_create_shift_with_invalid_date(self):
         """
@@ -698,7 +835,10 @@ class Settings(LiveServerTestCase):
         settings.fill_shift_form(shift)
 
         # verify that shift was not created and error message displayed
-        self.assertEqual(settings.get_warning_context(), 'Shift date should lie within Job dates')
+        self.assertEqual(
+            settings.get_warning_context(),
+            'Shift date should lie within Job dates'
+        )
 
     def test_edit_shift_with_invalid_date(self):
         """
@@ -727,7 +867,10 @@ class Settings(LiveServerTestCase):
         settings.fill_shift_form(invalid_shift)
 
         # verify that shift was not edited and error message displayed
-        self.assertEqual(settings.get_warning_context(), 'Shift date should lie within Job dates')
+        self.assertEqual(
+            settings.get_warning_context(),
+            'Shift date should lie within Job dates'
+        )
 
     def test_edit_shift(self):
         """
@@ -787,7 +930,10 @@ class Settings(LiveServerTestCase):
 
         # check deletion of shift
         settings.navigate_to_shift_list_view()
-        self.assertEqual(settings.get_message_context(), 'There are currently no shifts. Please create shifts first.')
+        self.assertEqual(
+            settings.get_message_context(),
+            'There are currently no shifts. Please create shifts first.'
+        )
 
     def test_delete_shift_with_volunteer(self):
         """
@@ -818,8 +964,10 @@ class Settings(LiveServerTestCase):
         self.delete_shift_from_list()
 
         # check error message displayed and shift not deleted
-        self.assertEqual(settings.get_template_error_message(),
-                         'You cannot delete a shift that a volunteer has signed up for.')
+        self.assertEqual(
+            settings.get_template_error_message(),
+            'You cannot delete a shift that a volunteer has signed up for.'
+        )
 
     def test_organization(self):
         """
@@ -833,8 +981,10 @@ class Settings(LiveServerTestCase):
                          self.live_server_url + settings.organization_list_page)
 
         settings.click_link('Create Organization')
-        self.assertEqual(settings.remove_i18n(self.driver.current_url),
-                         self.live_server_url + settings.create_organization_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.create_organization_page
+        )
 
         # Test all valid characters for organization
         # [(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]
@@ -858,7 +1008,10 @@ class Settings(LiveServerTestCase):
         settings.go_to_create_organization_page()
         settings.fill_organization_form('Organization')
 
-        self.assertEqual(settings.get_help_block().text, 'Organization with this Name already exists.')
+        self.assertEqual(
+            settings.get_help_block().text,
+            'Organization with this Name already exists.'
+        )
 
     def test_edit_org(self):
         """
@@ -872,7 +1025,10 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_organization_view()
 
         # edit org
-        self.assertEqual(settings.element_by_xpath(self.elements.EDIT_ORG).text, 'Edit')
+        self.assertEqual(
+            settings.element_by_xpath(self.elements.EDIT_ORG).text,
+            'Edit'
+        )
         settings.element_by_xpath(self.elements.EDIT_ORG + '//a').click()
 
         settings.fill_organization_form('changed-organization')
@@ -921,8 +1077,11 @@ class Settings(LiveServerTestCase):
 
         # check org not deleted message received
         self.assertNotEqual(settings.get_danger_message(), None)
-        self.assertEqual(settings.get_template_error_message(),
-                         'You cannot delete an organization that users are currently associated with.')
+        self.assertEqual(
+            settings.get_template_error_message(),
+            'You cannot delete an organization that '
+            'users are currently associated with.'
+        )
 
     # Feature not yet added.
     '''
@@ -936,14 +1095,20 @@ class Settings(LiveServerTestCase):
         self.settings.go_to_events_page()
         settings = self.settings
         # Check event created
-        self.assertEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
+        self.assertEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+            )
         self.assertEqual(settings.get_event_name(), 'event-name')
 
         settings.go_to_create_event_page()
         settings.fill_event_form(event)
 
         # TBA here - more checks depending on behaviour that should be reflected
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+        )
 
     # Feature not yet implemented
     def test_duplicate_job(self):
@@ -955,7 +1120,10 @@ class Settings(LiveServerTestCase):
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['event-name', 'job name', 'job description', '2017-08-21', '2017-08-28']
+        job = [
+            'event-name', 'job name', 'job description',
+            '2017-08-21', '2017-08-28'
+        ]
         create_job_with_details(job)
 
         settings = self.settings
@@ -971,5 +1139,8 @@ class Settings(LiveServerTestCase):
 
         # TBA here - more checks depending on logic that should be reflected
         # check job not created - commented out due to bug
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
     '''
