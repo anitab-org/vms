@@ -1,9 +1,8 @@
-import re
-
 # Django
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+
 
 class UserForm(forms.ModelForm):
     # password not visible when user types it out
@@ -12,19 +11,22 @@ class UserForm(forms.ModelForm):
 
     def clean_password(self):
         password = self.cleaned_data['password']
-        x = r'^(?=.*?[A-Z])'
+        checks = dict()
+        # check if it contains a lowercase digit
+        checks['lower'] = any(char.islower() for char in password)
+        # check if it contains a digit
+        checks['digit'] = any(char.isdigit() for char in password)
+        # check if its length<=6
+        checks['size'] = 6 <= len(password)
+        # check if it has special characters
         y = '[~!@#$%^&*()_+{}":;\']+$'
-        z = r'^(?=.*?[0-9])'
-        digit = re.match(z, password)
-        special_char = set(y).intersection(password)
-        uppercase = re.match(x, password)
-        if digit and uppercase and special_char:
+        checks['special'] = set(y).intersection(password)
+        if all(checks.values()):
             return password
         else:
             raise ValidationError(
-                "Password must have at least one uppercase letter, "
+                "Password must have at least 6 characters, one lowercase letter, "
                 "one special character and one digit.")
-
 
     class Meta:
         model = User

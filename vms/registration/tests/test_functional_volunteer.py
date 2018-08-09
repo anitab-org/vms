@@ -199,8 +199,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'jddvolunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'jddvolunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email1@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -212,6 +212,31 @@ class SignUpVolunteer(LiveServerTestCase):
         self.assertEqual(page.get_password_error_text(),
                          page.NO_MATCH)
 
+    def test_password_follows_regex(self):
+        """
+        Test error raised when usasswoer inputs invalid password
+        """
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+
+        page.get_volunteer_registration_page()
+
+        entry = [
+            'volunteer-username-1', 'volunteer-password',
+            'volunteer-password',
+            'volunteer-first-name', 'volunteer-last-name',
+            'volunteer-email1@systers.org', 'volunteer-address',
+            'Roorkee', 'Uttarakhand', 'India',
+            '9999999999', 'volunteer-org'
+        ]
+        page.fill_registration_form(entry)
+
+        self.assertNotEqual(page.get_help_blocks(), None)
+        self.assertEqual(page.get_password_regex_error_text(),
+                         page.PASSWORD_ERROR)
 
     def test_numeric_characters_in_first_and_last_name(self):
         """
@@ -228,8 +253,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name-1', 'volunteer-last-name-1',
             'volunteer-email1@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -258,8 +283,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'first-name-!@#$%^&*()_', 'last-name!@#$%^&*()_',
             'volunteer-email3@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -288,8 +313,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name-long-asdfghjkl',
             'volunteer-last-name-long-asdfghjkl',
             'volunteer-email4@systers.org', 'volunteer-address',
@@ -330,8 +355,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -355,8 +380,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -374,8 +399,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email1@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India', '237937913',
@@ -399,8 +424,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email1@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India', '23&79^37913',
@@ -424,8 +449,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-1', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-1', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email1@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -448,8 +473,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username-2', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username-2', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name',
             'volunteer-email2@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand', 'India',
@@ -478,8 +503,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name-3', 'volunteer-last-name',
             'volunteer-email@systers.org', 'volunteer-address',
             'Roorkee', 'Uttarakhand!', 'India',
@@ -510,8 +535,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.get_volunteer_registration_page()
 
         entry = [
-            'volunteer-username', 'volunteer-password!@#$%^&*()_',
-            'volunteer-password!@#$%^&*()_',
+            'volunteer-username', 'volunteer-password1!@#$%^&*()_',
+            'volunteer-password1!@#$%^&*()_',
             'volunteer-first-name', 'volunteer-last-name-3',
             'volunteer-email@systers.org', 'volunteer-address$@!',
             'Roorkee#$', 'Uttarakhand', 'India 15',
