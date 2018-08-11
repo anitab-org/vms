@@ -32,7 +32,11 @@ def clear_objects():
 
 
 def create_edit_request_with_details(start_time, end_time, logged_shift):
-    er1 = EditRequest(volunteer_shift=logged_shift, start_time=start_time, end_time=end_time)
+    er1 = EditRequest(
+        volunteer_shift=logged_shift,
+        start_time=start_time,
+        end_time=end_time
+    )
     er1.save()
     return er1
 
@@ -47,16 +51,20 @@ def create_event_with_details(event):
         e1 = Event(name=event[0], start_date=event[1], end_date=event[2],
                    address=event[3], venue=event[4])
     elif len(event) == 4:
-        e1 = Event(name=event[0], start_date=event[1], end_date=event[2], description=event[3])
+        e1 = Event(
+            name=event[0], start_date=event[1],
+            end_date=event[2], description=event[3]
+        )
     else:
-        e1 = Event(name=event[0], start_date=event[1], end_date=event[2], description=event[3],
-                   address=event[4], venue=event[5])
+        e1 = Event(name=event[0], start_date=event[1], end_date=event[2],
+                   description=event[3], address=event[4], venue=event[5])
     e1.save()
     return e1
 
 
 def create_report_with_details(vol, logged_shift):
-    total_hours = calculate_duration(logged_shift.start_time, logged_shift.end_time)
+    total_hours = \
+        calculate_duration(logged_shift.start_time, logged_shift.end_time)
     r1 = Report.objects.create(volunteer=vol, total_hrs=total_hours)
     r1.volunteer_shifts.add(logged_shift)
     r1.save()
@@ -268,14 +276,14 @@ def create_country():
 def create_state():
     country = Country.objects.get(name='India')
     state = Region.objects.create(
-        name_ascii = "Uttarakhand",
+        name_ascii='Uttarakhand',
         slug='uttarakhand',
         geoname_id='1444366',
         alternate_names='',
         name='Uttarakhand',
         geoname_code='39',
         country=country
-        )
+    )
     return state
 
 
@@ -283,14 +291,14 @@ def create_city():
     country = Country.objects.get(name='India')
     state = Region.objects.get(name='Uttarakhand')
     city = City.objects.create(
-        name_ascii = 'Roorkee',
+        name_ascii='Roorkee',
         slug='roorkee',
         geoname_id=1258044,
         alternate_names='',
         name='Roorkee',
         region=state,
         country=country,
-        )
+    )
     return city
 
 
@@ -298,14 +306,14 @@ def create_other_city():
     country = Country.objects.get(name='India')
     state = Region.objects.get(name='Uttarakhand')
     city = City.objects.create(
-        name_ascii = 'Mussoorie',
+        name_ascii='Mussoorie',
         slug='mussoorie',
         geoname_id=1262374,
         alternate_names='',
         name='Mussoorie',
         region=state,
-        country=country,
-        )
+        country=country
+    )
     return city
 
 
@@ -327,13 +335,14 @@ def create_second_country():
 def create_second_state():
     country = Country.objects.get(name='United States')
     state = Region.objects.create(
-        name_ascii = "Washington",
+        name_ascii='Washington',
         slug='washington',
         geoname_id='5815135',
         alternate_names='',
         name='Washington',
         geoname_code='WA',
-        country=country)
+        country=country
+    )
     return state
 
 
@@ -341,14 +350,14 @@ def create_second_city():
     country = Country.objects.get(name='United States')
     state = Region.objects.get(name='Washington')
     city = City.objects.create(
-        name_ascii = 'Bothell',
+        name_ascii='Bothell',
         slug='bothell',
         geoname_id=5787829,
         alternate_names='',
         name='Bothell',
         region=state,
-        country=country,
-        )
+        country=country
+    )
     return city
 
 
@@ -367,7 +376,8 @@ def create_admin_with_unlisted_org():
         country=country,
         phone_number='9999999999',
         email='admin@admin.com',
-        organization=org_1)
+        organization=org_1
+    )
 
     return admin
 
@@ -389,7 +399,8 @@ def create_admin():
         email='admin@admin.com',
         first_name='Son',
         last_name='Goku',
-        organization=org_1)
+        organization=org_1
+    )
 
     return admin
 
@@ -412,7 +423,8 @@ def create_volunteer():
         email='volunteer@volunteer.com',
         first_name='Prince',
         last_name='Vegeta',
-        organization=org_1)
+        organization=org_1
+    )
 
     return volunteer
 
@@ -440,7 +452,8 @@ def register_past_shift_utility():
         start_time='09:00',
         end_time='15:00',
         max_volunteers='6',
-        job=Job.objects.get(name='job'))
+        job=Job.objects.get(name='job')
+    )
 
     return shift
 
@@ -462,7 +475,8 @@ def register_job_utility():
         start_date='2050-05-10',
         end_date='2050-06-15',
         description='job description',
-        event=Event.objects.get(name='event'))
+        event=Event.objects.get(name='event')
+    )
 
     return job
 
@@ -475,7 +489,8 @@ def register_shift_utility():
         max_volunteers='6',
         address='East Baker Street',
         venue='Kame House',
-        job=Job.objects.get(name='job'))
+        job=Job.objects.get(name='job')
+    )
 
     return shift
 
@@ -490,4 +505,5 @@ def log_hours_utility():
         shift=Shift.objects.get(job__name='job'),
         volunteer=Volunteer.objects.get(user__username='volunteer'),
         start_time='09:00',
-        end_time='12:00')
+        end_time='12:00'
+    )

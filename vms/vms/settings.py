@@ -111,7 +111,7 @@ STATIC_URL = '/static/'
 
 # All uploaded files (such as resumes) are stored in the /srv directory
 # /srv directory contains site-specific data which is served by the system
-MEDIA_ROOT = os.path.join(BASE_DIR,'srv')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'srv')
 MEDIA_URL = '/srv/'
 
 # Uploaded files have read and write permissions to the owner only
@@ -133,11 +133,11 @@ LOGIN_URL = reverse_lazy('authentication:login_process')
 
 STATIC_ROOT = './static/'
 
-#Instead of sending out real email, during development the emails will be sent
+# Instead of sending out real email, during development the emails will be sent
 # to stdout, where from they can be inspected.
 if DEBUG:
-    EMAIL_HOST = os.getenv('HOST','localhost')
-    EMAIL_PORT = os.getenv('PORT','1025')
+    EMAIL_HOST = os.getenv('HOST', 'localhost')
+    EMAIL_PORT = os.getenv('PORT', '1025')
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGIN_REDIRECT_URL = reverse_lazy('home:index')

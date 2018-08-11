@@ -12,104 +12,123 @@ from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic import View
 from django.views.generic.edit import FormView, UpdateView
 from easy_pdf.rendering import render_to_pdf
 from django.core.mail.message import EmailMessage
 from django.core.mail import send_mail
 
 # local Django
-from administrator.forms import ReportForm, AdministratorForm
+from administrator.forms import AdministratorForm
 from administrator.models import Administrator
 from administrator.utils import admin_required, admin_id_check
-from event.services import get_events_ordered_by_name
-from job.services import get_jobs_ordered_by_title
 from shift.models import Report
 from shift.services import generate_report, get_report_by_id
-from organization.services import create_organization, get_organizations_ordered_by_name, get_organization_by_id
+from organization.services import (create_organization,
+                                   get_organizations_ordered_by_name,
+                                   get_organization_by_id)
+
 
 class ReportListView(ListView, LoginRequiredMixin):
-   """
-   Returns list of unconfirmed reports
+    """
+    Returns list of unconfirmed reports
 
-   Extends ListView which is a generic class-based view to display lists
-   """
-   template_name = "administrator/report.html"
+    Extends ListView which is a generic class-based view to display lists
+    """
+    template_name = "administrator/report.html"
 
-   def get_queryset(self):
-      """
-      defines queryset for the view
+    def get_queryset(self):
+        """
+        defines queryset for the view
 
-      :return: pending reports
-      """
-      reports = Report.objects.filter(confirm_status=0)
-      return reports
+        :return: pending reports
+        """
+        reports = Report.objects.filter(confirm_status=0)
+        return reports
+
 
 def reject(request, report_id):
-   """
-   rejects the pending reports
+    """
+    rejects the pending reports
 
-   :param report_id: The id of pending report
-   :return: redirect to list of pending reports
-   """
-   report = get_report_by_id(report_id)
-   report.confirm_status = 2
-   report.save()
-   volunteer = report.volunteer
-   admin = Administrator.objects.get(user=request.user)
-   message = render_to_string('administrator/reject_report.html',
-                              {
-                              'volunteer': volunteer,
-                              'admin': admin,
-                              })
-   send_mail("Report Rejected", message, "messanger@localhost.com", [volunteer.email])
-   return HttpResponseRedirect('/administrator/report')
+    :param report_id: The id of pending report
+    :return: redirect to list of pending reports
+    """
+    report = get_report_by_id(report_id)
+    report.confirm_status = 2
+    report.save()
+    volunteer = report.volunteer
+    admin = Administrator.objects.get(user=request.user)
+    message = render_to_string(
+        'administrator/reject_report.html',
+        {
+            'volunteer': volunteer,
+            'admin': admin,
+        }
+    )
+    send_mail(
+        "Report Rejected", message,
+        "messanger@localhost.com", [volunteer.email]
+    )
+    return HttpResponseRedirect('/administrator/report')
+
 
 def approve(request, report_id):
-   """
-   approves the pending reports
+    """
+    approves the pending reports
 
-   :param report_id: The id of pending report
-   :return: redirect to list of pending reports
-   """
-   report = get_report_by_id(report_id)
-   report.confirm_status = 1
-   report.save()
-   admin = Administrator.objects.get(user=request.user)
-   volunteer_shift_list = report.volunteer_shifts.all()
-   report_list = generate_report(volunteer_shift_list)
-   volunteer = report.volunteer
-   post_pdf = render_to_pdf('administrator/pdf.html',
-        {'report': report,
-       'admin': admin,
-       'report_list': report_list,},
-   )
-   message = render_to_string('administrator/confirm_report.html',
-                              {
-                              'volunteer': volunteer,
-                              'admin': admin,
-                              })
-   msg = EmailMessage("Report Approved", message, "messanger@localhost.com", [report.volunteer.email])
-   msg.attach('file.pdf', post_pdf, 'application/pdf')
-   msg.send()
-   return HttpResponseRedirect('/administrator/report')
+    :param report_id: The id of pending report
+    :return: redirect to list of pending reports
+    """
+    report = get_report_by_id(report_id)
+    report.confirm_status = 1
+    report.save()
+    admin = Administrator.objects.get(user=request.user)
+    volunteer_shift_list = report.volunteer_shifts.all()
+    report_list = generate_report(volunteer_shift_list)
+    volunteer = report.volunteer
+    post_pdf = render_to_pdf(
+        'administrator/pdf.html',
+        {
+            'report': report,
+            'admin': admin,
+            'report_list': report_list,
+        },
+    )
+    message = render_to_string(
+        'administrator/confirm_report.html',
+        {
+            'volunteer': volunteer,
+            'admin': admin,
+        }
+    )
+    msg = EmailMessage(
+        "Report Approved", message,
+        "messanger@localhost.com", [report.volunteer.email]
+    )
+    msg.attach('file.pdf', post_pdf, 'application/pdf')
+    msg.send()
+    return HttpResponseRedirect('/administrator/report')
+
 
 def show_report(request, report_id):
-   """
-   displays the report
+    """
+    displays the report
 
-   :param report_id: The id of pending report
-   :return: report of the volunteer
-   """
-   report = get_report_by_id(report_id)
-   volunteer_shift_list = report.volunteer_shifts.all()
-   report_list = generate_report(volunteer_shift_list)
-   total_hours = report.total_hrs
-   return render(request, 'administrator/view_report.html', {
-                 'report_list': report_list,
-                  'total_hours': total_hours,
-                  'report': report,
-                 })
+    :param report_id: The id of pending report
+    :return: report of the volunteer
+    """
+    report = get_report_by_id(report_id)
+    volunteer_shift_list = report.volunteer_shifts.all()
+    report_list = generate_report(volunteer_shift_list)
+    total_hours = report.total_hrs
+    return render(
+        request, 'administrator/view_report.html',
+        {
+            'report_list': report_list,
+            'total_hours': total_hours,
+            'report': report,
+        }
+    )
 
 
 class AdministratorLoginRequiredMixin(object):
@@ -119,8 +138,9 @@ class AdministratorLoginRequiredMixin(object):
         if not admin:
             return render(request, 'vms/no_admin_rights.html', status=403)
         else:
-            return super(AdministratorLoginRequiredMixin, self).dispatch(
-                request, *args, **kwargs)
+            return super(
+                AdministratorLoginRequiredMixin, self
+            ).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -201,12 +221,14 @@ class AdminUpdateView(AdministratorLoginRequiredMixin, UpdateView, FormView):
         # update the volunteer
         admin_to_edit.save()
         return HttpResponseRedirect(
-            reverse('administrator:profile', args=[admin_id,]))
+            reverse('administrator:profile', args=[admin_id, ])
+        )
 
 
 '''
   The view to display Admin profile.
-  It uses DetailView which is a generic class-based views are designed to display data.
+  It uses DetailView which is a generic
+  class-based views are designed to display data.
 '''
 
 

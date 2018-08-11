@@ -1,6 +1,7 @@
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.adminRegistrationPageLocators import AdminRegistrationPageLocators
+from pom.locators.adminRegistrationPageLocators import \
+    AdminRegistrationPageLocators
 from pom.pageUrls import PageUrls
 
 
@@ -12,7 +13,8 @@ class AdminRegistrationPage(BasePage):
     success_message = 'You have successfully registered!'
     USER_EXISTS = 'A user with that username already exists.'
     INVALID_PHONE = 'Please enter a valid phone number'
-    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
+    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t ' \
+                                'valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
     CONFIRM_EMAIL_MESSAGE = "Please confirm your email address before login."
 
@@ -103,9 +105,10 @@ class AdminRegistrationPage(BasePage):
     def register_valid_details(self):
         self.get_admin_registration_page()
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India', '9999999999',
-            'admin-org'
+            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email@systers.org',
+            'admin-address', 'Roorkee', 'Uttarakhand',
+            'India', '9999999999', 'admin-org'
         ]
         self.fill_registration_form(entry)

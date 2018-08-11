@@ -8,7 +8,8 @@ from django.test.testcases import TestCase
 # local Django
 from administrator.models import Administrator
 from pom.pages.basePage import BasePage
-from shift.utils import (create_admin_with_details, create_country, create_state, create_city)
+from shift.utils import (create_admin_with_details, create_country,
+                         create_state, create_city)
 
 
 class AdministratorModelTests(TestCase):
@@ -64,7 +65,9 @@ class AdministratorModelTests(TestCase):
         # Database check for admin creation
         self.assertEqual(len(Administrator.objects.all()), 1)
 
-        admin_in_db = Administrator.objects.get(Q(first_name='admin-first-name'))
+        admin_in_db = Administrator.objects.get(
+            Q(first_name='admin-first-name')
+        )
         # Verify correctness
         self.assertEqual(admin_in_db.first_name, admin[2])
         self.assertEqual(admin_in_db.last_name, admin[3])
@@ -87,7 +90,11 @@ class AdministratorModelTests(TestCase):
             'admin org2'
         ]
         created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            created_admin.full_clean
+        )
 
     def test_invalid_last_name_in_model_create(self):
         """
@@ -100,7 +107,11 @@ class AdministratorModelTests(TestCase):
             'admin org3'
         ]
         created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            created_admin.full_clean
+        )
 
     def test_invalid_city_in_model_create(self):
         """
@@ -115,7 +126,8 @@ class AdministratorModelTests(TestCase):
 
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'admin~city\'": '
-                                '"Administrator.city" must be a "City" instance.',
+                                '"Administrator.city" must be '
+                                'a "City" instance.',
                                 create_admin_with_details, admin)
 
     def test_invalid_state_in_model_create(self):
@@ -131,7 +143,8 @@ class AdministratorModelTests(TestCase):
 
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'admin~state\'": '
-                                '"Administrator.state" must be a "Region" instance.',
+                                '"Administrator.state" must be '
+                                'a "Region" instance.',
                                 create_admin_with_details, admin)
 
     def test_invalid_country_in_model_create(self):
@@ -147,7 +160,8 @@ class AdministratorModelTests(TestCase):
 
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'admin~country\'": '
-                                '"Administrator.country" must be a "Country" instance.',
+                                '"Administrator.country" must be '
+                                'a "Country" instance.',
                                 create_admin_with_details, admin)
 
     def test_invalid_email_in_model_create(self):
@@ -161,7 +175,10 @@ class AdministratorModelTests(TestCase):
             'admin org4'
         ]
         created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, 'Enter a valid email address.', created_admin.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            'Enter a valid email address.',
+            created_admin.full_clean)
 
     def test_invalid_address_in_model_create(self):
         """
@@ -174,7 +191,11 @@ class AdministratorModelTests(TestCase):
             'admin org5'
         ]
         created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_admin.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            created_admin.full_clean
+        )
 
     def test_invalid_phone_number_in_model_create(self):
         """
@@ -187,7 +208,11 @@ class AdministratorModelTests(TestCase):
             'admin org9'
         ]
         created_admin = create_admin_with_details(admin)
-        self.assertRaisesRegexp(ValidationError, 'Please enter a valid phone number', created_admin.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            'Please enter a valid phone number',
+            created_admin.full_clean
+        )
 
     def test_model_edit_with_valid_values(self):
         """
@@ -229,7 +254,11 @@ class AdministratorModelTests(TestCase):
         admin_in_db.first_name = 'new!first!name'
         admin_in_db.save()
 
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, admin_in_db.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            admin_in_db.full_clean
+        )
 
     def test_model_delete(self):
         """

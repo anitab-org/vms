@@ -1,6 +1,7 @@
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.volunteerRegistrationPageLocators import VolunteerRegistrationPageLocators
+from pom.locators.volunteerRegistrationPageLocators import \
+    VolunteerRegistrationPageLocators
 from pom.pageUrls import PageUrls
 
 
@@ -13,7 +14,8 @@ class VolunteerRegistrationPage(BasePage):
     confirm_email_message = "Please confirm your email address before login."
     USER_EXISTS = 'A user with that username already exists.'
     INVALID_PHONE = 'Please enter a valid phone number'
-    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
+    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t ' \
+                                'valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
 
     def __init__(self, driver):
@@ -72,7 +74,6 @@ class VolunteerRegistrationPage(BasePage):
 
     def get_password_error_text(self):
         return self.element_by_xpath(self.elements.MATCH_ERROR).text
-
 
     def get_first_name_error_text(self):
         return self.element_by_xpath(self.elements.FIRST_NAME_ERROR).text

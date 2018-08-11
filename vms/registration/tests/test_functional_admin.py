@@ -5,8 +5,6 @@ import re
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.firefox.options import Options
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.common.by import By
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -19,7 +17,8 @@ from django.utils.http import urlsafe_base64_encode
 from pom.pages.adminRegistrationPage import AdminRegistrationPage
 from pom.pageUrls import PageUrls
 from registration.tokens import account_activation_token
-from shift.utils import create_organization, create_country, create_state, create_city
+from shift.utils import (create_organization, create_country,
+                         create_state, create_city)
 
 
 class SignUpAdmin(LiveServerTestCase):
@@ -54,7 +53,8 @@ class SignUpAdmin(LiveServerTestCase):
         - Test legit characters as per Models defined
 
     Retention of fields:
-        - Field values are checked to see that they are not lost when the page gets reloaded
+        - Field values are checked to see that they
+          are not lost when the page gets reloaded
     """
 
     @classmethod
@@ -140,28 +140,38 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertEqual(page.get_help_blocks(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
 
     def test_user_registration_with_same_username(self):
         """
-        Test error raised when user registers with username which already exists.
+        Test error raised when user registers with
+        username which already exists.
         """
         # Register valid admin user
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email1@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India', '9999999999',
-            'admin-org'
+            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email1@systers.org',
+            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
+            '9999999999', 'admin-org'
         ]
         page.fill_registration_form(entry)
 
@@ -179,13 +189,17 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
 
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_','admin-password', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org', 'admin-address',
+            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-password', 'admin-first-name', 'admin-last-name',
+            'admin-email1@systers.org', 'admin-address',
             'Roorkee', 'Uttarakhand', 'India', '9999999999',
             'admin-org'
         ]
@@ -204,17 +218,23 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name-1', 'admin-last-name-1',
-            'admin-email1@systers.org', 'admin-address', 'Roorkee',
-            'Uttarakhand', 'India', '9999999999', 'admin-org'
+            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name-1',
+            'admin-last-name-1', 'admin-email1@systers.org',
+            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
+            '9999999999', 'admin-org'
         ]
         page.fill_registration_form(entry)
 
@@ -234,17 +254,23 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'name-!@#$%^&*()_', 'name-!@#$%^&*()_', 'admin-email1@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India', '9999999999',
-            'admin-org'
+            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'name-!@#$%^&*()_',
+            'name-!@#$%^&*()_', 'admin-email1@systers.org',
+            'admin-address', 'Roorkee', 'Uttarakhand',
+            'India', '9999999999', 'admin-org'
         ]
         page.fill_registration_form(entry)
 
@@ -264,14 +290,20 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
+            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_',
             'admin-first-name-!@#$%^&*()_lolwatneedlength',
             'admin-last-name-!@#$%^&*()_lolwatneedlength',
             'admin-email1@systers.org', 'admin-address', 'Roorkee',
@@ -303,16 +335,22 @@ class SignUpAdmin(LiveServerTestCase):
         page.register_valid_details()
 
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         # Try to register admin again with same email address
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email@systers.org',
+            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email@systers.org',
             'admin-address', 'Roorkee', 'Uttarakhand', 'India',
             '9999999999', 'admin-org'
         ]
@@ -333,25 +371,32 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
+            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email@systers.org', 'admin-address',
             'Roorkee', 'Uttarakhand', 'India', '022 2403 6606', 'admin-org'
         ]
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         # Try to register admin with incorrect phone number for country
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India', '237937913',
-            'admin-org'
+            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email1@systers.org',
+            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
+            '237937913', 'admin-org'
         ]
         page.fill_registration_form(entry)
 
@@ -371,22 +416,29 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
+            'admin-username', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email@systers.org', 'admin-address',
             'Roorkee', 'Uttarakhand', 'India', '022 2403 6606', 'admin-org'
         ]
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',  'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email1@systers.org',
+            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'admin-email1@systers.org',
             'admin-address', 'Roorkee', 'Uttarakhand', 'India',
             '23&79^37913', 'admin-org'
         ]
@@ -408,8 +460,9 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',  'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'email1@systers.org',
+            'admin-username-1', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'email1@systers.org',
             'admin-address', 'Roorkee', 'Uttarakhand', 'India',
             '9999999999', '13 admin-org'
         ]
@@ -417,9 +470,14 @@ class SignUpAdmin(LiveServerTestCase):
 
         # verify successful registration
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-        self.assertEqual(page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + PageUrls.admin_registration_page)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        self.assertEqual(
+            page.remove_i18n(self.driver.current_url),
+            self.live_server_url + PageUrls.admin_registration_page
+        )
 
     def test_organization_with_invalid_characters(self):
         """
@@ -430,8 +488,9 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
 
         entry = [
-            'admin-username-2', 'admin-password!@#$%^&*()_',  'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'email2@systers.org',
+            'admin-username-2', 'admin-password!@#$%^&*()_',
+            'admin-password!@#$%^&*()_', 'admin-first-name',
+            'admin-last-name', 'email2@systers.org',
             'admin-address', 'Roorkee', 'Uttarakhand', 'India',
             '9999999999', '!$&admin-org'
         ]
@@ -445,27 +504,47 @@ class SignUpAdmin(LiveServerTestCase):
                          page.ENTER_VALID_VALUE)
 
     def test_ajax_load_states(self):
-        response = self.client.post('/registration/load_states/', {'country':'India'})
+        response = self.client.post(
+            '/registration/load_states/',
+            {'country': 'India'}
+        )
         self.assertEqual(response.status_code, 302)
 
     def test_ajax_load_cities(self):
-        response = self.client.post('/registration/load_cities/', {'country':'India', 'state':'Uttarakhand'})
+        response = self.client.post(
+            '/registration/load_cities/',
+            {
+                'country': 'India',
+                'state': 'Uttarakhand'
+            }
+        )
         self.assertEqual(response.status_code, 302)
 
     def test_ajax_check_states(self):
-        response = self.client.post('/registration/check_states/',{'country':'India'})
+        response = self.client.post(
+            '/registration/check_states/',
+            {'country': 'India'}
+        )
         self.assertEqual(response.status_code, 302)
 
     def test_activation_email(self):
-        u1 = User.objects.create_user(username='admin',password='admin')
+        u1 = User.objects.create_user(
+            username='admin',
+            password='admin'
+        )
         page = self.page
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertEqual(page.get_help_blocks(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
         uid = urlsafe_base64_encode(force_bytes(u1.pk))
         token = account_activation_token.make_token(u1)
-        response = self.client.get(reverse('registration:activate', args=[uid,token]))
+        response = self.client.get(
+            reverse('registration:activate', args=[uid, token])
+        )
         self.assertEqual(response.status_code, 200)
 
 
@@ -474,7 +553,8 @@ class SignUpAdmin(LiveServerTestCase):
 '''
     def test_field_value_retention_in_first_name_state_phone_organization(self):
         """
-        Test field values are retained in first name, state, phone and organization when
+        Test field values are retained in first name, state,
+        phone and organization when
         entered invalid information in form.
         """
         page = self.page
@@ -490,7 +570,8 @@ class SignUpAdmin(LiveServerTestCase):
         ]
         page.fill_registration_form(entry)
 
-        # Verify that user wasn't registered and that field values are not erased
+        # Verify that user wasn't registered and
+        # that field values are not erased
         self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + page.admin_registration_page)
         details = [
@@ -503,7 +584,8 @@ class SignUpAdmin(LiveServerTestCase):
 
     def test_field_value_retention_in_last_name_address_city_country(self):
         """
-        Test field values are retained in last name, address, city and country when entered
+        Test field values are retained in last name, address,
+        city and country when entered
         invalid information in form.
         """
         page = self.page
@@ -519,7 +601,8 @@ class SignUpAdmin(LiveServerTestCase):
         ]
         page.fill_registration_form(entry)
 
-        # verify that user wasn't registered and that field values are not erased
+        # verify that user wasn't registered and
+        # that field values are not erased
         self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + page.admin_registration_page)
         details = [

@@ -5,14 +5,17 @@ import unittest
 # local Django
 from job.services import (delete_job, check_edit_job, get_job_by_id,
                           get_jobs_by_event_id, get_jobs_ordered_by_title,
-                          get_signed_up_jobs_for_volunteer,
-                          remove_empty_jobs_for_volunteer, search_jobs, job_not_empty)
+                          get_signed_up_jobs_for_volunteer, search_jobs,
+                          remove_empty_jobs_for_volunteer, job_not_empty)
 
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (create_second_city, create_second_state, create_second_country, create_event_with_details, create_job_with_details,
-                         create_volunteer_with_details, create_organization_with_details,
-                         create_shift_with_details, clear_objects, get_city_by_name, get_state_by_name, get_country_by_name)
+from shift.utils import (create_second_city, create_second_state,
+                         create_second_country, create_event_with_details,
+                         create_job_with_details, create_volunteer_with_details,
+                         create_organization_with_details, clear_objects,
+                         get_city_by_name, get_state_by_name,
+                         get_country_by_name, create_shift_with_details)
 
 
 def setUpModule():
@@ -152,8 +155,10 @@ class JobTests(unittest.TestCase):
         e1.state = state
         e1.country = country
         e1.save()
-        search_list = search_jobs('Software Developer', '2012-10-22', '2012-10-25',
-                                  'Roorkee', 'Uttarakhand', 'India', 'Software Conference')
+        search_list = search_jobs(
+            'Software Developer', '2012-10-22', '2012-10-25',
+            'Roorkee', 'Uttarakhand', 'India', 'Software Conference'
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.j1, search_list)
@@ -161,7 +166,10 @@ class JobTests(unittest.TestCase):
         self.assertNotIn(self.j3, search_list)
 
         # test partial search
-        search_list = search_jobs("Systems Administrator", None, None, None, None, None, None)
+        search_list = search_jobs(
+            "Systems Administrator", None, None, None,
+            None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.j2, search_list)
@@ -178,8 +186,10 @@ class JobTests(unittest.TestCase):
         self.assertIn(self.j3, search_list)
 
         # test no search matches
-        search_list = search_jobs("Billy", "2015-07-25", "2015-08-08", "Quebec",
-                                        "Canada", "Ubisoft", "Program")
+        search_list = search_jobs(
+            "Billy", "2015-07-25", "2015-08-08", "Quebec",
+            "Canada", "Ubisoft", "Program"
+        )
         self.assertEqual(len(search_list), 0)
         self.assertNotIn(self.j1, search_list)
         self.assertNotIn(self.j2, search_list)

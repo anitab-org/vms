@@ -39,6 +39,6 @@ class EditForm(ModelForm):
     class Meta:
         model = EditRequest
         fields = [
-           'start_time', 'end_time'
-              ]
+            'start_time', 'end_time'
+        ]
 

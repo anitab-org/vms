@@ -38,9 +38,9 @@ class AuthenticationPage(BasePage):
         self.click_link('Forgot password')
 
     def submit_form(self):
-        self.element_by_id(self.elements.RESET_SUBMIT).click() 
+        self.element_by_id(self.elements.RESET_SUBMIT).click()
 
-    def fill_email_form(self, email):  
+    def fill_email_form(self, email):
         self.element_by_id(self.elements.EMAIL).clear()
         self.send_value_to_element_id(self.elements.EMAIL, email)
         self.submit_form()

@@ -3,14 +3,19 @@ import datetime
 import unittest
 
 # local Django
-from event.services import (
-    event_not_empty, delete_event, check_edit_event, get_event_by_id,
-    get_events_ordered_by_name, get_events_by_date, get_event_by_shift_id,
-    get_signed_up_events_for_volunteer, remove_empty_events_for_volunteer, search_events)
+from event.services import (event_not_empty, delete_event,
+                            check_edit_event, get_event_by_id,
+                            get_events_ordered_by_name,
+                            get_events_by_date, get_event_by_shift_id,
+                            get_signed_up_events_for_volunteer,
+                            remove_empty_events_for_volunteer, search_events)
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (create_country, create_state, create_city, create_event_with_details,
-                         create_job_with_details,  create_organization_with_details, create_volunteer_with_details,
+from shift.utils import (create_country, create_state,
+                         create_city, create_event_with_details,
+                         create_job_with_details,
+                         create_organization_with_details,
+                         create_volunteer_with_details,
                          create_shift_with_details, clear_objects)
 
 
@@ -250,8 +255,10 @@ class EventWithJobTests(unittest.TestCase):
         e1.state = self.state
         e1.country = self.country
         e1.save()
-        search_list = search_events("Open Source Event", "2012-10-22", "2012-10-23",
-                                    "Roorkee", "Uttarakhand", "India", "Software Developer")
+        search_list = search_events(
+            "Open Source Event", "2012-10-22", "2012-10-23",
+            "Roorkee", "Uttarakhand", "India", "Software Developer"
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.e1, search_list)
@@ -259,7 +266,10 @@ class EventWithJobTests(unittest.TestCase):
         self.assertNotIn(self.e3, search_list)
 
         # test partial search
-        search_list = search_events("Systers Event", None, None, None, None, None, None)
+        search_list = search_events(
+            "Systers Event", None, None,
+            None, None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.e4, search_list)
@@ -268,19 +278,25 @@ class EventWithJobTests(unittest.TestCase):
 
         e2.city = self.city
         e2.save()
-        search_list = search_events(None, None, None, 'Roorkee', None, None, None)
+        search_list = search_events(
+            None, None, None, 'Roorkee',
+            None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 2)
         self.assertIn(self.e1, search_list)
         self.assertIn(self.e2, search_list)
 
         # test no search matches
-        search_list = search_events("Billy", "2015-07-25", "2015-08-08", "Quebec",
-                                        "Canada", "Ubisoft", "abc")
+        search_list = search_events(
+            "Billy", "2015-07-25", "2015-08-08", "Quebec",
+            "Canada", "Ubisoft", "abc"
+        )
         self.assertEqual(len(search_list), 0)
         self.assertNotIn(self.e1, search_list)
         self.assertNotIn(self.e2, search_list)
         self.assertNotIn(self.e3, search_list)
+
 
 class DeleteEventTest(unittest.TestCase):
     @classmethod
@@ -372,7 +388,8 @@ class EventWithVolunteerTest(unittest.TestCase):
     def test_get_signed_up_events_for_volunteer(self):
         """ Uses events e1,e2, volunteers v1,v2,v3 and shift s1,s2,s3"""
 
-        # volunteer 1 registers for 3 shifts belonging to two events - registers for s3 first to check if sorting is successful
+        # volunteer 1 registers for 3 shifts belonging to
+        # two events - registers for s3 first to check if sorting is successful
         register(self.v1.id, self.s3.id)
         register(self.v1.id, self.s2.id)
         register(self.v1.id, self.s1.id)

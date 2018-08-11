@@ -16,10 +16,14 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from pom.pages.upcomingShiftsPage import UpcomingShiftsPage
-from shift.utils import (create_second_city, create_second_state, create_second_country, create_volunteer, create_event_with_details,
-                         create_job_with_details, create_shift_with_details, create_organization_with_details,
-                         register_volunteer_for_shift_utility, create_volunteer_with_details,
-                         register_past_event_utility, register_past_job_utility, register_past_shift_utility)
+from shift.utils import (create_second_city, register_past_job_utility,
+                         create_second_country, create_volunteer,
+                         create_event_with_details, create_job_with_details,
+                         create_shift_with_details, register_past_shift_utility,
+                         create_organization_with_details,
+                         register_volunteer_for_shift_utility,
+                         create_volunteer_with_details,
+                         register_past_event_utility, create_second_state)
 
 
 class ViewVolunteerShift(LiveServerTestCase):
@@ -100,7 +104,8 @@ class ViewVolunteerShift(LiveServerTestCase):
         ])
         created_shift = create_shift_with_details(
             ['2050-06-01', '09:00', '15:00', '10', created_job])
-        registered_shift = register_volunteer_for_shift_utility(created_shift, self.v1)
+        registered_shift =\
+            register_volunteer_for_shift_utility(created_shift, self.v1)
 
     def test_access_another_existing_volunteer_view(self):
         """
@@ -122,16 +127,20 @@ class ViewVolunteerShift(LiveServerTestCase):
         second_country = create_second_country()
         second_state = create_second_state()
         second_city = create_second_city()
-        details = ['test_volunteer', 'volunteer-first-name', 'volunteer-last-name',
-                   'volunteer-address', second_city, second_state, second_country,
-                   '9999999999', 'volunteer-email2@systers.org']
+        details = [
+            'test_volunteer', 'volunteer-first-name', 'volunteer-last-name',
+            'volunteer-address', second_city, second_state, second_country,
+            '9999999999', 'volunteer-email2@systers.org'
+        ]
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         test_volunteer = create_volunteer_with_details(details, org_obj)
 
-        upcoming_shift_page.get_page(upcoming_shift_page.live_server_url,
-                                     upcoming_shift_page.view_shift_page + str(test_volunteer.id))
+        upcoming_shift_page.get_page(
+            upcoming_shift_page.live_server_url,
+            upcoming_shift_page.view_shift_page + str(test_volunteer.id)
+        )
         found = re.search('You don\'t have the required rights',
                           self.driver.page_source)
         self.assertNotEqual(found, None)
@@ -176,7 +185,10 @@ class ViewVolunteerShift(LiveServerTestCase):
         upcoming_shift_page.live_server_url = self.live_server_url
         upcoming_shift_page.view_upcoming_shifts()
 
-        self.assertEqual(upcoming_shift_page.get_shift_job(), 'jobOneInEventFour')
+        self.assertEqual(
+            upcoming_shift_page.get_shift_job(),
+            'jobOneInEventFour'
+        )
         self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
         self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')
@@ -190,7 +202,10 @@ class ViewVolunteerShift(LiveServerTestCase):
         upcoming_shift_page.live_server_url = self.live_server_url
         upcoming_shift_page.view_upcoming_shifts()
 
-        self.assertEqual(upcoming_shift_page.get_shift_job(), 'jobOneInEventFour')
+        self.assertEqual(
+            upcoming_shift_page.get_shift_job(),
+            'jobOneInEventFour'
+        )
         self.assertEqual(upcoming_shift_page.get_shift_date(), 'June 1, 2050')
         self.assertEqual(upcoming_shift_page.get_shift_start_time(), '9 a.m.')
         self.assertEqual(upcoming_shift_page.get_shift_end_time(), '3 p.m.')

@@ -7,7 +7,9 @@ from django.test.testcases import TestCase
 
 # local Django
 from pom.pages.basePage import BasePage
-from shift.utils import create_organization_with_details, create_country, create_state, create_city, create_volunteer_with_details
+from shift.utils import (create_organization_with_details,
+                         create_country, create_state,
+                         create_city, create_volunteer_with_details)
 from volunteer.models import Volunteer
 
 
@@ -42,7 +44,8 @@ class VolunteerModelTests(TestCase):
         :return: Volunteer type object
         """
         vol = [
-            'Goku', 'Son', 'Goku', '',  self.city, self.state, self.country,
+            'Goku', 'Son', 'Goku', '',
+            self.city, self.state, self.country,
             '9999999999', 'idonthave@gmail.com'
         ]
         org_name = 'organization'
@@ -55,7 +58,8 @@ class VolunteerModelTests(TestCase):
         :return: Volunteer type object
         """
         vol = [
-            'Goku~', "Son", "Goku", "Kame House", self.city, self.state, self.country,
+            'Goku~', "Son", "Goku", "Kame House",
+            self.city, self.state, self.country,
             "9999999999", ""
         ]
         org_name = 'org'
@@ -76,7 +80,10 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.first_name, volunteer_in_db.first_name)
         self.assertEqual(valid_volunteer.last_name, volunteer_in_db.last_name)
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
-        self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
+        self.assertEqual(
+            valid_volunteer.phone_number,
+            volunteer_in_db.phone_number
+        )
 
     def test_invalid_username_in_model_create(self):
         """
@@ -90,7 +97,8 @@ class VolunteerModelTests(TestCase):
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
                                 'The given username must be set',
-                                create_volunteer_with_details, volunteer, org_obj)
+                                create_volunteer_with_details,
+                                volunteer, org_obj)
 
     def test_invalid_first_name_in_model_create(self):
         """
@@ -103,7 +111,11 @@ class VolunteerModelTests(TestCase):
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_volunteer.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            created_volunteer.full_clean
+        )
 
     def test_invalid_last_name_in_model_create(self):
         """
@@ -116,7 +128,11 @@ class VolunteerModelTests(TestCase):
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_volunteer.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            created_volunteer.full_clean
+        )
 
     def test_invalid_city_in_model_create(self):
         """
@@ -130,8 +146,10 @@ class VolunteerModelTests(TestCase):
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'East!District!\'": '
-                                '"Volunteer.city" must be a "City" instance.',
-                                create_volunteer_with_details, volunteer, org_obj)
+                                '"Volunteer.city" must be '
+                                'a "City" instance.',
+                                create_volunteer_with_details,
+                                volunteer, org_obj)
 
     def test_invalid_state_in_model_create(self):
         """
@@ -145,8 +163,10 @@ class VolunteerModelTests(TestCase):
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'East!District!\'": '
-                                '"Volunteer.state" must be a "Region" instance.',
-                                create_volunteer_with_details, volunteer, org_obj)
+                                '"Volunteer.state" must be '
+                                'a "Region" instance.',
+                                create_volunteer_with_details,
+                                volunteer, org_obj)
 
     def test_invalid_country_in_model_create(self):
         """
@@ -160,8 +180,10 @@ class VolunteerModelTests(TestCase):
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'East!District!\'": '
-                                '"Volunteer.country" must be a "Country" instance.',
-                                create_volunteer_with_details, volunteer, org_obj)
+                                '"Volunteer.country" must be '
+                                'a "Country" instance.',
+                                create_volunteer_with_details,
+                                volunteer, org_obj)
 
     def test_invalid_address_in_model_create(self):
         """
@@ -174,7 +196,11 @@ class VolunteerModelTests(TestCase):
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
-        self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, created_volunteer.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.ENTER_VALID_VALUE,
+            created_volunteer.full_clean
+        )
 
     def test_invalid_phone_number_in_model_create(self):
         """
@@ -187,7 +213,11 @@ class VolunteerModelTests(TestCase):
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
-        self.assertRaisesRegexp(ValidationError, 'Please enter a valid phone number', created_volunteer.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            'Please enter a valid phone number',
+            created_volunteer.full_clean
+        )
 
     def test_invalid_email_in_model_create(self):
         """
@@ -200,7 +230,11 @@ class VolunteerModelTests(TestCase):
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
-        self.assertRaisesRegexp(ValidationError, 'Enter a valid email address.', created_volunteer.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            'Enter a valid email address.',
+            created_volunteer.full_clean
+        )
 
     def test_model_edit_with_valid_values(self):
         """
@@ -216,7 +250,10 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.first_name, volunteer_in_db.first_name)
         self.assertEqual(valid_volunteer.last_name, volunteer_in_db.last_name)
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
-        self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
+        self.assertEqual(
+            valid_volunteer.phone_number,
+            volunteer_in_db.phone_number
+        )
 
         valid_volunteer.first_name = 'Prince'
         valid_volunteer.last_name = 'Vegeta'
@@ -232,7 +269,10 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.first_name, volunteer_in_db.first_name)
         self.assertEqual(valid_volunteer.last_name, volunteer_in_db.last_name)
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
-        self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
+        self.assertEqual(
+            valid_volunteer.phone_number,
+            volunteer_in_db.phone_number
+        )
 
     def test_model_edit_with_invalid_values(self):
         """
@@ -248,7 +288,10 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.first_name, volunteer_in_db.first_name)
         self.assertEqual(valid_volunteer.last_name, volunteer_in_db.last_name)
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
-        self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
+        self.assertEqual(
+            valid_volunteer.phone_number,
+            volunteer_in_db.phone_number
+        )
 
         valid_volunteer.first_name = 'Prince'
         valid_volunteer.last_name = 'Vegeta'
@@ -256,7 +299,11 @@ class VolunteerModelTests(TestCase):
         valid_volunteer.phone_number = '1234567890'
 
         # Check save isn't working.
-        self.assertRaisesRegexp(ValidationError, BasePage.FIELD_CANNOT_LEFT_BLANK, valid_volunteer.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            BasePage.FIELD_CANNOT_LEFT_BLANK,
+            valid_volunteer.full_clean
+        )
         # Check single instance
         self.assertEqual(len(Volunteer.objects.all()), 1)
 
@@ -274,7 +321,10 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.first_name, volunteer_in_db.first_name)
         self.assertEqual(valid_volunteer.last_name, volunteer_in_db.last_name)
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
-        self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
+        self.assertEqual(
+            valid_volunteer.phone_number,
+            volunteer_in_db.phone_number
+        )
 
         volunteer_in_db.delete()
 
@@ -295,7 +345,10 @@ class VolunteerModelTests(TestCase):
         self.assertEqual(valid_volunteer.first_name, volunteer_in_db.first_name)
         self.assertEqual(valid_volunteer.last_name, volunteer_in_db.last_name)
         self.assertEqual(valid_volunteer.email, volunteer_in_db.email)
-        self.assertEqual(valid_volunteer.phone_number, volunteer_in_db.phone_number)
+        self.assertEqual(
+            valid_volunteer.phone_number,
+            volunteer_in_db.phone_number
+        )
 
         # Check representation
         self.assertEqual(str(volunteer_in_db), 'Son Goku')

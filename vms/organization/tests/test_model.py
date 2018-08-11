@@ -47,7 +47,7 @@ class OrganizationModelTests(TestCase):
         org_in_db = Organization.objects.get(Q(name='DummyOrg'))
         # Verify correct name saved
         self.assertEqual(org_in_db.name, org.name)
-        self.assertEqual(org_in_db.approved_status, 1) 
+        self.assertEqual(org_in_db.approved_status, 1)
 
     def test_invalid_organization_create(self):
         """
@@ -71,9 +71,15 @@ class OrganizationModelTests(TestCase):
         self.assertEqual(len(Organization.objects.all()), 1)
 
         # Create duplicate Organization and check Error message
-        error_message = 'duplicate key value violates unique constraint "organization_organization_name_key'
+        error_message = 'duplicate key value violates unique ' \
+                        'constraint "organization_organization_name_key'
         error_statement = Organization.objects.create
-        self.assertRaisesRegexp(IntegrityError, error_message, error_statement, name='DummyOrg')
+        self.assertRaisesRegexp(
+            IntegrityError,
+            error_message,
+            error_statement,
+            name='DummyOrg'
+        )
 
     def test_organization_edit_with_valid_values(self):
         """
@@ -95,7 +101,7 @@ class OrganizationModelTests(TestCase):
 
         # Check if save was successful
         self.assertNotEqual(org_in_db.name, org.name)
-        self.assertNotEqual(org_in_db.approved_status,org.approved_status)
+        self.assertNotEqual(org_in_db.approved_status, org.approved_status)
 
     def test_organization_edit_with_invalid_values(self):
         """
@@ -112,7 +118,11 @@ class OrganizationModelTests(TestCase):
 
         # Check Error message
         error_message = BasePage.ENTER_VALID_VALUE
-        self.assertRaisesRegexp(ValidationError, error_message, org_in_db.full_clean)
+        self.assertRaisesRegexp(
+            ValidationError,
+            error_message,
+            org_in_db.full_clean
+        )
 
     def test_organization_delete(self):
         """

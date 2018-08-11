@@ -48,10 +48,10 @@ class VolunteerSearchPage(BasePage):
         self.element_by_id('select').send_keys(search_text)
 
     def search_event_field(self, search_text):
-         self.send_to_field(self.elements.EVENT_FIELD, search_text)
+        self.send_to_field(self.elements.EVENT_FIELD, search_text)
 
     def search_job_field(self, search_text):
-         self.send_to_field(self.elements.JOB_FIELD, search_text)
+        self.send_to_field(self.elements.JOB_FIELD, search_text)
 
     def get_help_block(self):
         return self.element_by_class_name(self.elements.HELP_BLOCK)

@@ -12,8 +12,7 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventsPage import EventsPage
 from shift.utils import (create_admin, create_event_with_details,
-                         create_job_with_details, create_shift_with_details,
-                         register_job_utility)
+                         create_job_with_details, create_shift_with_details)
 
 
 class FormFields(LiveServerTestCase):
@@ -126,12 +125,23 @@ class FormFields(LiveServerTestCase):
         # Checks:
         # Event was not created
         # Error messages appear
-        self.assertEqual(settings.remove_i18n(self.driver.current_url),
-                         self.live_server_url + settings.create_event_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.create_event_page
+        )
         self.assertEqual(len(settings.get_help_blocks()), 5)
-        self.assertEqual(settings.get_event_name_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_event_start_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_event_end_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(
+            settings.get_event_name_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_event_start_date_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_event_end_date_error(),
+            settings.FIELD_REQUIRED
+        )
 
     def test_null_values_in_edit_event(self):
         """
@@ -154,11 +164,23 @@ class FormFields(LiveServerTestCase):
         # Checks:
         # Event not edited
         # Error messages appear
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.event_list_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.event_list_page
+        )
         self.assertEqual(len(settings.get_help_blocks()), 3)
-        self.assertEqual(settings.get_event_name_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_event_start_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_event_end_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(
+            settings.get_event_name_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_event_start_date_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_event_end_date_error(),
+            settings.FIELD_REQUIRED
+        )
 
     def test_null_values_in_create_job(self):
         """
@@ -182,12 +204,21 @@ class FormFields(LiveServerTestCase):
         # Checks:
         # Job not created
         # Error messages appear
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.create_job_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.create_job_page
+        )
         self.assertEqual(len(settings.get_help_blocks()), 3)
 
         self.assertEqual(settings.get_job_name_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_job_start_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_job_end_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(
+            settings.get_job_start_date_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_job_end_date_error(),
+            settings.FIELD_REQUIRED
+        )
 
     def test_null_values_in_edit_job(self):
         """
@@ -215,11 +246,20 @@ class FormFields(LiveServerTestCase):
         # Checks:
         # Job not edited
         # Error messages appear
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
         self.assertEqual(len(settings.get_help_blocks()), 3)
         self.assertEqual(settings.get_job_name_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_job_start_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_job_end_date_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(
+            settings.get_job_start_date_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_job_end_date_error(),
+            settings.FIELD_REQUIRED
+        )
 
     def test_null_values_in_create_shift(self):
         """
@@ -249,12 +289,30 @@ class FormFields(LiveServerTestCase):
         # Error messages appear
         self.assertEqual(len(settings.get_help_blocks()), 6)
 
-        self.assertEqual(settings.get_shift_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_start_time_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_end_time_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_max_volunteer_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_address_error(), settings.ENTER_VALID_VALUE)
-        self.assertEqual(settings.get_shift_venue_error(), settings.ENTER_VALID_VALUE)
+        self.assertEqual(
+            settings.get_shift_date_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_start_time_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_end_time_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_max_volunteer_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_address_error(),
+            settings.ENTER_VALID_VALUE
+        )
+        self.assertEqual(
+            settings.get_shift_venue_error(),
+            settings.ENTER_VALID_VALUE
+        )
 
     def test_null_values_in_edit_shift(self):
         """
@@ -287,10 +345,22 @@ class FormFields(LiveServerTestCase):
         # expected
         self.assertEqual(len(settings.get_help_blocks()), 4)
 
-        self.assertEqual(settings.get_shift_date_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_start_time_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_end_time_error(), settings.FIELD_REQUIRED)
-        self.assertEqual(settings.get_shift_max_volunteer_error(), settings.FIELD_REQUIRED)
+        self.assertEqual(
+            settings.get_shift_date_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_start_time_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_end_time_error(),
+            settings.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            settings.get_shift_max_volunteer_error(),
+            settings.FIELD_REQUIRED
+        )
 
     def test_max_volunteer_field(self):
         """
@@ -314,11 +384,17 @@ class FormFields(LiveServerTestCase):
         # Check error message
         self.wait.until(
             EC.presence_of_element_located(
-                (By.XPATH, "//form//div[7]/div/p/strong[contains(text(),"
-                           "'Ensure this value is greater than or equal to 1.')]")
+                (
+                    By.XPATH,
+                    "//form//div[7]/div/p/strong[contains(text(),"
+                    "'Ensure this value is greater than or equal to 1.')]"
+                )
             )
         )
-        self.assertEqual(settings.get_shift_max_volunteer_error(), 'Ensure this value is greater than or equal to 1.')
+        self.assertEqual(
+            settings.get_shift_max_volunteer_error(),
+            'Ensure this value is greater than or equal to 1.'
+        )
 
         # Create shift and edit with 0 value
         shift = ['2050-05-24', '09:00', '12:00', '10', created_job]
@@ -331,11 +407,17 @@ class FormFields(LiveServerTestCase):
         # Check error message
         self.wait.until(
             EC.presence_of_element_located(
-                (By.XPATH, "//form//div[7]/div/p/strong[contains(text(),"
-                           "'Ensure this value is greater than or equal to 1.')]")
+                (
+                    By.XPATH,
+                    "//form//div[7]/div/p/strong[contains(text(), "
+                    "'Ensure this value is greater than or equal to 1.')]"
+                )
             )
         )
-        self.assertEqual(settings.get_shift_max_volunteer_error(), 'Ensure this value is greater than or equal to 1.')
+        self.assertEqual(
+            settings.get_shift_max_volunteer_error(),
+            'Ensure this value is greater than or equal to 1.'
+        )
 
     def test_simplify_shift(self):
         """
@@ -386,7 +468,9 @@ class FormFields(LiveServerTestCase):
 
         settings.navigate_to_job_list_view()
         settings.go_to_edit_job_page()
-        element = self.driver.find_element_by_xpath('//div[2]//div[3]//div[1]//div[1]//option[1]')
+        element = self.driver.find_element_by_xpath(
+            '//div[2]//div[3]//div[1]//div[1]//option[1]'
+        )
         # verify that the correct event name and date are displayed
         self.assertEqual(element.text, 'event')
         self.assertEqual(element.get_attribute('start_date'), 'Aug. 21, 2050')
@@ -399,7 +483,8 @@ class FormFields(LiveServerTestCase):
 
     def test_field_value_retention_for_event(self):
         """
-        Test field values are retained after filling invalid values in event form.
+        Test field values are retained after
+        filling invalid values in event form.
         """
         self.settings.go_to_events_page()
         settings = self.settings
@@ -438,7 +523,10 @@ class FormFields(LiveServerTestCase):
         # Erasing the invalid field from event because invalid fields are
         # erased in form if we try to edit.
         invalid_event[1] = ''
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.create_event_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.create_event_page
+        )
 
         # https://stackoverflow.com/a/12967602
         for _ in range(3):
@@ -465,14 +553,20 @@ class FormFields(LiveServerTestCase):
 
         settings.navigate_to_job_list_view()
         # Fill invalid Job
-        invalid_job = [created_event.id, 'job name#$', 'job description', '24/05/2016', '22/08/2050']
+        invalid_job = [
+            created_event.id, 'job name#$', 'job description',
+            '24/05/2016', '22/08/2050'
+        ]
         settings.go_to_create_job_page()
         settings.fill_job_form(invalid_job)
 
         # Checks:
         # Job not created
         # Field values are not erased
-        self.assertEqual(settings.remove_i18n(self.driver.current_url), self.live_server_url + settings.create_job_page)
+        self.assertEqual(
+            settings.remove_i18n(self.driver.current_url),
+            self.live_server_url + settings.create_job_page
+        )
 
         # https://stackoverflow.com/a/12967602
         for _ in range(3):
@@ -499,7 +593,10 @@ class FormFields(LiveServerTestCase):
         # Erasing the invalid field from event because invalid fields are
         # erased in form if we try to edit.
         invalid_job[3] = invalid_job[4] = ''
-        self.assertNotEqual(self.driver.current_url, self.live_server_url + settings.job_list_page)
+        self.assertNotEqual(
+            self.driver.current_url,
+            self.live_server_url + settings.job_list_page
+        )
 
         # https://stackoverflow.com/a/12967602
         for _ in range(3):
@@ -512,10 +609,11 @@ class FormFields(LiveServerTestCase):
     # Retention tests are buggy.
     # The results change every time a new build starts
     # i.e. The values in forms are not always retained.
-    
+
     def test_field_value_retention_for_shift(self):
         """
-        Test field values are retained after filling invalid values in shift form.
+        Test field values are retained after filling
+        invalid values in shift form.
         """
         self.settings.go_to_events_page()
         settings = self.settings

@@ -17,9 +17,11 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSignUpPage import EventSignUpPage
 from pom.pages.manageShiftPage import ManageShiftPage
 from shift.utils import (create_admin, create_volunteer_with_details,
-                         create_event_with_details, create_job_with_details, create_volunteer,
-                         create_shift_with_details, create_organization_with_details, create_edit_request_with_details,
-                         log_hours_with_details, get_city_by_name, get_state_by_name, get_country_by_name)
+                         create_event_with_details, create_job_with_details,
+                         create_volunteer, create_shift_with_details,
+                         create_organization_with_details, get_city_by_name,
+                         create_edit_request_with_details, get_state_by_name,
+                         log_hours_with_details, get_country_by_name)
 
 
 class ManageVolunteerShift(LiveServerTestCase):
@@ -182,7 +184,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         # Events shown in table
         self.assertRaisesRegexp(NoSuchElementException,
-                                'Message: Unable to locate element: .alert-info',
+                                'Message: Unable to locate element: '
+                                '.alert-info',
                                 sign_up_page.get_info_box)
         self.assertEqual(sign_up_page.get_view_jobs(),
                          manage_shift_page.VIEW_JOB)
@@ -234,7 +237,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
     def test_events_page_with_no_events(self):
         """
-        Test no event present at shifts sign up page for volunteer to sign up for.
+        Test no event present at shifts sign up page
+        for volunteer to sign up for.
         """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
@@ -282,7 +286,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
     def test_assign_shifts_with_no_shifts(self):
         """
-        Test no shift present at shifts sign up page for volunteer to sign up for.
+        Test no shift present at shifts sign up page
+        for volunteer to sign up for.
         """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
@@ -296,7 +301,10 @@ class ManageVolunteerShift(LiveServerTestCase):
         event_1 = create_event_with_details(event)
 
         # Create jobs
-        job = ['job name', '2017-05-20', '2017-05-20', 'job description', event_1]
+        job = [
+            'job name', '2017-05-20', '2017-05-20',
+            'job description', event_1
+        ]
         job_1 = create_job_with_details(job)
 
         self.wait_for_home_page()
@@ -312,7 +320,8 @@ class ManageVolunteerShift(LiveServerTestCase):
 
     def test_assign_shifts_with_registered_shifts(self):
         """
-        Test assignment of shift present at shifts sign up page for volunteer to sign up for.
+        Test assignment of shift present at shifts sign up page
+        for volunteer to sign up for.
         """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
@@ -354,7 +363,10 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         # check shift assignment email
         mail.outbox = []
-        mail.send_mail("Shift Assigned", "message", "messanger@localhost.com", [volunteer_1.email])
+        mail.send_mail(
+            "Shift Assigned", "message",
+            "messanger@localhost.com", [volunteer_1.email]
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, 'Shift Assigned')
@@ -497,8 +509,10 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         # Check cancellation email
         mail.outbox = []
-        mail.send_mail("Shift Cancelled", "message",
-                              "messanger@localhost.com", [volunteer_1.email])
+        mail.send_mail(
+            "Shift Cancelled", "message",
+            "messanger@localhost.com", [volunteer_1.email]
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, 'Shift Cancelled')
@@ -531,8 +545,18 @@ class ManageVolunteerShift(LiveServerTestCase):
         logged_shift = log_hours_with_details(volunteer_1, shift_1, start, end)
         start_time = datetime.time(hour=9, minute=30)
         end_time = datetime.time(hour=14, minute=0)
-        edit_request = create_edit_request_with_details(start_time, end_time, logged_shift)
-        response = self.client.get(reverse('shift:edit_request_manager', args=[shift_1.id, volunteer_1.id, edit_request.id]))
+        edit_request = \
+            create_edit_request_with_details(start_time, end_time, logged_shift)
+        response = self.client.get(
+            reverse(
+                'shift:edit_request_manager',
+                args=[
+                    shift_1.id,
+                    volunteer_1.id,
+                    edit_request.id
+                ]
+            )
+        )
         self.assertEqual(response.status_code, 302)
 
     def test_edit_request_email_volunteer(self):
@@ -550,10 +574,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         logged_shift = log_hours_with_details(volunteer_1, shift_1, start, end)
         start_time = datetime.time(hour=9, minute=30)
         end_time = datetime.time(hour=14, minute=0)
-        edit_request = create_edit_request_with_details(start_time, end_time, logged_shift)
+        edit_request = \
+            create_edit_request_with_details(start_time, end_time, logged_shift)
         vol_email = volunteer_1.email
         mail.outbox = []
-        mail.send_mail("Log Hours Edited", "message", "messanger@localhost.com", [vol_email])
+        mail.send_mail(
+            "Log Hours Edited", "message",
+            "messanger@localhost.com", [vol_email]
+        )
         self.assertEqual(len(mail.outbox), 1)
         msg = mail.outbox[0]
         self.assertEqual(msg.subject, "Log Hours Edited")
@@ -581,14 +609,21 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         manage_shift_page.select_volunteer(1)
 
-        self.assertEqual(manage_shift_page.get_clear_shift_hours_text(), 'Clear Hours')
+        self.assertEqual(
+            manage_shift_page.get_clear_shift_hours_text(),
+            'Clear Hours'
+        )
         manage_shift_page.click_to_clear_hours()
         manage_shift_page.submit_form()
-        self.assertEqual(manage_shift_page.get_logged_info_box(), "This volunteer does not have any shifts with logged hours.")
+        self.assertEqual(
+            manage_shift_page.get_logged_info_box(),
+            "This volunteer does not have any shifts with logged hours."
+        )
 
     def test_assign_same_shift_to_volunteer_twice(self):
         """
-        Test errors while assignment of same shift to volunteer to which they are already assigned.
+        Test errors while assignment of same shift
+        to volunteer to which they are already assigned.
         """
         sign_up_page = self.sign_up_page
         manage_shift_page = self.manage_shift_page
@@ -630,5 +665,8 @@ class ManageVolunteerShift(LiveServerTestCase):
         manage_shift_page.assign_shift()
 
         # Events page
-        self.assertEqual(sign_up_page.get_info_box().text,sign_up_page.no_event_message)
+        self.assertEqual(
+            sign_up_page.get_info_box().text,
+            sign_up_page.no_event_message
+        )
 

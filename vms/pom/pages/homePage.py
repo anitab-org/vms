@@ -60,7 +60,9 @@ class HomePage(BasePage):
         return self.element_by_class_name(self.elements.NO_VOLUNTEER_RIGHT_HEAD)
 
     def get_no_volunteer_right_content(self):
-        return self.element_by_class_name(self.elements.NO_VOLUNTEER_RIGHT_CONTENT)
+        return self.element_by_class_name(
+            self.elements.NO_VOLUNTEER_RIGHT_CONTENT
+        )
 
     def submit_form(self):
         self.element_by_id(self.elements.SUBMIT).click()
@@ -68,5 +70,8 @@ class HomePage(BasePage):
     def fill_password_change_form(self, password):
         self.send_value_to_xpath(self.elements.OLD_PASSWORD, password[0])
         self.send_value_to_xpath(self.elements.NEW_PASSWORD, password[1])
-        self.send_value_to_xpath(self.elements.CONFIRM_NEW_PASSWORD, password[2])
+        self.send_value_to_xpath(
+            self.elements.CONFIRM_NEW_PASSWORD,
+            password[2]
+        )
         self.submit_form()

@@ -67,7 +67,11 @@ class EventDetails(LiveServerTestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        created_event = create_event_with_details(['event', '2050-06-11', '2050-06-19'])
+        created_event = create_event_with_details(
+            [
+                'event', '2050-06-11', '2050-06-19'
+            ]
+        )
         return created_event
 
     def check_error_messages(self):
@@ -76,9 +80,18 @@ class EventDetails(LiveServerTestCase):
         """
         event_details_page = self.event_details_page
         self.assertEqual(len(event_details_page.get_help_blocks()), 3)
-        self.assertEqual(event_details_page.get_event_name_error(), event_details_page.FIELD_REQUIRED)
-        self.assertEqual(event_details_page.get_event_start_date_error(), event_details_page.FIELD_REQUIRED)
-        self.assertEqual(event_details_page.get_event_end_date_error(), event_details_page.FIELD_REQUIRED)
+        self.assertEqual(
+            event_details_page.get_event_name_error(),
+            event_details_page.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            event_details_page.get_event_start_date_error(),
+            event_details_page.FIELD_REQUIRED
+        )
+        self.assertEqual(
+            event_details_page.get_event_end_date_error(),
+            event_details_page.FIELD_REQUIRED
+        )
 
     def login_admin(self):
         """
@@ -110,22 +123,47 @@ class EventDetails(LiveServerTestCase):
 
         # Verify Details
         event_details_page.navigate_to_event_list_view()
-        self.assertEqual(event_details_page.get_event_name(), created_event.name)
-        self.assertEqual(event_details_page.get_event_start_date(), 'June 11, 2050')
-        self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
+        self.assertEqual(
+            event_details_page.get_event_name(),
+            created_event.name
+        )
+        self.assertEqual(
+            event_details_page.get_event_start_date(),
+            'June 11, 2050'
+        )
+        self.assertEqual(
+            event_details_page.get_event_end_date(),
+            'June 19, 2050'
+        )
 
     def test_event_detail_page(self):
         # Navigate to event view
-        created_event = create_event_with_details(['event', '2050-06-11', '2050-06-19', 'event-description'])
+        created_event = create_event_with_details(
+            [
+                'event', '2050-06-11', '2050-06-19', 'event-description'
+            ]
+        )
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
         event_details_page.go_to_events_page()
 
         event_details_page.go_to_details_event_page()
-        self.assertEqual(event_details_page.get_event_name(), created_event.name)
-        self.assertEqual(event_details_page.get_event_start_date(), 'June 11, 2050')
-        self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
-        self.assertEqual(event_details_page.get_event_description(), 'event-description')
+        self.assertEqual(
+            event_details_page.get_event_name(),
+            created_event.name
+        )
+        self.assertEqual(
+            event_details_page.get_event_start_date(),
+            'June 11, 2050'
+        )
+        self.assertEqual(
+            event_details_page.get_event_end_date(),
+            'June 19, 2050'
+        )
+        self.assertEqual(
+            event_details_page.get_event_description(),
+            'event-description'
+        )
 
     def test_valid_event_create(self):
         """
@@ -138,9 +176,18 @@ class EventDetails(LiveServerTestCase):
         event_details_page.go_to_events_page()
 
         # Check event creation
-        self.assertEqual(event_details_page.get_event_name(), created_event.name)
-        self.assertEqual(event_details_page.get_event_start_date(), 'June 11, 2050')
-        self.assertEqual(event_details_page.get_event_end_date(), 'June 19, 2050')
+        self.assertEqual(
+            event_details_page.get_event_name(),
+            created_event.name
+        )
+        self.assertEqual(
+            event_details_page.get_event_start_date(),
+            'June 11, 2050'
+        )
+        self.assertEqual(
+            event_details_page.get_event_end_date(),
+            'June 19, 2050'
+        )
 
     def test_invalid_event_create(self):
         """
@@ -188,8 +235,14 @@ class EventDetails(LiveServerTestCase):
         event_details_page.navigate_to_event_list_view()
 
         self.assertEqual(event_details_page.get_event_name(), edit_job[0])
-        self.assertEqual(event_details_page.get_event_start_date(), 'June 12, 2050')
-        self.assertEqual(event_details_page.get_event_end_date(), 'June 20, 2050')
+        self.assertEqual(
+            event_details_page.get_event_start_date(),
+            'June 12, 2050'
+        )
+        self.assertEqual(
+            event_details_page.get_event_end_date(),
+            'June 20, 2050'
+        )
 
     def test_event_delete(self):
         """
@@ -200,9 +253,15 @@ class EventDetails(LiveServerTestCase):
         event_details_page.live_server_url = self.live_server_url
         event_details_page.go_to_events_page()
 
-        self.assertEqual(event_details_page.get_delete_event_element('').text, 'Delete')
+        self.assertEqual(
+            event_details_page.get_delete_event_element('').text,
+            'Delete'
+        )
         event_details_page.get_delete_event_element('//a').click()
-        self.assertEqual(event_details_page.get_deletion_context(), 'Delete Event')
+        self.assertEqual(
+            event_details_page.get_deletion_context(),
+            'Delete Event'
+        )
         event_details_page.submit_form()
 
     def test_start_date_after_end_date(self):

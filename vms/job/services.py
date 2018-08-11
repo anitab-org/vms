@@ -106,6 +106,7 @@ def get_jobs_by_date(start_date, end_date):
 
     return result
 
+
 def get_jobs_ordered_by_title():
     job_list = Job.objects.all().order_by('name')
     return job_list
@@ -145,6 +146,7 @@ def remove_empty_jobs_for_volunteer(job_list, volunteer_id):
             new_job_list.append(job)
     return new_job_list
 
+
 def search_jobs(name, start_date, end_date, city, state, country, event):
     """
     searches event on the basis of name, start date, end date,
@@ -164,11 +166,13 @@ def search_jobs(name, start_date, end_date, city, state, country, event):
     if start_date or end_date:
         search_query = get_jobs_by_date(start_date, end_date)
     if city:
-       search_query = search_query.filter(event__city__name__icontains=city)
+        search_query = search_query.filter(event__city__name__icontains=city)
     if state:
-       search_query = search_query.filter(event__state__name__icontains=state)
+        search_query = search_query.filter(event__state__name__icontains=state)
     if country:
-        search_query = search_query.filter(event__country__name__icontains=country)
+        search_query = search_query.filter(
+            event__country__name__icontains=country
+        )
     if event:
         search_query = search_query.filter(event__name__icontains=event)
     return search_query

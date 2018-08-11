@@ -68,7 +68,9 @@ class JobDetails(LiveServerTestCase):
         Utility function to register event with valid details.
         :return: Event type object.
         """
-        created_event = create_event_with_details(['event', '2050-06-11', '2050-06-19'])
+        created_event = create_event_with_details(
+            ['event', '2050-06-11', '2050-06-19']
+        )
         return created_event
 
     @staticmethod
@@ -78,7 +80,9 @@ class JobDetails(LiveServerTestCase):
         :param created_event: Event type object.
         :return: Job type object.
         """
-        created_job = create_job_with_details(['job', '2050-06-15', '2050-06-18', '', created_event])
+        created_job = create_job_with_details(
+            ['job', '2050-06-15', '2050-06-18', '', created_event]
+        )
         return created_job
 
     def check_error_messages(self):
@@ -89,8 +93,14 @@ class JobDetails(LiveServerTestCase):
         error_message = job_details_page.FIELD_REQUIRED
         self.assertEqual(len(job_details_page.get_help_blocks()), 3)
         self.assertEqual(job_details_page.get_job_name_error(), error_message)
-        self.assertEqual(job_details_page.get_job_start_date_error(), error_message)
-        self.assertEqual(job_details_page.get_job_end_date_error(), error_message)
+        self.assertEqual(
+            job_details_page.get_job_start_date_error(),
+            error_message
+        )
+        self.assertEqual(
+            job_details_page.get_job_end_date_error(),
+            error_message
+        )
 
     def login_admin(self):
         """
@@ -189,7 +199,10 @@ class JobDetails(LiveServerTestCase):
         job_details_page.live_server_url = self.live_server_url
         job_details_page.navigate_to_job_list_view()
 
-        edit_job = ['event', 'new job name', 'new-job-description', '2050-06-16', '2050-06-16']
+        edit_job = [
+            'event', 'new job name', 'new-job-description',
+            '2050-06-16', '2050-06-16'
+        ]
         job_details_page.go_to_edit_job_page()
         job_details_page.fill_job_form(edit_job)
         job_details_page.navigate_to_job_list_view()
@@ -227,8 +240,10 @@ class JobDetails(LiveServerTestCase):
                          job_details_page.NO_JOBS_PRESENT)
 
         job_details_page.click_link(job_details_page.create_job_tab)
-        self.assertEqual(job_details_page.remove_i18n(self.driver.current_url),
-                         self.live_server_url + job_details_page.create_job_page)
+        self.assertEqual(
+            job_details_page.remove_i18n(self.driver.current_url),
+            self.live_server_url + job_details_page.create_job_page
+        )
         self.assertEqual(job_details_page.get_message_context(),
                          job_details_page.ADD_EVENTS_TO_JOB)
 
@@ -244,7 +259,10 @@ class JobDetails(LiveServerTestCase):
         job_details_page.navigate_to_job_list_view()
         job_details_page.go_to_create_job_page()
 
-        job_start_after_end = [created_event.id, 'job name', 'job-description', '2050-06-17', '2050-06-16']
+        job_start_after_end = [
+            created_event.id, 'job name', 'job-description',
+            '2050-06-17', '2050-06-16'
+        ]
         job_details_page.fill_job_form(job_start_after_end)
 
         # Check error.
