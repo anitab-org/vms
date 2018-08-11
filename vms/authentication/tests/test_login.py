@@ -315,7 +315,11 @@ class TestAccessControl(LiveServerTestCase):
             home_page.remove_i18n(self.driver.current_url),
             self.live_server_url + PageUrls.password_change_page
         )
-        password = ['volunteer', 'new-password', 'new-password']
+        password = {
+            'old_password': 'volunteer',
+            'new_password': 'new-password',
+            'confirm_new_password': 'new-password'
+        }
         home_page.fill_password_change_form(password)
         self.assertEqual(
             home_page.remove_i18n(self.driver.current_url),

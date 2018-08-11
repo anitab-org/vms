@@ -39,7 +39,14 @@ class JobModelTests(TestCase):
         Utility function to create an event with valid values.
         :return: Event type object.
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -48,10 +55,13 @@ class JobModelTests(TestCase):
         Utility function to create a job with valid values.
         :return: Job type object.
         """
-        job = [
-            'job-name', '2050-05-25', '2050-05-26',
-            'job-description', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-25',
+            'end_date': '2050-05-26',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -59,10 +69,13 @@ class JobModelTests(TestCase):
         """
         Test creation of job model with valid values.
         """
-        job = [
-            'job-name', '2050-05-25', '2050-05-26',
-            'job-description', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-25',
+            'end_date': '2050-05-26',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
 
         # Check database for instance creation
@@ -74,19 +87,22 @@ class JobModelTests(TestCase):
 
         job_in_db = Job.objects.get(Q(event=event_in_db))
         # Check if job details are correct
-        self.assertEqual(job_in_db.name, job[0])
-        self.assertEqual(str(job_in_db.start_date), job[1])
-        self.assertEqual(str(job_in_db.end_date), job[2])
-        self.assertEqual(job_in_db.description, job[3])
+        self.assertEqual(job_in_db.name, job['name'])
+        self.assertEqual(str(job_in_db.start_date), job['start_date'])
+        self.assertEqual(str(job_in_db.end_date), job['end_date'])
+        self.assertEqual(job_in_db.description, job['description'])
 
     def test_invalid_name_in_model_create(self):
         """
         Database test for model creation with invalid name.
         """
-        job = [
-            'job~name', '2050-05-25', '2050-05-26',
-            'job description', self.event
-        ]
+        job = {
+            'name': 'job~name',
+            'start_date': '2050-05-25',
+            'end_date': '2050-05-26',
+            'description': 'job-description',
+            'event': self.event
+        }
 
         created_job = create_job_with_details(job)
         self.assertRaisesRegexp(ValidationError,
@@ -97,12 +113,15 @@ class JobModelTests(TestCase):
     #     """
     #      Database test for model creation with invalid start date.
     #     """
-    #     This test need to be uncommented after clean method
-    #     is defined for model.
-    #     job = [
-    #         'job name', '2016-05-25', '2050-05-26',
-    #         'job description', self.event
-    #     ]
+    #     This test need to be uncommented after clean method is
+    #     defined for model.
+    #     job = {
+    #         'name': 'job-name',
+    #         'start_date': '2016-05-25',
+    #         'end_date': '2050-05-26',
+    #         'description': 'job-description',
+    #         'event': self.event
+    #     }
     #     created_job = create_job_with_details(job)
     #     self.assertRaisesRegexp(ValidationError,
     #                             JobDetailsPage.ENTER_VALID_VALUE,
@@ -114,10 +133,13 @@ class JobModelTests(TestCase):
     #     """
     #     This test need to be uncommented after clean method
     #     is defined for model.
-    #     job = [
-    #         'job name', '2050-05-25', '2016-05-26',
-    #         'job description', self.event
-    #     ]
+    #     job = {
+    #         'name': 'job-name',
+    #         'start_date': '2050-05-25',
+    #         'end_date': '2016-05-26',
+    #         'description': 'job-description',
+    #         'event': self.event
+    #     }
     #     created_job = create_job_with_details(job)
     #     self.assertRaisesRegexp(ValidationError,
     #                             JobDetailsPage.ENTER_VALID_VALUE,
@@ -127,10 +149,13 @@ class JobModelTests(TestCase):
         """
          Database test for model creation with invalid description.
         """
-        job = [
-            'job name', '2050-05-25', '2050-05-26',
-            'job@description@', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-25',
+            'end_date': '2050-05-26',
+            'description': 'job@description@',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         self.assertRaisesRegexp(ValidationError,
                                 JobDetailsPage.ENTER_VALID_VALUE,
@@ -163,10 +188,13 @@ class JobModelTests(TestCase):
         """
         Test edit of job model with invalid values.
         """
-        job = [
-            'job-name', '2016-05-25', '2016-05-26',
-            'job-description', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2016-05-25',
+            'end_date': '2016-05-26',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
 
         # Check instance created

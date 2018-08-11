@@ -268,7 +268,7 @@ def get_shifts_with_open_slots(j_id):
     for shift in shift_list_by_date:
         slots_remaining = get_shift_slots_remaining(shift.id)
         if slots_remaining > 0:
-            shift_map = {}
+            shift_map = dict()
             shift_map["id"] = shift.id
             shift_map["date"] = shift.date
             shift_map["start_time"] = shift.start_time
@@ -290,7 +290,7 @@ def get_shifts_with_open_slots_for_volunteer(j_id, v_id):
     for shift in shift_list_by_date:
         slots_remaining = get_shift_slots_remaining(shift.id)
         if slots_remaining > 0 and not is_signed_up(v_id, shift.id):
-            shift_map = {}
+            shift_map = dict()
             shift_map["id"] = shift.id
             shift_map["date"] = shift.date
             shift_map["start_time"] = shift.start_time
@@ -373,7 +373,7 @@ def get_volunteer_shifts(v_id, event_name, job_name, start_date, end_date):
     if job_name:
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__job__name__icontains=job_name)
-    if (start_date and end_date):
+    if start_date and end_date:
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__date__gte=start_date, shift__date__lte=end_date)
     for shift in volunteer_shift_list:

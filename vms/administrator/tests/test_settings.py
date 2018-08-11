@@ -12,10 +12,10 @@ from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.jobDetailsPage import JobDetailsPage
 from pom.locators.eventsPageLocators import EventsPageLocators
 from shift.utils import (create_admin_with_unlisted_org,
-                         create_event_with_details, create_job_with_details,
+                         create_event_with_details,
+                         create_job_with_details, create_organization,
                          create_shift_with_details, create_volunteer,
-                         register_volunteer_for_shift_utility,
-                         create_organization)
+                         register_volunteer_for_shift_utility)
 
 
 class Settings(LiveServerTestCase):
@@ -232,7 +232,14 @@ class Settings(LiveServerTestCase):
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         settings.go_to_create_event_page()
         settings.fill_event_form(event)
         settings.navigate_to_event_list_view()
@@ -242,7 +249,7 @@ class Settings(LiveServerTestCase):
             settings.remove_i18n(self.driver.current_url),
             self.live_server_url + settings.event_list_page
         )
-        self.assertEqual(settings.get_event_name(), 'event-name')
+        self.assertEqual(settings.get_event_name(), event['name'])
 
     ''' commented till the portal gets live with its api
     def test_create_event_from_meetup(self):
@@ -261,7 +268,14 @@ class Settings(LiveServerTestCase):
         """
         Test event edit with valid values.
         """
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         self.settings.go_to_events_page()
@@ -273,7 +287,14 @@ class Settings(LiveServerTestCase):
         self.assertEqual(settings.get_event_name(), created_event.name)
 
         settings.go_to_edit_event_page()
-        edited_event = ['new-event-name', '2050-09-21', '2050-09-28']
+        edited_event = {
+            'name': 'new-event-name',
+            'start_date': '2050-09-21',
+            'end_date': '2050-09-28',
+            'address': 'new-event-address',
+            'venue': 'new-event-venue',
+            'description': 'event-description'
+        }
         settings.fill_event_form(edited_event)
         settings.navigate_to_event_list_view()
 
@@ -282,7 +303,10 @@ class Settings(LiveServerTestCase):
             settings.remove_i18n(self.driver.current_url),
             self.live_server_url + settings.event_list_page
         )
-        self.assertEqual(settings.get_event_name(), 'new-event-name')
+        self.assertEqual(
+            settings.get_event_name(),
+            edited_event['name']
+        )
 
     def test_create_and_edit_event_with_invalid_start_date(self):
         """
@@ -292,7 +316,14 @@ class Settings(LiveServerTestCase):
         settings = self.settings
         settings.live_server_url = self.live_server_url
         settings.go_to_create_event_page()
-        invalid_event = ['event-name-invalid', '05/17/2016', '09/28/2016']
+        invalid_event = {
+            'name': 'event-name-invalid',
+            'start_date': '05/17/2016',
+            'end_date': '09/28/2016',
+            'address': 'event-address-invalid',
+            'venue': 'event-venue-invalid',
+            'description': 'event-description'
+        }
         settings.fill_event_form(invalid_event)
 
         # Check event not created and error message displayed
@@ -307,7 +338,14 @@ class Settings(LiveServerTestCase):
 
         settings.navigate_to_event_list_view()
         settings.go_to_create_event_page()
-        valid_event = ['event-name', '2050-05-21', '2050-09-28']
+        valid_event = {
+            'name': 'event-name',
+            'start_date': '2050-05-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         valid_event_created = create_event_with_details(valid_event)
 
         settings.navigate_to_event_list_view()
@@ -330,7 +368,14 @@ class Settings(LiveServerTestCase):
         """
         Test edit of an event which is currently going on.
         """
-        elapsed_event = ['event-name', '2016-05-21', '2050-08-09']
+        elapsed_event = {
+            'name': 'event-name',
+            'start_date': '2016-05-21',
+            'end_date': '2050-08-09',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
 
         # Create an event with elapsed start date
         created_event = create_event_with_details(elapsed_event)
@@ -359,14 +404,27 @@ class Settings(LiveServerTestCase):
 
     def test_edit_event_with_invalid_job_date(self):
         """
-        Test edit of event with invalid date such
-        that the job dates do not lie in it.
+        Test edit of event with invalid date such that
+        the job dates do not lie in it.
         """
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # Create Job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         self.settings.go_to_events_page()
@@ -378,7 +436,14 @@ class Settings(LiveServerTestCase):
         settings.go_to_edit_event_page()
 
         # Edit event such that job is no longer in the new date range
-        new_event = ['new-event-name', '2017-08-30', '2017-09-21']
+        new_event = {
+            'name': 'new-event-name',
+            'start_date': '2017-08-30',
+            'end_date': '2017-09-21',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         settings.fill_event_form(new_event)
 
         # check event not edited and error message displayed
@@ -390,15 +455,22 @@ class Settings(LiveServerTestCase):
             settings.element_by_xpath(
                 self.elements.TEMPLATE_ERROR_MESSAGE
             ).text,
-            'You cannot edit this event as the following associated job '
-            'no longer lies within the new date range :'
+            'You cannot edit this event as the following associated '
+            'job no longer lies within the new date range :'
         )
 
     def test_delete_event_with_no_associated_job(self):
         """
         Test deletion of events with no jobs linked.
         """
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create event
@@ -423,11 +495,24 @@ class Settings(LiveServerTestCase):
         """
         Test deletion of events with linked jobs.
         """
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         self.settings.go_to_events_page()
@@ -450,14 +535,21 @@ class Settings(LiveServerTestCase):
 
         # check event NOT deleted
         settings.navigate_to_event_list_view()
-        self.assertEqual(settings.get_event_name(), 'event-name')
+        self.assertEqual(settings.get_event_name(), event['name'])
 
     def test_create_job(self):
         """
         Test creation of job with valid values.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         self.settings.go_to_events_page()
@@ -465,17 +557,20 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
 
         # create job
-        job = [
-            'event-name', 'job name', 'job description',
-            '2050-08-21', '2050-08-28'
-        ]
+        job = {
+            'event': 'event-name',
+            'name': 'job name',
+            'description': 'job description',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-28'
+        }
         settings.navigate_to_job_list_view()
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
 
         # check job created
         settings.navigate_to_job_list_view()
-        self.assertEqual(settings.get_job_name(), 'job name')
+        self.assertEqual(settings.get_job_name(), job['name'])
         self.assertEqual(settings.get_job_event(), created_event.name)
 
     def test_edit_job(self):
@@ -483,21 +578,37 @@ class Settings(LiveServerTestCase):
         Test edit of job with valid values.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         self.settings.go_to_events_page()
         settings = self.settings
         settings.live_server_url = self.live_server_url
 
-        edit_job = [
-            'event-name', 'changed job name', 'job description',
-            '2050-08-25', '2050-08-25'
-        ]
+        edit_job = {
+            'event': 'event-name',
+            'name': 'changed job name',
+            'description': 'job description',
+            'start_date': '2050-08-25',
+            'end_date': '2050-08-25'
+        }
         settings.navigate_to_job_list_view()
         settings.go_to_edit_job_page()
         settings.fill_job_form(edit_job)
@@ -508,14 +619,21 @@ class Settings(LiveServerTestCase):
             settings.remove_i18n(self.driver.current_url),
             self.live_server_url + settings.job_list_page
         )
-        self.assertEqual(settings.get_job_name(), 'changed job name')
+        self.assertEqual(settings.get_job_name(), edit_job['name'])
 
     def test_create_job_with_invalid_event_date(self):
         """
         Test creation of job with date not lying in event's date.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         create_event_with_details(event)
 
         self.settings.go_to_events_page()
@@ -523,10 +641,13 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
 
         # create job with start date outside range
-        job = [
-            'event-name', 'job name', 'job description',
-            '08/10/2050', '09/11/2050'
-        ]
+        job = {
+            'event': 'event-name',
+            'name': 'job name',
+            'description': 'job description',
+            'start_date': '08/10/2050',
+            'end_date': '09/11/2050'
+        }
         settings.navigate_to_job_list_view()
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
@@ -542,10 +663,13 @@ class Settings(LiveServerTestCase):
         )
 
         # create job with end date outside range
-        job = [
-            'event-name', 'job name', 'job description',
-            '08/30/2050', '09/29/2050'
-        ]
+        job = {
+            'event': 'event-name',
+            'name': 'job name',
+            'description': 'job description',
+            'start_date': '08/30/2050',
+            'end_date': '09/29/2050'
+        }
         settings.navigate_to_job_list_view()
         settings.go_to_create_job_page()
         settings.fill_job_form(job)
@@ -565,17 +689,33 @@ class Settings(LiveServerTestCase):
         Test edit of job with date not lying in event's date.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
-        invalid_job_one = [
-            'event-name', 'changed job name', 'job description',
-            '2050-05-03', '2050-11-09'
-        ]
+        invalid_job_one = {
+            'event': 'event-name',
+            'name': 'changed job name',
+            'description': 'job description',
+            'start_date': '2050-05-03',
+            'end_date': '2050-11-09'
+        }
 
         self.settings.go_to_events_page()
         settings = self.settings
@@ -596,10 +736,13 @@ class Settings(LiveServerTestCase):
             'Job dates should lie within Event dates'
         )
 
-        invalid_job_two = [
-            'event-name', 'changed job name', 'job description',
-            '2050-09-14', '2050-12-31'
-        ]
+        invalid_job_two = {
+            'event': 'event-name',
+            'name': 'changed job name',
+            'description': 'job description',
+            'start_date': '2050-09-14',
+            'end_date': '2050-12-31'
+        }
         settings.navigate_to_job_list_view()
         settings.go_to_edit_job_page()
         settings.fill_job_form(invalid_job_two)
@@ -620,15 +763,36 @@ class Settings(LiveServerTestCase):
         """
 
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         create_shift_with_details(shift)
 
         self.settings.go_to_events_page()
@@ -636,10 +800,13 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
         settings.navigate_to_job_list_view()
 
-        invalid_job_one = [
-            'event-name', 'changed job name', 'job description',
-            '2050-09-01', '2050-09-11'
-        ]
+        invalid_job_one = {
+            'event': 'event-name',
+            'name': 'changed job name',
+            'description': 'job description',
+            'start_date': '2050-09-01',
+            'end_date': '2050-09-11'
+        }
 
         # edit job with date range such that the shift start date no longer
         # falls in the range
@@ -662,11 +829,24 @@ class Settings(LiveServerTestCase):
         Test deletion of job with shifts not linked.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         self.settings.go_to_events_page()
@@ -693,15 +873,36 @@ class Settings(LiveServerTestCase):
         Test deletion of job with shifts linked.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-21', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-21',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         create_shift_with_details(shift)
 
         self.settings.go_to_events_page()
@@ -715,23 +916,37 @@ class Settings(LiveServerTestCase):
         self.assertNotEqual(settings.get_danger_message(), None)
         self.assertEqual(
             settings.get_template_error_message(),
-            'You cannot delete a job that a shift is currently associated with.'
+            'You cannot delete a job that a shift is '
+            'currently associated with.'
         )
 
         # check job NOT deleted
         settings.navigate_to_job_list_view()
-        self.assertEqual(settings.get_job_name(), 'job')
+        self.assertEqual(settings.get_job_name(), job['name'])
 
     def test_create_shift(self):
         """
         Test creation of shift with valid values.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         self.settings.go_to_events_page()
@@ -742,7 +957,14 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_shift_list_view()
         settings.go_to_create_shift_page()
 
-        shift = ['08/30/2050', '09:00', '12:00', '10']
+        shift = {
+            'date': '08/30/2050',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         settings.fill_shift_form(shift)
 
         # verify that shift was created
@@ -755,7 +977,14 @@ class Settings(LiveServerTestCase):
         Test creation of shift with invalid time.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         self.settings.go_to_events_page()
@@ -763,14 +992,27 @@ class Settings(LiveServerTestCase):
         settings.live_server_url = self.live_server_url
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         settings.navigate_to_shift_list_view()
         settings.go_to_create_shift_page()
 
         # create shift where end hours is less than start hours
-        shift = ['08/30/2050', '14:00', '12:00', '5']
+        shift = {
+            'date': '08/30/2050',
+            'start_time': '14:00',
+            'end_time': '12:00',
+            'max_volunteers': '5',
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         settings.fill_shift_form(shift)
 
         # verify that shift was not created and error message displayed
@@ -784,15 +1026,36 @@ class Settings(LiveServerTestCase):
         Test edit of shift with invalid time.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         create_shift_with_details(shift)
 
         self.settings.go_to_events_page()
@@ -802,7 +1065,14 @@ class Settings(LiveServerTestCase):
         settings.go_to_edit_shift_page()
 
         # edit shift with end hours less than start hours
-        invalid_shift = ['08/30/2050', '18:00', '13:00', '5']
+        invalid_shift = {
+            'date': '08/30/2050',
+            'start_time': '18:00',
+            'end_time': '13:00',
+            'max_volunteers': '5',
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         settings.fill_shift_form(invalid_shift)
 
         # verify that shift was not edited and error message displayed
@@ -816,11 +1086,24 @@ class Settings(LiveServerTestCase):
         Test creation of shift with date not lying in job's date.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2017-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         self.settings.go_to_events_page()
@@ -831,7 +1114,14 @@ class Settings(LiveServerTestCase):
         settings.navigate_to_shift_list_view()
         settings.go_to_create_shift_page()
 
-        shift = ['06/30/2050', '14:00', '18:00', '5']
+        shift = {
+            'date': '06/30/2050',
+            'start_time': '14:00',
+            'end_time': '18:00',
+            'max_volunteers': '5',
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         settings.fill_shift_form(shift)
 
         # verify that shift was not created and error message displayed
@@ -845,15 +1135,36 @@ class Settings(LiveServerTestCase):
         Test edit of shift with date not lying in job's date.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         create_shift_with_details(shift)
 
         self.settings.go_to_events_page()
@@ -863,7 +1174,14 @@ class Settings(LiveServerTestCase):
         settings.go_to_edit_shift_page()
 
         # edit shift with date not between job dates
-        invalid_shift = ['02/05/2050', '04:00', '13:00', '2']
+        invalid_shift = {
+            'date': '02/05/2050',
+            'start_time': '04:00',
+            'end_time': '13:00',
+            'max_volunteers': '2',
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         settings.fill_shift_form(invalid_shift)
 
         # verify that shift was not edited and error message displayed
@@ -877,15 +1195,36 @@ class Settings(LiveServerTestCase):
         Test edit of shift with valid values.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         create_shift_with_details(shift)
 
         self.settings.go_to_events_page()
@@ -895,7 +1234,14 @@ class Settings(LiveServerTestCase):
         settings.go_to_edit_shift_page()
 
         # edit shift with date between job dates
-        shift = ['08/25/2050', '10:00', '13:00', '2']
+        shift = {
+            'date': '08/25/2050',
+            'start_time': '10:00',
+            'end_time': '13:00',
+            'max_volunteers': '2',
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         settings.fill_shift_form(shift)
 
         with self.assertRaises(NoSuchElementException):
@@ -908,15 +1254,36 @@ class Settings(LiveServerTestCase):
         Test deletion of shift.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         create_shift_with_details(shift)
 
         self.settings.go_to_events_page()
@@ -940,15 +1307,36 @@ class Settings(LiveServerTestCase):
         Test deletion of shift with volunteer linked with it.
         """
         # register event first to create job
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = ['job', '2050-08-21', '2050-08-30', '', created_event]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': '',
+            'event': created_event
+        }
         created_job = create_job_with_details(job)
 
         # create shift
-        shift = ['2050-08-21', '09:00', '12:00', '10', created_job]
+        shift = {
+            'date': '2050-08-21',
+            'start_time': '09:00',
+            'end_time': '12:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
 
         # create volunteer for shift
@@ -1089,7 +1477,14 @@ class Settings(LiveServerTestCase):
         """
         Test creation of duplicate event with same details.
         """
-        event = ['event-name', '2050-08-21', '2050-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         self.settings.go_to_events_page()
@@ -1116,14 +1511,24 @@ class Settings(LiveServerTestCase):
         Test creation of duplicate job with same details.
         """
         # register event first to create job
-        event = ['event-name', '2017-08-21', '2017-09-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-08-21',
+            'end_date': '2050-09-28',
+            'address': 'event-address',
+            'venue': 'event-venue',
+            'description': 'event-description'
+        }
         created_event = create_event_with_details(event)
 
         # create job
-        job = [
-            'event-name', 'job name', 'job description',
-            '2017-08-21', '2017-08-28'
-        ]
+        job = {
+            'name': 'job',
+            'start_date': '2050-08-21',
+            'end_date': '2050-08-30',
+            'description': 'job-description',
+            'event': created_event
+        }
         create_job_with_details(job)
 
         settings = self.settings

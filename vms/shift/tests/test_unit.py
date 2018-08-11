@@ -49,7 +49,14 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -58,10 +65,13 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = [
-            'job-name', '2050-05-24', '2050-05-28', 'job-description',
-            self.event, 'dummy description', 'dummy venue'
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -70,7 +80,15 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid shift.
         :return: Shift type object
         """
-        shift = ['2050-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -79,7 +97,15 @@ class ShiftModelTests(TestCase):
         Utility function to create an invalid shift.
         :return: Shift type object
         """
-        shift = ['2050-05-29', '12:00:00', '09:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-29',
+            'start_time': '12:00:00',
+            'end_time': '09:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -222,7 +248,14 @@ class VolunteerShiftModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -231,10 +264,13 @@ class VolunteerShiftModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = [
-            'job-name', '2050-05-24', '2050-05-28',
-            'job-description', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -243,7 +279,15 @@ class VolunteerShiftModelTests(TestCase):
         Utility function to create a valid shift.
         :return: Shift type object
         """
-        shift = ['2050-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -256,10 +300,17 @@ class VolunteerShiftModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku", "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -273,10 +324,17 @@ class VolunteerShiftModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku~", "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku!",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -533,7 +591,14 @@ class EditRequestModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -542,10 +607,13 @@ class EditRequestModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = [
-            'job-name', '2015-05-24', '2015-05-28',
-            'job-description', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2015-05-24',
+            'end_date': '2015-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -554,7 +622,15 @@ class EditRequestModelTests(TestCase):
         Utility function to create a valid shift.
         :return: Shift type object
         """
-        shift = ['2015-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2015-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -567,10 +643,17 @@ class EditRequestModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku", "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -779,20 +862,38 @@ class ReportVolunteerShiftModelTests(TestCase):
 
     @staticmethod
     def create_event():
-        event = ['event-name', '2015-05-24', '2015-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2015-05-24',
+            'end_date': '2015-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
     def create_job(self):
-        job = [
-            'job-name', '2015-05-24', '2015-05-28',
-            'job-description', self.event
-        ]
+        job = {
+            'name': 'job-name',
+            'start_date': '2015-05-24',
+            'end_date': '2015-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
     def create_shift(self):
-        shift = ['2015-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -801,10 +902,17 @@ class ReportVolunteerShiftModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku", "Son", "Goku", "Kame House", city, state, country,
-            "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)

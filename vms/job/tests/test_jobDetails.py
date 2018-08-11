@@ -68,9 +68,14 @@ class JobDetails(LiveServerTestCase):
         Utility function to register event with valid details.
         :return: Event type object.
         """
-        created_event = create_event_with_details(
-            ['event', '2050-06-11', '2050-06-19']
-        )
+        created_event = create_event_with_details({
+            'name': 'event',
+            'start_date': '2050-06-11',
+            'end_date': '2050-06-19',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        })
         return created_event
 
     @staticmethod
@@ -80,9 +85,13 @@ class JobDetails(LiveServerTestCase):
         :param created_event: Event type object.
         :return: Job type object.
         """
-        created_job = create_job_with_details(
-            ['job', '2050-06-15', '2050-06-18', '', created_event]
-        )
+        created_job = create_job_with_details({
+            'name': 'job',
+            'start_date': '2050-06-15',
+            'end_date': '2050-06-18',
+            'description': '',
+            'event': created_event
+        })
         return created_job
 
     def check_error_messages(self):
@@ -162,7 +171,13 @@ class JobDetails(LiveServerTestCase):
         job_details_page.live_server_url = self.live_server_url
 
         # Create empty job
-        job = [created_event.id, '', '', '', '']
+        job = {
+            'event': created_event.id,
+            'name': '',
+            'description': '',
+            'start_date': '',
+            'end_date': ''
+        }
         job_details_page.navigate_to_job_list_view()
         job_details_page.go_to_create_job_page()
         job_details_page.fill_job_form(job)
@@ -183,7 +198,13 @@ class JobDetails(LiveServerTestCase):
         job_details_page.navigate_to_job_list_view()
         job_details_page.go_to_edit_job_page()
 
-        null_valued_job = [created_event.id, '', '', '', '']
+        null_valued_job = {
+            'event': created_event.id,
+            'name': '',
+            'description': '',
+            'start_date': '',
+            'end_date': ''
+        }
         job_details_page.fill_job_form(null_valued_job)
         self.check_error_messages()
 
@@ -199,16 +220,22 @@ class JobDetails(LiveServerTestCase):
         job_details_page.live_server_url = self.live_server_url
         job_details_page.navigate_to_job_list_view()
 
-        edit_job = [
-            'event', 'new job name', 'new-job-description',
-            '2050-06-16', '2050-06-16'
-        ]
+        edit_job = {
+            'event': 'event',
+            'name': 'new job name',
+            'description': 'new-job-description',
+            'start_date': '2050-06-16',
+            'end_date': '2050-06-16'
+        }
         job_details_page.go_to_edit_job_page()
         job_details_page.fill_job_form(edit_job)
         job_details_page.navigate_to_job_list_view()
 
-        self.assertEqual(job_details_page.get_name(), edit_job[1])
-        self.assertEqual(job_details_page.get_description(), edit_job[2])
+        self.assertEqual(job_details_page.get_name(), edit_job['name'])
+        self.assertEqual(
+            job_details_page.get_description(),
+            edit_job['description']
+        )
 
     def test_job_delete(self):
         """
@@ -259,10 +286,13 @@ class JobDetails(LiveServerTestCase):
         job_details_page.navigate_to_job_list_view()
         job_details_page.go_to_create_job_page()
 
-        job_start_after_end = [
-            created_event.id, 'job name', 'job-description',
-            '2050-06-17', '2050-06-16'
-        ]
+        job_start_after_end = {
+            'event': created_event.id,
+            'name': 'job name',
+            'description': 'job-description',
+            'start_date': '2050-06-17',
+            'end_date': '2050-06-16'
+        }
         job_details_page.fill_job_form(job_start_after_end)
 
         # Check error.

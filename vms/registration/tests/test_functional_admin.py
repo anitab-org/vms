@@ -107,16 +107,16 @@ class SignUpAdmin(LiveServerTestCase):
         """
         page = self.page
         values = page.get_field_values()
-        self.assertEqual(values['username'], info[0])
-        self.assertEqual(values['first_name'], info[1])
-        self.assertEqual(values['last_name'], info[2])
-        self.assertEqual(values['email'], info[3])
-        self.assertEqual(values['address'], info[4])
-        self.assertEqual(values['city'], info[5])
-        self.assertEqual(values['state'], info[6])
-        self.assertEqual(values['country'], info[7])
-        self.assertEqual(values['phone'], info[8])
-        self.assertEqual(values['organization'], info[9])
+        self.assertEqual(values['username'], info['username'])
+        self.assertEqual(values['first_name'], info['first_name'])
+        self.assertEqual(values['last_name'], info['last_name'])
+        self.assertEqual(values['email'], info['email'])
+        self.assertEqual(values['address'], info['address'])
+        self.assertEqual(values['city'], info['city'])
+        self.assertEqual(values['state'], info['state'])
+        self.assertEqual(values['country'], info['country'])
+        self.assertEqual(values['phone'], info['phone'])
+        self.assertEqual(values['organization'], info['organization'])
 
     def test_null_values(self):
         """
@@ -126,7 +126,20 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
 
-        entry = ['', '', '', '', '', '', '', '', '', '', '', '']
+        entry = {
+            'username': '',
+            'password': '',
+            'confirm_password': '',
+            'first_name': '',
+            'last_name': '',
+            'email': '',
+            'address': '',
+            'city': '',
+            'state': '',
+            'country': '',
+            'phone_number': '',
+            'organization': ''
+        }
         page.fill_registration_form(entry)
         self.assertNotEqual(page.get_help_blocks(), None)
         # Verify that 8 of the fields are compulsory
@@ -166,13 +179,20 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '9999999999', 'admin-org'
-        ]
+        entry = entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(), None)
@@ -196,13 +216,20 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
-            'admin-password', 'admin-first-name', 'admin-last-name',
-            'admin-email1@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India', '9999999999',
-            'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_password_error_text(),
@@ -229,13 +256,20 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name-1',
-            'admin-last-name-1', 'admin-email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '9999999999', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name-1',
+            'last_name': 'admin-last-name-1',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(), None)
@@ -265,13 +299,20 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'name-!@#$%^&*()_',
-            'name-!@#$%^&*()_', 'admin-email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand',
-            'India', '9999999999', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'name-!@#$%^&*()',
+            'last_name': 'name-!@#$%^&*()_',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(), None)
@@ -301,14 +342,20 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_',
-            'admin-first-name-!@#$%^&*()_lolwatneedlength',
-            'admin-last-name-!@#$%^&*()_lolwatneedlength',
-            'admin-email1@systers.org', 'admin-address', 'Roorkee',
-            'Uttarakhand', 'India', '9999999999', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name-!@#$%^&*()_lolwatneedlength',
+            'last_name': 'admin-last-name-!@#$%^&*()_lolwatneedlength',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_help_blocks(), None)
@@ -347,13 +394,20 @@ class SignUpAdmin(LiveServerTestCase):
         # Try to register admin again with same email address
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '9999999999', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         # Verify that user wasn't registered
@@ -370,12 +424,20 @@ class SignUpAdmin(LiveServerTestCase):
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India', '022 2403 6606', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '022 2403 6606',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_message_box(), None)
@@ -391,13 +453,20 @@ class SignUpAdmin(LiveServerTestCase):
         # Try to register admin with incorrect phone number for country
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '237937913', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '237937913',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
@@ -415,12 +484,20 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India', '022 2403 6606', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '022 2403 6606',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         self.assertNotEqual(page.get_message_box(), None)
@@ -435,13 +512,20 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '23&79^37913', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '23&79^37913',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
 
         # Verify that user wasn't registered
@@ -459,13 +543,20 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-1', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '9999999999', '13 admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': '13 admin-org'
+        }
         page.fill_registration_form(entry)
 
         # verify successful registration
@@ -487,13 +578,20 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username-2', 'admin-password!@#$%^&*()_',
-            'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'email2@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '9999999999', '!$&admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-2',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'email2@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': '!$&admin-org'
+        }
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered
@@ -562,23 +660,40 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_',
-            'admin-first-name-3', 'admin-last-name', 'email1@systers.org',
-            'admin-address', 'Roorkee', 'Uttarakhand', 'India',
-            '99999.!9999', '@#admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name-3',
+            'last_name': 'admin-last-name',
+            'email': 'email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India 15',
+            'phone_number': '99999.!9999',
+            'organization': '@#admin-org'
+        }
         page.fill_registration_form(entry)
 
         # Verify that user wasn't registered and
         # that field values are not erased
         self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + page.admin_registration_page)
-        details = [
-            'admin-username', 'admin-first-name-3', 'admin-last-name',
-            'email1@systers.org', 'admin-address', 'Roorkee', 'Uttarakhand',
-            'India', '99999.!9999', '@#admin-org'
-        ]
+        details = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name-3',
+            'last_name': 'admin-last-name',
+            'email': 'email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India 15',
+            'phone_number': '99999.!9999',
+            'organization': '@#admin-org'
+        }
         self.wait.until(EC.presence_of_element_located((By.ID, "id_username")))
         self.verify_field_values(details)
 
@@ -593,23 +708,40 @@ class SignUpAdmin(LiveServerTestCase):
 
         page.get_admin_registration_page()
 
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name-3', 'email1@systers.org', 'admin-address$@!',
-            'Roorkee#$', 'Uttarakhand', 'India 15', '99999.!9999',
-            '@#admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name-3',
+            'email': 'email1@systers.org',
+            'address': 'admin-address$@!',
+            'city': 'Roorkee#$',
+            'state': 'Uttarakhand',
+            'country': 'India 15',
+            'phone_number': '99999.!9999',
+            'organization': '@#admin-org'
+        }
         page.fill_registration_form(entry)
 
         # verify that user wasn't registered and
         # that field values are not erased
         self.assertEqual(page.remove_i18n(self.driver.current_url),
                          self.live_server_url + page.admin_registration_page)
-        details = [
-            'admin-username', 'admin-first-name', 'admin-last-name-3',
-            'email1@systers.org', 'admin-address$@!', 'Roorkee#$',
-            'Uttarakhand', 'India 15', '99999.!9999', '@#admin-org'
-        ]
+        details = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'confirm_password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name-3',
+            'email': 'email1@systers.org',
+            'address': 'admin-address$@!',
+            'city': 'Roorkee#$',
+            'state': 'Uttarakhand',
+            'country': 'India 15',
+            'phone_number': '99999.!9999',
+            'organization': '@#admin-org'
+        }
         self.wait.until(EC.presence_of_element_located((By.ID, "id_username")))
         self.verify_field_values(details)
 '''

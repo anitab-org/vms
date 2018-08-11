@@ -43,11 +43,17 @@ class VolunteerModelTests(TestCase):
         Utility function to create a valid volunteer.
         :return: Volunteer type object
         """
-        vol = [
-            'Goku', 'Son', 'Goku', '',
-            self.city, self.state, self.country,
-            '9999999999', 'idonthave@gmail.com'
-        ]
+        vol = {
+            'username': 'Goku',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'organization'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -57,11 +63,17 @@ class VolunteerModelTests(TestCase):
         Utility function to create an invalid volunteer.
         :return: Volunteer type object
         """
-        vol = [
-            'Goku~', "Son", "Goku", "Kame House",
-            self.city, self.state, self.country,
-            "9999999999", ""
-        ]
+        vol = {
+            'username': 'Goku~',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave1@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -89,10 +101,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid username.
         """
-        volunteer = [
-            '', "Son", "Goku", "Kame House", self.city,
-            self.state, self.country, "9999999999", "idonthave1@gmail.com"
-        ]
+        volunteer = {
+            'username': '',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
@@ -104,10 +123,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid first name.
         """
-        volunteer = [
-            'Goku2', "Son~", "Goku", "Kame House", self.city,
-            self.state, self.country, "9999999999", "idonthave2@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku2',
+            'first_name': "Son~",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave2@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
@@ -121,10 +147,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid last name.
         """
-        volunteer = [
-            'Goku3', "Son", "Goku!", "Kame House", self.city,
-            self.state, self.country, "9999999999", "idonthave3@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku3',
+            'first_name': "Son",
+            'last_name': "Goku!",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave3@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
@@ -138,10 +171,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid city.
         """
-        volunteer = [
-            'Goku5', "Son", "Goku", "Kame House", "East!District!",
-            self.state, self.country, "9999999999", "idonthave5@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku5',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': "East!District!",
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
@@ -155,10 +195,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid state.
         """
-        volunteer = [
-            'Goku6', "Son", "Goku", "Kame House", self.city,
-            "East!District!", self.country, "9999999999", "idonthave6@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku6',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': "East!District!",
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave6@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
@@ -172,10 +219,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid country.
         """
-        volunteer = [
-            'Goku7', "Son", "Goku", "Kame House", self.city,
-            self.state, "East!District!", "9999999999", "idonthave7@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku7',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': "East!District!",
+            'phone_number': "9999999999",
+            'email': "idonthave7@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         self.assertRaisesRegexp(ValueError,
@@ -189,10 +243,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid address.
         """
-        volunteer = [
-            'Goku4', "Son", "Goku", "Kame!House!", self.city,
-            self.state, self.country, "9999999999", "idonthave4@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku4',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame!House!",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave4@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
@@ -206,10 +267,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid phone number.
         """
-        volunteer = [
-            'Goku8', "Son", "Goku", "Kame House", self.city,
-            self.state, self.country, "99999999!9", "idonthave8@gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku8',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "99999999!9",
+            'email': "idonthave8@gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
@@ -223,10 +291,17 @@ class VolunteerModelTests(TestCase):
         """
         Database test for model creation with invalid email.
         """
-        volunteer = [
-            'Goku9', "Son", "Goku", "Kame House", self.city,
-            self.state, self.country, "9999999999", "idonthave9~gmail.com"
-        ]
+        volunteer = {
+            'username': 'Goku9',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': "9999999999",
+            'email': "idonthave9~gmail.com"
+        }
         org_name = 'org'
         org_obj = create_organization_with_details(org_name)
         created_volunteer = create_volunteer_with_details(volunteer, org_obj)
@@ -293,7 +368,7 @@ class VolunteerModelTests(TestCase):
             volunteer_in_db.phone_number
         )
 
-        valid_volunteer.first_name = 'Prince'
+        valid_volunteer.first_name = ''
         valid_volunteer.last_name = 'Vegeta'
         valid_volunteer.email = 'iwishihadone@gmail.com'
         valid_volunteer.phone_number = '1234567890'

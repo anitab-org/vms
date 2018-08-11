@@ -10,13 +10,12 @@ from selenium.webdriver.firefox.options import Options
 from job.models import Job
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.eventSignUpPage import EventSignUpPage
-from shift.utils import (create_volunteer, create_second_country,
-                         create_organization_with_details,
-                         create_second_state, create_second_city,
-                         get_country_by_name, get_state_by_name,
-                         get_city_by_name, register_event_utility,
-                         register_job_utility, register_shift_utility,
-                         create_shift_with_details,
+from shift.utils import (create_volunteer, create_organization_with_details,
+                         create_second_country, create_second_state,
+                         create_second_city, get_country_by_name,
+                         get_state_by_name, get_city_by_name,
+                         register_event_utility, register_job_utility,
+                         register_shift_utility, create_shift_with_details,
                          create_volunteer_with_details,
                          register_volunteer_for_shift_utility)
 
@@ -208,10 +207,15 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page = self.sign_up_page
 
         # create outdated shift
-        shift_1 = [
-            "2016-05-11", "9:00", "15:00",
-            6, Job.objects.get(name='job')
-        ]
+        shift_1 = {
+            'date': "2016-05-11",
+            'start_time': "9:00",
+            'end_time': "15:00",
+            'max_volunteers': 6,
+            'job': Job.objects.get(name='job'),
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift_1)
 
         # open Shift Sign Up
@@ -237,10 +241,15 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page = self.sign_up_page
 
         # create shift with no slot
-        shift_2 = [
-            "2050-05-11", "9:00", "15:00", 1,
-            Job.objects.get(name='job')
-        ]
+        shift_2 = {
+            'date': "2016-05-11",
+            'start_time': "9:00",
+            'end_time': "15:00",
+            'max_volunteers': 1,
+            'job': Job.objects.get(name='job'),
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         s2 = create_shift_with_details(shift_2)
 
         # Create another volunteer
@@ -250,11 +259,17 @@ class ShiftSignUp(LiveServerTestCase):
         second_country = create_second_country()
         second_state = create_second_state()
         second_city = create_second_city()
-        volunteer_2 = [
-            'volunteer-2', "Sam", "Turtle", "Mario Land",
-            second_city, second_state, second_country,
-            "2374983247", "volunteer2@volunteer.com"
-        ]
+        volunteer_2 = {
+            'username': 'volunteer-2',
+            'first_name': "Sam",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': second_city,
+            'state': second_state,
+            'country': second_country,
+            'phone_number': "2374983247",
+            'email': "volunteer2@volunteer.com"
+        }
         v2 = create_volunteer_with_details(volunteer_2, org_obj)
 
         # Assign shift to the volunteer
@@ -282,7 +297,14 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter name of the event
         sign_up_page.go_to_sign_up_page()
-        parameters = ['event', '', '', '', '', '']
+        parameters = {
+            'name': 'event',
+            'date_from': '',
+            'date_to': '',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -300,7 +322,14 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter date range in which an event starts
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '05/08/2050', '05/31/2050', '', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '05/08/2050',
+            'date_to': '05/31/2050',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -317,7 +346,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.live_server_url = self.live_server_url
         # Enter only correct starting date
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '05/08/2050', '', '', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '05/08/2050',
+            'date_to': '',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -335,7 +371,14 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct ending date
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '06/15/2050', '', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '06/15/2050',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -357,7 +400,14 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct city
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '', 'Roorkee', '', '']
+        parameters = parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '',
+            'city': 'Roorkee',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -379,7 +429,14 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct state
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '', '', 'Uttarakhand', '']
+        parameters = parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '',
+            'city': '',
+            'state': 'Uttarakhand',
+            'country': ''
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -401,7 +458,14 @@ class ShiftSignUp(LiveServerTestCase):
 
         # Enter correct country
         sign_up_page.go_to_sign_up_page()
-        parameters = ['', '', '', '', '', 'India']
+        parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '',
+            'city': '',
+            'state': '',
+            'country': 'India'
+        }
         sign_up_page.fill_search_form(parameters)
         # Verify that the event shows up
         self.assertEqual(sign_up_page.get_event_name(), 'event')
@@ -420,7 +484,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter name of the job
-        parameters = ['job', '', '', '', '', '']
+        parameters = {
+            'name': 'job',
+            'date_from': '',
+            'date_to': '',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -439,7 +510,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter date range in which a job starts
-        parameters = ['', '05/10/2050', '06/15/2050', '', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '05/10/2050',
+            'date_to': '06/15/2050',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -458,7 +536,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.navigate_to_sign_up()
         sign_up_page.click_to_view_jobs()
 
-        parameters = ['', '05/10/2050', '', '', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '05/10/2050',
+            'date_to': '',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -477,7 +562,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct ending date
-        parameters = ['', '', '06/15/2050', '', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '06/15/2050',
+            'city': '',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -500,7 +592,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct city
-        parameters = ['', '', '', 'Roorkee', '', '']
+        parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '',
+            'city': 'Roorkee',
+            'state': '',
+            'country': ''
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -523,7 +622,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct state
-        parameters = ['', '', '', '', 'Uttarakhand', '']
+        parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '',
+            'city': '',
+            'state': 'Uttarakhand',
+            'country': ''
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')
@@ -546,7 +652,14 @@ class ShiftSignUp(LiveServerTestCase):
         sign_up_page.click_to_view_jobs()
 
         # Enter correct country
-        parameters = ['', '', '', '', '', 'India']
+        parameters = {
+            'name': '',
+            'date_from': '',
+            'date_to': '',
+            'city': '',
+            'state': '',
+            'country': 'India'
+        }
         sign_up_page.fill_job_search_form(parameters)
         # Verify that the job shows up
         self.assertEqual(sign_up_page.get_job_name(), 'job')

@@ -19,7 +19,14 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
     """
 
     def setUp(self):
-        event = ['event', '2015-02-05', '2015-05-05', 'event-description']
+        event = {
+            'name': 'event',
+            'start_date': '2015-02-05',
+            'end_date': '2015-05-05',
+            'description': 'event-description',
+            'address': 'address',
+            'venue': 'venue'
+        }
         self.event_1 = create_event_with_details(event)
         country = create_country()
         state = create_state()
@@ -27,8 +34,6 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
         self.event_1.city = city
         self.event_1.state = state
         self.event_1.country = country
-        self.event_1.address = 'address'
-        self.event_1.venue = 'venue'
         self.event_1.save()
         self.expected_result_one = {
             'event_name': 'event',
@@ -42,7 +47,14 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
             'venue': 'venue'
         }
 
-        event = ['eventq', '2050-02-05', '2050-05-05', 'eventq-description']
+        event = {
+            'name': 'eventq',
+            'start_date': '2050-02-05',
+            'end_date': '2050-05-05',
+            'description': 'eventq-description',
+            'address': 'addressq',
+            'venue': 'venueq'
+        }
         self.event_2 = create_event_with_details(event)
         country2 = create_second_country()
         state2 = create_second_state()
@@ -50,8 +62,6 @@ class ApiForVolaViewTestCase(APITestCase, TestCase):
         self.event_2.city = city2
         self.event_2.state = state2
         self.event_2.country = country2
-        self.event_2.address = 'addressq'
-        self.event_2.venue = 'venueq'
         self.event_2.save()
         self.expected_result_two = {
             'event_name': 'eventq',

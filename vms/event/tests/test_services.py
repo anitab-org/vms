@@ -32,11 +32,46 @@ def setUpModule():
     country = create_country()
     state = create_state()
     city = create_city()
-    event_1 = ["Open Source Event", "2012-10-22", "2012-10-23"]
-    event_2 = ["Python Event", "2013-11-12", "2013-11-13"]
-    event_3 = ["Django Event", "2015-07-02", "2015-07-03"]
-    event_4 = ["Systers Event", "2015-07-25", "2015-08-08"]
-    event_5 = ["Anita Borg Event", "2015-07-07", "2015-07-08"]
+    event_1 = {
+        'name': "Open Source Event",
+        'start_date': "2012-10-22",
+        'end_date': "2012-10-23",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
+    event_2 = {
+        'name': "Python Event",
+        'start_date': "2013-11-12",
+        'end_date': "2013-11-13",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
+    event_3 = {
+        'name': "Django Event",
+        'start_date': "2015-07-02",
+        'end_date': "2015-07-03",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
+    event_4 = {
+        'name': "Systers Event",
+        'start_date': "2015-07-25",
+        'end_date': "2015-08-08",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
+    event_5 = {
+        'name': "Anita Borg Event",
+        'start_date': "2015-07-07",
+        'end_date': "2015-07-08",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
 
     e1 = create_event_with_details(event_1)
     e2 = create_event_with_details(event_2)
@@ -44,18 +79,42 @@ def setUpModule():
     e4 = create_event_with_details(event_4)
     e5 = create_event_with_details(event_5)
 
-    job_1 = [
-        "Software Developer", "2012-10-22", "2012-10-23", "A software job", e1
-    ]
-    job_2 = [
-        "Systems Administrator", "2013-11-12", "2013-11-13",
-        "A systems administrator job", e2
-    ]
-    job_3 = [
-        "Backend Dev", "2012-10-8", "2012-10-16", "A java developer job", e4
-    ]
-    job_4 = ["Instructor", "2012-10-22", "2012-10-23", "", e4]
-    job_5 = ["Instructor", "2012-10-22", "2012-10-23", "", e3]
+    job_1 = {
+        'name': "Software Developer",
+        'start_date': "2012-10-22",
+        'end_date': "2012-10-23",
+        'description': "A software job",
+        'event': e1
+    }
+    job_2 = {
+        'name': "Systems Administrator",
+        'start_date': "2013-11-12",
+        'end_date': "2013-11-13",
+        'description': "A systems administrator job",
+        'event': e2
+    }
+    job_3 = {
+        'name': "Backend Dev",
+        'start_date': "2012-10-8",
+        'end_date': "2012-10-16",
+        'description': "A java developer job",
+        'event': e4
+    }
+
+    job_4 = {
+        'name': "Instructor",
+        'start_date': "2012-10-22",
+        'end_date': "2012-10-23",
+        'description': "",
+        'event': e4
+    }
+    job_5 = {
+        'name': "Instructor",
+        'start_date': "2012-10-22",
+        'end_date': "2012-10-23",
+        'description': "",
+        'event': e3
+    }
 
     j1 = create_job_with_details(job_1)
     j2 = create_job_with_details(job_2)
@@ -64,10 +123,42 @@ def setUpModule():
     j5 = create_job_with_details(job_5)
 
     # shifts with limited, plenty and no slots
-    shift_1 = ["2012-10-23", "9:00", "15:00", 1, j1]
-    shift_2 = ["2012-10-23", "10:00", "16:00", 2, j1]
-    shift_3 = ["2013-11-12", "12:00", "18:00", 4, j2]
-    shift_4 = ["2013-10-23", "10:00", "18:00", 1, j4]
+    shift_1 = {
+        'date': "2012-10-23",
+        'start_time': "9:00",
+        'end_time': "15:00",
+        'max_volunteers': 1,
+        'job': j1,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
+    shift_2 = {
+        'date': "2012-10-23",
+        'start_time': "10:00",
+        'end_time': "16:00",
+        'max_volunteers': 2,
+        'job': j1,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
+    shift_3 = {
+        'date': "2012-11-12",
+        'start_time': "12:00",
+        'end_time': "18:00",
+        'max_volunteers': 4,
+        'job': j2,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
+    shift_4 = {
+        'date': "2012-10-23",
+        'start_time': "10:00",
+        'end_time': "18:00",
+        'max_volunteers': 1,
+        'job': j4,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
 
     s1 = create_shift_with_details(shift_1)
     s2 = create_shift_with_details(shift_2)
@@ -301,7 +392,14 @@ class EventWithJobTests(unittest.TestCase):
 class DeleteEventTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        event_1 = ["Open Source Event 101", "2012-10-22", "2012-10-23"]
+        event_1 = {
+            'name': "Open Source Event 101",
+            'start_date': "2012-10-22",
+            'end_date': "2012-10-23",
+            'description': '',
+            'venue': 'event-venue',
+            'address': 'event-address'
+        }
         cls.e1 = create_event_with_details(event_1)
 
         # event with associated job/shift
@@ -337,18 +435,39 @@ class EventWithVolunteerTest(unittest.TestCase):
         cls.s3 = s3
         cls.s4 = s4
 
-        volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
-            "2374983247", "yoshi@nintendo.com"
-        ]
-        volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", city, state, country,
-            "23454545", "john@test.com"
-        ]
-        volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", city, state, country,
-            "23454545", "ash@pikachu.com"
-        ]
+        volunteer_1 = {
+            'username': 'Yoshi',
+            'first_name': "Yoshi",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "yoshi@nintendo.com"
+        }
+        volunteer_2 = {
+            'username': 'John',
+            'first_name': "John",
+            'last_name': "Doe",
+            'address': "7 Alpine Street",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "john@test.com"
+        }
+        volunteer_3 = {
+            'username': 'Ash',
+            'first_name': "Ash",
+            'last_name': "Ketchum",
+            'address': "Pallet Town",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "ash@pikachu.com"
+        }
 
         org_name = 'volunteer-organization'
         cls.org_obj = create_organization_with_details(org_name)

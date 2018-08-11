@@ -35,18 +35,23 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.CREATE_EVENT_END_DATE).clear()
         self.element_by_xpath(self.elements.CREATE_EVENT_ADDRESS).clear()
         self.element_by_xpath(self.elements.CREATE_EVENT_VENUE).clear()
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_NAME, event[0])
+        self.send_value_to_xpath(self.elements.CREATE_EVENT_NAME, event['name'])
         self.send_value_to_xpath(
             self.elements.CREATE_EVENT_START_DATE,
-            event[1]
+            event['start_date']
         )
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_END_DATE, event[2])
-        if len(event) == 5:
-            self.send_value_to_xpath(
-                self.elements.CREATE_EVENT_ADDRESS,
-                event[3]
-            )
-            self.send_value_to_xpath(self.elements.CREATE_EVENT_VENUE, event[4])
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_END_DATE,
+            event['end_date']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_ADDRESS,
+            event['address']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_VENUE,
+            event['venue']
+        )
         self.submit_form()
 
     def fill_job_form(self, job):
@@ -55,11 +60,20 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.CREATE_JOB_START_DATE).clear()
         self.element_by_xpath(self.elements.CREATE_JOB_END_DATE).clear()
 
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_ID, job[0])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_NAME, job[1])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_DESCRIPTION, job[2])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_START_DATE, job[3])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_END_DATE, job[4])
+        self.send_value_to_xpath(self.elements.CREATE_EVENT_ID, job['event'])
+        self.send_value_to_xpath(self.elements.CREATE_JOB_NAME, job['name'])
+        self.send_value_to_xpath(
+            self.elements.CREATE_JOB_DESCRIPTION,
+            job['description']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_JOB_START_DATE,
+            job['start_date']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_JOB_END_DATE,
+            job['end_date']
+        )
         self.submit_form()
 
     def fill_shift_form(self, shift):
@@ -70,22 +84,27 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.CREATE_SHIFT_ADDRESS).clear()
         self.element_by_xpath(self.elements.CREATE_SHIFT_VENUE).clear()
 
-        self.send_value_to_xpath(self.elements.CREATE_SHIFT_DATE, shift[0])
+        self.send_value_to_xpath(self.elements.CREATE_SHIFT_DATE, shift['date'])
         self.send_value_to_xpath(
             self.elements.CREATE_SHIFT_START_TIME,
-            shift[1]
+            shift['start_time']
         )
-        self.send_value_to_xpath(self.elements.CREATE_SHIFT_END_TIME, shift[2])
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_END_TIME,
+            shift['end_time']
+        )
         self.send_value_to_xpath(
             self.elements.CREATE_SHIFT_MAX_VOLUNTEER,
-            shift[3]
+            shift['max_volunteers']
         )
-        if len(shift) == 6:
-            self.send_value_to_xpath(
-                self.elements.CREATE_SHIFT_ADDRESS,
-                shift[4]
-            )
-            self.send_value_to_xpath(self.elements.CREATE_SHIFT_VENUE, shift[5])
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_ADDRESS,
+            shift['address']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_VENUE,
+            shift['venue']
+        )
         self.submit_form()
 
     def fill_organization_form(self, org):
@@ -213,12 +232,6 @@ class EventsPage(BasePage):
 
     def get_event_end_date_error(self):
         return self.element_by_xpath(self.elements.EVENT_END_DATE_ERROR).text
-
-    def get_event_address_error(self):
-        return self.element_by_xpath(self.elements.EVENT_ADDRESS_ERROR).text
-
-    def get_event_venue_error(self):
-        return self.element_by_xpath(self.elements.EVENT_VENUE_ERROR).text
 
     def get_job_name_error(self):
         return self.element_by_xpath(self.elements.JOB_NAME_ERROR).text
