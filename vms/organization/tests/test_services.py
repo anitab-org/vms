@@ -3,7 +3,8 @@ import unittest
 
 # local Django
 from organization.models import Organization
-from organization.services import (get_organization_by_id, delete_organization,
+from organization.services import (get_organization_by_id,
+                                   delete_organization,
                                    get_organization_by_name,
                                    get_organizations_ordered_by_name)
 from shift.utils import (get_country_by_name, get_city_by_name,
@@ -115,11 +116,17 @@ class DeleteOrganizationTests(unittest.TestCase):
         country = get_country_by_name(country_name)
         state = get_state_by_name(state_name)
         city = get_city_by_name(city_name)
-        volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", city,
-            state, country, "2374983247",
-            "yoshi@nintendo.com"
-        ]
+        volunteer_1 = {
+            'username': 'Yoshi',
+            'first_name': "Yoshi",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "yoshi@nintendo.com"
+        }
         cls.v1 = create_volunteer_with_details(volunteer_1, cls.o2)
 
     @classmethod

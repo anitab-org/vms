@@ -9,6 +9,7 @@ from django.core import mail
 
 # local Django
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 from pom.locators.administratorReportPageLocators import\
     AdministratorReportPageLocators
@@ -28,7 +29,9 @@ class Report(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.authentication_page = AuthenticationPage(cls.driver)
@@ -86,11 +89,17 @@ class Report(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials = [
-            'volunteer-username', 'VOLUNTEER-FIRST-NAME',
-            'volunteer-last-name', 'volunteer-address', city, state, country,
-            '9999999999', 'volunteer-email@systers.org'
-        ]
+        credentials = {
+            'username': 'volunteer-username',
+            'first_name': 'VOLUNTEER-FIRST-NAME',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         vol = create_volunteer_with_details(credentials, org_obj)

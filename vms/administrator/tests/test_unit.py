@@ -42,24 +42,38 @@ class AdministratorModelTests(TestCase):
         Utility function to create a valid administrator.
         :return: Event type object
         """
-        admin = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org', 'admin-address',
-            self.city, self.state, self.country, '9999999999',
-            'admin-org'
-        ]
+        admin = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         return create_admin_with_details(admin)
 
     def test_valid_model_create(self):
         """
         Database test for model creation with valid values.
         """
-        admin = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-first-name',
-            'admin-last-name', 'admin-email1@systers.org', 'admin-address',
-            self.city, self.state, self.country, '9999999999',
-            'admin-org'
-        ]
+        admin = {
+            'username': 'admin-username',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         created_admin = create_admin_with_details(admin)
 
         # Database check for admin creation
@@ -69,26 +83,33 @@ class AdministratorModelTests(TestCase):
             Q(first_name='admin-first-name')
         )
         # Verify correctness
-        self.assertEqual(admin_in_db.first_name, admin[2])
-        self.assertEqual(admin_in_db.last_name, admin[3])
-        self.assertEqual(admin_in_db.email, admin[4])
-        self.assertEqual(admin_in_db.address, admin[5])
-        self.assertEqual(admin_in_db.city, admin[6])
-        self.assertEqual(admin_in_db.state, admin[7])
-        self.assertEqual(admin_in_db.country, admin[8])
-        self.assertEqual(admin_in_db.phone_number, admin[9])
-        self.assertEqual(str(admin_in_db.organization), admin[10])
+        self.assertEqual(admin_in_db.first_name, admin['first_name'])
+        self.assertEqual(admin_in_db.last_name, admin['last_name'])
+        self.assertEqual(admin_in_db.email, admin['email'])
+        self.assertEqual(admin_in_db.address, admin['address'])
+        self.assertEqual(admin_in_db.city, admin['city'])
+        self.assertEqual(admin_in_db.state, admin['state'])
+        self.assertEqual(admin_in_db.country, admin['country'])
+        self.assertEqual(admin_in_db.phone_number, admin['phone_number'])
+        self.assertEqual(str(admin_in_db.organization), admin['organization'])
 
     def test_invalid_first_name_in_model_create(self):
         """
         Database test for model creation with invalid first name.
         """
-        admin = [
-            'adminusername1', 'admin-password!@#$%^&*()_', 'admin~first~name',
-            'admin last name', 'adminemail2@systers.org', 'admin address',
-            self.city, self.state, self.country, '9999999999',
-            'admin org2'
-        ]
+        admin = {
+            'username': 'adminusername1',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin~first~name',
+            'last_name': 'admin last name',
+            'email': 'adminemail2@systers.org',
+            'address': 'admin address',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin org2'
+        }
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(
             ValidationError,
@@ -100,12 +121,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid last name.
         """
-        admin = [
-            'adminusername2', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin~last~name', 'adminemail3@systers.org', 'admin address',
-            self.city, self.state, self.country, '9999999999',
-            'admin org3'
-        ]
+        admin = {
+            'username': 'adminusername2',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin~last~name',
+            'email': 'adminemail3@systers.org',
+            'address': 'admin address',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin org3'
+        }
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(
             ValidationError,
@@ -117,12 +145,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid city.
         """
-        admin = [
-            'adminusername5', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail6@systers.org', 'admin address',
-            'admin~city', self.state, self.country, '9999999999',
-            'admin org6'
-        ]
+        admin = {
+            'username': 'adminusername5',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin last name',
+            'email': 'adminemail6@systers.org',
+            'address': 'admin address',
+            'city': 'admin~city',
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin org6'
+        }
 
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'admin~city\'": '
@@ -134,12 +169,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid state.
         """
-        admin = [
-            'adminusername6', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail7@systers.org', 'admin address',
-            self.city, 'admin~state', self.country, '9999999999',
-            'admin org7'
-        ]
+        admin = {
+            'username': 'adminusername6',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin last name',
+            'email': 'adminemail7@systers.org',
+            'address': 'admin address',
+            'city': self.city,
+            'state': 'admin~state',
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin org7'
+        }
 
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'admin~state\'": '
@@ -151,12 +193,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid country.
         """
-        admin = [
-            'adminusername7', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail8@systers.org', 'admin address',
-            self.city, self.state, 'admin~country', '9999999999',
-            'admin org8'
-        ]
+        admin = {
+            'username': 'adminusername7',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin last name',
+            'email': 'adminemail7@systers.org',
+            'address': 'admin address',
+            'city': self.city,
+            'state': self.state,
+            'country': 'admin~country',
+            'phone_number': '9999999999',
+            'organization': 'admin org7'
+        }
 
         self.assertRaisesRegexp(ValueError,
                                 'Cannot assign "\'admin~country\'": '
@@ -168,12 +217,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid email.
         """
-        admin = [
-            'adminusername3', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail4~systers.org', 'admin address',
-            self.city, self.state, self.country, '9999999999',
-            'admin org4'
-        ]
+        admin = {
+            'username': 'adminusername3',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin last name',
+            'email': 'adminemail4~systers.org',
+            'address': 'admin address',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin org4'
+        }
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(
             ValidationError,
@@ -184,12 +240,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid address.
         """
-        admin = [
-            'adminusername4', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail5@systers.org', 'admin!address!',
-            self.city, self.state, self.country, '9999999999',
-            'admin org5'
-        ]
+        admin = {
+            'username': 'adminusername4',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin last name',
+            'email': 'adminemail5@systers.org',
+            'address': 'admin!address!',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '9999999999',
+            'organization': 'admin org5'
+        }
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(
             ValidationError,
@@ -201,12 +264,19 @@ class AdministratorModelTests(TestCase):
         """
         Database test for model creation with invalid phone number.
         """
-        admin = [
-            'adminusername8', 'admin-password!@#$%^&*()_', 'admin first name',
-            'admin last name', 'adminemail9@systers.org', 'admin address',
-            self.city, self.state, self.country, '99999999~99',
-            'admin org9'
-        ]
+        admin = {
+            'username': 'adminusername8',
+            'password': 'admin-password!@#$%^&*()_',
+            'first_name': 'admin first name',
+            'last_name': 'admin last name',
+            'email': 'adminemail9@systers.org',
+            'address': 'admin address',
+            'city': self.city,
+            'state': self.state,
+            'country': self.country,
+            'phone_number': '99999999~99',
+            'organization': 'admin org9'
+        }
         created_admin = create_admin_with_details(admin)
         self.assertRaisesRegexp(
             ValidationError,

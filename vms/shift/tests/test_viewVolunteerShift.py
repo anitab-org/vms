@@ -96,14 +96,30 @@ class ViewVolunteerShift(LiveServerTestCase):
         """
         Utility function to register data for testing.
         """
-        created_event = create_event_with_details(
-            ['event-four', '2050-06-01', '2050-06-10'])
-        created_job = create_job_with_details([
-            'jobOneInEventFour', '2050-06-01', '2050-06-10', 'job description',
-            created_event
-        ])
-        created_shift = create_shift_with_details(
-            ['2050-06-01', '09:00', '15:00', '10', created_job])
+        created_event = create_event_with_details({
+            'name': 'event-four',
+            'start_date': '2050-06-01',
+            'end_date': '2050-06-10',
+            'address': 'event-address',
+            'description': 'event-description',
+            'venue': 'event-venue'
+        })
+        created_job = create_job_with_details({
+            'name': 'jobOneInEventFour',
+            'start_date': '2050-06-01',
+            'end_date': '2050-06-10',
+            'description': 'job description',
+            'event': created_event
+        })
+        created_shift = create_shift_with_details({
+            'date': '2050-06-01',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        })
         registered_shift =\
             register_volunteer_for_shift_utility(created_shift, self.v1)
 
@@ -127,11 +143,17 @@ class ViewVolunteerShift(LiveServerTestCase):
         second_country = create_second_country()
         second_state = create_second_state()
         second_city = create_second_city()
-        details = [
-            'test_volunteer', 'volunteer-first-name', 'volunteer-last-name',
-            'volunteer-address', second_city, second_state, second_country,
-            '9999999999', 'volunteer-email2@systers.org'
-        ]
+        details = {
+            'username': 'test_volunteer',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': second_city,
+            'state': second_state,
+            'country': second_country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)

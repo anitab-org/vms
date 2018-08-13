@@ -103,7 +103,6 @@ class SearchVolunteer(LiveServerTestCase):
     def verify_report_details(self, reports):
         """
         Utility function to verify the shift details.
-        :param total_reports: Total number of reports as filled in form.
         :param reports: Total number of reports as filled in form.
         """
         total_no_of_reports = self.report_page.get_report_hours()
@@ -134,23 +133,33 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'VOLUNTEER-FIRST-NAME',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'VOLUNTEER-FIRST-NAME',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         volunteer_1 = create_volunteer_with_details(credentials_1, org_obj)
 
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-name',
-            'volunteer-last-nameq', 'volunteer-addressq', city,
-            state, country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -218,23 +227,33 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'VOLUNTEER-LAST-NAME', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'VOLUNTEER-LAST-NAME',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         volunteer_1 = create_volunteer_with_details(credentials_1, org_obj)
 
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-name', 'volunteer-addressq', city,
-            state, country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-addressq',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
         volunteer_2 = create_volunteer_with_details(credentials_2, org_obj)
@@ -302,12 +321,17 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
@@ -319,12 +343,17 @@ class SearchVolunteer(LiveServerTestCase):
         second_country = get_country_by_name(country_name)
         second_state = get_state_by_name(state_name)
         second_city = get_city_by_name(city_name)
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', second_city,
-            second_state, second_country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': second_city,
+            'state': second_state,
+            'country': second_country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -389,12 +418,17 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
@@ -406,12 +440,17 @@ class SearchVolunteer(LiveServerTestCase):
         second_country = get_country_by_name(country_name)
         second_state = get_state_by_name(state_name)
         second_city = get_city_by_name(city_name)
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', second_city,
-            second_state, second_country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': second_city,
+            'state': second_state,
+            'country': second_country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -477,12 +516,17 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
@@ -494,12 +538,17 @@ class SearchVolunteer(LiveServerTestCase):
         second_country = get_country_by_name(country_name)
         second_state = get_state_by_name(state_name)
         second_city = get_city_by_name(city_name)
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', second_city,
-            second_state, second_country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': second_city,
+            'state': second_state,
+            'country': second_country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -565,22 +614,32 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         volunteer_1 = create_volunteer_with_details(credentials_1, org_obj)
 
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', city,
-            state, country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -632,22 +691,33 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         volunteer_1 = create_volunteer_with_details(credentials_1, org_obj)
 
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', city,
-            state, country, '9999999999', 'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -703,23 +773,33 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         volunteer_1 = create_volunteer_with_details(credentials_1, org_obj)
 
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', city,
-            state, country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -777,23 +857,33 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'volunteer-last-name', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'volunteer-last-name',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
 
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         volunteer_1 = create_volunteer_with_details(credentials_1, org_obj)
 
-        credentials_2 = [
-            'volunteer-usernameq', 'volunteer-first-nameq',
-            'volunteer-last-nameq', 'volunteer-addressq', city,
-            state, country, '9999999999',
-            'volunteer-email2@systers.orgq'
-        ]
+        credentials_2 = {
+            'username': 'volunteer-usernameq',
+            'first_name': 'volunteer-first-nameq',
+            'last_name': 'volunteer-last-nameq',
+            'address': 'volunteer-addressq',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.orgq'
+        }
 
         org_name = 'volunteer-organizationq'
         org_obj = create_organization_with_details(org_name)
@@ -871,12 +961,17 @@ class SearchVolunteer(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        credentials_1 = [
-            'volunteer-username', 'volunteer-first-name',
-            'VOLUNTEER-LAST-NAME', 'volunteer-address', city,
-            state, country, '9999999999',
-            'volunteer-email@systers.org'
-        ]
+        credentials_1 = {
+            'username': 'volunteer-username',
+            'first_name': 'volunteer-first-name',
+            'last_name': 'VOLUNTEER-LAST-NAME',
+            'address': 'volunteer-address',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email@systers.org'
+        }
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
         vol = create_volunteer_with_details(credentials_1, org_obj)

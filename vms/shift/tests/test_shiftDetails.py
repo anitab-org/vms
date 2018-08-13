@@ -34,12 +34,6 @@ class ShiftDetails(LiveServerTestCase):
         This method initiates Firefox WebDriver, WebDriverWait and
         the corresponding POM objects for this Test Class
         """
-        cls.volunteer_detail = [
-            'volunteer-username', 'Michael', 'Reed', 'address', 'city',
-            'state', 'country', '9999999999', 'volunteer@volunteer.com',
-            'organization'
-        ]
-
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -92,11 +86,30 @@ class ShiftDetails(LiveServerTestCase):
         Utility function to create data for testing
         :return: Shift type of object.
         """
-        e1 = create_event_with_details(['event', '2050-06-15', '2050-06-17'])
-        j1 = create_job_with_details(
-            ['job', '2050-06-15', '2050-06-15', 'job description', e1])
-        s1 = create_shift_with_details(
-            ['2050-06-15', '09:00', '15:00', '6', j1])
+        e1 = create_event_with_details({
+            'name': 'event',
+            'start_date': '2050-06-15',
+            'end_date': '2050-06-17',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        })
+        j1 = create_job_with_details({
+            'name': 'job',
+            'start_date': '2050-06-15',
+            'end_date': '2050-06-15',
+            'description': 'job description',
+            'event': e1
+        })
+        s1 = create_shift_with_details({
+            'date': '2050-06-15',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '6',
+            'job': j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        })
         return s1
 
     def wait_for_home_page(self):

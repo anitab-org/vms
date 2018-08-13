@@ -60,10 +60,17 @@ class VolunteerProfile(LiveServerTestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            'Goku', "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': 'Goku',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Detective'
         org_obj = create_organization_with_details(org_name)
         self.volunteer_1 = create_volunteer_with_details(vol, org_obj)
@@ -170,10 +177,17 @@ class VolunteerProfile(LiveServerTestCase):
         self.wait_for_profile_load('Son Goku')
         profile_page.edit_profile()
 
-        new_details = [
-            'Harvey', 'Specter', 'hspecter@ps.com', 'Empire State Building',
-            'Mussoorie', 'Uttarakhand', 'India', '9999999998', 'None', 'Lawyer'
-        ]
+        new_details = {
+            'first_name': 'Harvey',
+            'last_name': 'Specter',
+            'email': 'hspecter@ps.com',
+            'address': 'Empire State Building',
+            'city': 'Mussoorie',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999998',
+            'organization': 'Lawyer'
+        }
         profile_page.fill_values(new_details)
         self.wait_for_profile_load('Harvey Specter')
 
@@ -188,19 +202,19 @@ class VolunteerProfile(LiveServerTestCase):
         found_org = re.search(self.volunteer_1.organization.name, page_source)
         self.assertEqual(found_org, None)
 
-        found_email = re.search(new_details[2], page_source)
+        found_email = re.search(new_details['email'], page_source)
         self.assertNotEqual(found_email, None)
 
-        found_city = re.search(new_details[4], page_source)
+        found_city = re.search(new_details['city'], page_source)
         self.assertNotEqual(found_city, None)
 
-        found_state = re.search(new_details[5], page_source)
+        found_state = re.search(new_details['state'], page_source)
         self.assertNotEqual(found_state, None)
 
-        found_country = re.search(new_details[6], page_source)
+        found_country = re.search(new_details['country'], page_source)
         self.assertNotEqual(found_country, None)
 
-        found_org = re.search(new_details[9], page_source)
+        found_org = re.search(new_details['organization'], page_source)
         self.assertNotEqual(found_org, None)
 
     def test_invalid_resume_format(self):

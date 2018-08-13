@@ -24,18 +24,39 @@ class VolunteerMethodTests(unittest.TestCase):
         state = get_state_by_name(state_name)
         city_name = 'Roorkee'
         city = get_city_by_name(city_name)
-        volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
-            "2374983247", "yoshi@nintendo.com"
-        ]
-        volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", city, state,
-            country, "23454545", "john@test.com"
-        ]
-        volunteer_3 = [
-            'Ash', "Ash", "Doe", "Pallet Town", city, state, country,
-            "23454545", "ash@pikachu.com"
-        ]
+        volunteer_1 = {
+            'username': 'Yoshi',
+            'first_name': "Yoshi",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "yoshi@nintendo.com"
+        }
+        volunteer_2 = {
+            'username': 'John',
+            'first_name': "John",
+            'last_name': "Doe",
+            'address': "7 Alpine Street",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "john@test.com"
+        }
+        volunteer_3 = {
+            'username': 'Ash',
+            'first_name': "Ash",
+            'last_name': "Ketchum",
+            'address': "Pallet Town",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "ash@pikachu.com"
+        }
         o1 = 'Apple'
         cls.org_obj = create_organization_with_details(o1)
         cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
@@ -196,8 +217,7 @@ class VolunteerMethodTests(unittest.TestCase):
             None, None, None, None
         )
         self.assertNotEqual(search_list, False)
-        self.assertEqual(len(search_list), 2)
-        self.assertIn(self.v3, search_list)
+        self.assertEqual(len(search_list), 1)
         self.assertIn(self.v2, search_list)
 
         # test no search matches
@@ -218,19 +238,39 @@ class DeleteVolunteerTest(unittest.TestCase):
         state = get_state_by_name(state_name)
         city_name = 'Bothell'
         city = get_city_by_name(city_name)
-        volunteer_1 = [
-            'Margaret', "Yoshi", "Turtle", "Mario Land", city,
-            state, country, "2374983247",
-            "yoshi1@nintendo.com"
-        ]
-        volunteer_2 = [
-            'Miu', "John", "Doe", "7 Alpine Street", city, state,
-            country, "23454545", "john1@test.com"
-        ]
-        volunteer_3 = [
-            'Brock', "Ash", "Ketchum", "Pallet Town", city, state,
-            country, "23454545", "ash1@pikachu.com"
-        ]
+        volunteer_1 = {
+            'username': 'Margaret',
+            'first_name': "Yoshi",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "yoshi@nintendo.com"
+        }
+        volunteer_2 = {
+            'username': 'Miu',
+            'first_name': "John",
+            'last_name': "Doe",
+            'address': "7 Alpine Street",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "john@test.com"
+        }
+        volunteer_3 = {
+            'username': 'Brock',
+            'first_name': "Ash",
+            'last_name': "Ketchum",
+            'address': "Pallet Town",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "ash@pikachu.com"
+        }
         org_name = 'volunteer-organization'
         cls.org_obj = create_organization_with_details(org_name)
 

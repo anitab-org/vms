@@ -59,17 +59,6 @@ class ManageVolunteerShift(LiveServerTestCase):
         This method initiates Firefox WebDriver, WebDriverWait and
         the corresponding POM objects for this Test Class
         """
-        cls.volunteer_1 = [
-            'volunteer-one', 'volunteer-one', 'volunteer-one', 'volunteer-one',
-            'volunteer-one', 'volunteer-one', 'volunteer-one', '9999999999',
-            'volunteer-email@systers.org', 'volunteer-one'
-        ]
-        cls.volunteer_2 = [
-            'volunteer-two', 'volunteer-two', 'volunteer-two', 'volunteer-two',
-            'volunteer-two', 'volunteer-two', 'volunteer-two', '9999999999',
-            'volunteer-email2@systers.org', 'volunteer-two'
-        ]
-
         firefox_options = Options()
         firefox_options.add_argument('-headless')
         cls.driver = webdriver.Firefox(firefox_options=firefox_options)
@@ -123,29 +112,46 @@ class ManageVolunteerShift(LiveServerTestCase):
         :return: Shift type object.
         """
         # Register event to create job
-        event = ['event-name', '2050-05-20', '2050-05-20']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-20',
+            'end_date': '2050-05-20',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         e1 = create_event_with_details(event)
 
         # Create job to create shift
-        job = ['job name', '2050-05-20', '2050-05-20', 'job description', e1]
+        job = {
+            'name': 'job name',
+            'start_date': '2050-05-20',
+            'end_date': '2050-05-20',
+            'description': 'job description',
+            'event': e1
+        }
         j1 = create_job_with_details(job)
 
         # Create shift to assign
-        shift_1 = ['2050-05-20', shift[0], shift[1], shift[2], j1]
-        s1 = create_shift_with_details(shift_1)
+        shift['job'] = j1
+        s1 = create_shift_with_details(shift)
 
         return s1
 
-    def check_job_details(self, details):
+    def check_shift_details(self, details):
         """
-        Utility function to perform assertions on job details received as param.
+        Utility function to perform assertions on
+        shift detailsreceived as param.
         :param details: Iterable consisting details of job to check.
         """
         sign_up_page = self.sign_up_page
-        self.assertEqual(sign_up_page.get_shift_job(), details[0])
-        self.assertEqual(sign_up_page.get_shift_date(), details[1])
-        self.assertEqual(sign_up_page.get_shift_start_time(), details[2])
-        self.assertEqual(sign_up_page.get_shift_end_time(), details[3])
+        self.assertEqual(sign_up_page.get_shift_job(), details['job'])
+        self.assertEqual(sign_up_page.get_shift_date(), details['date'])
+        self.assertEqual(
+            sign_up_page.get_shift_start_time(),
+            details['start_time']
+        )
+        self.assertEqual(sign_up_page.get_shift_end_time(), details['end_time'])
 
     def wait_for_home_page(self):
         """
@@ -170,7 +176,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Register volunteers
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
 
         self.wait_for_home_page()
@@ -271,7 +284,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         volunteer_1 = create_volunteer()
 
         # Create events
-        event = ['event-name', '2017-05-20', '2017-05-20']
+        event = {
+            'name': 'event-name',
+            'start_date': '2017-05-20',
+            'end_date': '2017-05-20',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         event_1 = create_event_with_details(event)
 
         self.wait_for_home_page()
@@ -297,14 +317,24 @@ class ManageVolunteerShift(LiveServerTestCase):
         volunteer_1 = create_volunteer()
 
         # Create events
-        event = ['event-name', '2017-05-20', '2017-05-20']
+        event = {
+            'name': 'event-name',
+            'start_date': '2017-05-20',
+            'end_date': '2017-05-20',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         event_1 = create_event_with_details(event)
 
         # Create jobs
-        job = [
-            'job name', '2017-05-20', '2017-05-20',
-            'job description', event_1
-        ]
+        job = {
+            'name': 'job name',
+            'start_date': '2017-05-20',
+            'end_date': '2017-05-20',
+            'description': 'job description',
+            'event': event_1
+        }
         job_1 = create_job_with_details(job)
 
         self.wait_for_home_page()
@@ -330,7 +360,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Register volunteers
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
 
         self.wait_for_home_page()
@@ -358,8 +395,12 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Check shift assignment to volunteer-one
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.check_job_details(
-            ['job name', 'May 20, 2050', '9 a.m.', '3 p.m.'])
+        self.check_shift_details({
+            'job': 'job name',
+            'date': 'May 20, 2050',
+            'start_time': '9 a.m.',
+            'end_time': '3 p.m.'
+        })
 
         # check shift assignment email
         mail.outbox = []
@@ -388,16 +429,29 @@ class ManageVolunteerShift(LiveServerTestCase):
         city = get_city_by_name(city_name)
         state = get_state_by_name(state_name)
         country = get_country_by_name(country_name)
-        volunteer_2 = [
-            'volunteer-two', 'volunteer-two', 'volunteer-two', 'volunteer-two',
-            city, state, country, '9999999999',
-            'volunteer-email2@systers.org', 'volunteer-two'
-        ]
+        volunteer_2 = {
+            'username': 'volunteer-two',
+            'first_name': 'volunteer-two',
+            'last_name': 'volunteer-two',
+            'address': 'volunteer-two',
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': '9999999999',
+            'email': 'volunteer-email2@systers.org',
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         volunteer_2 = create_volunteer_with_details(volunteer_2, org_obj)
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
 
         # Open manage volunteer shift
@@ -425,8 +479,12 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Check shift assignment to volunteer-one
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.check_job_details(
-            ['job name', 'May 20, 2050', '9 a.m.', '3 p.m.'])
+        self.check_shift_details({
+            'job': 'job name',
+            'date': 'May 20, 2050',
+            'start_time': '9 a.m.',
+            'end_time': '3 p.m.'
+        })
 
         # Open manage volunteer shift again to assign shift to volunteer two
         manage_shift_page.navigate_to_manage_shift_page()
@@ -455,7 +513,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Register volunteers
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
 
         # Open manage volunteer shift
@@ -489,8 +554,12 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Check shift assignment to volunteer-one
         manage_shift_page.navigate_to_manage_shift_page()
         manage_shift_page.select_volunteer(1)
-        self.check_job_details(
-            ['job name', 'May 20, 2050', '9 a.m.', '3 p.m.'])
+        self.check_shift_details({
+            'job': 'job name',
+            'date': 'May 20, 2050',
+            'start_time': '9 a.m.',
+            'end_time': '3 p.m.'
+        })
 
         # Cancel assigned shift
         self.assertEqual(manage_shift_page.get_cancel_shift().text,
@@ -538,7 +607,14 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
         start = datetime.time(hour=10, minute=0)
         end = datetime.time(hour=14, minute=0)
@@ -567,7 +643,14 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
         start = datetime.time(hour=10, minute=0)
         end = datetime.time(hour=14, minute=0)
@@ -596,7 +679,14 @@ class ManageVolunteerShift(LiveServerTestCase):
 
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
         start = datetime.time(hour=10, minute=0)
         end = datetime.time(hour=14, minute=0)
@@ -632,7 +722,14 @@ class ManageVolunteerShift(LiveServerTestCase):
         # Register volunteers
         volunteer_1 = create_volunteer()
 
-        shift = ['09:00', '15:00', '1']
+        shift = {
+            'date': '2050-05-20',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '1',
+            'address': 'shift-address',
+            'venue': 'venue-address',
+        }
         shift_1 = self.create_shift(shift)
 
         self.wait_for_home_page()

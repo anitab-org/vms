@@ -60,21 +60,27 @@ class EventSignUpPage(BasePage):
 
         self.send_value_to_element_id(
             self.elements.SEARCH_EVENT_NAME,
-            parameters[0]
+            parameters['name']
         )
         self.send_value_to_element_id(
             self.elements.START_DATE_FROM,
-            parameters[1]
+            parameters['date_from']
         )
         self.send_value_to_element_id(
             self.elements.START_DATE_TO,
-            parameters[2]
+            parameters['date_to']
         )
-        self.send_value_to_element_id(self.elements.EVENT_CITY, parameters[3])
-        self.send_value_to_element_id(self.elements.EVENT_STATE, parameters[4])
+        self.send_value_to_element_id(
+            self.elements.EVENT_CITY,
+            parameters['city']
+        )
+        self.send_value_to_element_id(
+            self.elements.EVENT_STATE,
+            parameters['state']
+        )
         self.send_value_to_element_id(
             self.elements.EVENT_COUNTRY,
-            parameters[5]
+            parameters['country']
         )
         self.submit_search_form()
 
@@ -87,19 +93,28 @@ class EventSignUpPage(BasePage):
         self.element_by_id(self.elements.JOB_COUNTRY).clear()
         self.send_value_to_element_id(
             self.elements.SEARCH_JOB_NAME,
-            parameters[0]
+            parameters['name']
         )
         self.send_value_to_element_id(
             self.elements.JOB_START_DATE_FROM,
-            parameters[1]
+            parameters['date_from']
         )
         self.send_value_to_element_id(
             self.elements.JOB_START_DATE_TO,
-            parameters[2]
+            parameters['date_to']
         )
-        self.send_value_to_element_id(self.elements.JOB_CITY, parameters[3])
-        self.send_value_to_element_id(self.elements.JOB_STATE, parameters[4])
-        self.send_value_to_element_id(self.elements.JOB_COUNTRY, parameters[5])
+        self.send_value_to_element_id(
+            self.elements.JOB_CITY,
+            parameters['city']
+        )
+        self.send_value_to_element_id(
+            self.elements.JOB_STATE,
+            parameters['state']
+        )
+        self.send_value_to_element_id(
+            self.elements.JOB_COUNTRY,
+            parameters['country']
+        )
         self.submit_search_form()
 
     def get_job_name(self):

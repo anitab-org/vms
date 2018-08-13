@@ -80,14 +80,30 @@ class ShiftHours(LiveServerTestCase):
         """
         Utility function to register data for testing.
         """
-        created_event = create_event_with_details(
-            ['event-unlogged', '2015-06-01', '2015-06-10'])
-        created_job = create_job_with_details([
-            'jobUnlogged', '2015-06-01', '2015-06-10', 'job description',
-            created_event
-        ])
-        created_shift = create_shift_with_details(
-            ['2015-06-01', '09:00', '15:00', '10', created_job])
+        created_event = create_event_with_details({
+            'name': 'event-unlogged',
+            'start_date': '2015-06-01',
+            'end_date': '2015-06-10',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        })
+        created_job = create_job_with_details({
+            'name': 'jobUnlogged',
+            'start_date': '2015-06-01',
+            'end_date': '2015-06-10',
+            'description': 'job description',
+            'event': created_event
+        })
+        created_shift = create_shift_with_details({
+            'date': '2015-06-01',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '10',
+            'job': created_job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        })
         registered_shift =\
             register_volunteer_for_shift_utility(created_shift, self.v1)
 
@@ -96,15 +112,30 @@ class ShiftHours(LiveServerTestCase):
         Utility function to create valid data for test.
         """
         # Create shift and log hours
-        e1 = create_event_with_details(
-            ['event', '2015-06-15', '2015-06-17']
-        )
-        j1 = create_job_with_details(
-            ['job', '2015-06-15', '2015-06-15', 'job description', e1]
-        )
-        s1 = create_shift_with_details(
-            ['2015-06-15', '09:00', '15:00', '6', j1]
-        )
+        e1 = create_event_with_details({
+            'name': 'event',
+            'start_date': '2015-06-15',
+            'end_date': '2015-06-17',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        })
+        j1 = create_job_with_details({
+            'name': 'job',
+            'start_date': '2015-06-15',
+            'end_date': '2015-06-15',
+            'description': 'job description',
+            'event': e1
+        })
+        s1 = create_shift_with_details({
+            'date': '2015-06-15',
+            'start_time': '09:00',
+            'end_time': '15:00',
+            'max_volunteers': '6',
+            'job': j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        })
         log_hours_with_details(self.v1, s1, '12:00', '13:00')
 
     def test_view_without_unlogged_shift(self):

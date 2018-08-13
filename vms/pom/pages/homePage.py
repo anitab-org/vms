@@ -68,10 +68,16 @@ class HomePage(BasePage):
         self.element_by_id(self.elements.SUBMIT).click()
 
     def fill_password_change_form(self, password):
-        self.send_value_to_xpath(self.elements.OLD_PASSWORD, password[0])
-        self.send_value_to_xpath(self.elements.NEW_PASSWORD, password[1])
+        self.send_value_to_xpath(
+            self.elements.OLD_PASSWORD,
+            password['old_password']
+        )
+        self.send_value_to_xpath(
+            self.elements.NEW_PASSWORD,
+            password['new_password']
+        )
         self.send_value_to_xpath(
             self.elements.CONFIRM_NEW_PASSWORD,
-            password[2]
+            password['confirm_new_password']
         )
         self.submit_form()

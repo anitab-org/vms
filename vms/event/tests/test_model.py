@@ -40,7 +40,14 @@ class EventModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -48,8 +55,14 @@ class EventModelTests(TestCase):
         """
         Database test for model creation with valid values.
         """
-        event = ['event-name', '2050-05-24', '2050-05-28', 'event-description',
-                 'event address', 'event venue']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         create_event_with_details(event)
 
         # Check database for instance creation
@@ -57,18 +70,25 @@ class EventModelTests(TestCase):
 
         event_in_db = Event.objects.get(Q(name='event-name'))
         # Verify correctness
-        self.assertEqual(event_in_db.name, event[0])
-        self.assertEqual(str(event_in_db.start_date), event[1])
-        self.assertEqual(str(event_in_db.end_date), event[2])
-        self.assertEqual(event_in_db.description, event[3])
-        self.assertEqual(event_in_db.address, event[4])
-        self.assertEqual(event_in_db.venue, event[5])
+        self.assertEqual(event_in_db.name, event['name'])
+        self.assertEqual(str(event_in_db.start_date), event['start_date'])
+        self.assertEqual(str(event_in_db.end_date), event['end_date'])
+        self.assertEqual(event_in_db.description, event['description'])
+        self.assertEqual(event_in_db.address, event['address'])
+        self.assertEqual(event_in_db.venue, event['venue'])
 
     def test_invalid_name_in_model_create(self):
         """
         Database test for model creation with invalid name.
         """
-        event_data = ['event~name', '2050-05-21', '2050-05-24']
+        event_data = {
+            'name': 'event~name',
+            'start_date': '2050-05-21',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         event = create_event_with_details(event_data)
 
         self.assertRaisesRegexp(
@@ -81,23 +101,37 @@ class EventModelTests(TestCase):
     #     """
     #      Database test for model creation with invalid start date.
     #     """
-    #     This test need to be uncommented after
-    #     clean method is defined for model.
-    #     event_data = ['event-name', '2013-05-21', '2050-05-24']
+    #     This test need to be uncommented after clean method
+    #     is defined for model.
+    #     event_data = {
+    #         'name': 'event-name',
+    #         'start_date': '2013-05-21',
+    #         'end_date': '2050-05-24',
+    #         'description': 'event-description',
+    #         'address': 'event-address',
+    #         'venue': 'event-venue'
+    #     }
     #     event = create_event_with_details(event_data)
     #     self.assertRaisesRegexp(
     #         ValidationError,
     #         EventsPage.ENTER_VALID_VALUE,
     #         event.full_clean
-    #     )
+    # )
 
-    # def test_invalid_start_date_in_model_create(self):
+    # def test_invalid_end_date_in_model_create(self):
     #     """
     #      Database test for model creation with invalid end date.
     #     """
-    #     This test need to be uncommented after
-    #     clean method is defined for model.
-    #     event_data = ['event-name', '2050-05-21', '2013-05-24']
+    #     This test need to be uncommented after clean method
+    #     is defined for model.
+    #     event_data = {
+    #          'name': 'event-name',
+    #          'start_date': '2050-05-21',
+    #          'end_date': '2013-05-24',
+    #          'description': 'event-description',
+    #          'address': 'event-address',
+    #          'venue': 'event-venue'
+    #     }
     #     event = create_event_with_details(event_data)
     #     self.assertRaisesRegexp(
     #         ValidationError,

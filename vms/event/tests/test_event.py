@@ -67,11 +67,14 @@ class EventDetails(LiveServerTestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        created_event = create_event_with_details(
-            [
-                'event', '2050-06-11', '2050-06-19'
-            ]
-        )
+        created_event = create_event_with_details({
+            'name': 'event',
+            'start_date': '2050-06-11',
+            'end_date': '2050-06-19',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        })
         return created_event
 
     def check_error_messages(self):
@@ -138,11 +141,14 @@ class EventDetails(LiveServerTestCase):
 
     def test_event_detail_page(self):
         # Navigate to event view
-        created_event = create_event_with_details(
-            [
-                'event', '2050-06-11', '2050-06-19', 'event-description'
-            ]
-        )
+        created_event = create_event_with_details({
+            'name': 'event',
+            'start_date': '2050-06-11',
+            'end_date': '2050-06-19',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        })
         event_details_page = self.event_details_page
         event_details_page.live_server_url = self.live_server_url
         event_details_page.go_to_events_page()
@@ -198,7 +204,14 @@ class EventDetails(LiveServerTestCase):
         event_details_page.go_to_events_page()
 
         # Create empty job
-        event = ['', '', '']
+        event = {
+            'name': '',
+            'start_date': '',
+            'end_date': '',
+            'description': '',
+            'address': '',
+            'venue': ''
+        }
         event_details_page.go_to_create_event_page()
         event_details_page.fill_event_form(event)
 
@@ -216,7 +229,14 @@ class EventDetails(LiveServerTestCase):
 
         event_details_page.go_to_edit_event_page()
 
-        null_valued_event = ['', '', '']
+        null_valued_event = {
+            'name': '',
+            'start_date': '',
+            'end_date': '',
+            'description': '',
+            'address': '',
+            'venue': ''
+        }
         event_details_page.fill_event_form(null_valued_event)
         self.check_error_messages()
 
@@ -229,12 +249,22 @@ class EventDetails(LiveServerTestCase):
         event_details_page.live_server_url = self.live_server_url
         event_details_page.go_to_events_page()
 
-        edit_job = ['newevent', '2050-06-12', '2050-06-20']
+        edit_event = {
+            'name': 'newevent',
+            'start_date': '2050-06-12',
+            'end_date': '2050-06-20',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         event_details_page.go_to_edit_event_page()
-        event_details_page.fill_event_form(edit_job)
+        event_details_page.fill_event_form(edit_event)
         event_details_page.navigate_to_event_list_view()
 
-        self.assertEqual(event_details_page.get_event_name(), edit_job[0])
+        self.assertEqual(
+            event_details_page.get_event_name(),
+            edit_event['name']
+        )
         self.assertEqual(
             event_details_page.get_event_start_date(),
             'June 12, 2050'
@@ -273,7 +303,14 @@ class EventDetails(LiveServerTestCase):
         event_details_page.go_to_events_page()
         event_details_page.go_to_create_event_page()
 
-        event_start_after_end = ['event name', '2050-06-17', '2050-06-16']
+        event_start_after_end = {
+            'name': 'event name',
+            'start_date': '2050-06-17',
+            'end_date': '2050-06-16',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         event_details_page.fill_event_form(event_start_after_end)
 
         # Check error.
