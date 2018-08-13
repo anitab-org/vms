@@ -327,13 +327,14 @@ def get_meetup(request):
     if response.status_code == 200:
         json_data = json.loads(response.text)
         for meetup in json_data:
-             start_date = meetup['start_date']
-             venue = meetup['venue']
-             name = meetup['event_name']
-             end_date = start_date
-             event_details = [name, start_date, end_date]
-             event = create_event_with_details(event_details)
-             event.venue = venue
-             event.save()
+            start_date = meetup['start_date']
+            venue = meetup['venue']
+            name = meetup['event_name']
+            end_date = start_date
+            event_details = [name, start_date, end_date]
+            event = create_event_with_details(event_details)
+            event.venue = venue
+            event.save()
         return HttpResponseRedirect(reverse('event:list'))
-
+    else:
+        return render(request, 'vms/no_connection.html')
