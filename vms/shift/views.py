@@ -446,7 +446,7 @@ class EditHoursView(LoginRequiredMixin, FormView):
                                                'domain': site.domain,
                                                })
                     try:
-                        send_mail("Edit request", message, "messanger@localhost.com", ["admin@admin.com"])
+                        send_mail("Edit request", message, "messanger@localhost.com", ["systerskeeper@gmail.com"])
                     except:
                         raise Exception("There was an error in sending the email.")
                     volunteer_shift.edit_requested = True
