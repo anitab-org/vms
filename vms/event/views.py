@@ -25,7 +25,8 @@ from administrator.utils import admin_required
 from cities_light.models import Country, Region, City
 from event.forms import EventForm, SearchEventForm
 from event.models import Event
-from event.services import (check_edit_event, get_event_by_id, get_events_ordered_by_name,
+from event.services import (check_edit_event, get_event_by_id,
+                            get_events_ordered_by_name,
                             remove_empty_events_for_volunteer, search_events)
 from job.services import get_jobs_by_event_id
 from volunteer.utils import vol_id_check
@@ -119,7 +120,8 @@ class EventDeleteView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
 class EventDetailView(LoginRequiredMixin, DetailView):
     """
     The view to show the details of an Event
-    Extends DetailView which is a generic class based view designed to display data.
+    Extends DetailView which is a generic class
+    based view designed to display data.
     """
 
     template_name = 'event/details.html'
@@ -154,7 +156,7 @@ class EventUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
                                                   'end_date').distinct()
         context['country_list'] = Country.objects.all()
         event_id = self.kwargs['event_id']
-        event =  get_event_by_id(event_id)
+        event = get_event_by_id(event_id)
         if event.country:
             country = event.country
             state_list = Region.objects.filter(country=country)
@@ -238,7 +240,10 @@ def list_sign_up(request, volunteer_id):
             city = form.cleaned_data['city']
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
-            search_result_list = search_events(name, start_date, end_date, city, state, country, '')
+            search_result_list = search_events(
+                name, start_date, end_date,
+                city, state, country, ''
+            )
     else:
         form = SearchEventForm()
         search_result_list = get_events_ordered_by_name()
@@ -257,7 +262,9 @@ def list_sign_up(request, volunteer_id):
 def list_events(request):
     """
     list of filtered events
-    :return: search_result_list: filtered events based on name, start date, end date, state, city, country, job
+    :return: search_result_list: filtered events based on name,
+                                 start date, end date, state,
+                                 city, country, job
     :return: SearchEventForm
     """
     search_result_list = get_events_ordered_by_name()
@@ -284,10 +291,11 @@ def list_events(request):
             'today': today
         })
 
+
 class ApiForVolaView(APIView):
 
     @classmethod
-    def return_event_data(self, events):
+    def return_event_data(cls, events):
         """function to return all or filtered event data"""
         event_list = list()
         for event in events:
@@ -299,31 +307,38 @@ class ApiForVolaView(APIView):
             event_data['address'] = event.address
             event_data['city'] = event.city.name if event.city else None
             event_data['state'] = event.state.name if event.state else None
-            event_data['country'] = event.country.name if event.country else None
+            event_data['country'] = \
+                event.country.name if event.country else None
             event_data['venue'] = event.venue
             event_list.append(event_data)
         return JsonResponse(event_list, safe=False)
 
     @classmethod
-    def get(self, request):
+    def get(cls, request):
         # fetching all meetups
         events = Event.objects.all().order_by('start_date')
         api_for_vola_view = ApiForVolaView()
-        return(api_for_vola_view.return_event_data(events))
+        return api_for_vola_view.return_event_data(events)
 
     @classmethod
-    def post(self, request):
+    def post(cls, request):
         date = request.data['date']
-        # fetching all events whose start date is greater than or equal to the date posted
-        events = Event.objects.filter(start_date__gte=date).order_by('start_date')
+        # fetching all events whose start date is
+        # greater than or equal to the date posted
+        events = Event.objects.filter(
+            start_date__gte=date
+        ).order_by('start_date')
         api_for_vola_view = ApiForVolaView()
-        return(api_for_vola_view.return_event_data(events))
+        return api_for_vola_view.return_event_data(events)
 
 
 def get_meetup(request):
     date = str(datetime.datetime.today().date())
     data = {'date': date}
-    response = requests.post('http://127.0.0.1:8000/meetup/api/v1/request_meetup_data/', data)
+    response = requests.post(
+        'http://127.0.0.1:8000/meetup/api/v1/request_meetup_data/',
+        data
+    )
     if response.status_code == 200:
         json_data = json.loads(response.text)
         for meetup in json_data:

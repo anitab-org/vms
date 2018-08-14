@@ -7,6 +7,7 @@ from pom.locators.volunteerReportPageLocators import VolunteerReportPageLocators
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
 
+
 class VolunteerReportPage(BasePage):
     volunteer_history_page = PageUrls.volunteer_history_page
     volunteer_report_page = PageUrls.volunteer_report_page

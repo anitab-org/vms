@@ -1,15 +1,15 @@
 # third party
-from selenium.webdriver.support.ui import Select
 
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.administratorReportPageLocators import AdministratorReportPageLocators
+from pom.locators.administratorReportPageLocators import \
+    AdministratorReportPageLocators
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
 
+
 class AdministratorReportPage(BasePage):
     administrator_report_page = PageUrls.administrator_report_page
-
 
     def __init__(self, driver):
         self.driver = driver
@@ -40,7 +40,7 @@ class AdministratorReportPage(BasePage):
         self.element_by_xpath(self.elements.REJECT_REPORT + '//a').click()
 
     def get_report(self):
-         return self.element_by_xpath(self.elements.REPORT)
+        return self.element_by_xpath(self.elements.REPORT)
 
     def get_approval_context(self):
         return self.element_by_xpath(self.elements.APPROVE_REPORT).text

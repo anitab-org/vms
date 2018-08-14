@@ -32,7 +32,11 @@ def clear_objects():
 
 
 def create_edit_request_with_details(start_time, end_time, logged_shift):
-    er1 = EditRequest(volunteer_shift=logged_shift, start_time=start_time, end_time=end_time)
+    er1 = EditRequest(
+        volunteer_shift=logged_shift,
+        start_time=start_time,
+        end_time=end_time
+    )
     er1.save()
     return er1
 
@@ -40,21 +44,28 @@ def create_edit_request_with_details(start_time, end_time, logged_shift):
 def create_event_with_details(event):
     """
     Creates and returns event with passed name and dates
-    """ 
-    if len(event) == 4:
-       e1 = Event(name=event[0], start_date=event[1], end_date=event[2], description=event[3])
-    else: 
-       e1 = Event(name=event[0], start_date=event[1], end_date=event[2])
+    """
+    e1 = Event(
+        name=event['name'],
+        start_date=event['start_date'],
+        end_date=event['end_date'],
+        description=event['description'],
+        address=event['address'],
+        venue=event['venue']
+    )
     e1.save()
     return e1
 
 
 def create_report_with_details(vol, logged_shift):
-     total_hours = calculate_duration(logged_shift.start_time, logged_shift.end_time)
-     r1 = Report.objects.create(volunteer=vol, total_hrs=total_hours)
-     r1.volunteer_shifts.add(logged_shift)
-     r1.save()
-     return r1
+    total_hours = calculate_duration(
+        logged_shift.start_time,
+        logged_shift.end_time
+    )
+    r1 = Report.objects.create(volunteer=vol, total_hrs=total_hours)
+    r1.volunteer_shifts.add(logged_shift)
+    r1.save()
+    return r1
 
 
 def create_job_with_details(job):
@@ -63,11 +74,11 @@ def create_job_with_details(job):
     """
 
     j1 = Job(
-        name=job[0],
-        start_date=job[1],
-        end_date=job[2],
-        description=job[3],
-        event=job[4])
+        name=job['name'],
+        start_date=job['start_date'],
+        end_date=job['end_date'],
+        description=job['description'],
+        event=job['event'])
 
     j1.save()
     return j1
@@ -77,16 +88,19 @@ def create_volunteer_with_details(volunteer, org_obj):
     """
     Creates and returns volunteer with passed name and dates
     """
-    u1 = User.objects.create_user(username=volunteer[0], password='volunteer')
+    u1 = User.objects.create_user(
+        username=volunteer['username'],
+        password='volunteer'
+    )
     v1 = Volunteer(
-        first_name=volunteer[1],
-        last_name=volunteer[2],
-        address=volunteer[3],
-        city=volunteer[4],
-        state=volunteer[5],
-        country=volunteer[6],
-        phone_number=volunteer[7],
-        email=volunteer[8],
+        first_name=volunteer['first_name'],
+        last_name=volunteer['last_name'],
+        address=volunteer['address'],
+        city=volunteer['city'],
+        state=volunteer['state'],
+        country=volunteer['country'],
+        phone_number=volunteer['phone_number'],
+        email=volunteer['email'],
         user=u1,
         organization=org_obj)
     v1.save()
@@ -97,16 +111,24 @@ def create_volunteer_with_details_dynamic_password(volunteer):
     """
     Creates and returns volunteer with passed name and dates
     """
-    u1 = User.objects.create_user(username=volunteer[0], password=volunteer[1])
+    u1 = User.objects.create_user(
+        username=volunteer['username'],
+        password=volunteer['password']
+    )
     v1 = Volunteer(
-        email=volunteer[2],
-        first_name=volunteer[3],
-        last_name=volunteer[4],
-        address=volunteer[5],
-        city=volunteer[6],
-        state=volunteer[7],
-        country=volunteer[8],
-        phone_number=volunteer[9],
+        email=volunteer['email'],
+        first_name=volunteer['first_name'],
+        last_name=volunteer['last_name'],
+        address=volunteer['address'],
+        city=volunteer['city'],
+        state=volunteer['state'],
+        country=volunteer['country'],
+        phone_number=volunteer['phone_number'],
+        unlisted_organization=volunteer['unlisted_organization'],
+        websites=volunteer['websites'],
+        description=volunteer['description'],
+        resume=volunteer['resume'],
+        reminder_days=volunteer['reminder_days'],
         user=u1
     )
 
@@ -114,27 +136,47 @@ def create_volunteer_with_details_dynamic_password(volunteer):
     return v1
 
 
+def create_admin_with_details(admin):
+    """
+    Creates an administrator with received param.
+    :param admin: Iterable containing information of administrator.
+    :return: Administrator type object.
+    """
+    user = User.objects.create_user(
+        username=admin['username'],
+        password=admin['password']
+    )
+    org = create_organization_with_details(admin['organization'])
+    created_admin = Administrator(
+        first_name=admin['first_name'],
+        last_name=admin['last_name'],
+        email=admin['email'],
+        address=admin['address'],
+        city=admin['city'],
+        state=admin['state'],
+        country=admin['country'],
+        phone_number=admin['phone_number'],
+        organization=org,
+        user=user
+    )
+    created_admin.save()
+    return created_admin
+
+
 def create_shift_with_details(shift):
     """
     Creates and returns shift with passed name and dates
     """
-    if len(shift) == 5:
-        s1 = Shift(
-            date=shift[0],
-            start_time=shift[1],
-            end_time=shift[2],
-            max_volunteers=shift[3],
-            job=shift[4])
-    elif len(shift) == 7:
-        s1 = Shift(
-            date=shift[0],
-            start_time=shift[1],
-            end_time=shift[2],
-            max_volunteers=shift[3],
-            job=shift[4],
-            address=shift[5],
-            venue=shift[6]
-        )
+
+    s1 = Shift(
+        date=shift['date'],
+        start_time=shift['start_time'],
+        end_time=shift['end_time'],
+        max_volunteers=shift['max_volunteers'],
+        job=shift['job'],
+        address=shift['address'],
+        venue=shift['venue']
+    )
     s1.save()
     return s1
 
@@ -156,11 +198,11 @@ def set_shift_location(shift, loc):
     """
     Sets and returns shift with passed location details
     """
-    shift.address = loc[0]
-    shift.city = loc[1]
-    shift.state = loc[2]
-    shift.country = loc[3]
-    shift.venue = loc[4]
+    shift.address = loc['address']
+    shift.city = loc['city']
+    shift.state = loc['state']
+    shift.country = loc['country']
+    shift.venue = loc['venue']
 
     shift.save()
     return shift
@@ -174,11 +216,11 @@ def get_report_list(duration_list, report_list, total_hours):
 
     for duration in duration_list:
         total_hours += duration
-        report = {}
+        report = dict()
         report["duration"] = duration
         report_list.append(report)
 
-    return (report_list, total_hours)
+    return report_list, total_hours
 
 
 def get_country_by_name(country_name):
@@ -213,21 +255,22 @@ def create_country():
         code3='IND',
         continent='AS',
         tld='in',
-        phone='91')
+        phone='91'
+    )
     return country
 
 
 def create_state():
     country = Country.objects.get(name='India')
     state = Region.objects.create(
-        name_ascii = "Uttarakhand",
+        name_ascii="Uttarakhand",
         slug='uttarakhand',
         geoname_id='1444366',
         alternate_names='',
         name='Uttarakhand',
         geoname_code='39',
         country=country
-        )
+    )
     return state
 
 
@@ -235,14 +278,14 @@ def create_city():
     country = Country.objects.get(name='India')
     state = Region.objects.get(name='Uttarakhand')
     city = City.objects.create(
-        name_ascii = 'Roorkee',
+        name_ascii='Roorkee',
         slug='roorkee',
         geoname_id=1258044,
         alternate_names='',
         name='Roorkee',
         region=state,
         country=country,
-        )
+    )
     return city
 
 
@@ -250,14 +293,14 @@ def create_other_city():
     country = Country.objects.get(name='India')
     state = Region.objects.get(name='Uttarakhand')
     city = City.objects.create(
-        name_ascii = 'Mussoorie',
+        name_ascii='Mussoorie',
         slug='mussoorie',
         geoname_id=1262374,
         alternate_names='',
         name='Mussoorie',
         region=state,
         country=country,
-        )
+    )
     return city
 
 
@@ -279,7 +322,7 @@ def create_second_country():
 def create_second_state():
     country = Country.objects.get(name='United States')
     state = Region.objects.create(
-        name_ascii = "Washington",
+        name_ascii="Washington",
         slug='washington',
         geoname_id='5815135',
         alternate_names='',
@@ -293,14 +336,14 @@ def create_second_city():
     country = Country.objects.get(name='United States')
     state = Region.objects.get(name='Washington')
     city = City.objects.create(
-        name_ascii = 'Bothell',
+        name_ascii='Bothell',
         slug='bothell',
         geoname_id=5787829,
         alternate_names='',
         name='Bothell',
         region=state,
         country=country,
-        )
+    )
     return city
 
 
@@ -399,7 +442,11 @@ def register_past_shift_utility():
 
 def register_event_utility():
     event = Event.objects.create(
-        name='event', start_date='2050-05-10', end_date='2050-06-16')
+        name='event',
+        start_date='2050-05-10',
+        end_date='2050-06-16',
+        address='East Baker Street',
+        venue='Kame House')
 
     return event
 
@@ -409,6 +456,7 @@ def register_job_utility():
         name='job',
         start_date='2050-05-10',
         end_date='2050-06-15',
+        description='job description',
         event=Event.objects.get(name='event'))
 
     return job
@@ -420,6 +468,8 @@ def register_shift_utility():
         start_time='09:00',
         end_time='15:00',
         max_volunteers='6',
+        address='East Baker Street',
+        venue='Kame House',
         job=Job.objects.get(name='job'))
 
     return shift

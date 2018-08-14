@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
-from django.conf import settings
 from cities_light.models import City, Country, Region
 from organization.models import Organization
 
@@ -32,7 +31,8 @@ class Administrator(models.Model):
         max_length=20,
         validators=[
             RegexValidator(
-                r'^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$',
+                r'^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*'
+                r'(\d{2,4})(?:[-.x ]*(\d+))?)\s*$',
                 message="Please enter a valid phone number",
             ),
         ],

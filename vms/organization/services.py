@@ -5,15 +5,17 @@ from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from organization.models import Organization
 
 
-
 def create_organization(name):
-    
-    org, created = Organization.objects.get_or_create(name=name, approved_status=False)
+    org, created = Organization.objects.get_or_create(
+        name=name, approved_status=False
+    )
     if created:
         org.save()
     return org
-    
-# need to check that this organization is not currently associated with a user (otherwise the user gets cascade deleted)
+
+
+# need to check that this organization is not currently
+# associated with a user (otherwise the user gets cascade deleted)
 def delete_organization(organization_id):
 
     result = True
@@ -23,12 +25,15 @@ def delete_organization(organization_id):
     if not organization:
         result = False
     else:
-        # check if there are currently any users associated with this organization
-        # this might be difficult to maintain as different types of users are added on
+        # check if there are currently any users
+        # associated with this organization
+        # this might be difficult to maintain as
+        # different types of users are added on
         volunteers_in_organization = organization.volunteer_set.all()
         administrators_in_organization = organization.administrator_set.all()
 
-        # can only delete an organization if no users are currently associated with it
+        # can only delete an organization if no
+        # users are currently associated with it
         if organization and (not volunteers_in_organization) and (
                 not administrators_in_organization):
             organization.delete()
@@ -75,5 +80,7 @@ def get_organization_by_name(organization_name):
 
 
 def get_organizations_ordered_by_name():
-    organization_list = Organization.objects.filter(approved_status=1).order_by('name')
+    organization_list = Organization.objects.filter(
+        approved_status=1
+    ).order_by('name')
     return organization_list

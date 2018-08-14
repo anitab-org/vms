@@ -47,13 +47,19 @@ class CompletedShiftsPage(BasePage):
         return self.element_by_xpath(self.elements.UNLOGGED_SHIFT_JOB_PATH).text
 
     def get_unlogged_shift_date(self):
-        return self.element_by_xpath(self.elements.UNLOGGED_SHIFT_DATE_PATH).text
+        return self.element_by_xpath(
+            self.elements.UNLOGGED_SHIFT_DATE_PATH
+        ).text
 
     def get_unlogged_shift_start_time(self):
-        return self.element_by_xpath(self.elements.UNLOGGED_SHIFT_STIME_PATH).text
+        return self.element_by_xpath(
+            self.elements.UNLOGGED_SHIFT_STIME_PATH
+        ).text
 
     def get_unlogged_shift_end_time(self):
-        return self.element_by_xpath(self.elements.UNLOGGED_SHIFT_ETIME_PATH).text
+        return self.element_by_xpath(
+            self.elements.UNLOGGED_SHIFT_ETIME_PATH
+        ).text
 
     def get_logged_shift_job(self):
         return self.element_by_xpath(self.elements.LOGGED_SHIFT_JOB_PATH).text

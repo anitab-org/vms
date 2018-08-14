@@ -18,6 +18,7 @@ from organization.models import Organization
 from organization.services import get_organization_by_id, ObjectDoesNotExist
 from volunteer.models import Volunteer
 
+
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -88,6 +89,7 @@ class OrganizationListView(LoginRequiredMixin, ListView):
         organizations = Organization.objects.order_by('name')
         return organizations
 
+
 def approve(request, organization_id):
     """
     approves the pending organizatons
@@ -99,6 +101,7 @@ def approve(request, organization_id):
     unlisted_org.approved_status = 1
     unlisted_org.save()
     return HttpResponseRedirect('/organization/list')
+
 
 def reject(request, organization_id):
     """
@@ -113,15 +116,25 @@ def reject(request, organization_id):
     try:
         vol_email = Volunteer.objects.get(organization=unlisted_org).email
         try:
-            send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected",
-                      "messanger@localhost.com", [vol_email], fail_silently=False)
-        except:
+            send_mail(
+                "Organization Rejected",
+                "The organization you filled while sign-up has been rejected",
+                "messanger@localhost.com",
+                [vol_email],
+                fail_silently=False
+            )
+        except Exception:
             raise Exception("There was an error in sending emails.")
-    except:
+    except Exception:
         admin_email = Administrator.objects.get(organization=unlisted_org).email
         try:
-            send_mail("Organization Rejected", "The organization you filled while sign-up has been rejected",
-                      "messanger@localhost.com", [admin_email], fail_silently=False)
-        except:
+            send_mail(
+                "Organization Rejected",
+                "The organization you filled while sign-up has been rejected",
+                "messanger@localhost.com",
+                [admin_email],
+                fail_silently=False
+            )
+        except Exception:
             raise Exception("There was an error in sending emails.")
     return HttpResponseRedirect('/organization/list')

@@ -7,7 +7,7 @@ class EventsPageLocators(object):
     JOB_EVENT = '//table//tbody//tr[1]//td[2]'
     SHIFT_DATE = '//table//tbody//tr[1]//td[1]'
     CREATED_ORG_NAME = '//*[@id="confirmed"]//tbody//tr//td[1]'
-    UNLISTED_ORG_NAME = '//*[@id="approve"]//tbody//tr//td[1]' 
+    UNLISTED_ORG_NAME = '//*[@id="approve"]//tbody//tr//td[1]'
     MESSAGE_BOX = 'alert-success'
     HELP_BLOCK = 'help-block'
 
@@ -19,7 +19,7 @@ class EventsPageLocators(object):
     EDIT_ORG = '//*[@id="confirmed"]//tbody//tr//td[2]'
     DELETE_ORG = '//*[@id="confirmed"]//tbody//tr[1]//td[3]'
     APPROVE_ORG = '//*[@id="approve"]//tbody//tr//td[2]'
-    REJECT_ORG = '//*[@id="approve"]/tbody//tr//td[4]' 
+    REJECT_ORG = '//*[@id="approve"]/tbody//tr//td[4]'
     DELETE_SHIFT = '//table//tbody//tr[1]//td[6]'
     DELETE_JOB = '//table//tbody//tr[1]//td[7]'
     DELETE_EVENT = '//table//tbody//tr[1]//td[6]'
@@ -42,6 +42,8 @@ class EventsPageLocators(object):
     CREATE_EVENT_START_DATE = '//input[@name = "start_date"]'
     CREATE_EVENT_END_DATE = '//input[@name = "end_date"]'
     CREATE_EVENT_ID = '//select[@name = "event_id"]'
+    CREATE_EVENT_ADDRESS = '//input[@name = "address"]'
+    CREATE_EVENT_VENUE = '//input[@name = "venue"]'
     CREATE_JOB_NAME = '//input[@placeholder = "Job Name"]'
     CREATE_JOB_DESCRIPTION = '//textarea[@name = "description"]'
     CREATE_JOB_START_DATE = '//input[@name = "start_date"]'
@@ -50,6 +52,8 @@ class EventsPageLocators(object):
     CREATE_SHIFT_START_TIME = '//input[@name = "start_time"]'
     CREATE_SHIFT_END_TIME = '//input[@name = "end_time"]'
     CREATE_SHIFT_MAX_VOLUNTEER = '//input[@name = "max_volunteers"]'
+    CREATE_SHIFT_ADDRESS = '//input[@name = "address"]'
+    CREATE_SHIFT_VENUE = '//input[@name = "venue"]'
     ORG_NAME = '//input[@name = "name"]'
 
     EVENT_NAME_ERROR = "//form//div[1]/div/p/strong"
@@ -62,6 +66,8 @@ class EventsPageLocators(object):
     SHIFT_START_TIME_ERROR = "//form//div[5]/div/p/strong"
     SHIFT_END_TIME_ERROR = "//form//div[6]/div/p/strong"
     SHIFT_MAX_VOLUNTEER_ERROR = "//form//div[7]/div/p/strong"
+    SHIFT_ADDRESS_ERROR = "//form//div[11]/div/p/strong"
+    SHIFT_VENUE_ERROR = "//form//div[12]/div/p/strong"
     ORGANIZATION_NAME_ERROR = "//form//div[1]/div/p/strong"
 
     GENERAL_SUBMIT_PATH = '//form[1]'

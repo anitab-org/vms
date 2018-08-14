@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView
 from django.views.generic.edit import FormView, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,8 +17,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from event.services import get_events_ordered_by_name, get_event_by_id
 from job.forms import JobForm, SearchJobForm
 from job.models import Job
-from job.services import (get_job_by_id, get_jobs_ordered_by_title, check_edit_job,
-                          remove_empty_jobs_for_volunteer, search_jobs, get_jobs_by_event_id)
+from job.services import (get_job_by_id, get_jobs_ordered_by_title,
+                          check_edit_job, remove_empty_jobs_for_volunteer,
+                          search_jobs, get_jobs_by_event_id)
+
 
 class AdministratorLoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -56,8 +58,8 @@ class CreateJobView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
         job_name = form.cleaned_data.get('name')
         flag = Job.objects.filter(event=event, name=job_name).exists()
         event_list = get_events_ordered_by_name()
-        if (start_date_job >= start_date_event
-                and end_date_job <= end_date_event and not flag):
+        if (start_date_job >= start_date_event and
+                end_date_job <= end_date_event and not flag):
             job = form.save(commit=False)
             if event:
                 job.event = event
@@ -140,8 +142,8 @@ class JobUpdateView(LoginRequiredMixin, AdministratorLoginRequiredMixin,
             return render(self.request, 'job/edit_error.html', {
                 'count': job_edit['invalid_count']
             })
-        if (start_date_job >= start_date_event
-                and end_date_job <= end_date_event):
+        if (start_date_job >= start_date_event and
+                end_date_job <= end_date_event):
             job_to_edit = form.save(commit=False)
             if event:
                 job_to_edit.event = event
@@ -178,7 +180,10 @@ def list_sign_up(request, event_id, volunteer_id):
         else:
                 form = SearchJobForm()
                 search_result_list = get_jobs_by_event_id(event_id)
-        job_list = remove_empty_jobs_for_volunteer(search_result_list, volunteer_id)
+        job_list = remove_empty_jobs_for_volunteer(
+            search_result_list,
+            volunteer_id
+        )
         return render(
             request, 'job/list_sign_up.html', {
                 'form': form,
@@ -197,9 +202,12 @@ class JobListView(AdministratorLoginRequiredMixin, FormView):
     def get(self, request, *args, **kwargs):
         search_result_list = get_jobs_ordered_by_title()
         return render(
-            request, 'job/list.html', {
-            'search_result_list': search_result_list,
-        })
+            request,
+            'job/list.html',
+            {
+                'search_result_list': search_result_list
+            }
+        )
 
     def post(self, request, *args, **kwargs):
         search_result_list = get_jobs_ordered_by_title()
@@ -212,9 +220,16 @@ class JobListView(AdministratorLoginRequiredMixin, FormView):
             state = form.cleaned_data['state']
             country = form.cleaned_data['country']
             event = form.cleaned_data['event']
-            search_result_list = search_jobs(name, start_date, end_date, city, state, country, event)
-        return render(request, 'job/list.html', {
-                     'form': form,
-                     'search_result_list': search_result_list,
-                     })
+            search_result_list = search_jobs(
+                name, start_date, end_date,
+                city, state, country, event
+            )
+        return render(
+            request,
+            'job/list.html',
+            {
+                'form': form,
+                'search_result_list': search_result_list
+            }
+        )
 

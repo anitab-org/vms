@@ -5,14 +5,17 @@ import unittest
 # local Django
 from job.services import (delete_job, check_edit_job, get_job_by_id,
                           get_jobs_by_event_id, get_jobs_ordered_by_title,
-                          get_signed_up_jobs_for_volunteer,
-                          remove_empty_jobs_for_volunteer, search_jobs, job_not_empty)
+                          get_signed_up_jobs_for_volunteer, search_jobs,
+                          remove_empty_jobs_for_volunteer, job_not_empty)
 
 from shift.models import VolunteerShift
 from shift.services import register
-from shift.utils import (create_second_city, create_second_state, create_second_country, create_event_with_details, create_job_with_details,
-                         create_volunteer_with_details, create_organization_with_details,
-                         create_shift_with_details, clear_objects, get_city_by_name, get_state_by_name, get_country_by_name)
+from shift.utils import (create_second_city, create_second_state,
+                         create_second_country, create_event_with_details,
+                         create_job_with_details, create_volunteer_with_details,
+                         create_organization_with_details, clear_objects,
+                         get_city_by_name, get_state_by_name,
+                         get_country_by_name, create_shift_with_details)
 
 
 def setUpModule():
@@ -22,21 +25,46 @@ def setUpModule():
     """
 
     global e1, e2, j1, j2, j3
-    event_1 = ["Software Conference", "2012-10-3", "2012-11-25"]
-    event_2 = ["Django Conference", "2012-10-13", "2012-11-25"]
+    event_1 = {
+        'name': "Software Conference",
+        'start_date': "2012-10-3",
+        'end_date': "2012-11-25",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
+    event_2 = {
+        'name': "Django Conference",
+        'start_date': "2012-10-13",
+        'end_date': "2012-11-25",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
     e1 = create_event_with_details(event_1)
     e2 = create_event_with_details(event_2)
 
-    job_1 = [
-        "Software Developer", "2012-10-22", "2012-10-25", "A software job", e1
-    ]
-    job_2 = [
-        "Systems Administrator", "2012-10-8", "2012-10-16",
-        "A systems administrator job", e1
-    ]
-    job_3 = [
-        "Project Manager", "2012-11-2", "2012-11-12", "A management job", e1
-    ]
+    job_1 = {
+        'name': "Software Developer",
+        'start_date': "2012-10-22",
+        'end_date': "2012-10-25",
+        'description': "A software job",
+        'event': e1
+    }
+    job_2 = {
+        'name': "Systems Administrator",
+        'start_date': "2012-10-8",
+        'end_date': "2012-10-16",
+        'description': "A systems administrator job",
+        'event': e1
+    }
+    job_3 = {
+        'name': "Project Manager",
+        'start_date': "2012-11-2",
+        'end_date': "2012-11-12",
+        'description': "A management job",
+        'event': e1
+    }
 
     j1 = create_job_with_details(job_1)
     j2 = create_job_with_details(job_2)
@@ -152,8 +180,10 @@ class JobTests(unittest.TestCase):
         e1.state = state
         e1.country = country
         e1.save()
-        search_list = search_jobs('Software Developer', '2012-10-22', '2012-10-25',
-                                  'Roorkee', 'Uttarakhand', 'India', 'Software Conference')
+        search_list = search_jobs(
+            'Software Developer', '2012-10-22', '2012-10-25',
+            'Roorkee', 'Uttarakhand', 'India', 'Software Conference'
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.j1, search_list)
@@ -161,7 +191,10 @@ class JobTests(unittest.TestCase):
         self.assertNotIn(self.j3, search_list)
 
         # test partial search
-        search_list = search_jobs("Systems Administrator", None, None, None, None, None, None)
+        search_list = search_jobs(
+            "Systems Administrator", None, None, None,
+            None, None, None
+        )
         self.assertNotEqual(search_list, False)
         self.assertEqual(len(search_list), 1)
         self.assertIn(self.j2, search_list)
@@ -178,8 +211,10 @@ class JobTests(unittest.TestCase):
         self.assertIn(self.j3, search_list)
 
         # test no search matches
-        search_list = search_jobs("Billy", "2015-07-25", "2015-08-08", "Quebec",
-                                        "Canada", "Ubisoft", "Program")
+        search_list = search_jobs(
+            "Billy", "2015-07-25", "2015-08-08", "Quebec",
+            "Canada", "Ubisoft", "Program"
+        )
         self.assertEqual(len(search_list), 0)
         self.assertNotIn(self.j1, search_list)
         self.assertNotIn(self.j2, search_list)
@@ -189,22 +224,43 @@ class JobTests(unittest.TestCase):
 class DeleteJobTest(unittest.TestCase):
     @classmethod
     def setup_test_data(cls):
-        event_1 = ["Software Conference 101", "2012-10-3", "2012-10-24"]
+        event_1 = {
+            'name': "Software Conference 101",
+            'start_date': "2012-10-3",
+            'end_date': "2012-10-24",
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         cls.e1 = create_event_with_details(event_1)
 
-        job_1 = [
-            "Software Developer", "2012-10-22", "2012-10-23", "A software job",
-            e1
-        ]
-        job_2 = [
-            "Systems Administrator", "2012-10-8", "2012-10-16",
-            "A systems administrator job", e1
-        ]
+        job_1 = {
+            'name': "Software Developer",
+            'start_date': "2012-10-22",
+            'end_date': "2012-10-23",
+            'description': "A software job",
+            'event': e1
+        }
+        job_2 = {
+            'name': "Systems Administrator",
+            'start_date': "2012-10-8",
+            'end_date': "2012-10-16",
+            'description': "A systems administrator job",
+            'event': e1
+        }
 
         cls.j1 = create_job_with_details(job_1)
         cls.j2 = create_job_with_details(job_2)
 
-        shift_1 = ["2012-10-23", "1:00", "3:00", 1, cls.j1]
+        shift_1 = {
+            'date': "2012-10-23",
+            'start_time': "1:00",
+            'end_time': "3:00",
+            'max_volunteers': 1,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         cls.s1 = create_shift_with_details(shift_1)
 
     @classmethod
@@ -241,18 +297,53 @@ class JobWithShiftTests(unittest.TestCase):
         cls.j2 = j2
 
         # job with shift which has no slot
-        job_4 = [
-            "Information Technologist", "2012-11-2", "2012-12-2", "An IT job",
-            e1
-        ]
+        job_4 = {
+            'name': "Information Technologist",
+            'start_date': "2012-11-2",
+            'end_date': "2012-12-2",
+            'description': "An IT job",
+            'event': e1
+        }
         cls.j4 = create_job_with_details(job_4)
 
-        shift_1 = ["2012-10-23", "1:00", "3:00", 1, cls.j1]
-        shift_2 = ["2012-10-25", "2:00", "4:00", 2, cls.j1]
-        shift_3 = ["2012-10-24", "12:00", "18:00", 4, cls.j3]
+        shift_1 = {
+            'date': "2012-10-23",
+            'start_time': "1:00",
+            'end_time': "3:00",
+            'max_volunteers': 1,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
+        shift_2 = {
+            'date': "2012-10-25",
+            'start_time': "2:00",
+            'end_time': "4:00",
+            'max_volunteers': 2,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
+        shift_3 = {
+            'date': "2012-10-24",
+            'start_time': "12:00",
+            'end_time': "18:00",
+            'max_volunteers': 4,
+            'job': cls.j3,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
 
         # shift with no slots
-        shift_4 = ["2012-11-7", "12:00", "18:00", 1, cls.j4]
+        shift_4 = {
+            'date': "2012-11-7",
+            'start_time': "12:00",
+            'end_time': "18:00",
+            'max_volunteers': 1,
+            'job': cls.j4,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
 
         cls.s1 = create_shift_with_details(shift_1)
         cls.s2 = create_shift_with_details(shift_2)
@@ -263,18 +354,39 @@ class JobWithShiftTests(unittest.TestCase):
         country = create_second_country()
         state = create_second_state()
         city = create_second_city()
-        volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", city, state, country,
-            "2374983247", "yoshi@nintendo.com"
-        ]
-        volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", city, state,
-            country, "23454545", "john@test.com"
-        ]
-        volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", city, state,
-            country, "23454545", "ash@pikachu.com"
-        ]
+        volunteer_1 = {
+            'username': 'Yoshi',
+            'first_name': "Yoshi",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "yoshi@nintendo.com"
+        }
+        volunteer_2 = {
+            'username': 'John',
+            'first_name': "John",
+            'last_name': "Doe",
+            'address': "7 Alpine Street",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "john@test.com"
+        }
+        volunteer_3 = {
+            'username': 'Ash',
+            'first_name': "Ash",
+            'last_name': "Ketchum",
+            'address': "Pallet Town",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "ash@pikachu.com"
+        }
         org_name = 'volunteer-organization'
         org_obj = create_organization_with_details(org_name)
 

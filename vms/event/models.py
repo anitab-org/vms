@@ -10,9 +10,10 @@ class Event(models.Model):
         max_length=75,
         validators=[
             RegexValidator(
-                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$', ),
+                r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\.)|(,)|(\-)|(!)|(\')]+$',
+            ),
         ],
-        )
+    )
     description = models.TextField(blank=True)
     start_date = models.DateField()
     end_date = models.DateField()

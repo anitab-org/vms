@@ -25,7 +25,17 @@ from job.models import Job
 from job.services import get_job_by_id
 from shift.forms import HoursForm, ShiftForm, EditForm
 from shift.models import Shift, EditRequest
-from shift.services import get_shift_by_id, add_shift_hours, cancel_shift_registration, clear_shift_hours, get_future_shifts_by_volunteer_id, edit_shift_hours, get_unlogged_shifts_by_volunteer_id, get_logged_volunteers_by_shift_id, get_shift_slots_remaining, get_volunteers_by_shift_id, get_volunteer_by_id, get_volunteer_shifts_with_hours, get_shifts_ordered_by_date, get_shifts_with_open_slots_for_volunteer, register, get_volunteer_shift_by_id, get_shifts_by_job_id, delete_shift
+from shift.services import (get_shift_by_id, add_shift_hours,
+                            cancel_shift_registration, clear_shift_hours,
+                            get_future_shifts_by_volunteer_id,
+                            edit_shift_hours, get_shift_slots_remaining,
+                            get_unlogged_shifts_by_volunteer_id,
+                            get_logged_volunteers_by_shift_id, delete_shift,
+                            get_volunteers_by_shift_id, get_volunteer_by_id,
+                            get_volunteer_shifts_with_hours,
+                            get_shifts_ordered_by_date, register,
+                            get_shifts_with_open_slots_for_volunteer,
+                            get_volunteer_shift_by_id, get_shifts_by_job_id)
 from volunteer.forms import SearchVolunteerForm
 from volunteer.models import Volunteer
 from volunteer.services import get_all_volunteers, search_volunteers
@@ -75,9 +85,9 @@ class AddHoursView(LoginRequiredMixin, FormView):
         shift_start_time = shift.start_time
         shift_end_time = shift.end_time
         try:
-            if (end_time > start_time):
-                if (start_time >= shift_start_time
-                        and end_time <= shift_end_time):
+            if end_time > start_time:
+                if (start_time >= shift_start_time and
+                        end_time <= shift_end_time):
                     add_shift_hours(volunteer_id, shift_id, start_time,
                                     end_time)
                     return HttpResponseRedirect(
@@ -130,9 +140,9 @@ class AddHoursManagerView(AdministratorLoginRequiredMixin, FormView):
         shift_start_time = shift.start_time
         shift_end_time = shift.end_time
         try:
-            if (end_time > start_time):
-                if (start_time >= shift_start_time
-                        and end_time <= shift_end_time):
+            if end_time > start_time:
+                if (start_time >= shift_start_time and
+                        end_time <= shift_end_time):
                     add_shift_hours(volunteer_id, shift_id, start_time,
                                     end_time)
                     return HttpResponseRedirect(
@@ -188,9 +198,10 @@ def cancel(request, shift_id, volunteer_id):
         if not admin and not volunteer:
             return render(request, 'vms/no_volunteer_rights.html', status=403)
 
-        # if a volunteer is logged in, verify that they are canceling their own shift
+        # if a volunteer is logged in,
+        # verify that they are canceling their own shift
         if volunteer:
-            if (int(volunteer.id) != int(volunteer_id)):
+            if int(volunteer.id) != int(volunteer_id):
                 return render(
                     request, 'vms/no_volunteer_rights.html', status=403)
 
@@ -213,11 +224,14 @@ def cancel(request, shift_id, volunteer_id):
                             'job_name': job_object.name,
                             'event_name': event_object.name,
                             'shift_date': shift_object.date,
-                            })
+                        }
+                    )
                     try:
-                        send_mail("Shift Cancelled", message,
-                              "messanger@localhost.com", [vol_email])
-                    except:
+                        send_mail(
+                            "Shift Cancelled", message,
+                            "messanger@localhost.com", [vol_email]
+                        )
+                    except Exception:
                         raise Exception("There was an error in sending email.")
                     return HttpResponseRedirect(
                         reverse(
@@ -230,7 +244,7 @@ def cancel(request, shift_id, volunteer_id):
                             args=(volunteer_id, )))
                 else:
                     raise Http404
-            except:
+            except Exception:
                 raise Http404
         else:
             return render(request, 'shift/cancel_shift.html', {
@@ -293,15 +307,15 @@ class ShiftCreateView(AdministratorLoginRequiredMixin, FormView):
         shift_date = form.cleaned_data['date']
         shift_start_time = form.cleaned_data['start_time']
         shift_end_time = form.cleaned_data['end_time']
-        if (shift_date >= start_date_job and shift_date <= end_date_job
-                and shift_end_time > shift_start_time):
+        if (start_date_job <= shift_date <= end_date_job and
+                shift_end_time > shift_start_time):
             shift = form.save(commit=False)
             shift.job = job
             shift.save()
             return HttpResponseRedirect(
                 reverse('shift:list_shifts', args=(job_id, )))
         else:
-            if (shift_date < start_date_job or shift_date > end_date_job):
+            if shift_date < start_date_job or shift_date > end_date_job:
                 messages.add_message(self.request, messages.INFO,
                                      'Shift date should lie within Job dates')
             if shift_end_time <= shift_start_time:
@@ -371,15 +385,16 @@ class ShiftUpdateView(AdministratorLoginRequiredMixin, UpdateView):
         max_vols = form.cleaned_data['max_volunteers']
 
         # save when all conditions satisfied
-        if (shift_date >= start_date_job and shift_date <= end_date_job and shift_end_time > shift_start_time \
-            and max_vols >= len(shift.volunteers.all())):
+        if (start_date_job <= shift_date <= end_date_job and
+                shift_end_time > shift_start_time and
+                max_vols >= len(shift.volunteers.all())):
             shift_to_edit = form.save(commit=False)
             shift_to_edit.job = job
             shift_to_edit.save()
             return HttpResponseRedirect(
                 reverse('shift:list_shifts', args=(shift.job.id, )))
         else:
-            if (shift_date < start_date_job or shift_date > end_date_job):
+            if shift_date < start_date_job or shift_date > end_date_job:
                 messages.add_message(self.request, messages.INFO,
                                      'Shift date should lie within Job dates')
             if shift_end_time <= shift_start_time:
@@ -410,8 +425,8 @@ class EditHoursView(LoginRequiredMixin, FormView):
         context = super(EditHoursView, self).get_context_data(**kwargs)
         volunteer_id = self.kwargs['volunteer_id']
         shift_id = self.kwargs['shift_id']
-        context['volunteer_shift'] = get_volunteer_shift_by_id(
-            volunteer_id, shift_id)
+        context['volunteer_shift'] = \
+            get_volunteer_shift_by_id(volunteer_id, shift_id)
         context['shift'] = get_shift_by_id(shift_id)
         return context
 
@@ -428,27 +443,35 @@ class EditHoursView(LoginRequiredMixin, FormView):
         event = shift.job.event
         site = get_current_site(self.request)
         try:
-            if (end_time > start_time):
-                if (start_time >= shift_start_time
-                        and end_time <= shift_end_time):
-                    request =  form.save(commit=False)
+            if end_time > start_time:
+                if (start_time >= shift_start_time and
+                        end_time <= shift_end_time):
+                    request = form.save(commit=False)
                     request.volunteer_shift = volunteer_shift
                     request.save()
-                    message = render_to_string('shift/request_admin.html',
-                                              {'volunteer': volunteer,
-                                               'new_start_time': start_time,
-                                               'new_end_time': end_time,
-                                               'original_start_time': shift_start_time,
-                                               'original_end_time': shift_end_time,
-                                               'event': event,
-                                               'edit_request': request,
-                                               'shift_id': shift_id,
-                                               'domain': site.domain,
-                                               })
+                    message = render_to_string(
+                        'shift/request_admin.html',
+                        {
+                            'volunteer': volunteer,
+                            'new_start_time': start_time,
+                            'new_end_time': end_time,
+                            'original_start_time': shift_start_time,
+                            'original_end_time': shift_end_time,
+                            'event': event,
+                            'edit_request': request,
+                            'shift_id': shift_id,
+                            'domain': site.domain,
+                        }
+                    )
                     try:
-                        send_mail("Edit request", message, "messanger@localhost.com", ["systerskeeper@gmail.com"])
-                    except:
-                        raise Exception("There was an error in sending the email.")
+                        send_mail(
+                            "Edit request", message,
+                            "messanger@localhost.com", ["systerskeeper@gmail.com"]
+                        )
+                    except Exception:
+                        raise Exception(
+                            "There was an error in sending the email."
+                        )
                     volunteer_shift.edit_requested = True
                     volunteer_shift.save()
                     return HttpResponseRedirect(
@@ -469,7 +492,8 @@ class EditHoursView(LoginRequiredMixin, FormView):
             else:
                 messages.add_message(
                     self.request, messages.INFO,
-                    'End time should be greater than start time')
+                    'End time should be greater than start time'
+                )
                 return render(
                     self.request, 'shift/edit_hours.html', {
                         'form': form,
@@ -478,7 +502,7 @@ class EditHoursView(LoginRequiredMixin, FormView):
                         'shift': shift,
                         'volunteer_shift': volunteer_shift,
                     })
-        except:
+        except Exception:
             raise Http404
 
 
@@ -492,7 +516,8 @@ class EditRequestManagerView(AdministratorLoginRequiredMixin, UpdateView):
         context['shift'] = get_shift_by_id(shift_id)
         volunteer_id = self.kwargs['volunteer_id']
         context['volunteer'] = get_volunteer_by_id(volunteer_id)
-        context['volunteer_shift'] = get_volunteer_shift_by_id(volunteer_id, shift_id)
+        context['volunteer_shift'] = \
+            get_volunteer_shift_by_id(volunteer_id, shift_id)
         return context
 
     def get_object(self, queryset=None):
@@ -513,19 +538,25 @@ class EditRequestManagerView(AdministratorLoginRequiredMixin, UpdateView):
         shift_start_time = shift.start_time
         shift_end_time = shift.end_time
         try:
-            if (end_time > start_time):
-                if (start_time >= shift_start_time
-                        and end_time <= shift_end_time):
+            if end_time > start_time:
+                if (start_time >= shift_start_time and
+                        end_time <= shift_end_time):
                     edit_shift_hours(volunteer_id, shift_id, start_time,
                                      end_time)
                     vol_email = volunteer.email
-                    message = render_to_string('shift/request_status.html',
-                                        {'volunteer_first_name': volunteer.first_name,
-                                          'event': event
-                                        })
+                    message = render_to_string(
+                        'shift/request_status.html',
+                        {
+                            'volunteer_first_name': volunteer.first_name,
+                            'event': event
+                        }
+                    )
                     try:
-                        send_mail("Log Hours Edited", message, "messanger@localhost.com", [vol_email])
-                    except:
+                        send_mail(
+                            "Log Hours Edited", message,
+                            "messanger@localhost.com", [vol_email]
+                        )
+                    except Exception:
                         raise Exception("There was an error in sending mail.")
                     return HttpResponseRedirect(
                         reverse(
@@ -541,7 +572,6 @@ class EditRequestManagerView(AdministratorLoginRequiredMixin, UpdateView):
                             'shift_id': shift_id,
                             'volunteer_id': volunteer_id,
                             'shift': shift,
-                            'volunteer_shift': volunteer_shift,
                             'edit_request_id': edit_request_id,
                         })
 
@@ -555,11 +585,10 @@ class EditRequestManagerView(AdministratorLoginRequiredMixin, UpdateView):
                         'shift_id': shift_id,
                         'volunteer_id': volunteer_id,
                         'shift': shift,
-                        'volunteer_shift': volunteer_shift,
                         'edit_request_id': edit_request_id,
                     })
 
-        except:
+        except Exception:
             raise Http404
 
 
@@ -571,8 +600,8 @@ class EditHoursManagerView(AdministratorLoginRequiredMixin, FormView):
         context = super(EditHoursManagerView, self).get_context_data(**kwargs)
         volunteer_id = self.kwargs['volunteer_id']
         shift_id = self.kwargs['shift_id']
-        context['volunteer_shift'] = get_volunteer_shift_by_id(
-            volunteer_id, shift_id)
+        context['volunteer_shift'] = \
+            get_volunteer_shift_by_id(volunteer_id, shift_id)
         context['shift'] = get_shift_by_id(shift_id)
         return context
 
@@ -586,9 +615,9 @@ class EditHoursManagerView(AdministratorLoginRequiredMixin, FormView):
         shift_start_time = shift.start_time
         shift_end_time = shift.end_time
         try:
-            if (end_time > start_time):
-                if (start_time >= shift_start_time
-                        and end_time <= shift_end_time):
+            if end_time > start_time:
+                if (start_time >= shift_start_time and
+                        end_time <= shift_end_time):
                     edit_shift_hours(volunteer_id, shift_id, start_time,
                                      end_time)
                     return HttpResponseRedirect(
@@ -652,8 +681,8 @@ def list_shifts_sign_up(request, job_id, volunteer_id):
         job = get_job_by_id(job_id)
         if job:
             shift_list = []
-            shift_list_all = get_shifts_with_open_slots_for_volunteer(
-                job_id, volunteer_id)
+            shift_list_all = \
+                get_shifts_with_open_slots_for_volunteer(job_id, volunteer_id)
             for shift in shift_list_all:
                 sdate = shift["date"]
                 today = date.today()
@@ -678,11 +707,12 @@ class ManageVolunteerShiftView(AdministratorLoginRequiredMixin, TemplateView):
             **kwargs)
         volunteer_id = self.kwargs['volunteer_id']
         context['volunteer'] = get_volunteer_by_id(volunteer_id)
-        context['upcoming_shift_list'] = get_future_shifts_by_volunteer_id(volunteer_id)
-        context['shift_list'] = get_unlogged_shifts_by_volunteer_id(
-            volunteer_id)
-        context['shift_list_with_hours'] = get_volunteer_shifts_with_hours(
-            volunteer_id)
+        context['upcoming_shift_list'] = \
+            get_future_shifts_by_volunteer_id(volunteer_id)
+        context['shift_list'] = \
+            get_unlogged_shifts_by_volunteer_id(volunteer_id)
+        context['shift_list_with_hours'] = \
+            get_volunteer_shifts_with_hours(volunteer_id)
         return context
 
 
@@ -709,7 +739,7 @@ def sign_up(request, shift_id, volunteer_id):
                 return HttpResponse(status=403)
 
             if volunteer:
-                if (int(volunteer.id) != int(volunteer_id)):
+                if int(volunteer.id) != int(volunteer_id):
                     return HttpResponse(status=403)
 
             if request.method == 'POST':
@@ -733,13 +763,18 @@ def sign_up(request, shift_id, volunteer_id):
                                     'job_name': job_object.name,
                                     'event_name': event_object.name,
                                     'shift_date': shift_object.date,
-                                    })
+                                }
+                            )
                             try:
-                                send_mail("Shift Assigned", message,
-                                       "messanger@localhost.com", [vol_email],
-                                       fail_silently=False)
-                            except:
-                                raise Exception("There was an error in sending email.")
+                                send_mail(
+                                    "Shift Assigned", message,
+                                    "messanger@localhost.com", [vol_email],
+                                    fail_silently=False
+                                )
+                            except Exception:
+                                raise Exception(
+                                    "There was an error in sending email."
+                                )
                             return HttpResponseRedirect(
                                 reverse(
                                     'shift:manage_volunteer_shifts',
@@ -779,11 +814,11 @@ class ViewHoursView(LoginRequiredMixin, FormView, TemplateView):
         context = super(ViewHoursView, self).get_context_data(**kwargs)
         volunteer_id = self.kwargs['volunteer_id']
         context['volunteer'] = get_volunteer_by_id(volunteer_id)
-        context['shift_list'] = get_unlogged_shifts_by_volunteer_id(
-            volunteer_id)
-        context['logged_volunteer_shift_list'] = get_volunteer_shifts_with_hours(
-            volunteer_id)
-        context['init_date'] = timezone.now()-timedelta(days=7)
+        context['shift_list'] = \
+            get_unlogged_shifts_by_volunteer_id(volunteer_id)
+        context['logged_volunteer_shift_list'] = \
+            get_volunteer_shifts_with_hours(volunteer_id)
+        context['init_date'] = timezone.now() - timedelta(days=7)
         return context
 
 
@@ -844,8 +879,8 @@ def view_volunteers(request, shift_id):
             shift = get_shift_by_id(shift_id)
             if shift:
                 volunteer_list = get_volunteers_by_shift_id(shift_id)
-                logged_volunteer_list = get_logged_volunteers_by_shift_id(
-                    shift_id)
+                logged_volunteer_list = \
+                    get_logged_volunteers_by_shift_id(shift_id)
                 slots_remaining = get_shift_slots_remaining(shift_id)
                 return render(
                     request, 'shift/list_volunteers.html', {

@@ -33,10 +33,25 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.CREATE_EVENT_NAME).clear()
         self.element_by_xpath(self.elements.CREATE_EVENT_START_DATE).clear()
         self.element_by_xpath(self.elements.CREATE_EVENT_END_DATE).clear()
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_NAME, event[0])
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_START_DATE,
-                                 event[1])
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_END_DATE, event[2])
+        self.element_by_xpath(self.elements.CREATE_EVENT_ADDRESS).clear()
+        self.element_by_xpath(self.elements.CREATE_EVENT_VENUE).clear()
+        self.send_value_to_xpath(self.elements.CREATE_EVENT_NAME, event['name'])
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_START_DATE,
+            event['start_date']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_END_DATE,
+            event['end_date']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_ADDRESS,
+            event['address']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_EVENT_VENUE,
+            event['venue']
+        )
         self.submit_form()
 
     def fill_job_form(self, job):
@@ -45,11 +60,20 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.CREATE_JOB_START_DATE).clear()
         self.element_by_xpath(self.elements.CREATE_JOB_END_DATE).clear()
 
-        self.send_value_to_xpath(self.elements.CREATE_EVENT_ID, job[0])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_NAME, job[1])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_DESCRIPTION, job[2])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_START_DATE, job[3])
-        self.send_value_to_xpath(self.elements.CREATE_JOB_END_DATE, job[4])
+        self.send_value_to_xpath(self.elements.CREATE_EVENT_ID, job['event'])
+        self.send_value_to_xpath(self.elements.CREATE_JOB_NAME, job['name'])
+        self.send_value_to_xpath(
+            self.elements.CREATE_JOB_DESCRIPTION,
+            job['description']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_JOB_START_DATE,
+            job['start_date']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_JOB_END_DATE,
+            job['end_date']
+        )
         self.submit_form()
 
     def fill_shift_form(self, shift):
@@ -57,13 +81,30 @@ class EventsPage(BasePage):
         self.element_by_xpath(self.elements.CREATE_SHIFT_START_TIME).clear()
         self.element_by_xpath(self.elements.CREATE_SHIFT_END_TIME).clear()
         self.element_by_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER).clear()
+        self.element_by_xpath(self.elements.CREATE_SHIFT_ADDRESS).clear()
+        self.element_by_xpath(self.elements.CREATE_SHIFT_VENUE).clear()
 
-        self.send_value_to_xpath(self.elements.CREATE_SHIFT_DATE, shift[0])
-        self.send_value_to_xpath(self.elements.CREATE_SHIFT_START_TIME,
-                                 shift[1])
-        self.send_value_to_xpath(self.elements.CREATE_SHIFT_END_TIME, shift[2])
-        self.send_value_to_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER,
-                                 shift[3])
+        self.send_value_to_xpath(self.elements.CREATE_SHIFT_DATE, shift['date'])
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_START_TIME,
+            shift['start_time']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_END_TIME,
+            shift['end_time']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_MAX_VOLUNTEER,
+            shift['max_volunteers']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_ADDRESS,
+            shift['address']
+        )
+        self.send_value_to_xpath(
+            self.elements.CREATE_SHIFT_VENUE,
+            shift['venue']
+        )
         self.submit_form()
 
     def fill_organization_form(self, org):
@@ -96,7 +137,7 @@ class EventsPage(BasePage):
     def go_to_details_event_page(self):
         self.element_by_xpath(self.elements.VIEW_EVENT).click()
 
-    def get_event_description(self): 
+    def get_event_description(self):
         return self.element_by_xpath('//div[@class="panel-body"]').text
 
     def go_to_edit_event_page(self):
@@ -208,10 +249,20 @@ class EventsPage(BasePage):
         return self.element_by_xpath(self.elements.SHIFT_START_TIME_ERROR).text
 
     def get_shift_end_time_error(self):
-        return self.driver.find_element_by_xpath(self.elements.SHIFT_END_TIME_ERROR).text
+        return self.driver.find_element_by_xpath(
+            self.elements.SHIFT_END_TIME_ERROR
+        ).text
 
     def get_shift_max_volunteer_error(self):
-        return self.element_by_xpath(self.elements.SHIFT_MAX_VOLUNTEER_ERROR).text
+        return self.element_by_xpath(
+            self.elements.SHIFT_MAX_VOLUNTEER_ERROR
+        ).text
+
+    def get_shift_address_error(self):
+        return self.element_by_xpath(self.elements.SHIFT_ADDRESS_ERROR).text
+
+    def get_shift_venue_error(self):
+        return self.element_by_xpath(self.elements.SHIFT_VENUE_ERROR).text
 
     def get_organization_name_error(self):
         return self.element_by_xpath(self.elements.ORGANIZATION_NAME_ERROR).text
@@ -262,7 +313,9 @@ class EventsPage(BasePage):
         return self.get_value_for_xpath(self.elements.CREATE_SHIFT_END_TIME)
 
     def get_shift_max_volunteers(self):
-        return self.get_value_for_xpath(self.elements.CREATE_SHIFT_MAX_VOLUNTEER)
+        return self.get_value_for_xpath(
+            self.elements.CREATE_SHIFT_MAX_VOLUNTEER
+        )
 
     def get_help_blocks(self):
         blocks = self.elements_by_class_name(self.elements.HELP_BLOCK)

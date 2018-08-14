@@ -7,9 +7,15 @@ from django.test.testcases import TestCase
 
 # local Django
 from shift.models import Shift, VolunteerShift, Report, EditRequest
-from shift.utils import (create_country, create_state, create_city, create_event_with_details, create_job_with_details, create_organization_with_details,
-                         create_shift_with_details, create_volunteer_with_details, register_volunteer_for_shift_utility,
-                         create_edit_request_with_details, log_hours_with_details, create_report_with_details)
+from shift.utils import (create_country, create_event_with_details,
+                         create_job_with_details, create_city,
+                         create_organization_with_details,
+                         create_shift_with_details,
+                         create_volunteer_with_details,
+                         register_volunteer_for_shift_utility,
+                         create_edit_request_with_details,
+                         log_hours_with_details, create_state,
+                         create_report_with_details)
 from volunteer.models import Volunteer
 
 
@@ -43,7 +49,14 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -52,8 +65,13 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = ['job-name', '2050-05-24', '2050-05-28', 'job-description', self.event,
-               'dummy description', 'dummy venue']
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -62,7 +80,15 @@ class ShiftModelTests(TestCase):
         Utility function to create a valid shift.
         :return: Shift type object
         """
-        shift = ['2050-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -71,7 +97,15 @@ class ShiftModelTests(TestCase):
         Utility function to create an invalid shift.
         :return: Shift type object
         """
-        shift = ['2050-05-29', '12:00:00', '09:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-29',
+            'start_time': '12:00:00',
+            'end_time': '09:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -214,7 +248,14 @@ class VolunteerShiftModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -223,7 +264,13 @@ class VolunteerShiftModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = ['job-name', '2050-05-24', '2050-05-28', 'job-description', self.event]
+        job = {
+            'name': 'job-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -232,7 +279,15 @@ class VolunteerShiftModelTests(TestCase):
         Utility function to create a valid shift.
         :return: Shift type object
         """
-        shift = ['2050-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -245,10 +300,17 @@ class VolunteerShiftModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku", "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -262,10 +324,17 @@ class VolunteerShiftModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku~", "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku!",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -295,10 +364,22 @@ class VolunteerShiftModelTests(TestCase):
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
         # Verify correctness
         self.assertEqual(str(vol_shift_in_db.shift.date), vol_shift.shift.date)
-        self.assertEqual(str(vol_shift_in_db.shift.start_time), vol_shift.shift.start_time)
-        self.assertEqual(str(vol_shift_in_db.shift.end_time), vol_shift.shift.end_time)
-        self.assertEqual(vol_shift_in_db.volunteer.first_name, vol_shift.volunteer.first_name)
-        self.assertEqual(vol_shift_in_db.volunteer.last_name, vol_shift.volunteer.last_name)
+        self.assertEqual(
+            str(vol_shift_in_db.shift.start_time),
+            vol_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(vol_shift_in_db.shift.end_time),
+            vol_shift.shift.end_time
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.first_name,
+            vol_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.last_name,
+            vol_shift.volunteer.last_name
+        )
         self.assertEqual(vol_shift_in_db.report_status, vol_shift.report_status)
 
     def test_invalid_model_create(self):
@@ -311,7 +392,10 @@ class VolunteerShiftModelTests(TestCase):
         vol_shift = self.create_volunteer_shift(shift, volunteer)
 
         # Can't check error until clean method defined in model
-        # self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, vol_shift.full_clean)
+        # self.assertRaisesRegexp(
+        #     ValidationError,
+        #     BasePage.ENTER_VALID_VALUE, vol_shift.full_clean
+        # )
 
     def test_model_edit_with_valid_values(self):
         """
@@ -330,10 +414,22 @@ class VolunteerShiftModelTests(TestCase):
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
         # Verify correctness
         self.assertEqual(str(vol_shift_in_db.shift.date), vol_shift.shift.date)
-        self.assertEqual(str(vol_shift_in_db.shift.start_time), vol_shift.shift.start_time)
-        self.assertEqual(str(vol_shift_in_db.shift.end_time), vol_shift.shift.end_time)
-        self.assertEqual(vol_shift_in_db.volunteer.first_name, vol_shift.volunteer.first_name)
-        self.assertEqual(vol_shift_in_db.volunteer.last_name, vol_shift.volunteer.last_name)
+        self.assertEqual(
+            str(vol_shift_in_db.shift.start_time),
+            vol_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(vol_shift_in_db.shift.end_time),
+            vol_shift.shift.end_time
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.first_name,
+            vol_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.last_name,
+            vol_shift.volunteer.last_name
+        )
         self.assertEqual(vol_shift_in_db.report_status, vol_shift.report_status)
 
         volunteer_in_db.first_name = 'Prince'
@@ -349,12 +445,17 @@ class VolunteerShiftModelTests(TestCase):
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
         # Verify correctness
         self.assertEqual(str(vol_shift_in_db.shift.date), vol_shift.shift.date)
-        self.assertEqual(str(vol_shift_in_db.shift.start_time), vol_shift.shift.start_time)
-        self.assertEqual(str(vol_shift_in_db.shift.end_time), vol_shift.shift.end_time)
+        self.assertEqual(
+            str(vol_shift_in_db.shift.start_time),
+            vol_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(vol_shift_in_db.shift.end_time),
+            vol_shift.shift.end_time
+        )
         self.assertEqual(vol_shift_in_db.volunteer.first_name, 'Prince')
         self.assertEqual(vol_shift_in_db.volunteer.last_name, 'Vegeta')
         self.assertEqual(vol_shift_in_db.report_status, True)
-
 
     def test_model_edit_with_invalid_values(self):
         """
@@ -372,16 +473,32 @@ class VolunteerShiftModelTests(TestCase):
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
         # Verify correctness
         self.assertEqual(str(vol_shift_in_db.shift.date), vol_shift.shift.date)
-        self.assertEqual(str(vol_shift_in_db.shift.start_time), vol_shift.shift.start_time)
-        self.assertEqual(str(vol_shift_in_db.shift.end_time), vol_shift.shift.end_time)
-        self.assertEqual(vol_shift_in_db.volunteer.first_name, vol_shift.volunteer.first_name)
-        self.assertEqual(vol_shift_in_db.volunteer.last_name, vol_shift.volunteer.last_name)
+        self.assertEqual(
+            str(vol_shift_in_db.shift.start_time),
+            vol_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(vol_shift_in_db.shift.end_time),
+            vol_shift.shift.end_time
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.first_name,
+            vol_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.last_name,
+            vol_shift.volunteer.last_name
+        )
         self.assertEqual(vol_shift_in_db.report_status, vol_shift.report_status)
 
         vol_shift_in_db.volunteer.first_name = 'Son~'
 
         # Can't check error until clean method defined in model
-        # self.assertRaisesRegexp(ValidationError, BasePage.ENTER_VALID_VALUE, vol_shift_in_db.full_clean)
+        # self.assertRaisesRegexp(
+        #     ValidationError,
+        #     BasePage.ENTER_VALID_VALUE,
+        #     vol_shift_in_db.full_clean
+        # )
 
     def test_model_delete(self):
         """
@@ -399,13 +516,34 @@ class VolunteerShiftModelTests(TestCase):
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
         # Verify correctness
         self.assertEqual(str(vol_shift_in_db.shift.date), vol_shift.shift.date)
-        self.assertEqual(str(vol_shift_in_db.shift.start_time), vol_shift.shift.start_time)
-        self.assertEqual(str(vol_shift_in_db.shift.end_time), vol_shift.shift.end_time)
-        self.assertEqual(str(vol_shift_in_db.shift.max_volunteers), vol_shift.shift.max_volunteers)
-        self.assertEqual(vol_shift_in_db.volunteer.first_name, vol_shift.volunteer.first_name)
-        self.assertEqual(vol_shift_in_db.volunteer.last_name, vol_shift.volunteer.last_name)
-        self.assertEqual(vol_shift_in_db.volunteer.email, vol_shift.volunteer.email)
-        self.assertEqual(vol_shift_in_db.volunteer.phone_number, vol_shift.volunteer.phone_number)
+        self.assertEqual(
+            str(vol_shift_in_db.shift.start_time),
+            vol_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(vol_shift_in_db.shift.end_time),
+            vol_shift.shift.end_time
+        )
+        self.assertEqual(
+            str(vol_shift_in_db.shift.max_volunteers),
+            vol_shift.shift.max_volunteers
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.first_name,
+            vol_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.last_name,
+            vol_shift.volunteer.last_name
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.email,
+            vol_shift.volunteer.email
+        )
+        self.assertEqual(
+            vol_shift_in_db.volunteer.phone_number,
+            vol_shift.volunteer.phone_number
+        )
         self.assertEqual(vol_shift_in_db.report_status, vol_shift.report_status)
 
         vol_shift_in_db.delete()
@@ -453,7 +591,14 @@ class EditRequestModelTests(TestCase):
         Utility function to create a valid event.
         :return: Event type object
         """
-        event = ['event-name', '2050-05-24', '2050-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2050-05-24',
+            'end_date': '2050-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
@@ -462,7 +607,13 @@ class EditRequestModelTests(TestCase):
         Utility function to create a valid job.
         :return: Job type object
         """
-        job = ['job-name', '2015-05-24', '2015-05-28', 'job-description', self.event]
+        job = {
+            'name': 'job-name',
+            'start_date': '2015-05-24',
+            'end_date': '2015-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
@@ -471,7 +622,15 @@ class EditRequestModelTests(TestCase):
         Utility function to create a valid shift.
         :return: Shift type object
         """
-        shift = ['2015-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2015-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -484,10 +643,17 @@ class EditRequestModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku", "Son", "Goku", "Kame House", city,
-            state, country, "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -505,7 +671,9 @@ class EditRequestModelTests(TestCase):
         logged_shift = log_hours_with_details(volunteer, shift, start, end)
         start_time = datetime.time(hour=10, minute=0, second=0)
         end_time = datetime.time(hour=12, minute=0, second=0)
-        return create_edit_request_with_details(start_time, end_time, logged_shift)
+        return create_edit_request_with_details(
+            start_time, end_time, logged_shift
+        )
 
     def test_valid_model_create(self):
         """
@@ -521,13 +689,26 @@ class EditRequestModelTests(TestCase):
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        edit_request_in_db = EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
+        edit_request_in_db = \
+            EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
 
         # verify correctness
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.first_name, edit_request.volunteer_shift.volunteer.first_name)
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.last_name, edit_request.volunteer_shift.volunteer.last_name)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.start_time), edit_request.volunteer_shift.shift.start_time)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.end_time), edit_request.volunteer_shift.shift.end_time)
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.first_name,
+            edit_request.volunteer_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.last_name,
+            edit_request.volunteer_shift.volunteer.last_name
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.start_time),
+            edit_request.volunteer_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.end_time),
+            edit_request.volunteer_shift.shift.end_time
+        )
         self.assertEqual(edit_request_in_db.start_time, edit_request.start_time)
         self.assertEqual(edit_request_in_db.end_time, edit_request.end_time)
 
@@ -544,15 +725,28 @@ class EditRequestModelTests(TestCase):
         self.assertEqual(len(EditRequest.objects.all()), 1)
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
-        volunteer_in_db =  Volunteer.objects.get(Q(first_name='Son'))
+        volunteer_in_db = Volunteer.objects.get(Q(first_name='Son'))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        edit_request_in_db = EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
+        edit_request_in_db = \
+            EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
 
         # verify correctness
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.first_name, edit_request.volunteer_shift.volunteer.first_name)
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.last_name, edit_request.volunteer_shift.volunteer.last_name)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.start_time), edit_request.volunteer_shift.shift.start_time)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.end_time), edit_request.volunteer_shift.shift.end_time)
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.first_name,
+            edit_request.volunteer_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.last_name,
+            edit_request.volunteer_shift.volunteer.last_name
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.start_time),
+            edit_request.volunteer_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.end_time),
+            edit_request.volunteer_shift.shift.end_time
+        )
         self.assertEqual(edit_request_in_db.start_time, edit_request.start_time)
         self.assertEqual(edit_request_in_db.end_time, edit_request.end_time)
 
@@ -570,15 +764,28 @@ class EditRequestModelTests(TestCase):
 
         self.assertEqual(len(EditRequest.objects.all()), 1)
 
-        edit_request_in_db = EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
+        edit_request_in_db = \
+            EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
 
         # verify correctness
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.start_time), edit_request.volunteer_shift.shift.start_time)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.end_time), edit_request.volunteer_shift.shift.end_time)
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.start_time),
+            edit_request.volunteer_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.end_time),
+            edit_request.volunteer_shift.shift.end_time
+        )
         self.assertEqual(edit_request_in_db.start_time, start)
         self.assertEqual(edit_request_in_db.end_time, end)
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.first_name, 'Prince')
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.last_name, 'Vegeta')
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.first_name,
+            'Prince'
+        )
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.last_name,
+            'Vegeta'
+        )
 
     def test_model_delete(self):
         """
@@ -594,13 +801,26 @@ class EditRequestModelTests(TestCase):
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        edit_request_in_db = EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
+        edit_request_in_db = \
+            EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
 
         # verify correctness
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.first_name, edit_request.volunteer_shift.volunteer.first_name)
-        self.assertEqual(edit_request_in_db.volunteer_shift.volunteer.last_name, edit_request.volunteer_shift.volunteer.last_name)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.start_time), edit_request.volunteer_shift.shift.start_time)
-        self.assertEqual(str(edit_request_in_db.volunteer_shift.shift.end_time), edit_request.volunteer_shift.shift.end_time)
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.first_name,
+            edit_request.volunteer_shift.volunteer.first_name
+        )
+        self.assertEqual(
+            edit_request_in_db.volunteer_shift.volunteer.last_name,
+            edit_request.volunteer_shift.volunteer.last_name
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.start_time),
+            edit_request.volunteer_shift.shift.start_time
+        )
+        self.assertEqual(
+            str(edit_request_in_db.volunteer_shift.shift.end_time),
+            edit_request.volunteer_shift.shift.end_time
+        )
         self.assertEqual(edit_request_in_db.start_time, edit_request.start_time)
         self.assertEqual(edit_request_in_db.end_time, edit_request.end_time)
 
@@ -621,10 +841,14 @@ class EditRequestModelTests(TestCase):
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        edit_request_in_db = EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
+        edit_request_in_db = \
+            EditRequest.objects.get(Q(volunteer_shift=vol_shift_in_db))
 
         # Check correctness
-        self.assertEqual(str(edit_request_in_db), 'job-name - 2015-05-24 - Son Goku')
+        self.assertEqual(
+            str(edit_request_in_db),
+            'job-name - 2015-05-24 - Son Goku'
+        )
 
 
 class ReportVolunteerShiftModelTests(TestCase):
@@ -638,17 +862,38 @@ class ReportVolunteerShiftModelTests(TestCase):
 
     @staticmethod
     def create_event():
-        event = ['event-name', '2015-05-24', '2015-05-28']
+        event = {
+            'name': 'event-name',
+            'start_date': '2015-05-24',
+            'end_date': '2015-05-28',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
         created_event = create_event_with_details(event)
         return created_event
 
     def create_job(self):
-        job = ['job-name', '2015-05-24', '2015-05-28', 'job-description', self.event]
+        job = {
+            'name': 'job-name',
+            'start_date': '2015-05-24',
+            'end_date': '2015-05-28',
+            'description': 'job-description',
+            'event': self.event
+        }
         created_job = create_job_with_details(job)
         return created_job
 
     def create_shift(self):
-        shift = ['2015-05-24', '09:00:00', '12:00:00', '10', self.job]
+        shift = {
+            'date': '2050-05-24',
+            'start_time': '09:00:00',
+            'end_time': '12:00:00',
+            'max_volunteers': '10',
+            'job': self.job,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
         created_shift = create_shift_with_details(shift)
         return created_shift
 
@@ -657,10 +902,17 @@ class ReportVolunteerShiftModelTests(TestCase):
         country = create_country()
         state = create_state()
         city = create_city()
-        vol = [
-            "Goku", "Son", "Goku", "Kame House", city, state, country,
-             "9999999999", "idonthave@gmail.com"
-        ]
+        vol = {
+            'username': "Goku",
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
         org_name = 'Google'
         org_obj = create_organization_with_details(org_name)
         return create_volunteer_with_details(vol, org_obj)
@@ -683,14 +935,29 @@ class ReportVolunteerShiftModelTests(TestCase):
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        report_in_db= Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
+        report_in_db = Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
 
         # Verify correctness
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.start_time, report.volunteer_shifts.all()[0].shift.start_time)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.end_time, report.volunteer_shifts.all()[0].shift.end_time)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].report_status, report.volunteer_shifts.all()[0].report_status)
-        self.assertEqual(report_in_db.volunteer.first_name, report.volunteer.first_name)
-        self.assertEqual(report_in_db.volunteer.last_name, report.volunteer.last_name)
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.start_time,
+            report.volunteer_shifts.all()[0].shift.start_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.end_time,
+            report.volunteer_shifts.all()[0].shift.end_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].report_status,
+            report.volunteer_shifts.all()[0].report_status
+        )
+        self.assertEqual(
+            report_in_db.volunteer.first_name,
+            report.volunteer.first_name
+        )
+        self.assertEqual(
+            report_in_db.volunteer.last_name,
+            report.volunteer.last_name
+        )
         self.assertEqual(report_in_db.confirm_status, report.confirm_status)
 
     def test_model_edit_with_valid_values(self):
@@ -705,15 +972,30 @@ class ReportVolunteerShiftModelTests(TestCase):
         shift_in_db = Shift.objects.get(Q(job=self.job))
         volunteer_in_db = Volunteer.objects.get(Q(first_name='Son'))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        report_in_db= Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
+        report_in_db = Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
 
         # Verify correctness
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.start_time, report.volunteer_shifts.all()[0].shift.start_time)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.end_time, report.volunteer_shifts.all()[0].shift.end_time)
-        self.assertEqual(report_in_db.volunteer.first_name, report.volunteer.first_name)
-        self.assertEqual(report_in_db.volunteer.last_name, report.volunteer.last_name)
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.start_time,
+            report.volunteer_shifts.all()[0].shift.start_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.end_time,
+            report.volunteer_shifts.all()[0].shift.end_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer.first_name,
+            report.volunteer.first_name
+        )
+        self.assertEqual(
+            report_in_db.volunteer.last_name,
+            report.volunteer.last_name
+        )
         self.assertEqual(report_in_db.confirm_status, report.confirm_status)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].report_status, report.volunteer_shifts.all()[0].report_status)
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].report_status,
+            report.volunteer_shifts.all()[0].report_status
+        )
 
         volunteer_in_db.first_name = 'Prince'
         volunteer_in_db.last_name = 'Vegeta'
@@ -729,14 +1011,23 @@ class ReportVolunteerShiftModelTests(TestCase):
 
         self.assertEqual(len(Report.objects.all()), 1)
 
-        report_in_db= Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
+        report_in_db = Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
         # Verify correctness
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.start_time, report.volunteer_shifts.all()[0].shift.start_time)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.end_time, report.volunteer_shifts.all()[0].shift.end_time)
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.start_time,
+            report.volunteer_shifts.all()[0].shift.start_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.end_time,
+            report.volunteer_shifts.all()[0].shift.end_time
+        )
         self.assertEqual(report_in_db.volunteer.first_name, 'Prince')
         self.assertEqual(report_in_db.volunteer.last_name, 'Vegeta')
         self.assertEqual(report_in_db.confirm_status, 1)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].report_status, True)
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].report_status,
+            True
+        )
 
     def test_model_delete(self):
         shift = self.create_shift()
@@ -749,13 +1040,28 @@ class ReportVolunteerShiftModelTests(TestCase):
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        report_in_db= Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
+        report_in_db = Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
         # Verify correctness
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.start_time, report.volunteer_shifts.all()[0].shift.start_time)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].shift.end_time, report.volunteer_shifts.all()[0].shift.end_time)
-        self.assertEqual(report_in_db.volunteer_shifts.all()[0].report_status, report.volunteer_shifts.all()[0].report_status)
-        self.assertEqual(report_in_db.volunteer.first_name, report.volunteer.first_name)
-        self.assertEqual(report_in_db.volunteer.last_name, report.volunteer.last_name)
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.start_time,
+            report.volunteer_shifts.all()[0].shift.start_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].shift.end_time,
+            report.volunteer_shifts.all()[0].shift.end_time
+        )
+        self.assertEqual(
+            report_in_db.volunteer_shifts.all()[0].report_status,
+            report.volunteer_shifts.all()[0].report_status
+        )
+        self.assertEqual(
+            report_in_db.volunteer.first_name,
+            report.volunteer.first_name
+        )
+        self.assertEqual(
+            report_in_db.volunteer.last_name,
+            report.volunteer.last_name
+        )
         self.assertEqual(report_in_db.confirm_status, report.confirm_status)
 
         report_in_db.delete()
@@ -773,7 +1079,7 @@ class ReportVolunteerShiftModelTests(TestCase):
 
         shift_in_db = Shift.objects.get(Q(job=self.job))
         vol_shift_in_db = VolunteerShift.objects.get(Q(shift=shift_in_db))
-        report_in_db= Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
+        report_in_db = Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
 
         # Check correctness
         self.assertEqual(str(report_in_db), 'Report object')

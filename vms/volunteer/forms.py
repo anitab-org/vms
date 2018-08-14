@@ -1,10 +1,10 @@
 # Django
 from django import forms
-from django.forms import ModelForm
 
 # local Django
 from volunteer.models import Volunteer
 from shift.models import Report
+
 
 class ReportForm(forms.Form):
     event_name = forms.RegexField(
@@ -39,12 +39,17 @@ class SearchVolunteerForm(forms.Form):
 
 class VolunteerForm(forms.ModelForm):
     unlisted_organization = forms.RegexField(
-        regex=r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$', max_length=100, required=False)
+        regex=r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(:)]+$',
+        max_length=100,
+        required=False
+    )
 
     class Meta:
         model = Volunteer
         fields = [
-            'first_name', 'last_name', 'address', 'phone_number', 'email', 'websites',
-            'description', 'resume', 'resume_file', 'reminder_days'
+            'first_name', 'last_name', 'address',
+            'phone_number', 'email', 'websites',
+            'description', 'resume', 'resume_file',
+            'reminder_days'
         ]
 
