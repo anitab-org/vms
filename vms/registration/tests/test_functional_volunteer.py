@@ -265,7 +265,8 @@ class SignUpVolunteer(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.confirm_email_message)
+        self.assertEqual(page.get_message_box_text(),
+                         page.confirm_email_message)
 
         page.get_volunteer_registration_page()
         entry = {
@@ -279,8 +280,8 @@ class SignUpVolunteer(LiveServerTestCase):
             'country': 'India',
             'phone_number': '9999999999',
             'organization': 'volunteer-org',
-            'password': 'volunteer-password1!@#$%^&*()_',
-            'confirm_password': 'volunteer-password1!@#$%^&*()_'
+            'password': 'volunteer-password',
+            'confirm_password': 'volunteer-password'
         }
         page.fill_registration_form(entry)
 

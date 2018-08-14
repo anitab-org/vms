@@ -25,8 +25,9 @@ class UserForm(forms.ModelForm):
             return password
         else:
             raise ValidationError(
-                "Password must have at least 6 characters, one lowercase letter, "
-                "one special character and one digit.")
+                "Password must have at least 6 characters, one "
+                "lowercase letter, one "
+                "special character and one digit.")
 
     class Meta:
         model = User

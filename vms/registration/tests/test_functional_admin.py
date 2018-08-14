@@ -241,20 +241,26 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
         page.register_valid_details()
         self.assertNotEqual(page.get_message_box(), None)
-        self.assertEqual(page.get_message_box_text(), page.CONFIRM_EMAIL_MESSAGE)
-
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
         page.get_admin_registration_page()
-
-        entry = [
-            'admin-username-1', 'admin-password',
-            'admin-password',
-            'admin-first-name', 'admin-last-name',
-            'admin-email1@systers.org', 'admin-address',
-            'Roorkee', 'Uttarakhand', 'India',
-            '9999999999', 'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password',
+            'confirm_password': 'admin-password',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         page.fill_registration_form(entry)
-
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_password_regex_error_text(),
                          page.PASSWORD_ERROR)

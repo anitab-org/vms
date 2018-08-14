@@ -138,7 +138,8 @@ class AdministratorSignupView(TemplateView):
                 if organization:
                     administrator.organization = organization
                 else:
-                    unlisted_org = request.POST.get('admin-unlisted_organization')
+                    unlisted_org = request.POST.get('admin-unlisted_'
+                                                    'organization')
                     org = create_organization(unlisted_org)
                     administrator.organization = org
 
@@ -283,7 +284,8 @@ class VolunteerSignupView(TemplateView):
                     volunteer.organization = organization
                 else:
                     unlisted_org = request.POST.get('vol-unlisted_organization')
-                    org = Organization.objects.create(name=unlisted_org, approved_status=False)
+                    org = Organization.objects.create(name=unlisted_org,
+                                                      approved_status=False)
                     org.save()
                     volunteer.organization = org
                 volunteer.country = vol_country

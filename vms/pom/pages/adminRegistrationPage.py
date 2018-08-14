@@ -17,8 +17,8 @@ class AdminRegistrationPage(BasePage):
                                 'valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
     CONFIRM_EMAIL_MESSAGE = "Please confirm your email address before login."
-    PASSWORD_ERROR = 'Password must have at least 6 characters, one lowercase letter, one special character and one digit.'
-
+    PASSWORD_ERROR = 'Password must have at least 6 characters, one ' \
+                     'lowercase letter, one special character and one digit.'
 
     def __init__(self, driver):
         self.elements = AdminRegistrationPageLocators()
