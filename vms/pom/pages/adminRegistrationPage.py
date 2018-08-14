@@ -15,6 +15,8 @@ class AdminRegistrationPage(BasePage):
     INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
     CONFIRM_EMAIL_MESSAGE = "Please confirm your email address before login."
+    PASSWORD_ERROR = 'Password must have at least 6 characters, one lowercase letter, one special character and one digit.'
+
 
     def __init__(self, driver):
         self.elements = AdminRegistrationPageLocators()
@@ -73,6 +75,9 @@ class AdminRegistrationPage(BasePage):
     def get_password_error_text(self):
         return self.element_by_xpath(self.elements.MATCH_ERROR).text
 
+    def get_password_regex_error_text(self):
+        return self.element_by_xpath(self.elements.PASSWORD_ERROR).text
+
     def get_first_name_error_text(self):
         return self.element_by_xpath(self.elements.FIRST_NAME_ERROR).text
 
@@ -103,7 +108,7 @@ class AdminRegistrationPage(BasePage):
     def register_valid_details(self):
         self.get_admin_registration_page()
         entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
+            'admin-username', 'admin-password1!@#$%^&*()_', 'admin-password1!@#$%^&*()_',
             'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
             'Roorkee', 'Uttarakhand', 'India', '9999999999',
             'admin-org'

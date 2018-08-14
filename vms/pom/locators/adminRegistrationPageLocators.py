@@ -15,6 +15,7 @@ class AdminRegistrationPageLocators(object):
 
     USERNAME_ERROR = "id('div_id_username')/div/p/strong"
     MATCH_ERROR = "id('div_id_confirm_password')/div/p/strong"
+    PASSWORD_ERROR = "id('div_id_password')/div/p/strong"
     FIRST_NAME_ERROR = "id('div_id_first_name')/div/p/strong"
     LAST_NAME_ERROR = "id('div_id_last_name')/div/p/strong"
     EMAIL_ERROR = "id('div_id_email')/div/p/strong"
