@@ -17,6 +17,8 @@ class VolunteerRegistrationPage(BasePage):
     INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t ' \
                                 'valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
+    PASSWORD_ERROR = 'Password must have at least 6 characters, one ' \
+                     'lowercase letter, one special character and one digit.'
 
     def __init__(self, driver):
         self.elements = VolunteerRegistrationPageLocators()
@@ -81,6 +83,9 @@ class VolunteerRegistrationPage(BasePage):
     def get_password_error_text(self):
         return self.element_by_xpath(self.elements.MATCH_ERROR).text
 
+    def get_password_regex_error_text(self):
+        return self.element_by_xpath(self.elements.PASSWORD_ERROR).text
+
     def get_first_name_error_text(self):
         return self.element_by_xpath(self.elements.FIRST_NAME_ERROR).text
 
@@ -112,8 +117,8 @@ class VolunteerRegistrationPage(BasePage):
         self.get_volunteer_registration_page()
         entry = {
             'username': 'volunteer-username',
-            'password': 'volunteer-password!@#$%^&*()_',
-            'confirm_password': 'volunteer-password!@#$%^&*()_',
+            'password': 'volunteer-password1!@#$%^&*()_',
+            'confirm_password': 'volunteer-password1!@#$%^&*()_',
             'first_name': 'volunteer-first-name',
             'last_name': 'volunteer-last-name',
             'email': 'volunteer-email@systers.org',

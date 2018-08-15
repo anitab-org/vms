@@ -178,11 +178,10 @@ class SignUpAdmin(LiveServerTestCase):
         )
 
         page.get_admin_registration_page()
-
         entry = entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email1@systers.org',
@@ -215,11 +214,10 @@ class SignUpAdmin(LiveServerTestCase):
         )
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-1',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email1@systers.org',
@@ -234,6 +232,38 @@ class SignUpAdmin(LiveServerTestCase):
         self.assertNotEqual(page.get_help_blocks(), None)
         self.assertEqual(page.get_password_error_text(),
                          page.NO_MATCH)
+
+    def test_password_follows_regex(self):
+        """
+        Test error raised when user inputs invalid password
+        """
+        page = self.page
+        page.live_server_url = self.live_server_url
+        page.register_valid_details()
+        self.assertNotEqual(page.get_message_box(), None)
+        self.assertEqual(
+            page.get_message_box_text(),
+            page.CONFIRM_EMAIL_MESSAGE
+        )
+        page.get_admin_registration_page()
+        entry = {
+            'username': 'admin-username-1',
+            'password': 'admin-password',
+            'confirm_password': 'admin-password',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email1@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
+        page.fill_registration_form(entry)
+        self.assertNotEqual(page.get_help_blocks(), None)
+        self.assertEqual(page.get_password_regex_error_text(),
+                         page.PASSWORD_ERROR)
 
     def test_numeric_characters_in_first_and_last_name(self):
         """
@@ -255,11 +285,10 @@ class SignUpAdmin(LiveServerTestCase):
         )
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-1',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name-1',
             'last_name': 'admin-last-name-1',
             'email': 'admin-email1@systers.org',
@@ -298,11 +327,10 @@ class SignUpAdmin(LiveServerTestCase):
         )
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'name-!@#$%^&*()',
             'last_name': 'name-!@#$%^&*()_',
             'email': 'admin-email1@systers.org',
@@ -341,11 +369,10 @@ class SignUpAdmin(LiveServerTestCase):
         )
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name-!@#$%^&*()_lolwatneedlength',
             'last_name': 'admin-last-name-!@#$%^&*()_lolwatneedlength',
             'email': 'admin-email1@systers.org',
@@ -393,11 +420,10 @@ class SignUpAdmin(LiveServerTestCase):
 
         # Try to register admin again with same email address
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-1',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email@systers.org',
@@ -426,8 +452,8 @@ class SignUpAdmin(LiveServerTestCase):
         page.get_admin_registration_page()
         entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email@systers.org',
@@ -452,11 +478,10 @@ class SignUpAdmin(LiveServerTestCase):
 
         # Try to register admin with incorrect phone number for country
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-1',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email1@systers.org',
@@ -483,11 +508,10 @@ class SignUpAdmin(LiveServerTestCase):
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email@systers.org',
@@ -511,11 +535,10 @@ class SignUpAdmin(LiveServerTestCase):
         )
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-1',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'admin-email1@systers.org',
@@ -542,11 +565,10 @@ class SignUpAdmin(LiveServerTestCase):
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-1',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'email1@systers.org',
@@ -577,11 +599,10 @@ class SignUpAdmin(LiveServerTestCase):
         page = self.page
         page.live_server_url = self.live_server_url
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username-2',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name',
             'email': 'email2@systers.org',
@@ -659,11 +680,10 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name-3',
             'last_name': 'admin-last-name',
             'email': 'email1@systers.org',
@@ -707,11 +727,10 @@ class SignUpAdmin(LiveServerTestCase):
         page.live_server_url = self.live_server_url
 
         page.get_admin_registration_page()
-
         entry = {
             'username': 'admin-username',
-            'password': 'admin-password!@#$%^&*()_',
-            'confirm_password': 'admin-password!@#$%^&*()_',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
             'first_name': 'admin-first-name',
             'last_name': 'admin-last-name-3',
             'email': 'email1@systers.org',

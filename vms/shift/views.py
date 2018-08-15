@@ -466,7 +466,8 @@ class EditHoursView(LoginRequiredMixin, FormView):
                     try:
                         send_mail(
                             "Edit request", message,
-                            "messanger@localhost.com", ["admin@admin.com"]
+                            "messanger@localhost.com",
+                            ["systerskeeper@gmail.com"]
                         )
                     except Exception:
                         raise Exception(
