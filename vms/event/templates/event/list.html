@@ -11,7 +11,7 @@
         <form class="form-horizontal" action="{% url 'event:list' %}" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Search Events" %}</legend>
+                <legend class="header">{% trans "Search Events" %}</legend>
                 {% if form.name.errors %}
                 <div class="form-group has-error">
                     <label class="col-md-2 control-label">{% trans "Name" %}</label>
@@ -190,7 +190,11 @@
                             <a href="{% url 'event:details' event.id %}" class="btn btn-default btn-sm">{% trans "Details" %}</a>
                         </td>
                         <td>
-                            <a href="{% url 'event:edit' event.id %}" class="btn btn-info btn-sm">{% trans "Edit" %}</a>
+                            {% if event.start_date >= today %}
+                            <a href="{% url 'event:edit' event.id %}" class="btn btn-primary btn-sm">{% trans "Edit" %}</a>
+                            {% else %} 
+                            <a href="{% url 'event:edit' event.id %}" class="btn btn-primary btn-sm" disabled/>{% trans "Edit" %}</a>
+                            {% endif %}
                         </td>
                         <td>
                             <a href="{% url 'event:delete' event.id %}" class="btn btn-danger btn-sm">{% trans "Delete" %}</a>

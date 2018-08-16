@@ -5,15 +5,14 @@ The following include the models that define the database schema, its purpose, a
 ## Administrator Model
 
 ```
-class Volunteer(models.Model):
+class Administrator(models.Model):
     first_name = models.CharField()
     last_name = models.CharField()
     address = models.CharField()
-    city = models.CharField()
-    state = models.CharField()
-    country = models.CharField()
+    city = models.ForeignKey(City)
+    state = models.ForeignKey(Region)
+    country = models.ForeignKey(Country)
     phone_number = models.CharField()
-    unlisted_organization = models.CharField()
     organization = models.ForeignKey(Organization)
     email = models.EmailField(max_length=20)
     user = models.OneToOneField(User)
@@ -22,17 +21,18 @@ class Volunteer(models.Model):
 
 The Administrator model is used to represent an administrator.
 
-### Explanation of non-trivial fields
-
-`Organization` - The organization that an administrator is associated with.
-
-`unlisted_organization` - If the administrator is not associated with an organization in the Organization table in the database, then this field is filled in instead.
-
 ### Relationships
 
 1) One-to-One between Administrator and Django auth_user.
 
 2) One-to-Many from Organization to Administrator.
+
+3) One-to-Many from City to Volunteer.
+
+4) One-to-Many from State to Volunteer.
+
+5) One-to-Many from Country to Volunteer.
+
 
 ## Volunteer Model
 
@@ -41,11 +41,10 @@ class Volunteer(models.Model):
     first_name = models.CharField()
     last_name = models.CharField()
     address = models.CharField()
-    city = models.CharField()
-    state = models.CharField()
-    country = models.CharField()
+    city = models.ForeignKey(City)
+    state = models.ForeignKey(Region)
+    country = models.ForeignKey(Country)
     phone_number = models.CharField()
-    unlisted_organization = models.CharField()
     organization = models.ForeignKey(Organization)
     email = models.EmailField(max_length=20)
     websites = models.TextField()
@@ -59,9 +58,11 @@ The Volunteer model is used to represent a volunteer.
 
 ### Explanation of non-trivial fields
 
-`Organization` - The organization that a volunteer is associated with.
+`city` - City of the volunteer
 
-`unlisted_organization` - If the volunteer is not associated with an organization in the Organization table in the database, then this field is filled in instead.
+`state` - State of the volunteer
+
+`country` - Country of the volunteer
 
 `websites` - Contains URLs to a volunteer's online profiles (such as GitHub or a personal website).
 
@@ -71,17 +72,29 @@ The Volunteer model is used to represent a volunteer.
 
 `resume_file` - Holds the path name to the resume stored in the file system of the server.
 
+
+
+
 ### Relationships
 
 1) One-to-One between Volunteer and Django auth_user.
 
 2) One-to-Many from Organization to Volunteer.
 
+3) One-to-Many from City to Volunteer.
+
+4) One-to-Many from State to Volunteer.
+
+5) One-to-Many from Country to Volunteer.
+
+
+
 ## Organization Model
 
 ```
 class Organization(models.Model):
     organization_name = models.CharField(max_length=45)
+    approved_status = models.IntegerField(default=1)
 ```
 ### Purpose
 
@@ -155,6 +168,7 @@ class Event(models.Model):
     name = models.CharField()
     start_date = models.DateField()
     end_date = models.DateField()
+    description = models.TextField() 
 ````
 
 ### Purpose
@@ -234,6 +248,9 @@ class VolunteerShift(models.Model):
     end_time = models.TimeField()
     volunteer = models.ForeignKey(Volunteer)
     shift = models.ForeignKey(Shift)
+    date_logged = models.DateTimeField(null=True, blank=True)
+    report_status = models.BooleanField(choices=STATUS_CHOICES, default=False)
+    edit_requested = models.BooleanField(default=False) 
 ```
 
 ### Purpose
@@ -257,3 +274,49 @@ When a Volunteer signs up for a Shift, a new record/row is added to the Voluntee
 1) One-to-Many from Volunteer to VolunteerShift (since a Volunteer can be signed up for multiple Shifts).
 
 2) One-to-Many from Shift to VolunteerShift (a Shift can be served by multiple Volunteers).
+
+
+## EditRequest Model
+
+```
+class EditRequest(models.Model): 
+    volunteer_shift = models.ForeignKey(VolunteerShift)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+```
+
+### Purpose
+
+The EditRequest model is used to represent edit request on volunteer shifts.
+
+### Relationships
+
+1) One-to-Many from VolunteerShift to EditRequest (since a Volunteer can request multiple edits for a single volunteershift).
+
+## Report Model
+
+```
+class Report(models.Model):
+    total_hrs = models.DecimalField()
+    volunteer_shifts = models.ManyToManyField(VolunteerShift)
+    confirm_status = models.IntegerField(default=0)
+    date_submitted = models.DateField(default=timezone.now)
+    volunteer = models.ForeignKey(Volunteer)
+```
+
+### Purpose
+
+The Report Model is used to represent the reports submitted by the volunteers.
+
+### Explanation of non-trivial fields
+
+
+`confirm_status` - Divides the reports into 3 categories namely pending:0, approved:1 and rejected:2. 
+
+
+### Relationships
+
+1) Many-to-Many from VolunteerShift to Report (since multiple reports can be generated for a single volunteershift, also one report may contain many volunteershifts in it).
+
+2) One-to-Many from Volunteer to Report (a Volunteer can have multiple reports).
+

@@ -2,15 +2,15 @@
 import re
 from urllib.request import urlretrieve
 import os
-
-import PyPDF2
-from PyPDF2.utils import PdfReadError
+# import PyPDF2
+# from PyPDF2.utils import PdfReadError
 
 # third party
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -18,7 +18,11 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.volunteerProfilePage import VolunteerProfilePage
-from shift.utils import create_organization_with_details, create_volunteer_with_details
+from shift.utils import (create_country, create_state,
+                         create_city, create_other_city,
+                         create_volunteer_with_details,
+                         create_organization_with_details)
+
 
 class VolunteerProfile(LiveServerTestCase):
     """
@@ -37,7 +41,9 @@ class VolunteerProfile(LiveServerTestCase):
         This method initiates Firefox WebDriver, WebDriverWait and
         the corresponding POM objects for this Test Class
         """
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.profile_page = VolunteerProfilePage(cls.driver)
@@ -51,11 +57,21 @@ class VolunteerProfile(LiveServerTestCase):
         Method consists of statements to be executed before
         start of each test.
         """
-        vol = [
-            'Goku', "Son", "Goku", "Kame House", "East District",
-            "East District", "East District", "9999999999", "idonthave@gmail.com"
-        ]
-        org_name='Detective'
+        country = create_country()
+        state = create_state()
+        city = create_city()
+        vol = {
+            'username': 'Goku',
+            'first_name': "Son",
+            'last_name': "Goku",
+            'address': "Kame House",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "9999999999",
+            'email': "idonthave@gmail.com"
+        }
+        org_name = 'Detective'
         org_obj = create_organization_with_details(org_name)
         self.volunteer_1 = create_volunteer_with_details(vol, org_obj)
         self.login_correctly()
@@ -104,7 +120,11 @@ class VolunteerProfile(LiveServerTestCase):
         """
         self.wait.until(
             EC.presence_of_element_located(
-                (By.XPATH, "//h1[contains(text(), 'Volunteer Management System')]")
+                (
+                    By.XPATH,
+                    "//h1[contains(text(),"
+                    " 'Volunteer Management System')]"
+                )
             )
         )
 
@@ -113,10 +133,15 @@ class VolunteerProfile(LiveServerTestCase):
         """
         Utility functions to download dummy resume uploaded to dropbox.
         """
-        urlretrieve('https://dl.dropboxusercontent.com/s/08wpfj4n9f9jdnk/DummyResume.pdf',
-                    'DummyResume.pdf')
-        urlretrieve('https://dl.dropboxusercontent.com/s/uydlhww0ekdy6j7/DummyZip.zip',
-                    'DummyZip.zip')
+        urlretrieve(
+            'https://dl.dropboxusercontent.com/s/'
+            '08wpfj4n9f9jdnk/DummyResume.pdf',
+            'DummyResume.pdf'
+        )
+        urlretrieve(
+            'https://dl.dropboxusercontent.com/s/uydlhww0ekdy6j7/DummyZip.zip',
+            'DummyZip.zip'
+        )
 
     def test_details_tab(self):
         """
@@ -130,13 +155,13 @@ class VolunteerProfile(LiveServerTestCase):
         found_email = re.search(self.volunteer_1.email, page_source)
         self.assertNotEqual(found_email, None)
 
-        found_city = re.search(self.volunteer_1.city, page_source)
+        found_city = re.search(self.volunteer_1.city.name, page_source)
         self.assertNotEqual(found_city, None)
 
-        found_state = re.search(self.volunteer_1.state, page_source)
+        found_state = re.search(self.volunteer_1.state.name, page_source)
         self.assertNotEqual(found_state, None)
 
-        found_country = re.search(self.volunteer_1.country, page_source)
+        found_country = re.search(self.volunteer_1.country.name, page_source)
         self.assertNotEqual(found_country, None)
 
         found_org = re.search(self.volunteer_1.organization.name, page_source)
@@ -146,15 +171,23 @@ class VolunteerProfile(LiveServerTestCase):
         """
         Test profile edit in volunteer profile.
         """
+        create_other_city()
         profile_page = self.profile_page
         profile_page.navigate_to_profile()
         self.wait_for_profile_load('Son Goku')
         profile_page.edit_profile()
 
-        new_details = [
-            'Harvey', 'Specter', 'hspecter@ps.com', 'Empire State Building',
-            'NYC', 'New York', 'USA', '9999999998', 'None', 'Lawyer'
-        ]
+        new_details = {
+            'first_name': 'Harvey',
+            'last_name': 'Specter',
+            'email': 'hspecter@ps.com',
+            'address': 'Empire State Building',
+            'city': 'Mussoorie',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999998',
+            'organization': 'Lawyer'
+        }
         profile_page.fill_values(new_details)
         self.wait_for_profile_load('Harvey Specter')
 
@@ -163,31 +196,25 @@ class VolunteerProfile(LiveServerTestCase):
         found_email = re.search(self.volunteer_1.email, page_source)
         self.assertEqual(found_email, None)
 
-        found_city = re.search(self.volunteer_1.city, page_source)
+        found_city = re.search(self.volunteer_1.city.name, page_source)
         self.assertEqual(found_city, None)
-
-        found_state = re.search(self.volunteer_1.state, page_source)
-        self.assertEqual(found_state, None)
-
-        found_country = re.search(self.volunteer_1.country, page_source)
-        self.assertEqual(found_country, None)
 
         found_org = re.search(self.volunteer_1.organization.name, page_source)
         self.assertEqual(found_org, None)
 
-        found_email = re.search(new_details[2], page_source)
+        found_email = re.search(new_details['email'], page_source)
         self.assertNotEqual(found_email, None)
 
-        found_city = re.search(new_details[4], page_source)
+        found_city = re.search(new_details['city'], page_source)
         self.assertNotEqual(found_city, None)
 
-        found_state = re.search(new_details[5], page_source)
+        found_state = re.search(new_details['state'], page_source)
         self.assertNotEqual(found_state, None)
 
-        found_country = re.search(new_details[6], page_source)
+        found_country = re.search(new_details['country'], page_source)
         self.assertNotEqual(found_country, None)
 
-        found_org = re.search(new_details[9], page_source)
+        found_org = re.search(new_details['organization'], page_source)
         self.assertNotEqual(found_org, None)
 
     def test_invalid_resume_format(self):
@@ -209,7 +236,10 @@ class VolunteerProfile(LiveServerTestCase):
 
         profile_page.upload_resume(path)
         profile_page.submit_form()
-        self.assertEqual(profile_page.get_invalid_format_error(), 'Uploaded file is invalid.')
+        self.assertEqual(
+            profile_page.get_invalid_format_error(),
+            'Uploaded file is invalid.'
+        )
 
 # Resume Upload is buggy, it is taking too long to be uploaded on travis.
 # https://github.com/systers/vms/issues/776

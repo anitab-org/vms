@@ -1,5 +1,6 @@
 # third party
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 # Django
 from django.contrib.staticfiles.testing import LiveServerTestCase
@@ -10,6 +11,7 @@ from pom.pages.volunteerReportPage import VolunteerReportPage
 from shift.utils import (create_volunteer, register_past_event_utility,
                          register_past_job_utility, register_past_shift_utility,
                          log_hours_utility)
+
 
 class VolunteerReport(LiveServerTestCase):
     """
@@ -28,7 +30,9 @@ class VolunteerReport(LiveServerTestCase):
         This method initiates Firefox WebDriver, WebDriverWait and
         the corresponding POM objects for this Test Class
         """
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.report_page = VolunteerReportPage(cls.driver)
@@ -65,7 +69,7 @@ class VolunteerReport(LiveServerTestCase):
         :param total_shifts: Total number of shifts as filled in form.
         :param hours: Total number of hours as filled in form.
         """
-        total_no_of_hours = self.report_page.get_shift_summary().split(' ')[-1].strip('\n')
+        total_no_of_hours = self.report_page.get_report_hours()
         self.assertEqual(total_no_of_hours, hours)
 
     def login(self):
@@ -86,7 +90,10 @@ class VolunteerReport(LiveServerTestCase):
         report_page.live_server_url = self.live_server_url
         report_page.navigate_to_report_page()
         report_page.submit_form()
-        self.assertEqual(report_page.get_alert_box_text(), report_page.no_results_message)
+        self.assertEqual(
+            report_page.get_alert_box_text(),
+            report_page.no_results_message
+        )
 
     def test_report_with_empty_fields(self):
         """
@@ -140,7 +147,6 @@ class VolunteerReport(LiveServerTestCase):
         self.assertEqual(report_page.get_alert_box_text(),
                          report_page.no_results_message)
 
-
     def test_date_field(self):
         """
         Test report generation using date field.
@@ -165,7 +171,10 @@ class VolunteerReport(LiveServerTestCase):
             'start': '2015-05-10',
             'end': '2015-06-01'
         })
-        self.assertEqual(report_page.get_alert_box_text(), report_page.no_results_message)
+        self.assertEqual(
+            report_page.get_alert_box_text(),
+            report_page.no_results_message
+        )
 
     def test_event_field(self):
         """
@@ -233,5 +242,8 @@ class VolunteerReport(LiveServerTestCase):
             'start': '2015-05-10',
             'end': '2015-06-01'
         })
-        self.assertEqual(report_page.get_alert_box_text(), report_page.no_results_message)
+        self.assertEqual(
+            report_page.get_alert_box_text(),
+            report_page.no_results_message
+        )
 

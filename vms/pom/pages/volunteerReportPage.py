@@ -7,6 +7,7 @@ from pom.locators.volunteerReportPageLocators import VolunteerReportPageLocators
 from pom.pages.homePage import HomePage
 from pom.pageUrls import PageUrls
 
+
 class VolunteerReportPage(BasePage):
     volunteer_history_page = PageUrls.volunteer_history_page
     volunteer_report_page = PageUrls.volunteer_report_page
@@ -43,6 +44,6 @@ class VolunteerReportPage(BasePage):
     def get_alert_box_text(self):
         return self.element_by_class_name(self.elements.NO_RESULT_BOX).text
 
-    def get_shift_summary(self):
-        return self.element_by_xpath(
-            self.elements.REPORT_SHIFT_SUMMARY_PATH).text
+    def get_report_hours(self):
+        return self.element_by_xpath(self.elements.REPORT_HOURS_PATH).text
+

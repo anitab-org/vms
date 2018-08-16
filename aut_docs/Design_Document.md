@@ -47,3 +47,34 @@ The QA process is divided as follows:
 
 - To follow up changes in UI with changes in tests, the modifications need to be made only
   in the relevant locators/urls/page file.
+
+- Addition of any new view implies that a pom `page` and `locator` need to be created.
+
+- Similarly, modifying any view implies that the corresponding `page` and `locator` will
+  also need to be modified.
+  
+## Important points regarding creation of new Test Class:
+
+- As mentioned earlier, each test class corresponds to a view which has a corresponding
+  pom page and locator.
+
+- When creating a new test class, first identify the view the class is being created for,
+  and create corresponding pom page and locator.
+  
+- Similarly, if you are modifying the existing templates make sure you update the corresponding
+  pom page and locators.
+
+- Each Test Class has `setUpClass` and `tearDownClass` class methods which should initiate and
+  quit the WebDriver objects respectively.
+
+- POM page should be linked to the Test Class in the `setUpClass` method itself and WebDriverWait
+  if needed in the tests should also be initiated in this method only.
+
+- If in the tests you are logging in as admin or volunteer make sure to `logout` in the `tearDown`
+  method of the Test Class.
+
+- Use of implicit waits should always be avoided unless needed in an extreme case and has the
+  approval of a maintainer. If wait is needed use explicit waits instead.
+
+- Tests in normal mode might fail if all are executed at once, but if a test is fails in
+  `HEADLESS` mode then the test is wrong and should be corrected accordingly.

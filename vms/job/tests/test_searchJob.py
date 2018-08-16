@@ -1,6 +1,7 @@
 # third party
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -11,7 +12,11 @@ from django.contrib.staticfiles.testing import LiveServerTestCase
 # local Django
 from pom.pages.authenticationPage import AuthenticationPage
 from pom.pages.jobSearchPage import JobSearchPage
-from shift.utils import create_admin, create_event_with_details, create_job_with_details
+from shift.utils import (get_country_by_name, get_state_by_name,
+                         get_city_by_name, create_admin,
+                         create_event_with_details, create_job_with_details,
+                         create_country, create_state, create_city)
+
 
 class SearchJob(LiveServerTestCase):
     """
@@ -37,14 +42,36 @@ class SearchJob(LiveServerTestCase):
         the corresponding POM objects for this Test Class
         """
 
-        cls.event_1 = ['event', '2050-05-10', '2050-06-16']
+        cls.event_1 = {
+            'name': 'event',
+            'start_date': '2050-05-10',
+            'end_date': '2050-06-16',
+            'description': 'event-description',
+            'address': 'event-address',
+            'venue': 'event-venue'
+        }
 
-        cls.event_2 = ['eventq', '2050-05-10', '2050-06-16']
+        cls.event_2 = {
+            'name': 'eventq',
+            'start_date': '2050-05-10',
+            'end_date': '2050-06-16',
+            'description': 'event-descriptionq',
+            'address': 'event-addressq',
+            'venue': 'event-venueq'
+        }
 
-        cls.expected_result_one = ['job-name', 'event', 'June', '10,', '2050', 'June', '11,', '2050', 'Details', 'Edit', 'Delete']
-        cls.expected_result_two = ['job-nameq', 'eventq', 'May', '15,', '2050', 'May', '20,', '2050', 'Details', 'Edit', 'Delete']
+        cls.expected_result_one = [
+            'job-name', 'event', 'June', '10,', '2050',
+            'June', '11,', '2050', 'Details', 'Edit', 'Delete'
+        ]
+        cls.expected_result_two = [
+            'job-nameq', 'eventq', 'May', '15,', '2050',
+            'May', '20,', '2050', 'Details', 'Edit', 'Delete'
+        ]
 
-        cls.driver = webdriver.Firefox()
+        firefox_options = Options()
+        firefox_options.add_argument('-headless')
+        cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         cls.driver.implicitly_wait(5)
         cls.driver.maximize_window()
         cls.search_page = JobSearchPage(cls.driver)
@@ -59,19 +86,41 @@ class SearchJob(LiveServerTestCase):
         """
         e1 = create_event_with_details(self.event_1)
         e2 = create_event_with_details(self.event_2)
-        e1.city = 'job-city'
-        e1.state = 'job-state'
-        e1.country = 'job-country'
+        country = create_country()
+        state = create_state()
+        city = create_city()
+        e1.city = city
+        e1.state = state
+        e1.country = country
         e1.save()
-        e2.city = 'job-cityq'
-        e2.state = 'job-stateq'
-        e2.country = 'job-countryq'
+
+        create_admin()
+        city_name = 'Bothell'
+        second_city = get_city_by_name(city_name)
+        state_name = 'Washington'
+        second_state = get_state_by_name(state_name)
+        country_name = 'United States'
+        second_country = get_country_by_name(country_name)
+        e2.city = second_city
+        e2.state = second_state
+        e2.country = second_country
         e2.save()
-        job_1 = ['job-name', '2050-06-10', '2050-06-11', 'job-description', e1]
-        job_2 = ['job-nameq', '2050-05-15', '2050-05-20', 'job-description', e2]
+        job_1 = {
+            'name': 'job-name',
+            'start_date': '2050-06-10',
+            'end_date': '2050-06-11',
+            'description': 'job-description',
+            'event': e1
+        }
+        job_2 = {
+            'name': 'job-nameq',
+            'start_date': '2050-05-15',
+            'end_date': '2050-05-20',
+            'description': 'job-description',
+            'event': e2
+        }
         j1 = create_job_with_details(job_1)
         j2 = create_job_with_details(job_2)
-        create_admin()
         self.login_admin()
         self.wait_for_home_page()
 
@@ -107,7 +156,10 @@ class SearchJob(LiveServerTestCase):
         """
         self.wait.until(
             EC.presence_of_element_located(
-                (By.XPATH, "//h1[contains(text(), 'Volunteer Management System')]")
+                (
+                    By.XPATH,
+                    "//h1[contains(text(), 'Volunteer Management System')]"
+                )
             )
         )
 
@@ -196,28 +248,18 @@ class SearchJob(LiveServerTestCase):
         search_page.live_server_url = self.live_server_url
 
         search_page.navigate_to_job_search_page()
-        search_page.search_city_field('job')
+        search_page.search_city_field('Roorkee')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
 
-        search_page.search_city_field('j')
+        search_page.search_city_field('Bothell')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
-
-        search_page.search_city_field('job-')
-        search_page.submit_form()
-        search_results = search_page.get_search_results()
-        result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(self.expected_result_one in result)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_two in result)
 
         search_page.search_city_field('job-fail-test')
@@ -238,28 +280,18 @@ class SearchJob(LiveServerTestCase):
         search_page.live_server_url = self.live_server_url
 
         search_page.navigate_to_job_search_page()
-        search_page.search_state_field('job')
+        search_page.search_state_field('Uttarakhand')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
 
-        search_page.search_state_field('j')
+        search_page.search_state_field('Washington')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
-
-        search_page.search_state_field('job-')
-        search_page.submit_form()
-        search_results = search_page.get_search_results()
-        result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(self.expected_result_one in result)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_two in result)
 
         search_page.search_state_field('job-fail-test')
@@ -280,28 +312,18 @@ class SearchJob(LiveServerTestCase):
         search_page.live_server_url = self.live_server_url
 
         search_page.navigate_to_job_search_page()
-        search_page.search_country_field('job')
+        search_page.search_country_field('India')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
 
-        search_page.search_country_field('j')
+        search_page.search_country_field('United States')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
-
-        search_page.search_country_field('job-')
-        search_page.submit_form()
-        search_results = search_page.get_search_results()
-        result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
-        self.assertTrue(self.expected_result_one in result)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_two in result)
 
         search_page.search_country_field('job-fail-test')
@@ -338,8 +360,8 @@ class SearchJob(LiveServerTestCase):
 
     def test_intersection_of_all_fields(self):
         """
-        Test search results for different combinations of job name, start date, end date,
-        city, state, country and event
+        Test search results for different combinations of job name,
+        start date, end date, city, state, country and event
         """
         search_page = self.search_page
         search_page.live_server_url = self.live_server_url
@@ -348,16 +370,15 @@ class SearchJob(LiveServerTestCase):
         search_page.search_name_field('job')
         search_page.search_start_date_field('01/01/2017')
         search_page.search_end_date_field('10/06/2050')
-        search_page.search_city_field('job')
-        search_page.search_state_field('job')
-        search_page.search_country_field('job')
+        search_page.search_city_field('Roorkee')
+        search_page.search_state_field('Uttarakhand')
+        search_page.search_country_field('India')
         search_page.search_event_field('event')
         search_page.submit_form()
         search_results = search_page.get_search_results()
         result = search_page.get_results_list(search_results)
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(result), 1)
         self.assertTrue(self.expected_result_one in result)
-        self.assertTrue(self.expected_result_two in result)
 
         search_page.search_name_field('job')
         search_page.search_country_field('wrong-country')

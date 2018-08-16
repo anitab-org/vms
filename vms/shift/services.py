@@ -8,8 +8,6 @@ from django.db.models import Q
 from django.utils import timezone
 
 # local Django
-from organization.services import (get_organization_by_name,
-                                   get_organizations_ordered_by_name)
 from shift.models import Report
 from shift.models import Shift, VolunteerShift
 from volunteer.models import Volunteer
@@ -84,6 +82,7 @@ def get_report_by_id(report_id):
 
     return result
 
+
 def send_reminder():
     """
     Send reminder email for all shifts and volunteers
@@ -100,26 +99,27 @@ def send_reminder():
         else:
             email_word = " in " + str(days) + " days."
         v_id = volunteer.id
-        shift_list = get_unlogged_shifts_by_volunteer_id(v_id)
+        shift_list = get_future_shifts_by_volunteer_id(v_id)
         subject = "The Systers - VMS Volunteer Shift Reminder Mail"
         for shift in shift_list:
             date_shift = shift.date
             days_before_shift = date_shift - date.today()
             if days_before_shift.days == days:
                 message = "Dear " + volunteer.first_name + \
-                ",\n\nThis is your reminder that you have registered for the " + \
-                shift.job.name + " job at the " + shift.job.event.name + \
-                " event on " + str(shift.date) + \
-                ".\nThe shift you signed up starts" + \
-                email_word + \
-                "\n\nShift Start Time: " + str(shift.start_time) + \
-                "\nShift End Time: " + str(shift.end_time) + \
-                "\n\nAddress: " + shift.address + \
-                "\nVenue: " + shift.venue + \
-                "\nCity: " + shift.city + \
-                "\nState: " + shift.state + \
-                "\nCountry: " + shift.country + \
-                "\n\nThank you for registering!"
+                    ",\n\nThis is your reminder that you " \
+                    "have registered for the " + \
+                    shift.job.name + " job at the " + shift.job.event.name + \
+                    " event on " + str(shift.date) + \
+                    ".\nThe shift you signed up starts" + \
+                    email_word + \
+                    "\n\nShift Start Time: " + str(shift.start_time) + \
+                    "\nShift End Time: " + str(shift.end_time) + \
+                    "\n\nAddress: " + shift.address + \
+                    "\nVenue: " + shift.venue + \
+                    "\nCity: " + shift.city.name + \
+                    "\nState: " + shift.state.name + \
+                    "\nCountry: " + shift.country.name + \
+                    "\n\nThank you for registering!"
                 send_mail(
                     subject,
                     message,
@@ -268,7 +268,7 @@ def get_shifts_with_open_slots(j_id):
     for shift in shift_list_by_date:
         slots_remaining = get_shift_slots_remaining(shift.id)
         if slots_remaining > 0:
-            shift_map = {}
+            shift_map = dict()
             shift_map["id"] = shift.id
             shift_map["date"] = shift.date
             shift_map["start_time"] = shift.start_time
@@ -290,7 +290,7 @@ def get_shifts_with_open_slots_for_volunteer(j_id, v_id):
     for shift in shift_list_by_date:
         slots_remaining = get_shift_slots_remaining(shift.id)
         if slots_remaining > 0 and not is_signed_up(v_id, shift.id):
-            shift_map = {}
+            shift_map = dict()
             shift_map["id"] = shift.id
             shift_map["date"] = shift.date
             shift_map["start_time"] = shift.start_time
@@ -300,9 +300,13 @@ def get_shifts_with_open_slots_for_volunteer(j_id, v_id):
 
     return shift_list
 
+
 def get_future_shifts_by_volunteer_id(v_id):
-    shift_signed_up_list = Shift.objects.filter(Q(volunteershift__volunteer_id=v_id)&Q(date__gte=timezone.now().date())|
-                                                Q(date=timezone.now().date(), start_time__gte=timezone.now().time()))
+    shift_signed_up_list = Shift.objects.filter(
+        Q(volunteershift__volunteer_id=v_id) &
+        Q(date__gte=timezone.now().date()) |
+        Q(date=timezone.now().date(), start_time__gte=timezone.now().time())
+    )
     shift_signed_up_list = shift_signed_up_list.order_by('date')
 
     return shift_signed_up_list
@@ -313,9 +317,13 @@ def get_unlogged_shifts_by_volunteer_id(v_id):
     # get shifts that the volunteer signed up for and
     # that have not been logged yet (in terms of logged start and end times)
     shift_signed_up_list = Shift.objects.filter(
-        volunteershift__volunteer_id=v_id,
-        volunteershift__start_time__isnull=True,
-        volunteershift__end_time__isnull=True)
+        Q(
+            volunteershift__volunteer_id=v_id,
+            volunteershift__start_time__isnull=True,
+            volunteershift__end_time__isnull=True) &
+        Q(date__lte=timezone.now().date()) |
+        Q(date=timezone.now().date(), start_time__lte=timezone.now().time())
+    )
 
     # this filtering is buggy when done this way, why?
     # it shows the same shift multiple times if
@@ -350,8 +358,14 @@ def get_volunteer_shift_by_id(v_id, s_id):
 def get_volunteer_shifts(v_id, event_name, job_name, start_date, end_date):
 
     volunteer_shift_list = get_volunteer_shifts_with_hours(v_id)
-    volunteer_shift_list = volunteer_shift_list.filter(Q(report_status=False)&Q(shift__date__lte=timezone.now().date())|
-                                                Q(shift__date=timezone.now().date(), shift__end_time__lte=timezone.now().time()))
+    volunteer_shift_list = volunteer_shift_list.filter(
+        Q(report_status=False) &
+        Q(shift__date__lte=timezone.now().date()) |
+        Q(
+            shift__date=timezone.now().date(),
+            shift__end_time__lte=timezone.now().time()
+        )
+    )
     # filter based on criteria provided
     if event_name:
         volunteer_shift_list = volunteer_shift_list.filter(
@@ -359,7 +373,7 @@ def get_volunteer_shifts(v_id, event_name, job_name, start_date, end_date):
     if job_name:
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__job__name__icontains=job_name)
-    if (start_date and end_date):
+    if start_date and end_date:
         volunteer_shift_list = volunteer_shift_list.filter(
             shift__date__gte=start_date, shift__date__lte=end_date)
     for shift in volunteer_shift_list:
