@@ -16,7 +16,7 @@
                     {% trans "Username" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_username" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Username{% endblocktrans %}" name="usr-username" maxlength="30" autofocus="autofocus" value="{{ user_form.username.value }}">
+                    <input id="id_username" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Username{% endblocktrans %}" name="usr-username" maxlength="30" autofocus="autofocus" value="{{ user_form.username.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in user_form.username.errors %}
@@ -32,7 +32,7 @@
                     {% trans "Username" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_username" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Username{% endblocktrans %}" name="usr-username" maxlength="30" autofocus="autofocus" value="{% if user_form.username.value %}{{ user_form.username.value }}{% endif %}">
+                    <input id="id_username" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Username{% endblocktrans %}" name="usr-username" maxlength="30" autofocus="autofocus" value="{% if user_form.username.value %}{{ user_form.username.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -42,7 +42,7 @@
                     {% trans "Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" name="usr-password">
+                    <input id="id_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" name="usr-password" required>
                     <p class="help-block">
                         <strong>
                             {% for error in user_form.password.errors %}
@@ -58,7 +58,7 @@
                     {% trans "Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" name="usr-password">
+                    <input id="id_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Password{% endblocktrans %}" name="usr-password" required>
                 </div>
             </div>
         {% endif %}
@@ -68,7 +68,7 @@
                     {% trans "Confirm Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
+                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password" required>
                     <p class="help-block">
                         <strong>
                             {% for error in user_form.confirm_password.errors %}
@@ -84,7 +84,7 @@
                     {% trans "Confirm Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
+                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password" required>
                     <p class="help-block">
                         <strong>
                          Passwords don't match.
@@ -98,7 +98,7 @@
                     {% trans "Confirm Password" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password">
+                    <input id="id_confirm_password" class="textinput textInput form-control" type="password" placeholder="{% blocktrans %}Confirm Password{% endblocktrans %}" name="usr-confirm_password" required>
                 </div>
             </div>
         {% endif %}
@@ -134,7 +134,7 @@
                     {% trans "First Name" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_first_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}First Name{% endblocktrans %}" name="vol-first_name" value="{{ volunteer_form.first_name.value }}">
+                    <input id="id_first_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}First Name{% endblocktrans %}" name="vol-first_name" value="{{ volunteer_form.first_name.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.first_name.errors %}
@@ -150,7 +150,7 @@
                     {% trans "First Name" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_first_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}First Name{% endblocktrans %}" name="vol-first_name" value="{% if volunteer_form.first_name.value %}{{ volunteer_form.first_name.value }}{% endif %}">
+                    <input id="id_first_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}First Name{% endblocktrans %}" name="vol-first_name" value="{% if volunteer_form.first_name.value %}{{ volunteer_form.first_name.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -160,7 +160,7 @@
                     {% trans "Last Name" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_last_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Last Name{% endblocktrans %}" name="vol-last_name" value="{{ volunteer_form.last_name.value }}">
+                    <input id="id_last_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Last Name{% endblocktrans %}" name="vol-last_name" value="{{ volunteer_form.last_name.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.last_name.errors %}
@@ -176,7 +176,7 @@
                     {% trans "Last Name" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_last_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Last Name{% endblocktrans %}" name="vol-last_name" value="{% if volunteer_form.last_name.value %}{{ volunteer_form.last_name.value }}{% endif %}">
+                    <input id="id_last_name" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Last Name{% endblocktrans %}" name="vol-last_name" value="{% if volunteer_form.last_name.value %}{{ volunteer_form.last_name.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -186,7 +186,7 @@
                     {% trans "Email" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_email" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Email{% endblocktrans %}" name="vol-email" value="{{ volunteer_form.email.value }}">
+                    <input id="id_email" class="textinput textInput form-control" pattern=".+@.+\..+" type="text" placeholder="{% blocktrans %}Email{% endblocktrans %}" name="vol-email" value="{{ volunteer_form.email.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.email.errors %}
@@ -202,7 +202,7 @@
                     {% trans "Email" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_email" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Email{% endblocktrans %}" name="vol-email" value="{% if volunteer_form.email.value %}{{ volunteer_form.email.value }}{% endif %}">
+                    <input id="id_email" class="textinput textInput form-control" pattern=".+@.+\..+"  type="text" placeholder="{% blocktrans %}Email{% endblocktrans %}" name="vol-email" value="{% if volunteer_form.email.value %}{{ volunteer_form.email.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -212,7 +212,7 @@
                     {% trans "Address" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_address" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Address{% endblocktrans %}" name="vol-address" value="{{ volunteer_form.address.value }}">
+                    <input id="id_address" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Address{% endblocktrans %}" name="vol-address" value="{{ volunteer_form.address.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.address.errors %}
@@ -228,7 +228,7 @@
                     {% trans "Address" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_address" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Address{% endblocktrans %}" name="vol-address" value="{% if volunteer_form.address.value %}{{ volunteer_form.address.value }}{% endif %}">
+                    <input id="id_address" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Address{% endblocktrans %}" name="vol-address" value="{% if volunteer_form.address.value %}{{ volunteer_form.address.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -238,7 +238,7 @@
                     {% trans "City" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="vol-city" value="{{ volunteer_form.city.value }}">
+                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="vol-city" value="{{ volunteer_form.city.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.city.errors %}
@@ -254,7 +254,7 @@
                     {% trans "City" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="vol-city" value="{% if volunteer_form.city.value %}{{ volunteer_form.city.value }}{% endif %}">
+                    <input id="id_city" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}City{% endblocktrans %}" name="vol-city" value="{% if volunteer_form.city.value %}{{ volunteer_form.city.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -264,7 +264,7 @@
                     {% trans "State/Province" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{{ volunteer_form.state.value }}">
+                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{{ volunteer_form.state.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.state.errors %}
@@ -280,7 +280,7 @@
                     {% trans "State/Province" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{% if volunteer_form.state.value %}{{ volunteer_form.state.value }}{% endif %}">
+                    <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{% if volunteer_form.state.value %}{{ volunteer_form.state.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -306,7 +306,7 @@
                     {% trans "Country" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="vol-country" value="{% if volunteer_form.country.value %}{{ volunteer_form.country.value }}{% endif %}">
+                    <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="vol-country" value="{% if volunteer_form.country.value %}{{ volunteer_form.country.value }}{% endif %}" required>
                 </div>
             </div>
         {% endif %}
@@ -316,7 +316,7 @@
                     {% trans "Phone Number" %}<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}">
+                    <input id="id_phone_number" pattern="\+[0-9]+" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}" required>
                     <p class="help-block">
                         <strong>
                             {% for error in volunteer_form.phone_number.errors %}
@@ -332,7 +332,7 @@
                     Phone Number<span class="asteriskField">*</span>
                 </label>
                 <div class="controls">
-                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}">
+                    <input id="id_phone_number" class="textinput textInput form-control" type="text" placeholder="Phone Number" name="vol-phone_number" value="{{ volunteer_form.phone_number.value }}" required>
                     <p class="help-block">
                         <strong>
                             This phone number isn't valid for the selected country
