@@ -9,7 +9,7 @@
         <form class="form-horizontal" action="{% url 'event:list_sign_up' volunteer_id %}" method="post">
             {% csrf_token %}
             <fieldset>
-                <legend>{% trans "Search Events" %}</legend>
+                <legend class="header">{% trans "Search Events" %}</legend>
                 {% if form.name.errors %}
                 <div class="form-group has-error">
                     <label class="col-md-2 control-label">{% trans "Name" %}</label>
@@ -167,7 +167,7 @@
                         <td>{{ event.start_date }}</td>
                         <td>{{ event.end_date }}</td>
                         <td>
-                            <a href="{% url 'job:list_sign_up' event.id volunteer_id %}" class="btn btn-success btn-sm">{% trans "View Jobs" %}</a>
+                            <a href="{% url 'job:list_sign_up' event.id volunteer_id %}" class="btn btn-info btn-sm">{% trans "View Jobs" %}</a>
                         </td>
                     </tr>
                 {% endfor %}

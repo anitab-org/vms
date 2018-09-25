@@ -5,7 +5,7 @@
 {% block content %}
     <div class="spacer"></div>
     <div class="row">
-        <h1>
+        <h1 class="header">
             {{ user.volunteer.first_name }} {{ user.volunteer.last_name }}
         </h1>
         <hr>
@@ -34,18 +34,12 @@
                 </div>
                 <div class="panel-body">
                 <table>
-                    <!-- Better to have css padding instead of nbsp to insert spaces -->
-                   <tr> <td width="50%"><label><h4><span class="label label-info">Email</span></h4></label></td><td align="left">{{ volunteer.email }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">City</span></h4></label></td><td align="left">{{ volunteer.city }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">State/Province</span></h4></label></td><td align="left">{{ volunteer.state }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">Country</span></h4></label></td><td align="left">{{ volunteer.country }}</td></tr>
-                    <tr><td><label><h4><span class="label label-info">Shift Reminder Days</span></h4></label></td><td align="left">{{ volunteer.reminder_days }}</td></tr>
-                    <tr><td>{% if volunteer.organization %}
-                        <label><h4><span class="label label-info">Organization</span></h4></label></td><td align="left">{{ volunteer.organization.name }}
-                    {% elif volunteer.unlisted_organization  %}
-                        <label><h4><span class="label label-info">Organization</span></h4></label></td>&nbsp;&nbsp;<td align="center">{{ volunteer.unlisted_organization }}
-                    {% else %}
-                    {% endif %}</td></tr>
+                   <tr> <td class="centered"><label><h4><span class="label label-info">Email</span></h4></label></td><td class="centered">{{ volunteer.email }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">City</span></h4></label></td><td class="centered">{{ volunteer.city }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">State/Province</span></h4></label></td><td class="centered">{{ volunteer.state }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">Country</span></h4></label></td><td class="centered">{{ volunteer.country }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">Shift Reminder Days</span></h4></label></td><td class="centered">{{ volunteer.reminder_days }}</td></tr>
+                    <tr><td class="centered"><label><h4><span class="label label-info">Organization</span></h4></label></td><td class="centered">{{ volunteer.organization.name }}</td></tr>
                 </table>
                 </div>
             </div>
@@ -113,7 +107,7 @@
                     </h4>
                 </div>
                 <div class="panel-body">
-                    <a href="{% url 'volunteer:edit' volunteer.id %}" class="btn btn-default">{% trans "Edit Profile" %}</a>
+                    <a href="{% url 'volunteer:edit' volunteer.id %}" class="btn btn-primary">{% trans "Edit Profile" %}</a>
                 </div>
             </div>
         </div>

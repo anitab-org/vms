@@ -12,6 +12,15 @@ class HomePageLocators(object):
     VOLUNTEER_SEARCH_TEXT = 'Volunteer Search'
     VOLUNTEER_PROFILE_TEXT = 'Profile'
     CREATE_ADMIN_TEXT = 'Create Admin Account'
+    CHANGE_PASSWORD_TEXT = 'Change Password'
 
     NO_ADMIN_RIGHT_HEAD = 'panel-heading'
     NO_ADMIN_RIGHT_CONTENT = 'panel-body'
+    NO_VOLUNTEER_RIGHT_HEAD = 'panel-title'
+    NO_VOLUNTEER_RIGHT_CONTENT = 'panel-body'
+
+    OLD_PASSWORD = '//*[@id="id_old_password"]'
+    NEW_PASSWORD = '//*[@id="id_new_password1"]'
+    CONFIRM_NEW_PASSWORD = '//*[@id="id_new_password2"]'
+    SUBMIT = 'submit'
+

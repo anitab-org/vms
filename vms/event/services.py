@@ -5,7 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from event.models import Event
 from job.services import get_jobs_by_event_id, remove_empty_jobs_for_volunteer
 from shift.models import Shift
-from shift.services import get_volunteer_shifts_with_hours, get_unlogged_shifts_by_volunteer_id
+from shift.services import (get_volunteer_shifts_with_hours,
+                            get_unlogged_shifts_by_volunteer_id)
 
 
 def event_not_empty(event_id):
@@ -61,7 +62,8 @@ def delete_event(event_id):
 
 def check_edit_event(event_id, new_start_date, new_end_date):
     """
-    Checks if an event can be edited without resulting in invalid job or shift dates
+    Checks if an event can be edited without
+    resulting in invalid job or shift dates
     """
     result = True
     invalid_count = 0
@@ -74,8 +76,8 @@ def check_edit_event(event_id, new_start_date, new_end_date):
         # check if there are currently any jobs associated with this event
         if jobs_in_event:
             for job in jobs_in_event:
-                if (job.start_date < new_start_date
-                        or job.end_date > new_end_date):
+                if (job.start_date < new_start_date or
+                        job.end_date > new_end_date):
                     result = False
                     invalid_count += 1
                     invalid_jobs.append(job.name)
@@ -167,7 +169,8 @@ def remove_empty_events_for_volunteer(event_list, volunteer_id):
 
 def search_events(name, start_date, end_date, city, state, country, job):
     """
-    searches event on the basis of name, start date, end date, city, state, country and job
+    Searches event on the basis of name, start date,
+    end date, city, state, country and job
     :param name: The name of the event
     :param start_date: The start date of the event
     :param end_date: The end date of event
@@ -183,11 +186,11 @@ def search_events(name, start_date, end_date, city, state, country, job):
     if start_date or end_date:
         search_query = get_events_by_date(start_date, end_date)
     if city:
-        search_query = search_query.filter(city__icontains=city)
+        search_query = search_query.filter(city__name__icontains=city)
     if state:
-        search_query = search_query.filter(state__icontains=state)
+        search_query = search_query.filter(state__name__icontains=state)
     if country:
-        search_query = search_query.filter(country__icontains=country)
+        search_query = search_query.filter(country__name__icontains=country)
     if job:
         search_query = search_query.filter(job__name__icontains=job)
     return search_query

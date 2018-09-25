@@ -3,13 +3,14 @@ import os
 
 # third party
 from braces.views import LoginRequiredMixin
+from cities_light.models import Country, Region, City
 
 # Django
 from django.conf import settings
-# from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from wsgiref.util import FileWrapper
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
@@ -21,9 +22,11 @@ from django.utils.decorators import method_decorator
 from administrator.utils import admin_required
 from event.services import get_signed_up_events_for_volunteer
 from job.services import get_signed_up_jobs_for_volunteer
-from organization.services import create_organization, get_organization_by_id, get_organizations_ordered_by_name
+from organization.services import (create_organization, get_organization_by_id,
+                                   get_organizations_ordered_by_name)
 from shift.models import Report
-from shift.services import calculate_total_report_hours, get_volunteer_shifts, generate_report
+from shift.services import (calculate_total_report_hours, get_volunteer_shifts,
+                            generate_report)
 from volunteer.forms import ReportForm, SearchVolunteerForm, VolunteerForm
 from volunteer.models import Volunteer
 from volunteer.services import (delete_volunteer_resume, search_volunteers,
@@ -44,7 +47,8 @@ def download_resume(request, volunteer_id):
                 filename = settings.MEDIA_ROOT + '/..' + basename
                 wrapper = FileWrapper(open(filename, 'rb'))
                 response = HttpResponse(wrapper)
-                response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(filename)
+                response['Content-Disposition'] = \
+                    'attachment; filename=%s' % os.path.basename(filename)
                 response['Content-Length'] = os.path.getsize(filename)
                 return response
             else:
@@ -78,29 +82,32 @@ class VolunteerHistoryView(LoginRequiredMixin, ListView):
     model = Report
 
     def get_queryset(self):
-       """
-       returns confirmed reports of a volunteer
+        """
+        returns confirmed reports of a volunteer
 
-       :return: confirmed reports of the selected volunteer
-       """
-       volunteer_id = self.kwargs['volunteer_id']
-       volunteer = get_volunteer_by_id(volunteer_id)
-       reports = Report.objects.filter(confirm_status=1, volunteer=volunteer).order_by('date_submitted')
-       return reports
+        :return: confirmed reports of the selected volunteer
+        """
+        volunteer_id = self.kwargs['volunteer_id']
+        volunteer = get_volunteer_by_id(volunteer_id)
+        reports = Report.objects.filter(
+            confirm_status=1,
+            volunteer=volunteer
+        ).order_by('date_submitted')
+        return reports
 
     def get_context_data(self, **kwargs):
-       """
-       displays volunteer information
+        """
+        displays volunteer information
 
-       :return: volunteer object and its organization
-       """
-       context = super(VolunteerHistoryView, self).get_context_data(**kwargs)
-       volunteer_id = self.kwargs['volunteer_id']
-       volunteer = get_volunteer_by_id(volunteer_id)
-       context['volunteer'] = volunteer
-       organization = volunteer.organization
-       context['organization'] = organization
-       return context
+        :return: volunteer object and its organization
+        """
+        context = super(VolunteerHistoryView, self).get_context_data(**kwargs)
+        volunteer_id = self.kwargs['volunteer_id']
+        volunteer = get_volunteer_by_id(volunteer_id)
+        context['volunteer'] = volunteer
+        organization = volunteer.organization
+        context['organization'] = organization
+        return context
 
 
 '''
@@ -118,9 +125,22 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
     success_url = reverse_lazy('volunteer:profile')
 
     def get_context_data(self, **kwargs):
-        context = super(VolunteerUpdateView,self).get_context_data(**kwargs)
+        context = super(VolunteerUpdateView, self).get_context_data(**kwargs)
+        volunteer_id = self.kwargs['volunteer_id']
+        volunteer = get_volunteer_by_id(volunteer_id)
         organization_list = get_organizations_ordered_by_name()
         context['organization_list'] = organization_list
+        country_list = Country.objects.all()
+        if volunteer.country:
+            country = volunteer.country
+            state_list = Region.objects.filter(country=country)
+            context['state_list'] = state_list
+        if volunteer.state:
+            state = volunteer.state
+            city_list = City.objects.filter(region=state)
+            context['city_list'] = city_list
+        context['organization_list'] = organization_list
+        context['country_list'] = country_list
         return context
 
     def get_object(self, queryset=None):
@@ -152,7 +172,24 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
                     })
 
         volunteer_to_edit = form.save(commit=False)
-
+        try:
+            country_name = self.request.POST.get('country')
+            country = Country.objects.get(name=country_name)
+        except ObjectDoesNotExist:
+            country = None
+        volunteer_to_edit.country = country
+        try:
+            state_name = self.request.POST.get('state')
+            state = Region.objects.get(name=state_name)
+        except ObjectDoesNotExist:
+            state = None
+        volunteer_to_edit.state = state
+        try:
+            city_name = self.request.POST.get('city')
+            city = City.objects.get(name=city_name)
+        except ObjectDoesNotExist:
+            city = None
+        volunteer_to_edit.city = city
         organization_id = self.request.POST.get('organization_name')
         organization = get_organization_by_id(organization_id)
         if organization:
@@ -170,7 +207,8 @@ class VolunteerUpdateView(LoginRequiredMixin, UpdateView, FormView):
 
 '''
   The view to display Volunteer profile.
-  It uses DetailView which is a generic class-based views are designed to display data.
+  It uses DetailView which is a generic
+  class-based views are designed to display data.
 '''
 
 
@@ -190,7 +228,8 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
 '''
   The view generates Report.
-  GenerateReportView calls two other views(ShowFormView, ShowReportListView) within it.
+  GenerateReportView calls two other
+  views(ShowFormView, ShowReportListView) within it.
 '''
 
 
@@ -243,12 +282,16 @@ class ShowReportListView(LoginRequiredMixin, ListView):
         job_name = self.request.POST['job_name']
         start_date = self.request.POST['start_date']
         end_date = self.request.POST['end_date']
-        volunteer_shift_list = get_volunteer_shifts(volunteer_id, event_name, job_name,
-                                           start_date, end_date)
+        volunteer_shift_list = get_volunteer_shifts(
+            volunteer_id, event_name, job_name,
+            start_date, end_date
+        )
         if volunteer_shift_list:
             report_list = generate_report(volunteer_shift_list)
             total_hours = calculate_total_report_hours(report_list)
-            report = Report.objects.create(total_hrs=total_hours, volunteer=volunteer)
+            report = Report.objects.create(
+                total_hrs=total_hours, volunteer=volunteer
+            )
             report.volunteer_shifts.add(*volunteer_shift_list)
             report.save()
             return render(request, 'volunteer/report.html', {

@@ -1,6 +1,7 @@
 # local Django
 from pom.pages.basePage import BasePage
-from pom.locators.adminRegistrationPageLocators import AdminRegistrationPageLocators
+from pom.locators.adminRegistrationPageLocators import \
+    AdminRegistrationPageLocators
 from pom.pageUrls import PageUrls
 
 
@@ -12,8 +13,12 @@ class AdminRegistrationPage(BasePage):
     success_message = 'You have successfully registered!'
     USER_EXISTS = 'A user with that username already exists.'
     INVALID_PHONE = 'Please enter a valid phone number'
-    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t valid for the selected country'
+    INVALID_PHONE_FOR_COUNTRY = 'This phone number isn\'t ' \
+                                'valid for the selected country'
     NO_MATCH = 'Passwords don\'t match.'
+    CONFIRM_EMAIL_MESSAGE = "Please confirm your email address before login."
+    PASSWORD_ERROR = 'Password must have at least 6 characters, one ' \
+                     'lowercase letter, one special character and one digit.'
 
     def __init__(self, driver):
         self.elements = AdminRegistrationPageLocators()
@@ -21,18 +26,24 @@ class AdminRegistrationPage(BasePage):
 
     def fill_registration_form(self, info):
         elements = self.elements
-        self.send_value_to_element_id(elements.USERNAME, info[0])
-        self.send_value_to_element_id(elements.PASSWORD, info[1])
-        self.send_value_to_element_id(elements.CONFIRM_PASSWORD, info[2])
-        self.send_value_to_element_id(elements.FIRST_NAME, info[3])
-        self.send_value_to_element_id(elements.LAST_NAME, info[4])
-        self.send_value_to_element_id(elements.EMAIL, info[5])
-        self.send_value_to_element_id(elements.ADDRESS, info[6])
-        self.send_value_to_element_id(elements.CITY, info[7])
-        self.send_value_to_element_id(elements.STATE, info[8])
-        self.send_value_to_element_id(elements.COUNTRY, info[9])
-        self.send_value_to_element_id(elements.PHONE, info[10])
-        self.send_value_to_element_id(elements.ORGANIZATION, info[11])
+        self.send_value_to_element_id(elements.USERNAME, info['username'])
+        self.send_value_to_element_id(elements.PASSWORD, info['password'])
+        self.send_value_to_element_id(
+            elements.CONFIRM_PASSWORD,
+            info['confirm_password']
+        )
+        self.send_value_to_element_id(elements.FIRST_NAME, info['first_name'])
+        self.send_value_to_element_id(elements.LAST_NAME, info['last_name'])
+        self.send_value_to_element_id(elements.EMAIL, info['email'])
+        self.send_value_to_element_id(elements.ADDRESS, info['address'])
+        self.send_value_to_element_id(elements.COUNTRY, info['country'])
+        self.send_value_to_element_id(elements.STATE, info['state'])
+        self.send_value_to_element_id(elements.CITY, info['city'])
+        self.send_value_to_element_id(elements.PHONE, info['phone_number'])
+        self.send_value_to_element_id(
+            elements.ORGANIZATION,
+            info['organization']
+        )
         self.submit_form()
 
     def get_field_values(self):
@@ -72,6 +83,9 @@ class AdminRegistrationPage(BasePage):
     def get_password_error_text(self):
         return self.element_by_xpath(self.elements.MATCH_ERROR).text
 
+    def get_password_regex_error_text(self):
+        return self.element_by_xpath(self.elements.PASSWORD_ERROR).text
+
     def get_first_name_error_text(self):
         return self.element_by_xpath(self.elements.FIRST_NAME_ERROR).text
 
@@ -101,10 +115,18 @@ class AdminRegistrationPage(BasePage):
 
     def register_valid_details(self):
         self.get_admin_registration_page()
-        entry = [
-            'admin-username', 'admin-password!@#$%^&*()_', 'admin-password!@#$%^&*()_',
-            'admin-first-name', 'admin-last-name', 'admin-email@systers.org', 'admin-address',
-            'admin-city', 'admin-state', 'admin-country', '9999999999',
-            'admin-org'
-        ]
+        entry = {
+            'username': 'admin-username',
+            'password': 'admin-password1!@#$%^&*()_',
+            'confirm_password': 'admin-password1!@#$%^&*()_',
+            'first_name': 'admin-first-name',
+            'last_name': 'admin-last-name',
+            'email': 'admin-email@systers.org',
+            'address': 'admin-address',
+            'city': 'Roorkee',
+            'state': 'Uttarakhand',
+            'country': 'India',
+            'phone_number': '9999999999',
+            'organization': 'admin-org'
+        }
         self.fill_registration_form(entry)

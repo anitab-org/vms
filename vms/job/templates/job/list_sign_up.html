@@ -7,7 +7,7 @@
     <form class="form-horizontal" action="{% url 'job:list_sign_up' event.id volunteer_id %}" method="post">
         {% csrf_token %}
         <fieldset>
-            <legend>{% trans "Search Jobs" %}</legend>
+            <legend class="header">{% trans "Search Jobs" %}</legend>
             {% if form.name.errors %}
             <div class="form-group has-error">
                 <label class="col-md-2 control-label">{% trans "Name" %}</label>
@@ -168,7 +168,7 @@
                         <td>{{ job.start_date }}</td>
                         <td>{{ job.end_date }}</td>
                         <td>
-                            <a href="{% url 'shift:list_shifts_sign_up' job.id volunteer_id %}" class="btn btn-success btn-sm">{% trans "View Shifts" %}</a>
+                            <a href="{% url 'shift:list_shifts_sign_up' job.id volunteer_id %}" class="btn btn-info btn-sm">{% trans "View Shifts" %}</a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -12,7 +12,8 @@ class ManageShiftPage(BasePage):
     shift_assignment_text = 'Assign Shift'
     VIEW_SHIFT = 'View Shifts'
     VIEW_JOB = 'View Jobs'
-    no_volunteer_shift_message = 'This volunteer does not have any upcoming shifts.'
+    no_volunteer_shift_message = 'This volunteer does not ' \
+                                 'have any upcoming shifts.'
     live_server_url = ''
 
     def __init__(self, driver):
@@ -67,3 +68,15 @@ class ManageShiftPage(BasePage):
     def get_cancellation_message(self):
         return self.element_by_class_name(
             self.manage_elements.CANCELLATION_CONFIRMATION).text
+
+    def get_clear_shift_hours_text(self):
+        return self.element_by_xpath(self.manage_elements.SHIFT_CLEAR_PATH).text
+
+    def click_to_clear_hours(self):
+        self.element_by_xpath(
+            self.manage_elements.SHIFT_CLEAR_PATH + '//a'
+        ).click()
+
+    def get_logged_info_box(self):
+        return self.element_by_id(self.manage_elements.LOGGED_INFO_BOX).text
+

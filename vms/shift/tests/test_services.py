@@ -8,17 +8,30 @@ from django.core.exceptions import ObjectDoesNotExist
 
 # local Django
 from shift.models import VolunteerShift
-from shift.services import (
-    add_shift_hours, calculate_duration, calculate_total_report_hours,
-    cancel_shift_registration, clear_shift_hours, delete_shift,
-    edit_shift_hours, generate_report, get_all_volunteer_shifts_with_hours, get_future_shifts_by_volunteer_id,
-    get_shift_by_id, get_shifts_by_job_id, get_shifts_ordered_by_date,
-    get_shift_slots_remaining, get_shifts_with_open_slots,
-    get_unlogged_shifts_by_volunteer_id, get_volunteer_shift_by_id,
-    get_volunteer_shifts, get_volunteer_shifts_with_hours, get_volunteers_by_shift_id,
-    get_logged_volunteers_by_shift_id, is_signed_up, register, send_reminder,
-    get_shifts_with_open_slots_for_volunteer, get_report_by_id)
-from shift.utils import create_event_with_details, create_job_with_details, create_organization_with_details, create_shift_with_details, create_report_with_details, clear_objects, get_report_list, create_volunteer_with_details, register_event_utility, register_job_utility, register_shift_utility,  set_shift_location, log_hours_with_details
+from shift.services import (add_shift_hours, cancel_shift_registration,
+                            calculate_total_report_hours, calculate_duration,
+                            clear_shift_hours, delete_shift, edit_shift_hours,
+                            generate_report, get_shifts_with_open_slots,
+                            get_future_shifts_by_volunteer_id, get_shift_by_id,
+                            get_shifts_by_job_id, get_shifts_ordered_by_date,
+                            get_shift_slots_remaining, send_reminder,
+                            get_unlogged_shifts_by_volunteer_id,
+                            get_volunteer_shift_by_id, get_volunteer_shifts,
+                            get_volunteer_shifts_with_hours,
+                            get_volunteers_by_shift_id, register,
+                            get_logged_volunteers_by_shift_id, is_signed_up,
+                            get_all_volunteer_shifts_with_hours,
+                            get_shifts_with_open_slots_for_volunteer,
+                            get_report_by_id)
+from shift.utils import (create_report_with_details, create_event_with_details,
+                         create_organization_with_details, clear_objects,
+                         create_job_with_details, get_report_list,
+                         create_shift_with_details,
+                         create_volunteer_with_details,
+                         register_event_utility, register_job_utility,
+                         register_shift_utility, set_shift_location,
+                         log_hours_with_details, get_country_by_name,
+                         get_state_by_name, get_city_by_name)
 
 
 def setUpModule():
@@ -31,22 +44,60 @@ def setUpModule():
     global j1, j2
     global s1, s2, s3
 
-    event_1 = ["Open Source Event", "2012-9-1", "2012-11-23"]
+    event_1 = {
+        'name': "Open Source Event",
+        'start_date': "2012-9-1",
+        'end_date': "2012-11-23",
+        'description': 'event-description',
+        'address': 'event-address',
+        'venue': 'event-venue'
+    }
     e1 = create_event_with_details(event_1)
 
-    job_1 = [
-        "Software Developer", "2012-10-22", "2012-10-30", "A software job", e1
-    ]
-    job_2 = [
-        "Systems Administrator", "2012-9-1", "2012-10-26",
-        "A systems administrator job", e1
-    ]
+    job_1 = {
+        'name': "Software Developer",
+        'start_date': "2012-10-22",
+        'end_date': "2012-10-30",
+        'description': "A software job",
+        'event': e1
+    }
+    job_2 = {
+        'name': "Systems Administrator",
+        'start_date': "2012-9-1",
+        'end_date': "2012-10-26",
+        'description': "A systems administrator job",
+        'event': e1
+    }
     j1 = create_job_with_details(job_1)
     j2 = create_job_with_details(job_2)
 
-    shift_1 = ["2012-10-28", "9:00", "15:00", 1, j1]
-    shift_2 = ["2012-10-25", "10:00", "16:00", 2, j1]
-    shift_3 = ["2012-10-22", "10:00", "16:00", 4, j2]
+    shift_1 = {
+        'date': "2012-10-28",
+        'start_time': "9:00",
+        'end_time': "15:00",
+        'max_volunteers': 1,
+        'job': j1,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
+    shift_2 = {
+        'date': "2012-10-25",
+        'start_time': "10:00",
+        'end_time': "16:00",
+        'max_volunteers': 2,
+        'job': j1,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
+    shift_3 = {
+        'date': "2012-10-21",
+        'start_time': "10:00",
+        'end_time': "16:00",
+        'max_volunteers': 4,
+        'job': j2,
+        'address': 'shift-address',
+        'venue': 'shift-venue'
+    }
 
     s1 = create_shift_with_details(shift_1)
     s2 = create_shift_with_details(shift_2)
@@ -59,11 +110,11 @@ def tearDownModule():
 
 
 class ShiftTests(unittest.TestCase):
-    '''
+    """
     Contains tests which require
     - only shift objects
     - no objects to be created
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -217,9 +268,9 @@ class ShiftTests(unittest.TestCase):
 
 
 class ShiftWithVolunteerTest(unittest.TestCase):
-    '''
+    """
     Contains tests which require volunteer object
-    '''
+    """
 
     @classmethod
     def setup_test_data(cls):
@@ -231,20 +282,46 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         cls.s2 = s2
         cls.s3 = s3
 
+        country_name = 'United States'
+        country = get_country_by_name(country_name)
+        state_name = 'Washington'
+        state = get_state_by_name(state_name)
+        city_name = 'Bothell'
+        city = get_city_by_name(city_name)
         # Create volunteers who will register for the shifts
-        volunteer_1 = [
-            'Yoshi', "Yoshi", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "yoshi@nintendo.com"
-        ]
-        volunteer_2 = [
-            'John', "John", "Doe", "7 Alpine Street", "Maplegrove", "Wyoming",
-            "USA", "23454545", "john@test.com"
-        ]
-        volunteer_3 = [
-            'Ash', "Ash", "Ketchum", "Pallet Town", "Kanto", "Gameboy",
-            "Japan", "23454545", "ash@pikachu.com"
-        ]
+        volunteer_1 = {
+            'username': 'Yoshi',
+            'first_name': "Yoshi",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "yoshi@nintendo.com"
+        }
+        volunteer_2 = {
+            'username': 'John',
+            'first_name': "John",
+            'last_name': "Doe",
+            'address': "7 Alpine Street",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "john@test.com"
+        }
+        volunteer_3 = {
+            'username': 'Ash',
+            'first_name': "Ash",
+            'last_name': "Ketchum",
+            'address': "Pallet Town",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "ash@pikachu.com"
+        }
 
         org_name = 'Locale'
         cls.org_obj = create_organization_with_details(org_name)
@@ -307,12 +384,16 @@ class ShiftWithVolunteerTest(unittest.TestCase):
         end_time = datetime.time(hour=10, minute=0)
         add_shift_hours(self.v1.id, self.s1.id, start_time, end_time)
 
-        volunteer_shift_list_1 = get_volunteer_shifts(self.v1.id, self.e1.name, self.j1.name,
-                                        "2012-10-22", "2012-10-30")
+        volunteer_shift_list_1 = get_volunteer_shifts(
+            self.v1.id, self.e1.name, self.j1.name,
+            "2012-10-22", "2012-10-30"
+        )
         report_1 = generate_report(volunteer_shift_list_1)
 
-        volunteer_shift_list_2 = get_volunteer_shifts(self.v1.id, self.e1.name, self.j2.name,
-                                        "2012-9-1", "2012-10-26")
+        volunteer_shift_list_2 = get_volunteer_shifts(
+            self.v1.id, self.e1.name, self.j2.name,
+            "2012-9-1", "2012-10-26"
+        )
         report_2 = generate_report(volunteer_shift_list_2)
 
         # verify that report for logged shift appears
@@ -835,25 +916,66 @@ class ShiftReminderTest(unittest.TestCase):
         cls.j1 = j1
         cls.j2 = j2
 
-        shift_1 = ["2015-08-23", "9:00", "15:00", 1, cls.j1]
-        shift_2 = [date.today() + timedelta(7), "10:00", "16:00", 2,
-                   cls.j1]  # one week date
-        shift_3 = [date.today() + timedelta(1), "12:00", "18:00", 2,
-                   cls.j2]  # tomorrow date
+        shift_1 = {
+            'date': "2015-08-23",
+            'start_time': "9:00",
+            'end_time': "15:00",
+            'max_volunteers': 1,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
+        shift_2 = {
+            'date': date.today() + timedelta(7),  # one week ahead
+            'start_time': "10:00",
+            'end_time': "16:00",
+            'max_volunteers': 2,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
+        shift_3 = {
+            'date': date.today() + timedelta(1),  # a day ahead
+            'start_time': "12:00",
+            'end_time': "18:00",
+            'max_volunteers': 2,
+            'job': cls.j2,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
 
         cls.s1 = create_shift_with_details(shift_1)
         cls.s2 = create_shift_with_details(shift_2)
         cls.s3 = create_shift_with_details(shift_3)
 
-        volunteer_1 = [
-            'Jake', "Jake", "Flamoy", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "jake@nintendo.com"
-        ]
-        volunteer_2 = [
-            'Dora', "Dorothy", "Flamoy", "7 Alpine Street", "Maplegrove",
-            "Wyoming", "USA", "23454545", "dora@test.com"
-        ]
+        country_name = 'United States'
+        country = get_country_by_name(country_name)
+        state_name = 'Washington'
+        state = get_state_by_name(state_name)
+        city_name = 'Bothell'
+        city = get_city_by_name(city_name)
+        volunteer_1 = {
+            'username': 'Jake',
+            'first_name': "Jake",
+            'last_name': "Flamoy",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "jake@nintendo.com"
+        }
+        volunteer_2 = {
+            'username': 'Dora',
+            'first_name': "Dorothy",
+            'last_name': "Flamoy",
+            'address': "7 Alpine Street",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "23454545",
+            'email': "dora@test.com"
+        }
 
         org_name = 'Google'
         cls.org_obj = create_organization_with_details(org_name)
@@ -875,10 +997,19 @@ class ShiftReminderTest(unittest.TestCase):
 
     def test_send_reminder(self):
 
-        location = [
-            "Test address", "Atlanta", "Georgia", "USA",
-            "Near the south entrance"
-        ]
+        city_name = 'Roorkee'
+        state_name = 'Uttarakhand'
+        country_name = 'India'
+        country = get_country_by_name(country_name)
+        state = get_state_by_name(state_name)
+        city = get_city_by_name(city_name)
+        location = {
+            'address': "Test address",
+            'city': city,
+            'state': state,
+            'country': country,
+            'venue': "Near the south entrance"
+        }
 
         set_shift_location(self.s1, location)
         set_shift_location(self.s2, location)
@@ -910,17 +1041,45 @@ class DeleteShiftTest(unittest.TestCase):
         cls.e1 = e1
         cls.j1 = j1
 
-        shift_1 = ["2012-10-28", "9:00", "15:00", 1, cls.j1]
-        shift_2 = ["2012-10-25", "10:00", "16:00", 2, cls.j1]
+        shift_1 = {
+            'date': "2012-10-28",
+            'start_time': "9:00",
+            'end_time': "15:00",
+            'max_volunteers': 1,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
+        shift_2 = {
+            'date': "2012-10-25",
+            'start_time': "10:00",
+            'end_time': "16:00",
+            'max_volunteers': 2,
+            'job': cls.j1,
+            'address': 'shift-address',
+            'venue': 'shift-venue'
+        }
 
         cls.s1 = create_shift_with_details(shift_1)
         cls.s2 = create_shift_with_details(shift_2)
 
-        volunteer_1 = [
-            'Aaron', "Aaron", "Turtle", "Mario Land", "Nintendo Land",
-            "Nintendo State", "Nintendo Nation", "2374983247",
-            "aaron@nintendo.com"
-        ]
+        city_name = 'Roorkee'
+        state_name = 'Uttarakhand'
+        country_name = 'India'
+        country = get_country_by_name(country_name)
+        state = get_state_by_name(state_name)
+        city = get_city_by_name(city_name)
+        volunteer_1 = {
+            'username': 'Aaron',
+            'first_name': "Aaron",
+            'last_name': "Turtle",
+            'address': "Mario Land",
+            'city': city,
+            'state': state,
+            'country': country,
+            'phone_number': "2374983247",
+            'email': "aaron@nintendo.com"
+        }
         org_name = 'organization'
         cls.org_obj = create_organization_with_details(org_name)
         cls.v1 = create_volunteer_with_details(volunteer_1, cls.org_obj)
