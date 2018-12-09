@@ -116,7 +116,7 @@ To shut down the VM, run the command:
 To start up the VM again, run the command:
 
     vagrant up
-    
+
 
 ## Install PostgreSQL
 
@@ -212,19 +212,17 @@ Make sure to exit the postgres client before proceeding to the next steps:
 
 Change directory to where you can find the **manage.py** file (this is located in the top level directory for the project). If you are installing the project on the VM, the project will be located within the **/vagrant/vms** directory.
 
-To view the sql commands that will be generated from syncdb, run the command:
 
-    python manage.py sqlall app_name_here
+To generate the database tables run the following command:
 
-To generate the database tables that correspond to the Django models, run the command:
 
-    python manage.py syncdb
+    python manage.py migrate
 
 NOTE: In case, you get the following error django.db.utils.ProgrammingError: relation "auth_user" does not exist, while running the above command do the following
+
+
     python manage.py migrate auth
     python manage.py migrate
-Now again try running the command 
-    python manage.py syncdb
 
 
 We do not want to create a superuser at this time, so when it asks you to create a superuser, say 'no':
@@ -233,10 +231,10 @@ We do not want to create a superuser at this time, so when it asks you to create
     Would you like to create one now? (yes/no): no
 
 Use the secret_key by running this command:
-    
+
     export DJANGO_SECRET_KEY='foobarbaz'
-    
-    
+
+
 In addition to this, you would also have to populate the database for django-cities-light. Run the following to do so:
 
     python manage.py migrate
@@ -255,7 +253,7 @@ You will be prompted to enter a password, which is `0xdeadbeef`
 ```
 There needs to be at least one organization in the `organization_organization` table in order to register for an account (this be changed later). Add Google as an organization:
 
-    insert into organization_organization values (1, 'Google');
+    insert into organization_organization values (1, 'Google', 1);
 
 Make sure to exit the postgres client before proceeding to the next steps:
 
