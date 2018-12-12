@@ -2,8 +2,8 @@
 import re
 from urllib.request import urlretrieve
 import os
-# import PyPDF2
-# from PyPDF2.utils import PdfReadError
+import PyPDF2
+from PyPDF2.utils import PdfReadError
 
 # third party
 from selenium import webdriver
@@ -241,15 +241,12 @@ class VolunteerProfile(LiveServerTestCase):
             'Uploaded file is invalid.'
         )
 
-# Resume Upload is buggy, it is taking too long to be uploaded on travis.
-# https://github.com/systers/vms/issues/776
-
-
-'''
     def test_valid_upload_resume(self):
         """
         Test upload of valid resume to profile.
         """
+        if(os.path.isdir((os.getcwd() + '/srv/'))):
+            os.chmod(os.getcwd() + '/srv/', 0o740)
         self.wait_for_home_page()
 
         path = os.getcwd() + '/DummyResume.pdf'
@@ -302,7 +299,7 @@ class VolunteerProfile(LiveServerTestCase):
         try:
             PyPDF2.PdfFileReader(open(path, 'rb'))
         except PdfReadError:
-            print('Some error while upload/download')
+            self.fail('Uploaded resume is corrupted')
         else:
             pass
-'''
+
