@@ -67,3 +67,11 @@ class BasePage(object):
         slashes = [pos for pos, char in enumerate(string) if char == '/']
         return string[:slashes[2]] + string[slashes[3]:]
 
+    @staticmethod
+    def get_results_list(search_results):
+        result = []
+        for tr in search_results.find_elements_by_tag_name('tr'):
+            row = tr.text.split()
+            result.append(row)
+
+        return result
