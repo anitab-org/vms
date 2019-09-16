@@ -56,11 +56,3 @@ class EventSearchPage(BasePage):
         search_results = self.element_by_xpath(self.elements.RESULT_BODY)
         return search_results
 
-    def get_results_list(self, search_results):
-
-        result = []
-        for tr in search_results.find_elements_by_tag_name('tr'):
-            row = tr.text.split()
-            result.append(row)
-
-        return result

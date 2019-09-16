@@ -60,15 +60,5 @@ class VolunteerSearchPage(BasePage):
         search_results = self.element_by_xpath(self.elements.RESULT_BODY)
         return search_results
 
-    @staticmethod
-    def get_results_list(search_results):
-
-        result = []
-        for tr in search_results.find_elements_by_tag_name('tr'):
-            row = tr.text.split()
-            result.append(row)
-
-        return result
-
     def get_shift_summary(self):
         return self.element_by_xpath(self.elements.TOTAL_SHIFTS).text
