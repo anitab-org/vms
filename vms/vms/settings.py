@@ -115,9 +115,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'srv')
 MEDIA_URL = '/srv/'
 
 # Uploaded files have read and write permissions to the owner only
-FILE_UPLOAD_PERMISSIONS = 0o600
+FILE_UPLOAD_PERMISSIONS = 0o740
 
-FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o600
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o740
 
 # Instead of sending out real email, during development the emails will be sent
 # to stdout, where from they can be inspected.

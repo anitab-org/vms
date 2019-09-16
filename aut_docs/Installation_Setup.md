@@ -93,3 +93,11 @@ Following points are needed to start a testing session:
 - For automated tests, if any of the tests fail its not necessary that there is something wrong. To confirm if the the test is actually wrong you have to test it in headless mode.
 
 :Note: For automated testing, currently VMS uses the Firefox version 60, selenium version 3.4.0 and geckodriver version 0.20.1
+
+:Note : Some of the test may be failing due to the incorrect permission given to the media folder ,If media folder(srv directory) is already created on your system , then change its permissions by the following command:
+   ```bash
+     sudo chmod -R 740 /srv
+   ```
+In case you can the error "/srv: No such file or directory" while running the above comment do the following sudo mkdir /srv
+
+After creating the directory, then try to change the permissions i.e., run the following command (sudo chmod 740 /srv)
