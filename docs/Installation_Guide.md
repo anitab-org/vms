@@ -212,19 +212,17 @@ Make sure to exit the postgres client before proceeding to the next steps:
 
 Change directory to where you can find the **manage.py** file (this is located in the top level directory for the project). If you are installing the project on the VM, the project will be located within the **/vagrant/vms** directory.
 
-To view the sql commands that will be generated from syncdb, run the command:
 
-    python manage.py sqlall app_name_here
+To generate the database tables run the following command:
 
-To generate the database tables that correspond to the Django models, run the command:
 
-    python manage.py syncdb
+    python manage.py migrate
 
 NOTE: In case, you get the following error django.db.utils.ProgrammingError: relation "auth_user" does not exist, while running the above command do the following
+
+
     python manage.py migrate auth
     python manage.py migrate
-Now again try running the command
-    python manage.py syncdb
 
 
 We do not want to create a superuser at this time, so when it asks you to create a superuser, say 'no':
