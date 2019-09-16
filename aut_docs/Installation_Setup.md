@@ -50,6 +50,11 @@ Following points are needed to start a testing session:
       python manage.py migrate --noinput --traceback --settings=vms.settings
     ```
 
+- Populate the database for django-cities-light
+    ```bash
+      python manage.py cities_light
+    ```
+
 - Check that the project is running correctly by browsing to
     ```
       http://127.0.0.1:8000
