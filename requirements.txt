@@ -1,6 +1,6 @@
 coverage == 3.7.1
 coveralls == 0.5
-Django == 1.11.0
+Django == 1.11.17
 docopt == 0.6.2
 flake8 == 3.4.1
 psycopg2 == 2.7.4
