@@ -117,7 +117,8 @@ We have a mailing list located at: systers-dev@systers.org
 Communicate
 -----------
 
-The best way to connect with the maintainers is through GitHub comments. Feel free to discuss more about an issue by commenting on it or asking questions. We also have Systers Slack channel, you can request an invite [here](http://systers.io/slack-systers-opensource/). If there is something you want to discuss privately with the maintainer and you are being hesitant to discuss it on above mediums, then drop an email. For Systers VMS join #vms on Slack.
+Communicate with our community on [AnitaB.org Open Source Zulip](https://anitab-org.zulipchat.com/). For queries regarding VMS Project join, [#vms](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms).
+If there is something you want to discuss privately with the maintainer and you are being hesitant to discuss it on above mediums, then drop an email.
 
 
 License
