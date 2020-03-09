@@ -115,7 +115,7 @@
 
         export DJANGO_SECRET_KEY='foobarbaz'
     
-### Setting up for the database
+### Setting up the database
 
 - Create migrations for the database
     ```bash
@@ -173,9 +173,9 @@
 
 - For automated tests, if any of the tests fail its not necessary that there is something wrong. To confirm if the the test is actually wrong you have to test it in headless mode.
 
-Note: For automated testing, currently VMS uses the Firefox version 60, selenium version 3.4.0 and geckodriver version 0.20.1
+    Note: For automated testing, currently VMS uses the Firefox version 60, selenium version 3.4.0 and geckodriver version 0.20.1
 
-Note : Some of the test may be failing due to the incorrect permission given to the media folder, If media folder(srv directory) is already created on your system , then change its permissions by the following command:
+    Note : Some of the test may be failing due to the incorrect permission given to the media folder, If media folder(srv directory) is already created on your system , then change its permissions by the following command:
    ```bash
      sudo chmod -R 740 /srv
    ```
