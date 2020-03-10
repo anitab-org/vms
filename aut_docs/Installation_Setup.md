@@ -32,20 +32,24 @@
     ```bash
       source venv/bin/activate
     ```
+    
 - Change directory to VMS code
     ```bash
       cd vms/
     ```
+    
 - Run the following commands
     ```bash
       sudo apt-get install libpq-dev
       sudo apt install python-dev
       sudo apt install python3-dev
     ```
+    
 - Install all python dependencies
     ```bash
       pip install -r requirements.txt
     ```
+    
   Note: If you face any errors, do not open a new issue and ask for help on slack with full error logs.
 
 ### Install Postgresql
@@ -65,11 +69,15 @@
     ```bash
       sudo -u <insert postgres username here> psql
     ```
+    
 - Create a user called `vmsadmin` with password `0xdeadbeef` with the permissions to be able to create roles, databases and to login with a password. Wherever prompted in the below steps, use the password `0xdeadbeef`.
-
+    ```
         create role vmsadmin with createrole createdb login password '0xdeadbeef';
-
-- Exit the postgres client using `\q`
+    ```
+- Exit the postgres client using 
+    ```
+        \q
+    ```        
 
 - Change the **pg_hba.conf** file to indicate that users will be authenticated by md5 as opposed to peer authentication. To do this open the **pg_hba.conf** file by running the command
     ```bash
@@ -80,6 +88,7 @@
     ```bash
       sudo find / -type f -iname pg_hba\.conf
      ```
+     
     and open the pg_hba.conf file using this path after "sudo nano ".
 
 - Change the line `local all postgres peer` to `local all postgres md5` and the line `local all all peer` to `local all all md5` and save the file.
@@ -90,30 +99,42 @@
     ```bash
       sudo service postgresql restart
     ```
-- Login to the postgres client with user `vmsadmin` by running the following command
     
+- Login to the postgres client with user `vmsadmin` by running the following command
+    ```
         psql -U vmsadmin -d postgres -h localhost -W
-
-- Exit the postgres client using `\q`.
+    ```
+    
+- Exit the postgres client using 
+    ```
+        \q
+    ```
 
 - Create a database called `vms`
-    
+    ```    
         createdb -U vmsadmin vms;
-
+    ```
+    
 - Login to the postgres client for the `vms` database
-
+    ```
         psql -U vmsadmin -d vms -h localhost -W
-
+    ```
+    
 - To view a list of tables for the `vms` database, run this command under the postgres client
-
+    ```
         \dt
+    ```        
     We can now manipulate the database by running the appropriate sql commands under this postgres client.
 
-- Exit the postgres client using `\q`
+- Exit the postgres client using
+    ```
+        \q
+    ```
 
 - Use the secret_key by running this command
-
+    ```
         export DJANGO_SECRET_KEY='foobarbaz'
+    ```
     
 ### Setting up the database
 
@@ -121,18 +142,22 @@
     ```bash
       python manage.py makemigrations auth volunteer administrator organization event job shift registration
     ```
+    
 - Apply migrations to database
     ```bash
       python manage.py migrate --noinput --traceback --settings=vms.settings
     ```
+    
 - Populate the database for django-cities-light
     ```bash
       python manage.py cities_light
     ```
+    
 - After running the command
     ```bash
       python manage.py runserver
     ```
+    
     Check that the project is running correctly by browsing to
     ```
       http://127.0.0.1:8000
@@ -144,6 +169,7 @@
     ```bash
       bash setup-geckodriver.sh
     ```
+    
     OR run these commands
     ```bash
       wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
