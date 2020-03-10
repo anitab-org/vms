@@ -117,7 +117,7 @@ We have a mailing list located at: systers-dev@systers.org
 Communicate
 -----------
 
-The best way to connect with the maintainers is through Github comments. For queries regarding VMS Project join, [#vms](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms). Communicate with our community on [AnitaB.org Open Source Zulip](https://anitab-org.zulipchat.com/).
+The best way to connect with the maintainers is through Github comments. Communicate with our community on [AnitaB.org Open Source Zulip](https://anitab-org.zulipchat.com/). For queries regarding VMS Project join, [#vms](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms).
 
 
 
