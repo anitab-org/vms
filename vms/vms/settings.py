@@ -119,14 +119,6 @@ FILE_UPLOAD_PERMISSIONS = 0o740
 
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o740
 
-# Instead of sending out real email, during development the emails will be sent
-# to stdout, where from they can be inspected.
-if DEBUG:
-    EMAIL_HOST = os.getenv('HOST', 'localhost')
-    EMAIL_PORT = os.getenv('PORT', '1025')
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-
 # If user fails to authenticate, then they are redirected to the view
 # specified in the reverse_lazy call
 LOGIN_URL = reverse_lazy('authentication:login_process')
