@@ -283,7 +283,6 @@
                     <input id="id_state" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}State/Province{% endblocktrans %}" name="vol-state" value="{% if volunteer_form.state.value %}{{ volunteer_form.state.value }}{% endif %}" required>
                 </div>
             </div>
-
             <div id="div_id_city" class="form-group">
                 <label class="control-label">
                     {% trans "City" %}
@@ -292,6 +291,7 @@
                     <input id="id_country" class="textinput textInput form-control" type="text" placeholder="{% blocktrans %}Country{% endblocktrans %}" name="vol-country" value="{% if volunteer_form.country.value %}{{ volunteer_form.country.value }}{% endif %}" required>
                 </div>
             </div>
+        {% endif %}
         {% if volunteer_form.phone_number.errors %}
             <div id="div_id_phone_number" class="form-group has-error">
                 <label class="control-label requiredField" for="id_phone_number">
