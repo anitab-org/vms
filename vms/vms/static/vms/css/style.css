@@ -57,6 +57,7 @@ body {
   height: 40px;
   font-size: 14px;
   padding-top: 11px;
+  
 }
 
 #upper-nav {
@@ -78,6 +79,7 @@ body {
   height: 80px;
   width: 350px;
   margin: 10px;
+  max-width: 95%;
 }
 
 #log-btn {
@@ -88,21 +90,13 @@ body {
   background-color: #288F79;
 }
 
-#signup-btn {
+#signup-btn, #signup-admin-btn{
   background-color: #8d2165;
-  right: 20%;
 }
-
 
 #signup-btn:hover, #signup-admin-btn:hover {
   background-color: #690344;
 }
-
-#signup-admin-btn {
-  background-color: #8d2165;
-  right: 10%;
-}
-
 
 /* Reusable CSS
 -------------------------------------------------- */
@@ -345,10 +339,62 @@ p.comment-alert {
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
-@media (min-width: 768px) {
+@media (min-width: 912px) {
 
   .featurette-heading {
     font-size: 50px;
   }
+
+  #upper-nav{
+    right: 130px;
+  }
 }
+
+@media (max-width: 772px) {
+  #upper-nav{
+    right: 0px;
+    top:100%;
+    width:100%;
+    margin:0;
+  }
+
+  .container{
+    margin-top: 100px;
+  }
+}
+
+@media (min-width: 772px) and (max-width:911px){
+  #upper-nav{
+    right: 10px;
+  }
+}
+
+
+
+@media (max-width: 772px) {
+  #lower-nav {
+    border-top: 0px;
+  }
+}
+
+@media (width : 772px) {
+  #upper-nav{
+    right: -10px;
+  }
+}
+
+@media (min-width: 768px){
+  #signup-btn, #signup-admin-btn {
+    right:5%;
+    width: max-content;
+  }
+
+  #signup-btn {
+    right: 12%;
+    margin-left:15px;
+  }
+}
+
+
+
 
