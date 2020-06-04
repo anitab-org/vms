@@ -6,6 +6,8 @@ from volunteer import views
 from volunteer.views import (VolunteerUpdateView, ProfileView,
                              GenerateReportView, VolunteerHistoryView)
 
+app_name='volunteer'
+
 urlpatterns = [
     url(r'^delete_resume/(?P<volunteer_id>\d+)$',
         views.delete_resume,

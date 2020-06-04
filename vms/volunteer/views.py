@@ -9,7 +9,7 @@ from cities_light.models import Country, Region, City
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from wsgiref.util import FileWrapper
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render

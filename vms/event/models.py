@@ -26,9 +26,9 @@ class Event(models.Model):
         blank=True,
         null=True,
     )
-    city = models.ForeignKey(City, null=True, blank=True)
-    state = models.ForeignKey(Region, null=True, blank=True)
-    country = models.ForeignKey(Country, null=True, blank=True)
+    city = models.ForeignKey(City, null=True, blank=True, on_delete=models.CASCADE)
+    state = models.ForeignKey(Region, null=True, blank=True, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.CASCADE)
     venue = models.CharField(
         max_length=30,
         validators=[

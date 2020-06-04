@@ -13,6 +13,8 @@ from authentication import views
 from authentication.views import anonymous_required
 from authentication.forms import EmailValidationOnForgotPassword
 
+app_name='authentication'
+
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^login/$',

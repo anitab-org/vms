@@ -6,6 +6,8 @@ from organization.views import (approve, reject, OrganizationCreateView,
                                 OrganizationDeleteView, OrganizationListView,
                                 OrganizationUpdateView)
 
+app_name='organization'
+
 urlpatterns = [
     url(r'^create/$', OrganizationCreateView.as_view(), name='create'),
     url(r'^delete/(?P<organization_id>\d+)$',

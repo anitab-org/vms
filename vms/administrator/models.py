@@ -24,9 +24,9 @@ class Administrator(models.Model):
             RegexValidator(r'^[(A-Z)|(a-z)|(0-9)|(\s)|(\-)|(\.)|(,)|(\:)]+$', ),
         ],
     )
-    city = models.ForeignKey(City, null=True, blank=True)
-    state = models.ForeignKey(Region, null=True, blank=True)
-    country = models.ForeignKey(Country, null=True, blank=True)
+    city = models.ForeignKey(City, null=True, blank=True, on_delete=models.CASCADE)
+    state = models.ForeignKey(Region, null=True, blank=True, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.CASCADE)
     phone_number = models.CharField(
         max_length=20,
         validators=[
@@ -38,10 +38,10 @@ class Administrator(models.Model):
         ],
     )
     # Organization to Volunteer is a one-to-many relationship
-    organization = models.ForeignKey(Organization)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     # EmailField automatically checks if email address is a valid format
     email = models.EmailField(max_length=45, unique=True)
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username

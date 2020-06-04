@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.6
 MAINTAINER Tapasweni Pathak <tapaswenipathak@gmail.com>
 EXPOSE 8000
 

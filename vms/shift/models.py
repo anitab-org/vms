@@ -27,9 +27,9 @@ class Shift(models.Model):
         null=True,
     )
 
-    city = models.ForeignKey(City, null=True, blank=True)
-    state = models.ForeignKey(Region, null=True, blank=True)
-    country = models.ForeignKey(Country, null=True, blank=True)
+    city = models.ForeignKey(City, null=True, blank=True, on_delete=models.CASCADE)
+    state = models.ForeignKey(Region, null=True, blank=True, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.CASCADE)
     venue = models.CharField(
         max_length=30,
         validators=[
@@ -39,7 +39,7 @@ class Shift(models.Model):
         null=True,
     )
     # Job to Shift is a one-to-many relationship
-    job = models.ForeignKey(Job)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
     # VolunteerShift is the intermediary model
     # for the many-to-many relationship between Volunteer and Shift
     volunteers = models.ManyToManyField(Volunteer, through='VolunteerShift')
@@ -50,9 +50,9 @@ class Shift(models.Model):
 
 class VolunteerShift(models.Model):
     # Volunteer  to VolunteerShift is a one-to-many relationship
-    volunteer = models.ForeignKey(Volunteer)
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
     # Shift to VolunteerShift is a one-to-many relationship
-    shift = models.ForeignKey(Shift)
+    shift = models.ForeignKey(Shift, on_delete=models.CASCADE)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     date_logged = models.DateTimeField(null=True, blank=True)
@@ -67,7 +67,7 @@ class VolunteerShift(models.Model):
 
 
 class EditRequest(models.Model):
-    volunteer_shift = models.ForeignKey(VolunteerShift)
+    volunteer_shift = models.ForeignKey(VolunteerShift, on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
 
@@ -84,7 +84,7 @@ class Report(models.Model):
     # pending:0, approved:1 and rejected:2
     confirm_status = models.IntegerField(default=0)
     date_submitted = models.DateField(default=timezone.now)
-    volunteer = models.ForeignKey(Volunteer)
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE)
 
     def get_volunteer_shifts(self):
         return self.volunteer_shifts.all()
