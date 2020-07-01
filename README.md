@@ -1,29 +1,26 @@
-Systers Portal - VMS project
+AnitaB.org Portal - VMS project
 ============================
 
-[![Build Status](https://travis-ci.org/systers/vms.svg?branch=develop)](https://travis-ci.org/systers/vms) [![Coverage Status](https://coveralls.io/repos/github/systers/vms/badge.svg?branch=develop)](https://coveralls.io/github/systers/vms?branch=develop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![Build Status](https://travis-ci.org/anitab-org/vms.svg?branch=develop)](https://travis-ci.org/anitab-org/vms) [![Coverage Status](https://coveralls.io/repos/github/anitab-org/vms/badge.svg?branch=develop)](https://coveralls.io/github/anitab-org/vms?branch=develop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 
-Systers has many volunteers that offer their skills, time, and commitment to
+AnitaB.org has many volunteers that offer their skills, time, and commitment to
 our vision and projects. The **Volunteer Management System** (VMS) will
 be useful for volunteer coordinators, volunteer sign-up, tracking hours, and
 reporting.
 
 **This project is under active development.**
 
-VMS is live [here](http://52.8.110.63/).
+VMS is live [here](http://ec2-52-53-177-18.us-west-1.compute.amazonaws.com/en-us/).
 
-If you are an Outreachy Applicant, start with reading [this](https://github.com/systers/ossprojects/wiki/Volunteer-Management-System).
+If you are an Outreachy Applicant, start with reading [this](https://www.outreachy.org/communities/cfp/systers/).
 
 Features
 --------
 
-The VMS will be developed in phases. The initial implementation will track
-volunteers' contact information, enable administrators to track volunteer
-hours, and allow reporting of useful information.
-
-The [requirements document](docs/Systers_GSoC14_VMS_Requirements.pdf) gives
-additional detail on the project's scope.
+The VMS is developed in phases. The initial implementation tracks
+volunteers' contact information, enables administrators to track volunteer
+hours, and allows reporting of useful information.
 
 
 Installation
@@ -32,15 +29,13 @@ Installation
 The VMS project uses the [Django](https://www.djangoproject.com/) web
 framework and [Python](https://www.python.org/).
 
-To get started, read the [Installation Guide](https://github.com/systers/vms/blob/develop/aut_docs/Installation_Setup.md).
-
-If you face some issues while installing and making VMS up in your local, have a look at issues labelled as [While Setting up VMS](https://github.com/systers/vms/labels/While%20Setting%20up%20VMS).
+To get started, read the [Installation Guide](aut_docs/Installation_Setup.md).
 
 
 Run VMS in a Docker Container
 -----------------------------
 
-If you wish to view a sneak peek of the Systers VMS, you may use Docker to
+If you wish to view a sneak peek of the AnitaB.org VMS, you may use Docker to
 preview the VMS.
 Note: The following Docker configuration is not intended to be run in
 production at the moment. It may be configured to do so in the future.
@@ -53,7 +48,7 @@ production at the moment. It may be configured to do so in the future.
 1. Install [docker-compose](http://docs.docker.com/compose/install/).
    Note: fig has been deprecated. Docker-compose replaces fig.
 1. Create a new directory on your local system.
-1. Enter `git clone git@github.com:systers/vms.git` to clone the Systers
+1. Enter `git clone git@github.com:anitab-org/vms.git` to clone the AnitaB.org
    VMS repository. After the clone is done, change directory (cd) to the
    `vms` directory.
 1. Run `docker-compose build`. This pulls the Docker images required to run the
@@ -64,9 +59,9 @@ production at the moment. It may be configured to do so in the future.
 1. *Optional:*
    Run `docker-compose run web python vms/manage.py createsuperuser`
    if you wish to create a superuser to access the admin panel.
-1. Run `docker-compose up` to start the webserver for the Django Systers VMS
+1. Run `docker-compose up` to start the webserver for the Django AnitaB.org VMS
    project.
-1. Systers VMS should be running on port 8000.
+1. AnitaB.org VMS should be running on port 8000.
      * If you are on Linux, enter `http://0.0.0.0:8000` in your browser.
      * If you are using boot2docker on Windows or Mac OS X, enter
        `http://192.168.59.103:8000/` in your browser. If this IP address
@@ -78,18 +73,31 @@ production at the moment. It may be configured to do so in the future.
 Contribute
 ----------
 
-- Issue Tracker: [vms/issues](http://github.com/systers/vms/issues)
-- Source Code: [vms](http://github.com/systers/vms/)
+- Please read our [Contributing guidelines](CONTRIBUTING.md), [Code of Conduct](code_of_conduct.md) and [Reporting Guidelines](reporting_guidelines.md)
+- Please follow our [Commit Message Style Guide](https://github.com/anitab-org/mentorship-android/wiki/Commit-Message-Style-Guide) while sending PRs.
+- Issue Tracker: [vms/issues](http://github.com/anitab-org/vms/issues)
+- Source Code: [vms](http://github.com/anitab-org/vms/)
 - Linking pull request to an issue
 
   When you create a pull request, use closes #id_of_issue or fixes #id_of_issue. It will link the issue with your pull request. It also
   automatically closes the issue if your pull request gets merged.
 
 
+## Branches
+
+The repository has the following permanent branches:
+
+ * **master** This contains the code which has been released.
+
+ * **develop** This contains the latest code. All the contributing PRs must be sent to this branch. When we want to release the next version of the app, this branch is merged into the `master` branch.
+
+ * **aws** This is the branch through which the project is deployed.
+
+
 Documentation
 -------------
 
-User and developer documentation for Systers Portal VMS project is generated
+User and developer documentation for AnitaB.org Portal VMS project is generated
 using [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 and available online for convenient reading at
 [VMS Website](http://vms.readthedocs.org/).
@@ -101,18 +109,13 @@ Google Summer of Code (GSoC) Development
 We are pleased to participate in the Google Summer of Code and are grateful
 for the contributions from our GSoC developers.
 
+* [Completed features during GSoC 2018](https://github.com/anitab-org/vms/blob/develop/docs/GSoC18.md)
 * Completed features during GSoC 2016
-       * [Development](https://github.com/systers/vms/wiki/GSoC'16---Migrating-VMS-from-Function-based-views-to-Class-based-views)
-       * [Testing](https://github.com/systers/vms/wiki/GSOC-16--Work-:-AUT-VMS-%5Bvatsala%5D)
+       * [Development](https://github.com/anitab-org/vms/wiki/GSoC'16---Migrating-VMS-from-Function-based-views-to-Class-based-views)
+       * [Testing](https://github.com/anitab-org/vms/wiki/GSOC-16--Work-:-AUT-VMS-%5Bvatsala%5D)
 * [Completed features during GSoC 2015](https://docs.google.com/document/d/1bzKjyxWIXeqW45UjhsbM4wtlyNagiyueZTqxhtmD_A0/edit)
 * [Completed features during GSoC 2014](https://docs.google.com/document/d/1wIHGmqTbufyGW9nKYt3vV-zZhdJEPfdxaOjegQ9qKEk/edit)
 
-
-Support
--------
-
-If you are having issues, please let us know.
-We have a mailing list located at: systers-dev@systers.org
 
 Communicate
 -----------
@@ -124,7 +127,7 @@ The best way to connect with the maintainers is through Github comments. Communi
 License
 -------
 
-The project is licensed under the [GNU GENERAL PUBLIC LICENSE](https://github.com/systers/vms/blob/master/LICENSE).
+The project is licensed under the [GNU GENERAL PUBLIC LICENSE](https://github.com/anitab-org/vms/blob/master/LICENSE).
 
 
 
