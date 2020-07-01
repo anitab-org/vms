@@ -8,16 +8,17 @@ from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from decouple import config
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+SECRET_KEY = config('SECRET_KEY')
 
 
 # SECURITY WARNING: run with debug turned off (DEBUG = False) in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.split(',')])
 
 # Application definition
 INSTALLED_APPS = (
@@ -63,10 +64,10 @@ WSGI_APPLICATION = 'vms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'vms',
-        'USER': 'vmsadmin',
-        'PASSWORD': '0xdeadbeef',
-        'HOST': 'localhost',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
     }
 }
 
@@ -129,8 +130,8 @@ STATIC_ROOT = './static/'
 # Instead of sending out real email, during development the emails will be sent
 # to stdout, where from they can be inspected.
 if DEBUG:
-    EMAIL_HOST = os.getenv('HOST', 'localhost')
-    EMAIL_PORT = os.getenv('PORT', '1025')
+    EMAIL_HOST = config('EMAIL_HOST', default='localhost')
+    EMAIL_PORT = config('EMAIL_PORT', default=1025, cast=int)
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGIN_REDIRECT_URL = reverse_lazy('home:index')

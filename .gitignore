@@ -103,9 +103,14 @@ local/
 # Documentation build
 _build
 
+
+# Environment variables
+.env
+
 # Visual Studio Code 
 .vscode/* 
 
 # Sublime Text  
 *.sublime-workspace 
 *.sublime-project
+
