@@ -229,7 +229,7 @@ class JobDetails(LiveServerTestCase):
         }
         job_details_page.go_to_edit_job_page()
         job_details_page.fill_job_form(edit_job)
-        job_details_page.navigate_to_job_list_view()
+        # job_details_page.navigate_to_job_list_view()
 
         self.assertEqual(job_details_page.get_name(), edit_job['name'])
         self.assertEqual(

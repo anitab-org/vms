@@ -6,7 +6,7 @@ from event import views
 from event.views import (EventCreateView, EventDeleteView, EventDetailView,
                          EventUpdateView, ApiForVolaView)
 
-app_name='event'
+app_name = 'event'
 
 urlpatterns = [
     url(r'^create/$', EventCreateView.as_view(), name='create'),

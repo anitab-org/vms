@@ -5,7 +5,7 @@ from django.conf.urls import url
 from administrator import views
 from administrator.views import AdminUpdateView, ProfileView, ReportListView
 
-app_name='administrator'
+app_name = 'administrator'
 
 urlpatterns = [
     url(r'^report/$', ReportListView.as_view(), name='report'),

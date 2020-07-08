@@ -1,6 +1,6 @@
 class PageUrls(object):
 
-    homepage = '/'
+    homepage = '/home/'
     authentication_page = '/authentication/login/'
     logout_page = '/authentication/logout/'
     shift_list_page = '/shift/list_jobs/'

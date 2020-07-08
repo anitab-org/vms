@@ -10,7 +10,7 @@ from shift.views import (AddHoursView, AddHoursManagerView,
                          JobListView, ShiftListView, ManageVolunteerShiftView,
                          ViewHoursView, VolunteerSearchView)
 
-app_name='shift'
+app_name = 'shift'
 
 urlpatterns = [
     url(r'^add_hours/(?P<shift_id>\d+)/(?P<volunteer_id>\d+)$',

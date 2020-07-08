@@ -259,7 +259,7 @@ class EventDetails(LiveServerTestCase):
         }
         event_details_page.go_to_edit_event_page()
         event_details_page.fill_event_form(edit_event)
-        event_details_page.navigate_to_event_list_view()
+        # event_details_page.navigate_to_event_list_view()
 
         self.assertEqual(
             event_details_page.get_event_name(),

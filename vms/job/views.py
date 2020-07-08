@@ -178,8 +178,8 @@ def list_sign_up(request, event_id, volunteer_id):
                                             city, state, country, '')
                 search_result_list = search_result.filter(event_id=event_id)
         else:
-                form = SearchJobForm()
-                search_result_list = get_jobs_by_event_id(event_id)
+            form = SearchJobForm()
+            search_result_list = get_jobs_by_event_id(event_id)
         job_list = remove_empty_jobs_for_volunteer(
             search_result_list,
             volunteer_id

@@ -1082,4 +1082,4 @@ class ReportVolunteerShiftModelTests(TestCase):
         report_in_db = Report.objects.get(Q(volunteer_shifts=vol_shift_in_db))
 
         # Check correctness
-        self.assertEqual(str(report_in_db), 'Report object')
+        self.assertEqual(str(report_in_db), 'Report object (3)')

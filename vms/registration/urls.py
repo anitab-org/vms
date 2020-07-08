@@ -5,7 +5,7 @@ from django.conf.urls import url
 from registration.views import (activate, AdministratorSignupView,
                                 VolunteerSignupView, load_cities,
                                 load_states, check_states)
-app_name='registration'
+app_name = 'registration'
 
 urlpatterns = [
     url(r'^signup_administrator/$',
