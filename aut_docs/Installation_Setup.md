@@ -25,6 +25,27 @@
     ```bash
       virtualenv --python=/usr/bin/python3 venv
     ```
+#### A one-time setup for RHEL/Feroda:
+
+- Install python
+    ```bash
+      sudo yum install python3
+    ```
+
+- Install virtual environment
+    ```bash
+      sudo yum install python-virtualenv
+    ```
+
+- Clone the VMS project
+    ```bash
+      git clone https://github.com/anitab-org/vms.git
+    ```
+
+- Create python3.6 virtual environment
+    ```bash
+      python3.6 -m venv myvirtual_venv
+    ```
     
 ### To start a testing session:
 
@@ -51,6 +72,33 @@
     ```
     
   Note: If you face any errors, do not open a new issue and ask for help on slack with full error logs.
+  
+#### To start a testing session for RHEL/Feroda:
+
+- Activate virtual environment
+    ```bash
+      source myvirtual_venv/bin/activate
+    ```
+    
+- Change directory to VMS code
+    ```bash
+      cd vms/
+    ```
+    
+- Run the following commands
+    ```bash
+      sudo yum install libpq-dev
+      sudo yum install python-devel
+      sudo yum install python3-devel.x86_64
+    ```
+    
+- Install all python dependencies
+    ```bash
+      pip3 install -r requirements.txt
+
+    ```
+    
+  Note: If you face any errors, do not open a new issue and ask for help on slack with full error logs.    
 
 ### Install Postgresql
 
