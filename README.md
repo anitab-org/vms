@@ -120,7 +120,7 @@ for the contributions from our GSoC developers.
 Communicate
 -----------
 
-The best way to connect with the maintainers is through Github comments. Communicate with our community on [AnitaB.org Open Source Zulip](https://anitab-org.zulipchat.com/). For queries regarding VMS Project join, [#vms](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms).
+The best way to connect with the maintainers is through Github comments. Communicate with our community on [AnitaB.org Open Source Zulip](https://anitab-org.zulipchat.com/). For queries regarding VMS Project join, [#vms](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms) and newcomers can join, [#newcomers](https://anitab-org.zulipchat.com/#narrow/stream/223071-newcomers).
 
 
 
