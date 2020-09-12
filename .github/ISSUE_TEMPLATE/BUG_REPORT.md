@@ -1,7 +1,10 @@
-## Description
+## Description of bug
 As a [USER],
 I need [TO DO THIS],
-so that I can [ACCOMPLISH THAT].
+so that I can [ACCOMPLISH OR RESOLVE THAT].
+
+## Expected behaviour (corrected)
+Write here
 
 ## Mocks
 [INSERT RELEVANT PNG FILE]
