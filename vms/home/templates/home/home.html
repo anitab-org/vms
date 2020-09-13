@@ -7,23 +7,28 @@
 {% if messages %}
 
 <div class="alert alert-dismissible alert-success">
-  <button type="button" class="close" data-dismiss="alert">×</button>
-  <ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+    </ul>
 </div>
 
 {% endif %}
 
-    <div class="jumbotron jumbotron-custom">
-        <h1 class="index">Volunteer Management System</h1>
-        <p>{% trans "Systers, an Anita Borg Institute Community, has many volunteers that devote their time, skills and commitment to our vision. Volunteer Management System serves as a place where volunteers can view volunteer events, sign up for volunteer jobs and log volunteer hours. Volunteer Management System also enables volunteer managers to manage their volunteers and run volunteer related reports." %}</p>
-        {% if error %}
-            <div class="alert alert-danger" role="alert">
-              You will need to have atleast one organisation to Sign up as a volunteer
-            </div>
-        {% endif %}
+<div class="jumbotron jumbotron-custom">
+    <h1 class="index">Volunteer Management System</h1>
+    <p>{% trans "Systers, an Anita Borg Institute Community, has many volunteers that devote their time, skills and commitment to our vision. Volunteer Management System serves as a place where volunteers can view volunteer events, sign up for volunteer jobs and log volunteer hours. Volunteer Management System also enables volunteer managers to manage their volunteers and run volunteer related reports." %}
+    </p>
+    {% if user.is_authenticated %}
+    <a href="http://anitab-org.zulipchat.com">
+        <button type="button" class="btn btn-primary btn-lg">Connect With us on Zulip</button></a>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        You will need to have atleast one organisation to Sign up as a volunteer
     </div>
+    {% endif %}
+</div>
 {% endblock %}
