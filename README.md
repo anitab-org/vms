@@ -1,7 +1,7 @@
-AnitaB.org Portal - VMS project
+Volunteer Management System (VMS)
 ============================
 
-[![Build Status](https://travis-ci.org/anitab-org/vms.svg?branch=develop)](https://travis-ci.org/anitab-org/vms) [![Coverage Status](https://coveralls.io/repos/github/anitab-org/vms/badge.svg?branch=develop)](https://coveralls.io/github/anitab-org/vms?branch=develop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms)
+[![Build Status](https://travis-ci.org/anitab-org/vms.svg?branch=develop)](https://travis-ci.org/anitab-org/vms) [![Coverage Status](https://coveralls.io/repos/github/anitab-org/vms/badge.svg?branch=develop)](https://coveralls.io/github/anitab-org/vms?branch=develop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms) [![codecov](https://codecov.io/gh/anitab-org/vms/branch/develop/graph/badge.svg)](https://codecov.io/gh/anitab-org/vms)
 
 
 AnitaB.org has many volunteers that offer their skills, time, and commitment to
