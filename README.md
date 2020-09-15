@@ -1,8 +1,11 @@
-Volunteer Management System (VMS)
-============================
+AnitaB.org Portal - VMS project
+=============================
 
-[![Build Status](https://travis-ci.org/anitab-org/vms.svg?branch=develop)](https://travis-ci.org/anitab-org/vms) [![Coverage Status](https://coveralls.io/repos/github/anitab-org/vms/badge.svg?branch=develop)](https://coveralls.io/github/anitab-org/vms?branch=develop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms) [![codecov](https://codecov.io/gh/anitab-org/vms/branch/develop/graph/badge.svg)](https://codecov.io/gh/anitab-org/vms)
-
+[![Build Status](https://img.shields.io/travis/anitab-org/vms/develop?logo=travis)](https://travis-ci.org/anitab-org/vms)
+[![Coverage Status](https://coveralls.io/repos/github/anitab-org/vms/badge.svg)](https://coveralls.io/github/anitab-org/vms?branch=develop) 
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com) 
+[![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg?logo=zulip)](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms)
+[![Python Version](https://img.shields.io/badge/python-3.6-blue.svg?logo=python)](https://www.python.org/downloads/release/python-360/)
 
 AnitaB.org has many volunteers that offer their skills, time, and commitment to
 our vision and projects. The **Volunteer Management System** (VMS) will
