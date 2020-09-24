@@ -76,7 +76,7 @@ production at the moment. It may be configured to do so in the future.
 Contribute
 ----------
 
-- Please read our [Contributing guidelines](CONTRIBUTING.md), [Code of Conduct](code_of_conduct.md) and [Reporting Guidelines](reporting_guidelines.md)
+- Please read our [Contributing guidelines](CONTRIBUTING.md), [Code of Conduct](CODE_OF_CONDUCT.md) and [Reporting Guidelines](reporting_guidelines.md)
 - Please follow our [Commit Message Style Guide](https://github.com/anitab-org/mentorship-android/wiki/Commit-Message-Style-Guide) while sending PRs.
 - Issue Tracker: [vms/issues](http://github.com/anitab-org/vms/issues)
 - Source Code: [vms](http://github.com/anitab-org/vms/)
