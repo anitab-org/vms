@@ -1,4 +1,4 @@
-AnitaB.org Portal - VMS project
+Volunteer Management System(VMS)
 =============================
 
 [![Build Status](https://img.shields.io/travis/anitab-org/vms/develop?logo=travis)](https://travis-ci.org/anitab-org/vms)
@@ -6,6 +6,7 @@ AnitaB.org Portal - VMS project
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com) 
 [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg?logo=zulip)](https://anitab-org.zulipchat.com/#narrow/stream/222539-vms)
 [![Python Version](https://img.shields.io/badge/python-3.6-blue.svg?logo=python)](https://www.python.org/downloads/release/python-360/)
+[![codecov](https://codecov.io/gh/anitab-org/vms/branch/develop/graph/badge.svg)](https://codecov.io/gh/anitab-org/vms)
 
 AnitaB.org has many volunteers that offer their skills, time, and commitment to
 our vision and projects. The **Volunteer Management System** (VMS) will
