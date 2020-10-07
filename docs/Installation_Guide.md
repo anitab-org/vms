@@ -4,20 +4,20 @@
 This tutorial assumes that the user is installing and running the project under the Ubuntu Virtual Machine that is provided by Systers or on their local Ubuntu machine.
 
 ## Table of Contents
-1. [Install git](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-git)
-2. [Clone Project](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#clone-project)
+1. [Install git](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#install-git)
+2. [Clone Project](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#clone-project)
 2.5 [Install Python] (https://www.python.org/downloads/)
 2.6 [Install and make sure pip is working] (https://pip.pypa.io/en/latest/installing/)
-3. [Install VirtualBox and Vagrant](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-virtualbox-and-vagrant)
-4. [Download Systers Ubuntu Virtual Machine](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#download-systers-ubuntu-virtual-machine)
-5. [Using Vagrant](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#using-vagrant)
-6. [Install PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-postgresql)
-7. [Install Django and additional packages](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#install-django-and-additional-packages)
-8. [Setup PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#setup-postgresql)
-9. [Generate Database Tables Corresponding to Django Models](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#generate-database-tables-corresponding-to-django-models)
-10. [Change Directory Permissions](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#change-directory-permissions)
-11. [Run Development Server](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#run-development-server)
-12. [Run Unit Tests](https://github.com/systers/vms/blob/master/docs/Installation%20Guide.md#run-unit-tests)
+3. [Install VirtualBox and Vagrant](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#install-virtualbox-and-vagrant)
+4. [Download Systers Ubuntu Virtual Machine](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#download-systers-ubuntu-virtual-machine)
+5. [Using Vagrant](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#using-vagrant)
+6. [Install PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#install-postgresql)
+7. [Install Django and additional packages](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#install-django-and-additional-packages)
+8. [Setup PostgreSQL](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#setup-postgresql)
+9. [Generate Database Tables Corresponding to Django Models](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#generate-database-tables-corresponding-to-django-models)
+10. [Change Directory Permissions](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#change-directory-permissions)
+11. [Run Development Server](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#run-development-server)
+12. [Run Unit Tests](https://github.com/systers/vms/blob/master/docs/Installation_Guide.md#run-unit-tests)
 
 ## Install git
 
