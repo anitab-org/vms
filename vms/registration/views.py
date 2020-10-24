@@ -102,7 +102,7 @@ class AdministratorSignupView(TemplateView):
 
                 try:
                     admin_city_name = request.POST.get('city')
-                    admin_city = City.objects.get(pk=admin_city_name)
+                    admin_city = City.objects.get(name=admin_city_name)
                 except ObjectDoesNotExist:
                     admin_city = None
 
